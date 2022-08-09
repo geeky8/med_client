@@ -1,14 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
-import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
-import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
-import 'package:medrpha_customer/products/utils/add_subtract_widget.dart';
 import 'package:medrpha_customer/products/utils/product_view_list.dart';
-import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
@@ -22,22 +16,22 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = context.read<ProductsStore>();
     final loginStore = context.read<LoginStore>();
-    final profileStore = context.read<ProfileStore>();
-    final orderHistoryStore = context.read<OrderHistoryStore>();
+    // final profileStore = context.read<ProfileStore>();
+    // final orderHistoryStore = context.read<OrderHistoryStore>();
 
     double height = ConstantWidget.getScreenPercentSize(context, 14);
     double searchHeight = ConstantWidget.getPercentSize(height, 30);
     double radius = ConstantWidget.getPercentSize(height, 10);
     double margin = ConstantWidget.getScreenPercentSize(context, 2);
-    double sideMargin = margin * 1.2;
+    // double sideMargin = margin * 1.2;
 
     // double margin = ConstantWidget.getScreenPercentSize(context, 2);
     // double height = safeBlockHorizontal(context: context) * 45;
 
-    double width = ConstantWidget.getWidthPercentSize(context, 60);
+    // double width = ConstantWidget.getWidthPercentSize(context, 60);
     // double sideMargin = margin * 1.2;
-    double firstHeight = ConstantWidget.getPercentSize(height, 60);
-    double remainHeight = height - firstHeight;
+    // double firstHeight = ConstantWidget.getPercentSize(height, 60);
+    // double remainHeight = height - firstHeight;
 
     // double radius = ConstantWidget.getPercentSize(height, 5);
 

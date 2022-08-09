@@ -1,8 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:medrpha_customer/bottom_navigation/screens/home_screen.dart';
+import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/button_state.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
@@ -96,20 +98,26 @@ class LoginScreen extends StatelessWidget {
                           // if (!mounted) return;
                           final productsStore = context.read<ProductsStore>();
                           Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => Provider.value(
-                                      value: store,
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => Provider.value(
+                                value: store,
+                                child: Provider.value(
+                                  value: productsStore,
+                                  child: Provider.value(
+                                    value: _bottomNavigationStore,
+                                    child: Provider.value(
+                                      value: _profileStore,
                                       child: Provider.value(
-                                          value: productsStore,
-                                          child: Provider.value(
-                                              value: _bottomNavigationStore,
-                                              child: Provider.value(
-                                                  value: _profileStore,
-                                                  child: Provider.value(
-                                                      value: _orderHistoryStore,
-                                                      child:
-                                                          const HomeScreen())))))));
+                                        value: _orderHistoryStore,
+                                        child: const HomeScreen(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
                         } else {
                           final phone = await DataBox().readPhoneNo();
                           // print(phone);
@@ -155,107 +163,106 @@ class LoginScreen extends StatelessWidget {
                 ),
 
                 // Login Button
-                Observer(builder: (_) {
-                  return InkWell(
-                    focusColor: Colors.transparent,
-                    onTap: () async {
-                      //---> Login func
-                      final _dataBox = DataBox();
-                      final _pin = await _dataBox.readPin();
-                      if (_pin == '') {
-                        final _snackBar = ConstantWidget.customSnackBar(
-                            text:
-                                'Session expired, Please login again using OTP',
-                            context: context);
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context).showSnackBar(_snackBar);
-                      } else {
-                        if (_pin == _pinController.text.trim()) {
-                          store.buttonState = ButtonState.LOADING;
-                          await store.getUserStatus();
+                InkWell(
+                  focusColor: Colors.transparent,
+                  onTap: () async {
+                    //---> Login func
+                    final dataBox = DataBox();
+                    final pin = await dataBox.readPin();
+                    if (pin == '') {
+                      final snackBar = ConstantWidget.customSnackBar(
+                          text: 'Session expired, Please login again using OTP',
+                          context: context);
 
-                          //--> Check user's profile status
-                          if (store.loginModel.completedStatus) {
-                            final productsStore = context.read<ProductsStore>();
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    } else {
+                      if (pin == _pinController.text.trim()) {
+                        store.buttonState = ButtonState.LOADING;
+                        await store.getUserStatus();
 
-                            // ignore: use_build_context_synchronously
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => Provider.value(
+                        //--> Check user's profile status
+                        if (store.loginModel.completedStatus) {
+                          final productsStore = context.read<ProductsStore>();
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => Provider.value(
+                                value: store,
+                                child: Provider.value(
+                                  value: productsStore,
+                                  child: Provider.value(
+                                    value: _bottomNavigationStore,
+                                    child: Provider.value(
+                                      value: _profileStore,
+                                      child: const HomeScreen(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        } else {
+                          final phone = await DataBox().readPhoneNo();
+                          // print(phone);
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (_) => Provider.value(
+                                      value: _profileStore,
+                                      child: Provider.value(
                                         value: store,
                                         child: Provider.value(
-                                            value: productsStore,
-                                            child: Provider.value(
-                                                value: _bottomNavigationStore,
-                                                child: Provider.value(
-                                                    value: _profileStore,
-                                                    child:
-                                                        const HomeScreen()))))));
-                          } else {
-                            final phone = await DataBox().readPhoneNo();
-                            // print(phone);
-                            Navigator.of(context)
-                                .pushReplacement(MaterialPageRoute(
-                                    builder: (_) => Provider.value(
-                                        value: _profileStore,
-                                        child: Provider.value(
-                                          value: store,
+                                          value: _productStore,
                                           child: Provider.value(
-                                            value: _productStore,
-                                            child: Provider.value(
-                                              value: _bottomNavigationStore,
-                                              child: ProfilePage(
-                                                model:
-                                                    _profileStore.profileModel,
-                                                phone: phone,
-                                                beginToFill: '',
-                                              ),
+                                            value: _bottomNavigationStore,
+                                            child: ProfilePage(
+                                              model: _profileStore.profileModel,
+                                              phone: phone,
+                                              beginToFill: '',
                                             ),
                                           ),
-                                        ))));
-                          }
-                          store.buttonState = ButtonState.SUCCESS;
+                                        ),
+                                      ))));
                         }
-                        //---> Incorrect pin
-                        else {
-                          final _snackBar = ConstantWidget.customSnackBar(
-                              text: 'Incorrect Pin', context: context);
-                          ScaffoldMessenger.of(context).showSnackBar(_snackBar);
-                        }
+                        store.buttonState = ButtonState.SUCCESS;
                       }
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal:
-                              blockSizeHorizontal(context: context) * 30),
-                      child: Observer(builder: (_) {
-                        final state = store.buttonState;
+                      //---> Incorrect pin
+                      else {
+                        final snackBar = ConstantWidget.customSnackBar(
+                            text: 'Incorrect Pin', context: context);
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    }
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: blockSizeHorizontal(context: context) * 30),
+                    child: Observer(builder: (_) {
+                      final state = store.buttonState;
 
-                        switch (state) {
-                          case ButtonState.LOADING:
-                            return LoadingAnimationWidget.prograssiveDots(
-                              color: ConstantData.color1,
-                              size: ConstantWidget.getScreenPercentSize(
-                                  context, 10),
-                            );
-                          case ButtonState.SUCCESS:
-                            return ConstantWidget.getButtonWidget(
-                              context,
-                              'Login',
-                              ConstantData.primaryColor,
-                            );
-                          case ButtonState.ERROR:
-                            return ConstantWidget.getButtonWidget(
-                              context,
-                              'Login',
-                              ConstantData.primaryColor,
-                            );
-                        }
-                      }),
-                    ),
-                  );
-                }),
+                      switch (state) {
+                        case ButtonState.LOADING:
+                          return LoadingAnimationWidget.prograssiveDots(
+                            color: ConstantData.color1,
+                            size: ConstantWidget.getScreenPercentSize(
+                                context, 10),
+                          );
+                        case ButtonState.SUCCESS:
+                          return ConstantWidget.getButtonWidget(
+                            context,
+                            'Login',
+                            ConstantData.primaryColor,
+                          );
+                        case ButtonState.ERROR:
+                          return ConstantWidget.getButtonWidget(
+                            context,
+                            'Login',
+                            ConstantData.primaryColor,
+                          );
+                      }
+                    }),
+                  ),
+                ),
 
                 SizedBox(
                   height: blockSizeVertical(context: context) * 5,

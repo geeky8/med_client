@@ -1,5 +1,4 @@
 // import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/bottom_navigation/screens/setting_page_screen.dart';
@@ -7,8 +6,6 @@ import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store
 import 'package:medrpha_customer/order_history/screens/order_history_screen.dart';
 import 'package:medrpha_customer/products/screens/categories_screen.dart';
 import 'package:medrpha_customer/products/screens/home_products_screen.dart';
-import 'package:medrpha_customer/products/screens/search_screen.dart';
-import 'package:medrpha_customer/test_screen.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
@@ -283,7 +280,7 @@ class HomeScreen extends StatelessWidget {
               type: BottomNavigationBarType.fixed,
               currentIndex: bottomNavigationStore.currentPage,
               selectedItemColor: ConstantData.primaryColor,
-              unselectedItemColor: ConstantData.clrBlack30,
+              unselectedItemColor: Colors.black45,
               iconSize: ConstantWidget.getScreenPercentSize(context, 3.2),
               selectedLabelStyle: TextStyle(
                 fontFamily: ConstantData.fontFamily,
@@ -298,21 +295,25 @@ class HomeScreen extends StatelessWidget {
               ),
               items: const [
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.shopping_bag_outlined),
-                    activeIcon: Icon(Icons.shopping_bag),
-                    label: 'Orders'),
+                  icon: Icon(Icons.shopping_bag_outlined),
+                  activeIcon: Icon(Icons.shopping_bag),
+                  label: 'Orders',
+                ),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.home_outlined),
-                    activeIcon: Icon(Icons.home),
-                    label: 'Home'),
+                  icon: Icon(Icons.home_outlined),
+                  activeIcon: Icon(Icons.home),
+                  label: 'Home',
+                ),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.grid_view_outlined),
-                    activeIcon: Icon(Icons.grid_view_rounded),
-                    label: 'Categories'),
+                  icon: Icon(Icons.grid_view_outlined),
+                  activeIcon: Icon(Icons.grid_view_rounded),
+                  label: 'Categories',
+                ),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.settings_outlined),
-                    activeIcon: Icon(Icons.settings),
-                    label: 'Settings'),
+                  icon: Icon(Icons.settings_outlined),
+                  activeIcon: Icon(Icons.settings),
+                  label: 'Settings',
+                ),
               ]),
         ),
         body: pages[page],

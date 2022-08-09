@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import 'package:medrpha_customer/products/models/category_model.dart';
 import 'package:medrpha_customer/products/screens/products_view_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
@@ -22,15 +21,15 @@ class CategoriesListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double margin = ConstantWidget.getScreenPercentSize(context, 1.7);
-    var _crossAxisSpacing = 1;
-    var _screenWidth = MediaQuery.of(context).size.width;
-    var _crossAxisCount = 2;
-    var _width = (_screenWidth - ((_crossAxisCount - 1) * _crossAxisSpacing)) /
-        _crossAxisCount;
+    var crossAxisSpacing = 1;
+    var screenWidth = MediaQuery.of(context).size.width;
+    var crossAxisCount = 2;
+    var width = (screenWidth - ((crossAxisCount - 1) * crossAxisSpacing)) /
+        crossAxisCount;
     var cellHeight = ConstantWidget.getScreenPercentSize(context, 11.5);
     // var cellHeight = _width;
 
-    var _aspectRatio = _width / cellHeight;
+    var aspectRatio = width / cellHeight;
 
     final store = context.read<ProductsStore>();
     final loginStore = context.read<LoginStore>();
@@ -100,9 +99,9 @@ class CategoriesListScreen extends StatelessWidget {
                       bottom: MediaQuery.of(context).size.width * 0.01),
                   padding: EdgeInsets.symmetric(horizontal: margin),
                   child: GridView.count(
-                    crossAxisCount: _crossAxisCount,
+                    crossAxisCount: crossAxisCount,
                     shrinkWrap: true,
-                    childAspectRatio: _aspectRatio,
+                    childAspectRatio: aspectRatio,
                     mainAxisSpacing: (margin / 1.5),
                     crossAxisSpacing: (margin / 1.5),
                     // childAspectRatio: 0.64,

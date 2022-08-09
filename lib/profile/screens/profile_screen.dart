@@ -3,19 +3,17 @@
 // import 'package:awesome_dropdown/awesome_dropdown.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 // import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:medrpha_customer/bottom_navigation/screens/home_screen.dart';
+import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/button_state.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
-import 'package:medrpha_customer/profile/models/area_model.dart';
-import 'package:medrpha_customer/profile/models/country_model.dart';
 import 'package:medrpha_customer/profile/models/firm_info_model.dart';
 import 'package:medrpha_customer/profile/models/profile_model.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
@@ -479,7 +477,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                         }
                                       }
                                       await store.updateProfile(
-                                          context: context);
+                                        context: context,
+                                        loginStore: loginstore,
+                                      );
 
                                       final state = store.saveState;
                                       if (state == ButtonState.SUCCESS) {
@@ -532,9 +532,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                           store.profileModel = store
                                               .profileModel
                                               .copyWith(fssaiModel: fssaiModel);
-
-                                          // await store.updateProfile(
-                                          //     context: context);
                                         } else {
                                           final snackBar = ConstantData()
                                               .snackBarValidation(context);
@@ -553,10 +550,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                         await store.updateProfile(
                                           context: context,
                                           beginToFill: true,
+                                          loginStore: loginstore,
                                         );
                                       } else {
                                         await store.updateProfile(
-                                            context: context);
+                                          context: context,
+                                          loginStore: loginstore,
+                                        );
                                       }
 
                                       /// Check for navigation for first time and regular users.
@@ -1001,7 +1001,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget fssaiProfile({required ProfileStore store}) {
-    double editTextHeight = MediaQuery.of(context).size.height * 0.1;
     double profileHeight = ConstantWidget.getScreenPercentSize(context, 15);
     double defaultMargin = ConstantWidget.getScreenPercentSize(context, 2);
 
@@ -1198,6 +1197,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       }
                                     }
                                   }
+                                  return null;
                                 },
                               ),
                             ),
@@ -1622,7 +1622,6 @@ class _ProfilePageState extends State<ProfilePage> {
     double defaultMargin = ConstantWidget.getScreenPercentSize(context, 2);
 
     return Observer(builder: (_) {
-      final toFill = store.profileModel.drugLicenseModel.toFill;
       return Expanded(
         flex: 1,
         child: ListView(
@@ -1697,6 +1696,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     return null;
                                   }
                                 }
+                                return null;
                               },
                             ),
                           ),
@@ -1717,6 +1717,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     return null;
                                   }
                                 }
+                                return null;
                               },
                             ),
                           )
@@ -2203,7 +2204,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget gstProfile({required ProfileStore store}) {
-    double editTextHeight = MediaQuery.of(context).size.height * 0.1;
     double profileHeight = ConstantWidget.getScreenPercentSize(context, 15);
     double defaultMargin = ConstantWidget.getScreenPercentSize(context, 2);
 
@@ -2400,6 +2400,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   }
                                 }
                               }
+                              return null;
                             },
                           ),
                         ),
@@ -2576,7 +2577,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget profile({required ProfileStore store}) {
-    double editTextHeight = ConstantWidget.getScreenPercentSize(context, 8);
     double profileHeight = ConstantWidget.getScreenPercentSize(context, 15);
     double defaultMargin = ConstantWidget.getScreenPercentSize(context, 2);
 
@@ -2651,6 +2651,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               return null;
                             }
                           }
+                          return null;
                         },
                       ),
                       InputField(
@@ -2668,6 +2669,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               return null;
                             }
                           }
+                          return null;
                         },
                       ),
                       Row(
@@ -2696,6 +2698,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     }
                                   }
                                 }
+                                return null;
                               },
                             ),
                           ),
@@ -2721,6 +2724,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     }
                                   }
                                 }
+                                return null;
                               },
                             ),
                           )
@@ -2931,7 +2935,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           Expanded(
                             flex: 4,
                             child: Observer(builder: (_) {
-                              final list = <AreaModel>[];
                               if (store.areaFetching == StoreState.LOADING) {
                                 area = null;
                               }
@@ -3012,6 +3015,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               return null;
                             }
                           }
+                          return null;
                         },
                       ),
                       Row(
@@ -3037,6 +3041,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     }
                                   }
                                 }
+                                return null;
                               },
                             ),
                           ),
@@ -3062,6 +3067,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     }
                                   }
                                 }
+                                return null;
                               },
                             ),
                           )

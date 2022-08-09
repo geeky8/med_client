@@ -1,21 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
-import 'package:medrpha_customer/enums/categories.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/screens/checkout_screen.dart';
-import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/add_subtract_widget.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
-import 'package:medrpha_customer/utils/custom_dialog_box.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:provider/provider.dart';
@@ -31,18 +27,18 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double leftMargin = MediaQuery.of(context).size.width * 0.04;
-    double radius = ConstantWidget.getScreenPercentSize(context, 4);
-    double defMargin = ConstantWidget.getScreenPercentSize(context, 2);
-    double padding = ConstantWidget.getScreenPercentSize(context, 1.5);
-    double bottomHeight = ConstantWidget.getScreenPercentSize(context, 6);
+    // double radius = ConstantWidget.getScreenPercentSize(context, 4);
+    // double defMargin = ConstantWidget.getScreenPercentSize(context, 2);
+    // double padding = ConstantWidget.getScreenPercentSize(context, 1.5);
+    // double bottomHeight = ConstantWidget.getScreenPercentSize(context, 6);
 
-    double subRadius = ConstantWidget.getPercentSize(bottomHeight, 10);
+    // double subRadius = ConstantWidget.getPercentSize(bottomHeight, 10);
 
     final store = context.read<ProductsStore>();
-    final _loginStore = context.read<LoginStore>();
-    final _profileStore = context.read<ProfileStore>();
-    final _orderHistoryStore = context.read<OrderHistoryStore>();
-    final _bottomNavigationStore = context.read<BottomNavigationStore>();
+    final loginStore = context.read<LoginStore>();
+    final profileStore = context.read<ProfileStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
 
     return WillPopScope(
       child: Scaffold(
@@ -98,7 +94,7 @@ class CartScreen extends StatelessWidget {
                           ),
                           Observer(builder: (_) {
                             final adminStatus =
-                                _loginStore.loginModel.adminStatus;
+                                loginStore.loginModel.adminStatus;
 
                             return ConstantWidget.getCustomText(
                               '₹${(adminStatus) ? store.cartModel.totalSalePrice.toString() : '0'}',
@@ -121,7 +117,7 @@ class CartScreen extends StatelessWidget {
                   Expanded(
                     flex: 5,
                     child: Observer(builder: (_) {
-                      final adminStatus = _loginStore.loginModel.adminStatus;
+                      final adminStatus = loginStore.loginModel.adminStatus;
                       return InkWell(
                         onTap: () {
                           if (store.cartModel.productList.isNotEmpty &&
@@ -130,15 +126,15 @@ class CartScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => Provider.value(
-                                  value: _profileStore,
+                                  value: profileStore,
                                   child: Provider.value(
                                     value: store,
                                     child: Provider.value(
-                                      value: _loginStore,
+                                      value: loginStore,
                                       child: Provider.value(
-                                        value: _orderHistoryStore,
+                                        value: orderHistoryStore,
                                         child: Provider.value(
-                                          value: _bottomNavigationStore,
+                                          value: bottomNavigationStore,
                                           child: const CheckoutScreen(),
                                         ),
                                       ),
@@ -148,10 +144,10 @@ class CartScreen extends StatelessWidget {
                               ),
                             );
                           } else {
-                            final _snackBar = ConstantWidget.customSnackBar(
+                            final snackBar = ConstantWidget.customSnackBar(
                                 text: 'No items in cart', context: context);
                             ScaffoldMessenger.of(context)
-                                .showSnackBar(_snackBar);
+                                .showSnackBar(snackBar);
                           }
                         },
                         child: Container(
@@ -183,7 +179,7 @@ class CartScreen extends StatelessWidget {
         ),
         body: SafeArea(
           child: Observer(builder: (_) {
-            final _state = store.cartState;
+            final state = store.cartState;
 
             return Stack(
               children: [
@@ -194,7 +190,7 @@ class CartScreen extends StatelessWidget {
                     Align(
                       alignment: Alignment.topCenter,
                       child: Observer(builder: (_) {
-                        final adminStatus = _loginStore.loginModel.adminStatus;
+                        final adminStatus = loginStore.loginModel.adminStatus;
                         return Offstage(
                           offstage: adminStatus,
                           child: ConstantWidget.adminStatusbanner(context),
@@ -203,7 +199,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     Observer(builder: (_) {
                       final show = store.cartModel.productList.length;
-                      if (show == 0 || !_loginStore.loginModel.adminStatus) {
+                      if (show == 0 || !loginStore.loginModel.adminStatus) {
                         return Expanded(
                           child: ConstantWidget.errorWidget(
                             context: context,
@@ -237,7 +233,7 @@ class CartScreen extends StatelessWidget {
                     }),
                   ],
                 ),
-                if (_state == StoreState.LOADING)
+                if (state == StoreState.LOADING)
                   Container(
                     height: screenHeight(context: context),
                     width: screenWidth(context: context),

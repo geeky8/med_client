@@ -46,12 +46,12 @@ class ProductsRepository {
 
   Future<List<CategoryModel>> getCategories() async {
     final catlist = <CategoryModel>[];
-    final _sessId = await DataBox().readSessId();
-    final _body = {
+    final sessId = await DataBox().readSessId();
+    final body = {
       // "sessid": "34c4efad30e6e2d4",
-      "sessid": _sessId,
+      "sessid": sessId,
     };
-    final resp = await _httpClient.post(Uri.parse(_categoryUrl), body: _body);
+    final resp = await _httpClient.post(Uri.parse(_categoryUrl), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
@@ -69,15 +69,15 @@ class ProductsRepository {
   Future<ProductResponseModel?> getProducts(
       {String? categoryId, bool? refresh, String? term}) async {
     final productlist = <ProductModel>[];
-    final _sessId = await DataBox().readSessId();
-    final _body = {
+    final sessId = await DataBox().readSessId();
+    final body = {
       // "sessid": "34c4efad30e6e2d4",
-      "sessid": _sessId,
+      "sessid": sessId,
       "term": term ?? '',
       "catcheck": categoryId ?? '',
     };
 
-    final resp = await _httpClient.post(Uri.parse(_productsUrl), body: _body);
+    final resp = await _httpClient.post(Uri.parse(_productsUrl), body: body);
     // print('body :${resp.body}');
 
     if (resp.statusCode == 200) {
@@ -94,7 +94,7 @@ class ProductsRepository {
           final model = ProductModel.fromJson(json: i);
           // print(model.pid);
           final updatedModel =
-              await _getProductDetails(model: model, sessId: _sessId);
+              await _getProductDetails(model: model, sessId: sessId);
 
           productlist.add(updatedModel);
         }
@@ -103,40 +103,41 @@ class ProductsRepository {
       }
       return productRespModel;
     }
+    return null;
   }
 
   Future<ProductModel> _getProductDetails({
     required ProductModel model,
     required String sessId,
   }) async {
-    final _body = {
+    final body = {
       "sessid": sessId,
       "pid": model.pid,
       "price_id": model.priceId
     };
 
-    ProductModel _currModel = model;
+    ProductModel currModel = model;
 
     final resp =
-        await _httpClient.post(Uri.parse(_productDetailsUrl), body: _body);
+        await _httpClient.post(Uri.parse(_productDetailsUrl), body: body);
 
     if (resp.statusCode == 200) {
-      final _respBody = jsonDecode(resp.body);
-      if (_respBody['status'] == '1') {
-        final _data = _respBody['data'] as Map<String, dynamic>;
+      final respBody = jsonDecode(resp.body);
+      if (respBody['status'] == '1') {
+        final data = respBody['data'] as Map<String, dynamic>;
         // print(_data);
-        _currModel = model.copyWith(
-          expiryDate: _data['dtExpiryDate'] as String,
-          description: _data['Description'] as String,
-          productName: _data['product_name'] as String,
-          productImg: _data['product_img'] as String,
-          prodSaleTypeDetails: _data['prodsaletypedetails'] as String,
-          company: _data['compnaystr'] as String,
-          category: _data['categorystr'] as String,
+        currModel = model.copyWith(
+          expiryDate: data['dtExpiryDate'] as String,
+          description: data['Description'] as String,
+          productName: data['product_name'] as String,
+          productImg: data['product_img'] as String,
+          prodSaleTypeDetails: data['prodsaletypedetails'] as String,
+          company: data['compnaystr'] as String,
+          category: data['categorystr'] as String,
         );
       }
     }
-    return _currModel;
+    return currModel;
   }
 
   final _httpClient = http.Client();
@@ -152,61 +153,55 @@ class ProductsRepository {
   final _plusCart = 'https://apitest.medrpha.com/api/cart/cartplus';
   final _minusCart = 'https://apitest.medrpha.com/api/cart/cartminus';
 
-  Future<void> plusTheCart({required ProductModel model}) async {
-    final _sessId = await DataBox().readSessId();
+  Future<int?> plusTheCart({required ProductModel model}) async {
+    final sessId = await DataBox().readSessId();
 
-    final _body = {
-      "sessid": _sessId,
+    final body = {
+      "sessid": sessId,
       "pid": model.pid,
       "priceID": model.priceId,
       "quantity": model.quantity
     };
 
-    final resp = await _httpClient.post(Uri.parse(_plusCart), body: _body);
+    final resp = await _httpClient.post(Uri.parse(_plusCart), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       // print(respBody);
-      // if (respBody['status'] == '1') {
-      //   final list = respBody['data'] as List<dynamic>;
-      //   for (final i in list) {
-      //     final model = ProductModel.fromJson(json: i);
-      //     productlist.add(model);
-      //   }
-      // }
+      if (respBody['status'] == '1') {
+        return 1;
+      }
     }
+    return null;
   }
 
-  Future<void> minusTheCart({required ProductModel model}) async {
-    final _sessId = await DataBox().readSessId();
+  Future<int?> minusTheCart({required ProductModel model}) async {
+    final sessId = await DataBox().readSessId();
 
-    final _body = {
-      "sessid": _sessId,
+    final body = {
+      "sessid": sessId,
       "pid": model.pid,
       "priceID": model.priceId,
     };
 
-    final resp = await _httpClient.post(Uri.parse(_minusCart), body: _body);
+    final resp = await _httpClient.post(Uri.parse(_minusCart), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      // print(respBody);
-      // if (respBody['status'] == '1') {
-      //   final list = respBody['data'] as List<dynamic>;
-      //   for (final i in list) {
-      //     final model = ProductModel.fromJson(json: i);
-      //     productlist.add(model);
-      //   }
-      // }
+
+      if (respBody['status'] == '1') {
+        return 1;
+      }
     }
+    return null;
   }
 
-  Future<void> updateQuantity({required ProductModel model}) async {
-    final _sessId = await DataBox().readSessId();
+  Future<int?> updateQuantity({required ProductModel model}) async {
+    final sessId = await DataBox().readSessId();
 
-    final _body = {
+    final body = {
       // "sessid": "34c4efad30e6e2d4",
-      "sessid": _sessId,
+      "sessid": sessId,
       "pid": model.pid,
       "priceID": model.priceId,
       "quantity": model.quantity,
@@ -214,86 +209,77 @@ class ProductsRepository {
     };
 
     final resp = await _httpClient.post(Uri.parse(_updateProductQuantityUrl),
-        body: _body);
+        body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      // print(respBody);
-      // if (respBody['status'] == '1') {
-      //   final list = respBody['data'] as List<dynamic>;
-      //   for (final i in list) {
-      //     final model = ProductModel.fromJson(json: i);
-      //     productlist.add(model);
-      //   }
-      // }
+      if (respBody['status'] == '1') {
+        return 1;
+      }
     }
+    return null;
   }
 
-  Future<void> addToCart({required ProductModel model}) async {
-    final _sessId = await DataBox().readSessId();
+  Future<int?> addToCart({required ProductModel model}) async {
+    final sessId = await DataBox().readSessId();
 
-    final _body = {
+    final body = {
       // "sessid": "34c4efad30e6e2d4",
-      "sessid": _sessId,
+      "sessid": sessId,
       "pid": model.pid,
       "priceID": model.priceId,
       "WPID": model.wpid,
       "saleprice": model.salePrice,
     };
 
-    final resp = await _httpClient.post(Uri.parse(_addToCartUrl), body: _body);
+    final resp = await _httpClient.post(Uri.parse(_addToCartUrl), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       // print(respBody);
-      // if (respBody['status'] == '1') {
-      //   final list = respBody['data'] as List<dynamic>;
-      //   for (final i in list) {
-      //     final model = ProductModel.fromJson(json: i);
-      //     productlist.add(model);
-      //   }
-      // }
+      if (respBody['status'] == '1') {
+        return 1;
+      }
     }
+    return null;
   }
 
-  Future<void> removeFromCart({required ProductModel model}) async {
-    final _sessId = await DataBox().readSessId();
+  Future<int?> removeFromCart({required ProductModel model}) async {
+    final sessId = await DataBox().readSessId();
 
-    final _body = {
+    final body = {
       // "sessid": "34c4efad30e6e2d4",
-      "sessid": _sessId,
+      "sessid": sessId,
       "pid": model.pid,
       "priceID": model.priceId
     };
 
-    final resp = await _httpClient.post(Uri.parse(_removeCartUrl), body: _body);
+    final resp = await _httpClient.post(Uri.parse(_removeCartUrl), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      // print(respBody);
-      // if (respBody['status'] == '1') {
-      //   final list = respBody['data'] as List<dynamic>;
-      //   for (final i in list) {
-      //     final model = ProductModel.fromJson(json: i);
-      //     productlist.add(model);
-      //   }
-      // }
+
+      if (respBody['status'] == '1') {
+        return 1;
+      }
     }
+
+    return null;
   }
 
   Future<CartModel> getCart() async {
-    final _sessId = await DataBox().readSessId();
+    final sessId = await DataBox().readSessId();
 
-    final _body = {
+    final body = {
       // "sessid": "34c4efad30e6e2d4",
-      "sessid": _sessId,
+      "sessid": sessId,
     };
 
     final prodList = ObservableList<ProductModel>.of([]);
     int count = 0;
     String total = '';
 
-    final resp = await _httpClient.post(Uri.parse(_getCartUrl), body: _body);
+    final resp = await _httpClient.post(Uri.parse(_getCartUrl), body: body);
 
     // print(resp.body);
 
@@ -354,6 +340,7 @@ class ProductsRepository {
         return respBody['order_id'] as String;
       }
     }
+    return null;
   }
 
   Future<String?> checkoutConfirm({
@@ -376,6 +363,7 @@ class ProductsRepository {
         return (respBody['order_id'] as String);
       }
     }
+    return null;
   }
 
   Future<int> paymentConfirmation({required String orderId}) async {

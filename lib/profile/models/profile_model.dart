@@ -12,18 +12,18 @@ class ProfileModel {
   });
 
   factory ProfileModel.fromJson({required Map<String, dynamic> json}) {
-    final _firmInfoModel = FirmInfoModel.fromJson(json: json);
-    final _gstModel = GSTModel.fromJson(json: json);
-    final _drugLicenseModel = DrugLicenseModel.fromJson(json: json);
-    final _fssaiModel = FSSAIModel.fromJson(json: json);
+    final firmInfoModel = FirmInfoModel.fromJson(json: json);
+    final gstModel = GSTModel.fromJson(json: json);
+    final drugLicenseModel = DrugLicenseModel.fromJson(json: json);
+    final fssaiModel = FSSAIModel.fromJson(json: json);
 
     // print(_fssaiModel.fssaiImg);
 
     return ProfileModel(
-      firmInfoModel: _firmInfoModel,
-      gstModel: _gstModel,
-      drugLicenseModel: _drugLicenseModel,
-      fssaiModel: _fssaiModel,
+      firmInfoModel: firmInfoModel,
+      gstModel: gstModel,
+      drugLicenseModel: drugLicenseModel,
+      fssaiModel: fssaiModel,
     );
   }
 

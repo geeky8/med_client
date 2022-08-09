@@ -1,15 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:medrpha_customer/bottom_navigation/screens/home_screen.dart';
+import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/payment_options.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
-import 'package:medrpha_customer/order_history/repository/order_history_repository.dart';
-import 'package:medrpha_customer/order_history/screens/order_history_details_screen.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/cart_model.dart';
 import 'package:medrpha_customer/products/repository/products_repository.dart';
@@ -107,7 +106,9 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
   }
 
   _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    print('-----------Success Payment-------- ${response.orderId}');
+    if (kDebugMode) {
+      print('-----------Success Payment-------- ${response.orderId}');
+    }
     final store = context.read<ProductsStore>();
     final orderHistoryStore = context.read<OrderHistoryStore>();
     final profileStore = context.read<ProfileStore>();
@@ -125,7 +126,9 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
   }
 
   _handlePaymentFailure(PaymentFailureResponse response) {
-    print('-----------Failure Payment-------- ${response.code}');
+    if (kDebugMode) {
+      print('-----------Failure Payment-------- ${response.code}');
+    }
     showDialog(
       context: context,
       builder: (_) => OrderDialog(
@@ -140,8 +143,10 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
   }
 
   _handlePaymentExternalWallet(PaymentSuccessResponse response) {
-    print(
-        '-----------Success Payment External wallet-------- ${response.signature}');
+    if (kDebugMode) {
+      print(
+          '-----------Success Payment External wallet-------- ${response.signature}');
+    }
   }
 
   void openGateway({

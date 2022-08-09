@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:medrpha_customer/profile/models/area_model.dart';
 import 'package:medrpha_customer/profile/models/city_model.dart';
 import 'package:medrpha_customer/profile/models/country_model.dart';
@@ -52,80 +53,83 @@ class ProfileRepository {
     if (resp.statusCode == 200) {
       final respBody = jsonDecode((resp.body)) as Map<String, dynamic>;
       if (respBody['message'] == 'successful !!') {
-        print('deleted');
+        if (kDebugMode) {
+          print('deleted');
+        }
         return 1;
       }
     }
+    return null;
   }
 
   Future<List<CountryModel>> getCountries() async {
-    final _sessId = await DataBox().readSessId();
+    final sessId = await DataBox().readSessId();
 
-    final _body = {"sessid": _sessId};
+    final body = {"sessid": sessId};
 
-    final list = <CountryModel>[];
+    final countryList = <CountryModel>[];
 
-    final resp = await httpClient.post(Uri.parse(_countryUrl), body: _body);
+    final resp = await httpClient.post(Uri.parse(_countryUrl), body: body);
     if (resp.statusCode == 200) {
-      final _respBody = jsonDecode(resp.body);
-      if (_respBody['status'] == '1') {
-        final _list = _respBody['data'] as List<dynamic>;
-        for (final i in _list) {
+      final respBody = jsonDecode(resp.body);
+      if (respBody['status'] == '1') {
+        final list = respBody['data'] as List<dynamic>;
+        for (final i in list) {
           final model = CountryModel.fromJson(json: i as Map<String, dynamic>);
           list.add(model);
         }
       }
     }
-    list.add(CountryModel(countryName: 'India', countryId: 1));
-    return list;
+    countryList.add(CountryModel(countryName: 'India', countryId: 1));
+    return countryList;
   }
 
   Future<List<StateModel>> getState() async {
-    final _sessId = await DataBox().readSessId();
+    final sessId = await DataBox().readSessId();
 
-    final _body = {
-      "sessid": _sessId,
+    final body = {
+      "sessid": sessId,
     };
 
-    final list = <StateModel>[];
+    final stateList = <StateModel>[];
 
-    final resp = await httpClient.post(Uri.parse(_stateUrl), body: _body);
+    final resp = await httpClient.post(Uri.parse(_stateUrl), body: body);
 
     if (resp.statusCode == 200) {
-      final _respBody = jsonDecode(resp.body);
-      if (_respBody['status'] == '1') {
-        final _list = _respBody['data'] as List<dynamic>;
-        for (final i in _list) {
+      final respBody = jsonDecode(resp.body);
+      if (respBody['status'] == '1') {
+        final list = respBody['data'] as List<dynamic>;
+        for (final i in list) {
           final model = StateModel.fromJson(json: i as Map<String, dynamic>);
-          list.add(model);
+          stateList.add(model);
         }
       }
     }
-    return list;
+    return stateList;
   }
 
   Future<List<CityModel>> getCity() async {
-    final _sessId = await DataBox().readSessId();
+    final sessId = await DataBox().readSessId();
 
-    final _body = {
-      "sessid": _sessId,
+    final body = {
+      "sessid": sessId,
     };
 
-    final list = <CityModel>[];
+    final cityList = <CityModel>[];
 
-    final resp = await httpClient.post(Uri.parse(_cityUrl), body: _body);
+    final resp = await httpClient.post(Uri.parse(_cityUrl), body: body);
 
     if (resp.statusCode == 200) {
-      final _respBody = jsonDecode(resp.body);
-      if (_respBody['status'] == '1') {
-        final _list = _respBody['data'] as List<dynamic>;
-        for (final i in _list) {
+      final respBody = jsonDecode(resp.body);
+      if (respBody['status'] == '1') {
+        final list = respBody['data'] as List<dynamic>;
+        for (final i in list) {
           final model = CityModel.fromJson(json: i as Map<String, dynamic>);
-          list.add(model);
+          cityList.add(model);
         }
       }
     }
-    return list;
+    return cityList;
   }
 
   Future<List<AreaModel>> getArea({String? id}) async {
@@ -140,27 +144,29 @@ class ProfileRepository {
       body = {"sessid": sessId, 'cityid': id};
     }
 
-    final list = <AreaModel>[];
+    final areaList = <AreaModel>[];
 
     final resp = await httpClient.post(Uri.parse(areaUrl), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      print('---------${resp.body}');
+      if (kDebugMode) {
+        print('---------${resp.body}');
+      }
       if (respBody['status'] == '1') {
         final respList = respBody['data'] as List<dynamic>;
         for (final i in respList) {
           final model = AreaModel.fromJson(json: i as Map<String, dynamic>);
-          list.add(model);
+          areaList.add(model);
         }
       }
     }
-    return list;
+    return areaList;
   }
 
   Future<String> uploadProfile(
       {required String sessId, required FirmInfoModel model}) async {
-    final _body = {
+    final body = {
       "sessid": sessId,
       "firm_name": model.firmName,
       "txtemail": model.email,
@@ -176,11 +182,15 @@ class ProfileRepository {
     };
 
     final resp =
-        await httpClient.post(Uri.parse(_uploadProfileUrl), body: _body);
-    print(resp.body);
+        await httpClient.post(Uri.parse(_uploadProfileUrl), body: body);
+    if (kDebugMode) {
+      print(resp.body);
+    }
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      print(respBody);
+      if (kDebugMode) {
+        print(respBody);
+      }
       if (respBody['status'] == '0' || respBody['status'] == null) {
         return '0';
       } else {
@@ -193,12 +203,12 @@ class ProfileRepository {
 
   Future<String> uploadGSTDetails(
       {required String sessId, required GSTModel model}) async {
-    final _body = {
+    final body = {
       "sessid": sessId,
       "gstno": model.gstNo,
     };
 
-    final resp = await httpClient.post(Uri.parse(_uploadGSTUrl), body: _body);
+    final resp = await httpClient.post(Uri.parse(_uploadGSTUrl), body: body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       if (respBody['status'] == '0' || respBody['status'] == null) {
@@ -213,17 +223,19 @@ class ProfileRepository {
 
   Future<String> uploadDrugLicenseDetails(
       {required String sessId, required DrugLicenseModel model}) async {
-    final _body = {
+    final body = {
       "sessid": sessId,
       "txtdlno": model.number,
       "valid": model.validity,
       "txtdlname": model.name,
     };
 
-    final resp = await httpClient.post(Uri.parse(_uploadDLUrl), body: _body);
+    final resp = await httpClient.post(Uri.parse(_uploadDLUrl), body: body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      print(respBody);
+      if (kDebugMode) {
+        print(respBody);
+      }
       if (respBody['status'] == '0' || respBody['status'] == null) {
         return '0';
       } else {
@@ -236,12 +248,12 @@ class ProfileRepository {
 
   Future<String> uploadFSSAIDetails(
       {required String sessId, required FSSAIModel model}) async {
-    final _body = {
+    final body = {
       "sessid": sessId,
       "fssaiNo": model.number,
     };
 
-    final resp = await httpClient.post(Uri.parse(_uploadFssaiUrl), body: _body);
+    final resp = await httpClient.post(Uri.parse(_uploadFssaiUrl), body: body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       if (respBody['status'] == '0' || respBody['status'] == null) {
@@ -261,10 +273,10 @@ class ProfileRepository {
     required String url,
   }) async {
     final body = {"sessid": sessId};
-    final headers = {
-      'content-type': 'multipart/form-data',
-      'Accept': 'application/json',
-    };
+    // final headers = {
+    //   'content-type': 'multipart/form-data',
+    //   'Accept': 'application/json',
+    // };
     final file = await http.MultipartFile.fromPath('image', path);
     final request = http.MultipartRequest('POST', Uri.parse(url))
       ..fields.addAll(body)
@@ -274,7 +286,7 @@ class ProfileRepository {
     // print(object)
     final resp = await http.Response.fromStream(respStream);
     if (resp.statusCode == 200) {
-      print(resp.body);
+      // print(resp.body);
       return '1';
     } else {
       // final output = await resp.stream.bytesToString();
@@ -283,10 +295,10 @@ class ProfileRepository {
   }
 
   Future<ProfileModel> getProfile() async {
-    final _sessId = await DataBox().readSessId();
+    final sessId = await DataBox().readSessId();
 
-    final _body = {
-      "sessid": _sessId,
+    final body = {
+      "sessid": sessId,
     };
 
     ProfileModel profileModel = ProfileModel(
@@ -296,13 +308,15 @@ class ProfileRepository {
       fssaiModel: ConstantData().initFssaiModel,
     );
 
-    final resp = await httpClient.post(Uri.parse(_getProfileUrl), body: _body);
+    final resp = await httpClient.post(Uri.parse(_getProfileUrl), body: body);
 
     if (resp.statusCode == 200) {
-      final _respBody = jsonDecode(resp.body);
-      if (_respBody['status'] == '1') {
-        print(resp.body);
-        final json = _respBody['data'] as Map<String, dynamic>;
+      final respBody = jsonDecode(resp.body);
+      if (respBody['status'] == '1') {
+        if (kDebugMode) {
+          print(resp.body);
+        }
+        final json = respBody['data'] as Map<String, dynamic>;
         profileModel = ProfileModel.fromJson(json: json);
       }
     }

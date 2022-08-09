@@ -1,15 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
-import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
-import 'package:medrpha_customer/products/utils/add_subtract_widget.dart';
 import 'package:medrpha_customer/products/utils/product_view_list.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
-import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -30,14 +25,12 @@ class ProductsViewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double margin = ConstantWidget.getScreenPercentSize(context, 2);
-    double height = safeBlockHorizontal(context: context) * 45;
 
-    double width = ConstantWidget.getWidthPercentSize(context, 60);
-    double sideMargin = margin * 1.2;
-    double firstHeight = ConstantWidget.getPercentSize(height, 60);
-    double remainHeight = height - firstHeight;
+    // double sideMargin = margin * 1.2;
+    // double firstHeight = ConstantWidget.getPercentSize(height, 60);
+    // double remainHeight = height - firstHeight;
 
-    double radius = ConstantWidget.getPercentSize(height, 5);
+    // double radius = ConstantWidget.getPercentSize(height, 5);
 
     final loginStore = context.read<LoginStore>();
     final store = context.read<ProductsStore>();

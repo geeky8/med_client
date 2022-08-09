@@ -29,39 +29,39 @@ class PlusMinusWidget extends StatelessWidget {
   }) {
     switch (category) {
       case 'Ethical':
-        final _index = store.ethicalProductList
+        final index = store.ethicalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.ethicalProductList[_index];
+        return store.ethicalProductList[index];
 
       case 'Generic':
-        final _index = store.genericProductList
+        final index = store.genericProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.genericProductList[_index];
+        return store.genericProductList[index];
 
       case 'Surgical':
-        final _index = store.surgicalProductList
+        final index = store.surgicalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.surgicalProductList[_index];
+        return store.surgicalProductList[index];
 
       case 'Veterinary':
-        final _index = store.veterinaryProductList
+        final index = store.veterinaryProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.veterinaryProductList[_index];
+        return store.veterinaryProductList[index];
 
       case 'Ayurvedic':
-        final _index = store.ayurvedicProductList
+        final index = store.ayurvedicProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.ayurvedicProductList[_index];
+        return store.ayurvedicProductList[index];
 
       case 'General':
-        final _index = store.generalProductList
+        final index = store.generalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.generalProductList[_index];
+        return store.generalProductList[index];
 
       default:
-        final _index = store.generalProductList
+        final index = store.generalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.generalProductList[_index];
+        return store.generalProductList[index];
     }
   }
 
@@ -71,22 +71,20 @@ class PlusMinusWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Observer(builder: (_) {
-          return InkWell(
-            onTap: () async {
-              if (model.cartQuantity! > 0) {
-                await store.minusToCart(
-                  model: model,
-                  context: context,
-                );
-              }
-            },
-            child: PlusMinusButton(
-              icon: CupertinoIcons.minus,
-              iconSize: iconSize,
-            ),
-          );
-        }),
+        InkWell(
+          onTap: () async {
+            if (model.cartQuantity! > 0) {
+              await store.minusToCart(
+                model: model,
+                context: context,
+              );
+            }
+          },
+          child: PlusMinusButton(
+            icon: CupertinoIcons.minus,
+            iconSize: iconSize,
+          ),
+        ),
         InkWell(
           onTap: () {
             showDialog(

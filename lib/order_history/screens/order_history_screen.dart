@@ -3,14 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/delivery_status_type.dart';
 import 'package:medrpha_customer/enums/payment_status_type.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/models/order_history_model.dart';
 import 'package:medrpha_customer/order_history/screens/order_history_details_screen.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
-import 'package:medrpha_customer/products/models/cart_model.dart';
 import 'package:medrpha_customer/products/repository/products_repository.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/order_dialog.dart';
@@ -19,12 +17,10 @@ import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
-import 'package:medrpha_customer/utils/custom_dialog_box.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class OrderHistoryScreen extends StatelessWidget {
@@ -447,7 +443,7 @@ class _OrderTileState extends State<OrderTile> {
   final razorPay = Razorpay();
 
   handlePaymentSuccess(PaymentSuccessResponse response) async {
-    print('-----------Success Payment-------- ${response.orderId}');
+    // print('-----------Success Payment-------- ${response.orderId}');
     final store = context.read<ProductsStore>();
     final orderHistoryStore = context.read<OrderHistoryStore>();
     // final profileStore = context.read<ProfileStore>();
@@ -462,7 +458,7 @@ class _OrderTileState extends State<OrderTile> {
   }
 
   handlePaymentFailure(PaymentFailureResponse response) {
-    print('-----------Failure Payment-------- ${response.code}');
+    // print('-----------Failure Payment-------- ${response.code}');
     showDialog(
       context: context,
       builder: (_) => OrderDialog(
@@ -760,15 +756,13 @@ class _OrderTileState extends State<OrderTile> {
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  blockSizeHorizontal(context: context) * 3,
-                              vertical:
-                                  blockSizeVertical(context: context) * 1.5,
-                            ),
+                                horizontal:
+                                    blockSizeHorizontal(context: context) * 3,
+                                vertical: blockSizeVertical(context: context)),
                             decoration: BoxDecoration(
                               color: ConstantData.primaryColor,
                               borderRadius: BorderRadius.circular(
-                                font18Px(context: context),
+                                font25Px(context: context),
                               ),
                             ),
                             child: ConstantWidget.getCustomText(
@@ -777,7 +771,7 @@ class _OrderTileState extends State<OrderTile> {
                               1,
                               TextAlign.center,
                               FontWeight.w500,
-                              font15Px(context: context),
+                              font12Px(context: context) * 1.1,
                             ),
                           ),
                         ),
@@ -1096,6 +1090,7 @@ class DropDownListTile extends StatelessWidget {
               ),
             ),
             Expanded(
+              flex: 1,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1124,7 +1119,6 @@ class DropDownListTile extends StatelessWidget {
                   )
                 ],
               ),
-              flex: 1,
             ),
           ],
         ),
@@ -1227,6 +1221,7 @@ class OrdersList extends StatelessWidget {
                                   //     myOrderList[index].image),
                                 ),
                                 Expanded(
+                                  flex: 1,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
@@ -1278,7 +1273,6 @@ class OrdersList extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  flex: 1,
                                 )
                               ],
                             ),

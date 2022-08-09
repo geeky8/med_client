@@ -1,8 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:medrpha_customer/bottom_navigation/screens/home_screen.dart';
+import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/categories.dart';
 import 'package:medrpha_customer/enums/payment_options.dart';
@@ -14,7 +13,6 @@ import 'package:medrpha_customer/products/models/cart_model.dart';
 import 'package:medrpha_customer/products/models/category_model.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/repository/products_repository.dart';
-import 'package:medrpha_customer/products/screens/home_products_screen.dart';
 import 'package:medrpha_customer/products/utils/order_dialog.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
@@ -124,11 +122,11 @@ abstract class _ProductsStore with Store {
   @action
   Future<void> getCategories() async {
     catState = StoreState.LOADING;
-    final _list = await _productsRepository.getCategories();
-    if (_list.isNotEmpty) {
+    final list = await _productsRepository.getCategories();
+    if (list.isNotEmpty) {
       categories
         ..clear()
-        ..addAll(_list);
+        ..addAll(list);
 
       catState = StoreState.SUCCESS;
     } else {
@@ -338,12 +336,12 @@ abstract class _ProductsStore with Store {
       );
     } else {
       // cartModel = model;
-      final _list = ObservableList<ProductModel>.of([]);
+      final list = ObservableList<ProductModel>.of([]);
       for (final i in model.productList) {
-        final _updatedModel = await _updateProductsAccordingToCart(model: i);
-        _list.add(_updatedModel);
+        final updatedModel = await _updateProductsAccordingToCart(model: i);
+        list.add(updatedModel);
       }
-      cartModel = model.copyWith(productList: _list);
+      cartModel = model.copyWith(productList: list);
     }
     // cartState = StoreState.SUCCESS;
     // print(
@@ -358,60 +356,60 @@ abstract class _ProductsStore with Store {
     // print(model.cartQuantity);
     switch (category) {
       case CategoriesType.ETHICAL:
-        final _index = ethicalProductList
+        final index = ethicalProductList
             .indexWhere((element) => element.pid == model.pid);
-        final _cartModel = ethicalProductList[_index].copyWith(
+        final cartModel = ethicalProductList[index].copyWith(
             cartQuantity: model.cartQuantity, subTotal: model.subTotal);
         ethicalProductList
-          ..removeAt(_index)
-          ..insert(_index, _cartModel);
-        return _cartModel;
+          ..removeAt(index)
+          ..insert(index, cartModel);
+        return cartModel;
       case CategoriesType.GENERIC:
-        final _index = genericProductList
+        final index = genericProductList
             .indexWhere((element) => element.pid == model.pid);
-        final _cartModel = genericProductList[_index].copyWith(
+        final cartModel = genericProductList[index].copyWith(
             cartQuantity: model.cartQuantity, subTotal: model.subTotal);
         genericProductList
-          ..removeAt(_index)
-          ..insert(_index, _cartModel);
-        return _cartModel;
+          ..removeAt(index)
+          ..insert(index, cartModel);
+        return cartModel;
       case CategoriesType.SURGICAL:
-        final _index = surgicalProductList
+        final index = surgicalProductList
             .indexWhere((element) => element.pid == model.pid);
-        final _cartModel = surgicalProductList[_index].copyWith(
+        final cartModel = surgicalProductList[index].copyWith(
             cartQuantity: model.cartQuantity, subTotal: model.subTotal);
         surgicalProductList
-          ..removeAt(_index)
-          ..insert(_index, _cartModel);
+          ..removeAt(index)
+          ..insert(index, cartModel);
 
-        return _cartModel;
+        return cartModel;
       case CategoriesType.VETERINARY:
-        final _index = veterinaryProductList
+        final index = veterinaryProductList
             .indexWhere((element) => element.pid == model.pid);
-        final _cartModel = veterinaryProductList[_index].copyWith(
+        final cartModel = veterinaryProductList[index].copyWith(
             cartQuantity: model.cartQuantity, subTotal: model.subTotal);
         veterinaryProductList
-          ..removeAt(_index)
-          ..insert(_index, _cartModel);
-        return _cartModel;
+          ..removeAt(index)
+          ..insert(index, cartModel);
+        return cartModel;
       case CategoriesType.AYURVEDIC:
-        final _index = ayurvedicProductList
+        final index = ayurvedicProductList
             .indexWhere((element) => element.pid == model.pid);
-        final _cartModel = ayurvedicProductList[_index].copyWith(
+        final cartModel = ayurvedicProductList[index].copyWith(
             cartQuantity: model.cartQuantity, subTotal: model.subTotal);
         ayurvedicProductList
-          ..removeAt(_index)
-          ..insert(_index, _cartModel);
-        return _cartModel;
+          ..removeAt(index)
+          ..insert(index, cartModel);
+        return cartModel;
       case CategoriesType.GENERAL:
-        final _index = generalProductList
+        final index = generalProductList
             .indexWhere((element) => element.pid == model.pid);
-        final _cartModel = generalProductList[_index].copyWith(
+        final cartModel = generalProductList[index].copyWith(
             cartQuantity: model.cartQuantity, subTotal: model.subTotal);
         generalProductList
-          ..removeAt(_index)
-          ..insert(_index, _cartModel);
-        return _cartModel;
+          ..removeAt(index)
+          ..insert(index, cartModel);
+        return cartModel;
     }
 
     // final _totalPrice = (int.parse(model.salePrice) * model.cartQuantity!) +
@@ -427,27 +425,27 @@ abstract class _ProductsStore with Store {
     required String value,
     required BuildContext context,
   }) async {
-    SnackBar _snackBar;
+    SnackBar snackBar;
     if (int.parse(value) > int.parse(model.quantity)) {
-      _snackBar = ConstantWidget.customSnackBar(
+      snackBar = ConstantWidget.customSnackBar(
           text: 'Selection exceeded avl quantity', context: context);
     } else if (int.parse(value) <= 0) {
-      _snackBar = ConstantWidget.customSnackBar(
+      snackBar = ConstantWidget.customSnackBar(
           text: 'Selection below minimum quantity', context: context);
     } else {
       final currModel = model.copyWith(cartQuantity: int.parse(value));
-      final _index = cartModel.productList
+      final index = cartModel.productList
           .indexWhere((element) => element.pid == currModel.pid);
       cartModel.productList
-        ..removeAt(_index)
-        ..insert(_index, currModel);
+        ..removeAt(index)
+        ..insert(index, currModel);
       await _productsRepository.updateQuantity(model: currModel);
       await getCartItems();
-      _snackBar = ConstantWidget.customSnackBar(
+      snackBar = ConstantWidget.customSnackBar(
           text: 'Successfully updated the quantity', context: context);
       // plusMinusToCart(model: currModel);
     }
-    ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @action
@@ -457,16 +455,16 @@ abstract class _ProductsStore with Store {
   }) async {
     int qty = model.cartQuantity! + 1;
     if (qty > int.parse(model.quantity)) {
-      final _snackBar = ConstantWidget.customSnackBar(
+      final snackBar = ConstantWidget.customSnackBar(
           text: 'Selection exceeded avl quantity', context: context);
-      ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
       final currModel = model.copyWith(cartQuantity: qty);
-      final _index = cartModel.productList
+      final index = cartModel.productList
           .indexWhere((element) => element.pid == currModel.pid);
       cartModel.productList
-        ..removeAt(_index)
-        ..insert(_index, currModel);
+        ..removeAt(index)
+        ..insert(index, currModel);
       await _productsRepository.plusTheCart(model: currModel);
       await getCartItems();
       // plusMinusToCart(model: currModel);
@@ -481,11 +479,11 @@ abstract class _ProductsStore with Store {
     if (model.cartQuantity! > 1) {
       int qty = model.cartQuantity! - 1;
       final currModel = model.copyWith(cartQuantity: qty);
-      final _index = cartModel.productList
+      final index = cartModel.productList
           .indexWhere((element) => element.pid == currModel.pid);
       cartModel.productList
-        ..removeAt(_index)
-        ..insert(_index, currModel);
+        ..removeAt(index)
+        ..insert(index, currModel);
       await _productsRepository.minusTheCart(model: currModel);
       await getCartItems();
       // plusMinusToCart(model: currModel);
@@ -502,9 +500,9 @@ abstract class _ProductsStore with Store {
       //   ..removeAt(_index)
       //   ..insert(_index, currModel);
     } else {
-      final _snackBar = ConstantWidget.customSnackBar(
+      final snackBar = ConstantWidget.customSnackBar(
           text: 'Selection below minimum quantity', context: context);
-      ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 
@@ -601,6 +599,7 @@ abstract class _ProductsStore with Store {
     } else {
       cartState = StoreState.SUCCESS;
     }
+    return null;
   }
 
   @observable

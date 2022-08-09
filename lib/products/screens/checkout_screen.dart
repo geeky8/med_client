@@ -1,19 +1,13 @@
-import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:medrpha_customer/bottom_navigation/screens/home_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/payment_options.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
-import 'package:medrpha_customer/order_history/repository/order_history_repository.dart';
-import 'package:medrpha_customer/order_history/screens/order_history_details_screen.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/online_payment_bottom_sheet.dart';
-import 'package:medrpha_customer/products/utils/order_dialog.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
@@ -54,14 +48,12 @@ class CheckoutScreen extends StatelessWidget {
     double leftMargin = blockSizeHorizontal(context: context) * 4;
     double topMargin = blockSizeVertical(context: context) * 2;
 
-    final _profileStore = context.read<ProfileStore>();
+    final profileStore = context.read<ProfileStore>();
 
-    double cellHeight = MediaQuery.of(context).size.width * 0.2;
-
-    final _productStore = context.read<ProductsStore>();
-    final _loginStore = context.read<LoginStore>();
-    final _orderHistoryStore = context.read<OrderHistoryStore>();
-    final _bottomNavigationStore = context.read<BottomNavigationStore>();
+    final productStore = context.read<ProductsStore>();
+    final loginStore = context.read<LoginStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
 
     return Observer(builder: (_) {
       return Scaffold(
@@ -105,18 +97,18 @@ class CheckoutScreen extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (_) => Provider.value(
-                  value: _productStore,
+                  value: productStore,
                   child: Provider.value(
-                    value: _profileStore,
+                    value: profileStore,
                     child: Provider.value(
-                      value: _orderHistoryStore,
+                      value: orderHistoryStore,
                       child: Provider.value(
-                        value: _loginStore,
+                        value: loginStore,
                         child: Provider.value(
-                          value: _bottomNavigationStore,
+                          value: bottomNavigationStore,
                           child: OnlinePaymentScreen(
-                            model: _productStore.cartModel,
-                            profileModel: _profileStore.profileModel,
+                            model: productStore.cartModel,
+                            profileModel: profileStore.profileModel,
                           ),
                         ),
                       ),
@@ -240,7 +232,7 @@ class CheckoutScreen extends StatelessWidget {
             Container(
               child: RefreshIndicator(
                 onRefresh: () async {
-                  await _loginStore.getUserStatus();
+                  await loginStore.getUserStatus();
                 },
                 child: ListView(
                   padding: EdgeInsets.symmetric(
@@ -256,7 +248,7 @@ class CheckoutScreen extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                             horizontal: leftMargin,
                           ),
-                          itemCount: _productStore.cartModel.productList.length,
+                          itemCount: productStore.cartModel.productList.length,
                           itemBuilder: (_, index) {
                             return Row(
                               children: [
@@ -278,7 +270,7 @@ class CheckoutScreen extends StatelessWidget {
                                     image: DecorationImage(
                                         image: CachedNetworkImageProvider(
                                           ConstantData.productUrl +
-                                              _productStore
+                                              productStore
                                                   .cartModel
                                                   .productList[index]
                                                   .productImg,
@@ -307,7 +299,7 @@ class CheckoutScreen extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       ConstantWidget.getCustomText(
-                                        _productStore.cartModel
+                                        productStore.cartModel
                                             .productList[index].productName,
                                         ConstantData.mainTextColor,
                                         1,
@@ -316,7 +308,7 @@ class CheckoutScreen extends StatelessWidget {
                                         font15Px(context: context) * 1.2,
                                       ),
                                       ConstantWidget.getCustomText(
-                                        ' X ${_productStore.cartModel.productList[index].cartQuantity}',
+                                        ' X ${productStore.cartModel.productList[index].cartQuantity}',
                                         Colors.black45,
                                         1,
                                         TextAlign.center,
@@ -328,7 +320,7 @@ class CheckoutScreen extends StatelessWidget {
                                 ),
                                 const Spacer(),
                                 ConstantWidget.getCustomText(
-                                  '₹${_productStore.cartModel.productList[index].subTotal}',
+                                  '₹${productStore.cartModel.productList[index].subTotal}',
                                   ConstantData.mainTextColor,
                                   1,
                                   TextAlign.center,
@@ -381,7 +373,7 @@ class CheckoutScreen extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: [
                                             ConstantWidget.getCustomText(
-                                              _profileStore.profileModel
+                                              profileStore.profileModel
                                                   .firmInfoModel.address,
                                               ConstantData.mainTextColor,
                                               1,
@@ -394,7 +386,7 @@ class CheckoutScreen extends StatelessWidget {
                                                   context: context),
                                             ),
                                             ConstantWidget.getCustomText(
-                                              '${_profileStore.getCityName(cityId: int.parse(_profileStore.profileModel.firmInfoModel.city))} , ${_profileStore.getState(stateId: int.parse(_profileStore.profileModel.firmInfoModel.state))} - ${_profileStore.getArea(areaId: int.parse(_profileStore.profileModel.firmInfoModel.pin))}',
+                                              '${profileStore.getCityName(cityId: int.parse(profileStore.profileModel.firmInfoModel.city))} , ${profileStore.getState(stateId: int.parse(profileStore.profileModel.firmInfoModel.state))} - ${profileStore.getArea(areaId: int.parse(profileStore.profileModel.firmInfoModel.pin))}',
                                               ConstantData.mainTextColor,
                                               1,
                                               TextAlign.center,
@@ -516,7 +508,7 @@ class CheckoutScreen extends StatelessWidget {
                               ),
                               const Spacer(),
                               ConstantWidget.getCustomText(
-                                '₹${_productStore.cartModel.totalSalePrice}',
+                                '₹${productStore.cartModel.totalSalePrice}',
                                 Colors.black45,
                                 1,
                                 TextAlign.center,
@@ -541,7 +533,7 @@ class CheckoutScreen extends StatelessWidget {
                               ),
                               const Spacer(),
                               ConstantWidget.getCustomText(
-                                '₹${_productStore.cartModel.totalSalePrice}',
+                                '₹${productStore.cartModel.totalSalePrice}',
                                 ConstantData.primaryColor,
                                 1,
                                 TextAlign.center,
@@ -557,7 +549,7 @@ class CheckoutScreen extends StatelessWidget {
                 ),
               ),
             ),
-            if (_productStore.checkoutState == StoreState.LOADING)
+            if (productStore.checkoutState == StoreState.LOADING)
               Container(
                 height: screenHeight(context: context),
                 width: screenWidth(context: context),

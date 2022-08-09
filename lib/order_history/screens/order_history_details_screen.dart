@@ -2,8 +2,9 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
+
 import 'package:medrpha_customer/enums/delivery_status_type.dart';
 import 'package:medrpha_customer/enums/payment_status_type.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
@@ -11,7 +12,6 @@ import 'package:medrpha_customer/order_history/models/order_history_model.dart';
 import 'package:medrpha_customer/order_history/screens/order_history_screen.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
-import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
@@ -19,7 +19,6 @@ import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
-import 'package:provider/provider.dart';
 
 class OrderHistoryDetailsScreen extends StatelessWidget {
   const OrderHistoryDetailsScreen({Key? key, required this.model})
@@ -34,10 +33,10 @@ class OrderHistoryDetailsScreen extends StatelessWidget {
     final loginStore = context.read<LoginStore>();
     final profileSTore = context.read<ProfileStore>();
 
-    double margin = safeBlockVertical(context: context) * 2;
-    double padding = safeBlockVertical(context: context) * 0.9;
+    // double margin = safeBlockVertical(context: context) * 2;
+    // double padding = safeBlockVertical(context: context) * 0.9;
 
-    double leftMargin = screenWidth(context: context) * 0.05;
+    // double leftMargin = screenWidth(context: context) * 0.05;
     return Scaffold(
       backgroundColor: ConstantData.cellColor,
       appBar:
@@ -690,11 +689,11 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                           vertical: blockSizeVertical(context: context) * 1.2),
                       child: InkWell(
                         onTap: () async {
-                          final _contact = await DataBox().readPhoneNo();
+                          final contact = await DataBox().readPhoneNo();
                           showDialog(
                             context: context,
                             builder: (context) => InvoiceView(
-                              phone: _contact,
+                              phone: contact,
                               url: '${widget.model.orderId}.pdf',
                               store: widget.orderHistoryStore,
                               invoice: widget.model.orderId,
@@ -966,84 +965,82 @@ class ProductDetailsTile extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         vertical: blockSizeVertical(context: context),
       ),
-      child: Container(
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: CachedNetworkImage(
-                imageUrl: ConstantData.productUrl + model.productImg,
-                fit: BoxFit.cover,
-                height: imageSize * 1.2,
-                width: imageSize * 1.2,
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: CachedNetworkImage(
+              imageUrl: ConstantData.productUrl + model.productImg,
+              fit: BoxFit.cover,
+              height: imageSize * 1.2,
+              width: imageSize * 1.2,
+            ),
+          ),
+          SizedBox(
+            width: blockSizeHorizontal(context: context) * 4,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ConstantWidget.getCustomText(
+                model.productName,
+                ConstantData.mainTextColor,
+                1,
+                TextAlign.center,
+                FontWeight.w600,
+                font15Px(context: context) * 1.1,
               ),
-            ),
-            SizedBox(
-              width: blockSizeHorizontal(context: context) * 4,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ConstantWidget.getCustomText(
-                  model.productName,
-                  ConstantData.mainTextColor,
-                  1,
-                  TextAlign.center,
-                  FontWeight.w600,
-                  font15Px(context: context) * 1.1,
-                ),
-                SizedBox(
-                  height: blockSizeVertical(context: context),
-                ),
-                Row(
-                  children: [
-                    ConstantWidget.getCustomText(
-                      '₹${model.mrp}',
-                      ConstantData.mainTextColor,
-                      1,
-                      TextAlign.center,
-                      FontWeight.w600,
-                      font15Px(context: context),
-                    ),
-                    SizedBox(
-                      width: blockSizeHorizontal(context: context) * 2,
-                    ),
-                    ConstantWidget.getCustomText(
-                      'Qty: ${model.quantity}',
-                      Colors.black38,
-                      1,
-                      TextAlign.center,
-                      FontWeight.w600,
-                      font12Px(context: context),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const Spacer(),
-            IconButton(
-                onPressed: () {
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (_) => Provider.value(
-                  //             value: productsStore,
-                  //             child: Provider.value(
-                  //               value: loginStore,
-                  //               child: ProductsDetailScreen(
-                  //                 model: model,
-                  //                 // modelIndex: index,
-                  //                 // list: list,
-                  //               ),
-                  //             ))));
-                },
-                icon: Icon(
-                  Icons.arrow_right,
-                  size: 22,
-                  color: ConstantData.clrBlack30,
-                )),
-          ],
-        ),
+              SizedBox(
+                height: blockSizeVertical(context: context),
+              ),
+              Row(
+                children: [
+                  ConstantWidget.getCustomText(
+                    '₹${model.mrp}',
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w600,
+                    font15Px(context: context),
+                  ),
+                  SizedBox(
+                    width: blockSizeHorizontal(context: context) * 2,
+                  ),
+                  ConstantWidget.getCustomText(
+                    'Qty: ${model.quantity}',
+                    Colors.black38,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w600,
+                    font12Px(context: context),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const Spacer(),
+          IconButton(
+              onPressed: () {
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (_) => Provider.value(
+                //             value: productsStore,
+                //             child: Provider.value(
+                //               value: loginStore,
+                //               child: ProductsDetailScreen(
+                //                 model: model,
+                //                 // modelIndex: index,
+                //                 // list: list,
+                //               ),
+                //             ))));
+              },
+              icon: Icon(
+                Icons.arrow_right,
+                size: 22,
+                color: ConstantData.clrBlack30,
+              )),
+        ],
       ),
     );
   }
@@ -1064,7 +1061,7 @@ class OrderDetailsProductList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double imageSize = safeBlockVertical(context: context) * 9;
-    double smallTextSize = ConstantWidget.getScreenPercentSize(context, 1.6);
+    // double smallTextSize = ConstantWidget.getScreenPercentSize(context, 1.6);
     double margin = safeBlockVertical(context: context) * 2;
 
     return Container(
@@ -1153,11 +1150,11 @@ class OrderDetailsProductList extends StatelessWidget {
                                   ),
                                 ),
                                 Observer(builder: (_) {
-                                  final _index = store.orders.indexWhere(
+                                  final index = store.orders.indexWhere(
                                       (element) =>
                                           element.orderId == model.orderId);
                                   final state =
-                                      store.orders[_index].orderStatusType;
+                                      store.orders[index].orderStatusType;
 
                                   switch (state) {
                                     case OrderStatusType.CONFIRMED:

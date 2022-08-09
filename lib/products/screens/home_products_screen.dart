@@ -1,24 +1,18 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:medrpha_customer/bottom_navigation/screens/setting_page_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/categories.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
-import 'package:medrpha_customer/products/models/category_model.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/screens/cart_screen.dart';
 import 'package:medrpha_customer/products/screens/categories_screen.dart';
-import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/screens/products_view_screen.dart';
 import 'package:medrpha_customer/products/screens/search_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/category_list.dart';
 import 'package:medrpha_customer/products/utils/products_list.dart';
-import 'package:medrpha_customer/products/utils/quantity_dialog.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
@@ -189,86 +183,80 @@ class ProductHomeScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             const Spacer(),
-                            Observer(builder: (_) {
-                              return InkWell(
-                                child: Stack(
-                                  children: [
-                                    /// Cart-Icon
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: blockSizeVertical(
-                                                  context: context) *
-                                              2),
-                                      child: Icon(
-                                        Icons.shopping_cart,
-                                        color: ConstantData.mainTextColor,
-                                        size:
-                                            ConstantWidget.getWidthPercentSize(
-                                                context, 5.5),
-                                      ),
-                                    ),
-
-                                    /// No of items in cart
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: blockSizeHorizontal(
+                            InkWell(
+                              child: Stack(
+                                children: [
+                                  /// Cart-Icon
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: blockSizeVertical(
                                                 context: context) *
-                                            2.5,
-                                      ),
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding: EdgeInsets.all(
-                                            blockSizeVertical(
-                                                context: context)),
-                                        decoration: BoxDecoration(
-                                            color: ConstantData.primaryColor,
-                                            shape: BoxShape.circle),
-                                        child: Observer(builder: (_) {
-                                          final adminStatus =
-                                              loginStore.loginModel.adminStatus;
-                                          final value =
-                                              (store.cartModel.noOfProducts >
-                                                      10)
-                                                  ? '9+'
-                                                  : store.cartModel.noOfProducts
-                                                      .toString();
-                                          return ConstantWidget.getCustomText(
-                                            (adminStatus) ? value : '0',
-                                            Colors.white,
-                                            1,
-                                            TextAlign.center,
-                                            FontWeight.w600,
-                                            font12Px(context: context) / 1.2,
-                                          );
-                                        }),
-                                      ),
+                                            2),
+                                    child: Icon(
+                                      Icons.shopping_cart,
+                                      color: ConstantData.mainTextColor,
+                                      size: ConstantWidget.getWidthPercentSize(
+                                          context, 5.5),
                                     ),
-                                  ],
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Provider.value(
-                                          value: store,
+                                  ),
+
+                                  /// No of items in cart
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: blockSizeHorizontal(
+                                              context: context) *
+                                          2.5,
+                                    ),
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.all(
+                                          blockSizeVertical(context: context)),
+                                      decoration: BoxDecoration(
+                                          color: ConstantData.primaryColor,
+                                          shape: BoxShape.circle),
+                                      child: Observer(builder: (_) {
+                                        final adminStatus =
+                                            loginStore.loginModel.adminStatus;
+                                        final value =
+                                            (store.cartModel.noOfProducts > 10)
+                                                ? '9+'
+                                                : store.cartModel.noOfProducts
+                                                    .toString();
+                                        return ConstantWidget.getCustomText(
+                                          (adminStatus) ? value : '0',
+                                          Colors.white,
+                                          1,
+                                          TextAlign.center,
+                                          FontWeight.w600,
+                                          font12Px(context: context) / 1.2,
+                                        );
+                                      }),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Provider.value(
+                                        value: store,
+                                        child: Provider.value(
+                                          value: loginStore,
                                           child: Provider.value(
-                                            value: loginStore,
+                                            value: profileStore,
                                             child: Provider.value(
-                                              value: profileStore,
+                                              value: orderHistoryStore,
                                               child: Provider.value(
-                                                value: orderHistoryStore,
-                                                child: Provider.value(
-                                                    value:
-                                                        bottomNavigationStore,
-                                                    child: const CartScreen()),
-                                              ),
+                                                  value: bottomNavigationStore,
+                                                  child: const CartScreen()),
                                             ),
                                           ),
                                         ),
-                                      ));
-                                },
-                              );
-                            }),
+                                      ),
+                                    ));
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -400,143 +388,137 @@ class ProductHomeScreen extends StatelessWidget {
                     physics: const BouncingScrollPhysics(),
                     children: [
                       ///----------------------------------- Search bar --------------------------------------------
-                      Observer(builder: (_) {
-                        return InkWell(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  blockSizeHorizontal(context: context) * 4,
-                              vertical: blockSizeVertical(context: context) * 2,
-                            ),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: searchHeight,
-                              child: InkWell(
-                                onTap: () {
-                                  // store.searchController =
-                                  //     TextEditingController(text: '');
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => Provider.value(
-                                          value: store,
-                                          child: Provider.value(
-                                              value: loginStore,
-                                              child: Provider.value(
-                                                  value: profileStore,
-                                                  child: Provider.value(
-                                                      value: orderHistoryStore,
-                                                      child:
-                                                          const SearchScreen())))),
-                                    ),
-                                  );
-                                  // FocusScope.of(context)
+                      InkWell(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                blockSizeHorizontal(context: context) * 4,
+                            vertical: blockSizeVertical(context: context) * 2,
+                          ),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: searchHeight,
+                            child: InkWell(
+                              onTap: () {
+                                // store.searchController =
+                                //     TextEditingController(text: '');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => Provider.value(
+                                        value: store,
+                                        child: Provider.value(
+                                            value: loginStore,
+                                            child: Provider.value(
+                                                value: profileStore,
+                                                child: Provider.value(
+                                                    value: orderHistoryStore,
+                                                    child:
+                                                        const SearchScreen())))),
+                                  ),
+                                );
+                                // FocusScope.of(context)
+                              },
+                              child: TextFormField(
+                                enabled: false,
+                                style: TextStyle(
+                                  fontFamily: ConstantData.fontFamily,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                onChanged: (value) async {
+                                  await store.getSearchedResults(term: value);
                                 },
-                                child: TextFormField(
-                                  enabled: false,
-                                  style: TextStyle(
+                                // onFieldSubmitted: (value) async {
+                                //   await store.getSearchedResults(term: value);
+                                // },
+                                maxLines: 1,
+                                // controller: store.searchController,
+                                // enabled: false,
+                                textAlignVertical: TextAlignVertical.center,
+                                textAlign: TextAlign.left,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.zero,
+                                  hintText: 'Find Products',
+                                  // prefixIcon: Icon(Icons.search),
+
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: Colors.grey,
+                                    size: font25Px(context: context) * 1.2,
+                                  ),
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey,
                                     fontFamily: ConstantData.fontFamily,
                                     fontWeight: FontWeight.w400,
+                                    fontSize: font15Px(context: context) * 1.2,
                                   ),
-                                  onChanged: (value) async {
-                                    await store.getSearchedResults(term: value);
-                                  },
-                                  // onFieldSubmitted: (value) async {
-                                  //   await store.getSearchedResults(term: value);
-                                  // },
-                                  maxLines: 1,
-                                  // controller: store.searchController,
-                                  // enabled: false,
-                                  textAlignVertical: TextAlignVertical.center,
-                                  textAlign: TextAlign.left,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.zero,
-                                    hintText: 'Find Products',
-                                    // prefixIcon: Icon(Icons.search),
-
-                                    prefixIcon: Icon(
-                                      Icons.search,
-                                      color: Colors.grey,
-                                      size: font25Px(context: context) * 1.2,
-                                    ),
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontFamily: ConstantData.fontFamily,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize:
-                                          font15Px(context: context) * 1.2,
-                                    ),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    disabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(radius)),
-                                      borderSide: BorderSide(
-                                          color: ConstantData.cellColor,
-                                          width: 2),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(radius)),
-                                      borderSide: BorderSide(
-                                          color: ConstantData.cellColor,
-                                          width: 2),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(radius)),
-                                      borderSide: BorderSide(
-                                          color: ConstantData.cellColor,
-                                          width: 2),
-                                    ),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(radius)),
+                                    borderSide: BorderSide(
+                                        color: ConstantData.cellColor,
+                                        width: 2),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(radius)),
+                                    borderSide: BorderSide(
+                                        color: ConstantData.cellColor,
+                                        width: 2),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(radius)),
+                                    borderSide: BorderSide(
+                                        color: ConstantData.cellColor,
+                                        width: 2),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          onTap: () {},
-                        );
-                      }),
-                      Observer(builder: (_) {
-                        final list = store.categories;
-                        return Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: sideMargin, vertical: sideMargin),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ConstantWidget.getCustomTextWithoutAlign(
-                                'Categories',
-                                ConstantData.mainTextColor,
-                                FontWeight.w600,
-                                font22Px(context: context),
-                              ),
-                              const Spacer(),
-                              InkWell(
-                                child: ConstantWidget.getCustomTextWithoutAlign(
-                                    'View All',
-                                    ConstantData.accentColor,
-                                    FontWeight.w600,
-                                    font18Px(context: context)),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => Provider.value(
-                                        value: loginStore,
-                                        child: Provider.value(
-                                          value: store,
-                                          child: CategoriesListScreen(),
-                                        ),
+                        ),
+                        onTap: () {},
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: sideMargin, vertical: sideMargin),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ConstantWidget.getCustomTextWithoutAlign(
+                              'Categories',
+                              ConstantData.mainTextColor,
+                              FontWeight.w600,
+                              font22Px(context: context),
+                            ),
+                            const Spacer(),
+                            InkWell(
+                              child: ConstantWidget.getCustomTextWithoutAlign(
+                                  'View All',
+                                  ConstantData.accentColor,
+                                  FontWeight.w600,
+                                  font18Px(context: context)),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => Provider.value(
+                                      value: loginStore,
+                                      child: Provider.value(
+                                        value: store,
+                                        child: const CategoriesListScreen(),
                                       ),
                                     ),
-                                  );
-                                },
-                              )
-                            ],
-                          ),
-                        );
-                      }),
+                                  ),
+                                );
+                              },
+                            )
+                          ],
+                        ),
+                      ),
                       Observer(builder: (_) {
                         final list = store.categories;
                         final state = store.catState;
@@ -623,7 +605,7 @@ class ProductHomeScreen extends StatelessWidget {
                                       label: 'Veterinary',
                                       list: store.veterinaryProductList,
                                     );
-                                    ;
+
                                   case CategoriesType.AYURVEDIC:
                                     return ViewAllToggle(
                                       loginStore: loginStore,
@@ -668,7 +650,7 @@ class ProductHomeScreen extends StatelessWidget {
                                   list: store.surgicalProductList,
                                   state: store.homeState,
                                 );
-                                ;
+
                               case CategoriesType.VETERINARY:
                                 return CategoryProducts(
                                   store: store,
@@ -676,7 +658,7 @@ class ProductHomeScreen extends StatelessWidget {
                                   list: store.veterinaryProductList,
                                   state: store.homeState,
                                 );
-                                ;
+
                               case CategoriesType.AYURVEDIC:
                                 return CategoryProducts(
                                   store: store,
@@ -684,7 +666,7 @@ class ProductHomeScreen extends StatelessWidget {
                                   list: store.ayurvedicProductList,
                                   state: store.homeState,
                                 );
-                                ;
+
                               case CategoriesType.GENERAL:
                                 return CategoryProducts(
                                   store: store,

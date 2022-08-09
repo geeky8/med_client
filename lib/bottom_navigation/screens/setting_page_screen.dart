@@ -41,57 +41,55 @@ class SettingsPageScreen extends StatelessWidget {
             children: [
               Container(
                 margin: EdgeInsets.only(bottom: (deftMargin * 1.5)),
-                child: Container(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: (deftMargin * 2),
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            height: imageSize,
-                            width: imageSize,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.transparent,
-                              image: DecorationImage(
-                                image: ExactAssetImage(
-                                    '${ConstantData.assetsPath}med_logo.png'),
-                                fit: BoxFit.cover,
-                              ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: (deftMargin * 2),
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          height: imageSize,
+                          width: imageSize,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.transparent,
+                            image: DecorationImage(
+                              image: ExactAssetImage(
+                                  '${ConstantData.assetsPath}med_logo.png'),
+                              fit: BoxFit.cover,
                             ),
                           ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              margin: EdgeInsets.only(left: deftMargin),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ConstantWidget.getCustomTextWithoutAlign(
-                                      profileModel.firmName,
-                                      ConstantData.mainTextColor,
-                                      FontWeight.w600,
-                                      font22Px(context: context)),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 2),
-                                    child: ConstantWidget
-                                        .getCustomTextWithoutAlign(
-                                            profileModel.email,
-                                            ConstantData.mainTextColor,
-                                            FontWeight.w500,
-                                            font15Px(context: context)),
-                                  )
-                                ],
-                              ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            margin: EdgeInsets.only(left: deftMargin),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ConstantWidget.getCustomTextWithoutAlign(
+                                    profileModel.firmName,
+                                    ConstantData.mainTextColor,
+                                    FontWeight.w600,
+                                    font22Px(context: context)),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2),
+                                  child:
+                                      ConstantWidget.getCustomTextWithoutAlign(
+                                          profileModel.email,
+                                          ConstantData.mainTextColor,
+                                          FontWeight.w500,
+                                          font15Px(context: context)),
+                                )
+                              ],
                             ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
                 ),
               ),
               SizedBox(

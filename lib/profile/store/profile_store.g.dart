@@ -211,9 +211,11 @@ mixin _$ProfileStore on _ProfileStore, Store {
 
   @override
   Future<void> updateProfile(
-      {required BuildContext context, bool? beginToFill}) {
-    return _$updateProfileAsyncAction.run(
-        () => super.updateProfile(context: context, beginToFill: beginToFill));
+      {required BuildContext context,
+      bool? beginToFill,
+      required LoginStore loginStore}) {
+    return _$updateProfileAsyncAction.run(() => super.updateProfile(
+        context: context, beginToFill: beginToFill, loginStore: loginStore));
   }
 
   late final _$_ProfileStoreActionController =

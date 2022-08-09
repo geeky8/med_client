@@ -1,8 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:medrpha_customer/enums/delivery_status_type.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
@@ -42,24 +43,24 @@ abstract class _OrderHistoryStore with Store {
 
   @action
   Future<void> updateTheOrdersState({required OrderHistoryModel model}) async {
-    final _index =
+    final index =
         orders.indexWhere((element) => element.orderId == model.orderId);
     final updateModel = model.copyWith(isView: !model.isView);
     orders
-      ..removeAt(_index)
-      ..insert(_index, updateModel);
+      ..removeAt(index)
+      ..insert(index, updateModel);
   }
 
   @action
   Future<void> getOrdersList() async {
     state = StoreState.LOADING;
-    final _list = await _orderHistoryRepository.getListOrdersHistory();
+    final list = await _orderHistoryRepository.getListOrdersHistory();
     // print(
     //     '---------- order history resp -------------->${_list.first.ordersList.length}');
-    if (_list.isNotEmpty) {
+    if (list.isNotEmpty) {
       orders
         ..clear()
-        ..addAll(_list);
+        ..addAll(list);
       // dispatchedOrders.clear();
       // deliveredOrders.clear();
       // for (final model in orders) {
@@ -91,7 +92,6 @@ abstract class _OrderHistoryStore with Store {
     required BuildContext context,
   }) async {
     final url = '${ConstantData.invoiceUrl}$invoice.pdf';
-    final dio = Dio();
 
     final status = await Permission.storage.status;
     // final persmissionStatus = await [Permission.storage].request();
@@ -134,17 +134,17 @@ abstract class _OrderHistoryStore with Store {
               ],
             ),
           );
-          // ignore: use_build_context_synchronously
+
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else {
-          print(savePath);
+          // print(savePath);
 
           try {
             Future.delayed(const Duration(seconds: 1), () async {
               await Dio().download(url, savePath,
                   onReceiveProgress: (received, total) {
                 if (total != -1) {
-                  print((received / total * 100).toStringAsFixed(0) + "%");
+                  // print((received / total * 100).toStringAsFixed(0) + "%");
                   //you can build progressbar feature too
                 }
               });
@@ -181,7 +181,7 @@ abstract class _OrderHistoryStore with Store {
                   ],
                 ),
               );
-              // ignore: use_build_context_synchronously
+
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             });
           } on DioError catch (e) {
@@ -190,21 +190,21 @@ abstract class _OrderHistoryStore with Store {
 
             final snackBar = ConstantWidget.customSnackBar(
                 text: 'Failed to download invoice', context: context);
-            // ignore: use_build_context_synchronously
+
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         }
       } else {
         final snackBar = ConstantWidget.customSnackBar(
             text: 'Cannot find downloads directory', context: context);
-        // ignore: use_build_context_synchronously
+
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         invoiceDwdState = StoreState.EMPTY;
       }
     } else {
       final snackBar = ConstantWidget.customSnackBar(
           text: 'Permission denied', context: context);
-      // ignore: use_build_context_synchronously
+
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       invoiceDwdState = StoreState.EMPTY;
     }
@@ -235,7 +235,6 @@ abstract class _OrderHistoryStore with Store {
       );
     }
     invoiceDwdState = StoreState.SUCCESS;
-    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     await getOrdersList();
   }

@@ -10,6 +10,7 @@ import 'package:medrpha_customer/profile/models/country_model.dart';
 import 'package:medrpha_customer/profile/models/profile_model.dart';
 import 'package:medrpha_customer/profile/models/state_model.dart';
 import 'package:medrpha_customer/profile/repository/profile_repository.dart';
+import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/storage.dart';
@@ -235,6 +236,7 @@ abstract class _ProfileStore with Store {
   Future<void> updateProfile({
     required BuildContext context,
     bool? beginToFill,
+    required LoginStore loginStore,
   }) async {
     final sessId = await DataBox().readSessId();
     final gstToFIll = profileModel.gstModel.toFill;
@@ -330,6 +332,7 @@ abstract class _ProfileStore with Store {
     if (saveState != ButtonState.ERROR) {
       saveState = ButtonState.SUCCESS;
       page = 0;
+      await loginStore.getUserStatus();
       final snackBar = ConstantWidget.customSnackBar(
           text: 'Success, profile updated', context: context);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);

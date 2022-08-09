@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
-import 'package:medrpha_customer/order_history/screens/order_history_screen.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/splash.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   // WidgetsFlutterBinding.ensureInitialized();

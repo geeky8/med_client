@@ -32,7 +32,7 @@ class CategoryProducts extends StatelessWidget {
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
       final state1 = store.prodState;
-      print(list.length);
+
       switch (state1) {
         case StoreState.LOADING:
           return Center(
@@ -238,9 +238,9 @@ class ProductsCard extends StatelessWidget {
         child: Stack(
           children: [
             Observer(builder: (_) {
-              final _adminStatus = loginStore.loginModel.adminStatus;
+              final adminStatus = loginStore.loginModel.adminStatus;
               return Offstage(
-                offstage: !_adminStatus,
+                offstage: !adminStatus,
                 child: Align(
                   alignment: Alignment.topRight,
                   child: Container(

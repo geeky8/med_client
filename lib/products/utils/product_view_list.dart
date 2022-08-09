@@ -65,9 +65,9 @@ class ProductViewList extends StatelessWidget {
                     children: [
                       //-----> Discount percent
                       Observer(builder: (_) {
-                        final _adminStatus = loginStore.loginModel.adminStatus;
+                        final adminStatus = loginStore.loginModel.adminStatus;
                         return Offstage(
-                          offstage: !_adminStatus,
+                          offstage: !adminStatus,
                           child: Align(
                             alignment: Alignment.topRight,
                             child: Container(
@@ -159,11 +159,11 @@ class ProductViewList extends StatelessWidget {
 
                                 //----> Add,Remove buttons
                                 Observer(builder: (_) {
-                                  final _adminStatus =
+                                  final adminStatus =
                                       loginStore.loginModel.adminStatus;
 
                                   return Offstage(
-                                    offstage: !_adminStatus,
+                                    offstage: !adminStatus,
                                     child: Observer(builder: (_) {
                                       final _index = store.cartModel.productList
                                           .indexWhere((element) =>
@@ -212,12 +212,12 @@ class ProductViewList extends StatelessWidget {
                             // const Spacer(),
                             //----> MRP widgets
                             Observer(builder: (_) {
-                              final _adminStatus =
+                              final adminStatus =
                                   loginStore.loginModel.adminStatus;
 
                               return Expanded(
                                 child: Offstage(
-                                  offstage: !_adminStatus,
+                                  offstage: !adminStatus,
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                         right: blockSizeHorizontal(
