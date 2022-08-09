@@ -86,7 +86,7 @@ class _ThankYouDialog extends State<ThankYouDialog> {
                   'thankYou',
                   ConstantData.mainTextColor,
                   TextAlign.center,
-                  FontWeight.bold,
+                  FontWeight.w600,
                   ConstantWidget.getPercentSize(height, 7)),
               SizedBox(
                 height: ConstantWidget.getPercentSize(
@@ -111,7 +111,7 @@ class _ThankYouDialog extends State<ThankYouDialog> {
                           text: ' #345678 ',
                           style: TextStyle(
                               fontSize: font18Px(context: context),
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                               color: ConstantData.textColor)),
                       const TextSpan(text: 'is Completed.'),
                     ],
@@ -146,7 +146,7 @@ class _ThankYouDialog extends State<ThankYouDialog> {
                         text: '\nOrder Tracking ',
                         style: TextStyle(
                             decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                             fontSize: font22Px(context: context),
                             color: ConstantData.accentColor)),
                     TextSpan(
@@ -172,13 +172,13 @@ class _ThankYouDialog extends State<ThankYouDialog> {
           //       ));
           // }),))
 
-          ConstantWidget.getBottomText(context, 'goToOrder', () {
-            // Navigator.pushReplacement(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => MyOrderPage(false),
-            //     ));
-          })
+          // ConstantWidget.getBottomText(context, 'goToOrder', () {
+          //   // Navigator.pushReplacement(
+          //   //     context,
+          //   //     MaterialPageRoute(
+          //   //       builder: (context) => MyOrderPage(false),
+          //   //     ));
+          // })
         ],
       ),
     );

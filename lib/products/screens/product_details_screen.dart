@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/enums/categories.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/screens/home_products_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
+import 'package:medrpha_customer/products/utils/add_subtract_widget.dart';
+import 'package:medrpha_customer/products/utils/products_list.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
@@ -14,11 +17,13 @@ class ProductsDetailScreen extends StatelessWidget {
   const ProductsDetailScreen({
     Key? key,
     required this.model,
-    required this.modelIndex,
+    // required this.modelIndex,
+    // required this.list,
   }) : super(key: key);
 
   final ProductModel model;
-  final int modelIndex;
+  // final int modelIndex;
+  // final List<ProductModel> list;
 
   @override
   Widget build(BuildContext context) {
@@ -35,61 +40,20 @@ class ProductsDetailScreen extends StatelessWidget {
 
     return Scaffold(
         backgroundColor: ConstantData.bgColor,
-        bottomNavigationBar: Observer(builder: (_) {
-          final adminStatus = loginStore.loginModel.adminStatus;
-          if (adminStatus) {
-            return Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: blockSizeHorizontal(context: context) * 2,
-                      right: blockSizeHorizontal(context: context) * 3,
-                    ),
-                    child: InkWell(
-                        onTap: () async {
-                          final _index = store.cartModel.productList.indexWhere(
-                              (element) => element.pid == model.pid);
-                          SnackBar _snackBar;
-                          if (_index == -1) {
-                            await store.addToCart(model: model);
-                            _snackBar = ConstantWidget.customSnackBar(
-                                text: 'Added To Cart', context: context);
-                          } else {
-                            _snackBar = ConstantWidget.customSnackBar(
-                                text: 'Item Already in Cart', context: context);
-                          }
-
-                          ScaffoldMessenger.of(context).showSnackBar(_snackBar);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical:
-                                  blockSizeVertical(context: context) * 2.3),
-                          decoration: BoxDecoration(
-                            color: ConstantData.primaryColor,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ConstantWidget.getCustomText(
-                            'Add',
-                            ConstantData.bgColor,
-                            1,
-                            TextAlign.center,
-                            FontWeight.w500,
-                            font18Px(context: context) * 1.1,
-                          ),
-                        )),
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return const SizedBox();
-          }
-        }),
         body: Observer(builder: (_) {
           return ListView(
+            physics: const BouncingScrollPhysics(),
             children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: Observer(builder: (_) {
+                  final adminStatus = loginStore.loginModel.adminStatus;
+                  return Offstage(
+                    offstage: adminStatus,
+                    child: ConstantWidget.adminStatusbanner(context),
+                  );
+                }),
+              ),
               Container(
                 margin: EdgeInsets.only(bottom: defMargin),
                 color: ConstantData.bgColor,
@@ -97,58 +61,22 @@ class ProductsDetailScreen extends StatelessWidget {
                   children: [
                     SizedBox(
                       height: height,
-                      // padding: EdgeInsets.only(: margin),
-
-                      // decoration: BoxDecoration(
-                      //     image: DecorationImage(
-                      //         image: AssetImage(
-                      //             ConstantData.assetsPath + sModel.image),
-                      //         fit: BoxFit.cover)),
                       child: Stack(
                         children: [
-                          // FutureBuilder<Color>(
-                          //     future: _updatePaletteGenerator(sliderList[position]),
-                          //     //This function return color from Sqlite DB Asynchronously
-                          //     builder: (BuildContext context, AsyncSnapshot<Color> snapshot) {
-                          //       Color color;
-                          //       if (snapshot.hasData) {
-                          //         color = snapshot.data;
-                          //       } else {
-                          //         color = ConstantData.cellColor;
-                          //       }
-                          //
-                          //       return   Container(
-                          //         height:double.infinity,
-                          //         width: double.infinity,
-                          //         color: color,
-                          //       );
-                          //     }),
-
-                          Container(
-                              height: ConstantWidget.getScreenPercentSize(
-                                  context, 40),
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                        ConstantData.productUrl +
-                                            model.productImg,
-                                      ),
-                                      fit: BoxFit.cover))
-                              // child: PageView.builder(
-                              //   controller: controller,
-                              //   onPageChanged: _onPageViewChange,
-                              //   itemBuilder: (context, position) {
-                              //   ;})  return Container(
-                              //         decoration: BoxDecoration(
-                              //             image: DecorationImage(
-                              //                 image: AssetImage(
-                              //                     ConstantData.assetsPath +
-                              //                         sliderList[position]),
-                              //                 fit: BoxFit.cover)));
-                              //   },
-                              //   // itemCount: sliderList.length,
-                              // ),
-                              ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: blockSizeVertical(context: context) * 5),
+                            child: Container(
+                                height: ConstantWidget.getScreenPercentSize(
+                                    context, 40),
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                          ConstantData.productUrl +
+                                              model.productImg,
+                                        ),
+                                        fit: BoxFit.cover))),
+                          ),
                           Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: (defMargin / 2),
@@ -162,6 +90,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                       context, 2),
                                 ),
                                 Material(
+                                  color: Colors.transparent,
                                   child: InkWell(
                                     child: Icon(
                                       Icons.keyboard_backspace,
@@ -171,41 +100,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                       Navigator.pop(context);
                                     },
                                   ),
-                                  color: Colors.transparent,
                                 ),
-                                // const Spacer(),
-                                // InkWell(
-                                //   child: Container(
-                                //     height: closeSize,
-                                //     width: closeSize,
-                                //     decoration: BoxDecoration(
-                                //       shape: BoxShape.rectangle,
-                                //       color: Colors.redAccent,
-                                //       borderRadius: BorderRadius.all(
-                                //         Radius.circular(radius),
-                                //       ),
-                                //     ),
-                                //     child: Center(
-                                //       child: Icon(
-                                //         (sModel.isFav == 0)
-                                //             ? Icons.favorite_border
-                                //             : Icons.favorite,
-                                //         color: Colors.white,
-                                //         size: ConstantWidget.getPercentSize(
-                                //             closeSize, 50),
-                                //       ),
-                                //     ),
-                                //   ),
-                                //   onTap: () {
-                                //     setState(() {
-                                //       if (sModel.isFav == 1) {
-                                //         sModel.isFav = 0;
-                                //       } else {
-                                //         sModel.isFav = 1;
-                                //       }
-                                //     });
-                                //   },
-                                // ),
                                 SizedBox(
                                   width: ConstantWidget.getWidthPercentSize(
                                       context, 2),
@@ -213,22 +108,6 @@ class ProductsDetailScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-
-                          // Align(
-                          //   alignment: Alignment.bottomCenter,
-                          //   child: Container(
-                          //     margin: EdgeInsets.all(defMargin),
-                          //     padding: EdgeInsets.only(bottom: defMargin * 1.5),
-                          //     child: SmoothPageIndicator(
-                          //       count: sliderList.length,
-                          //       effect: WormEffect(
-                          //           activeDotColor: ConstantData.cellColor,
-                          //           dotColor: ConstantData.cellColor
-                          //               .withOpacity(0.5)),
-                          //       controller: controller, // your preferred effect
-                          //     ),
-                          //   ),
-                          // )
                         ],
                       ),
                     ),
@@ -265,12 +144,13 @@ class ProductsDetailScreen extends StatelessWidget {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             ConstantWidget.getCustomText(
-                                                model.productName,
-                                                ConstantData.mainTextColor,
-                                                2,
-                                                TextAlign.start,
-                                                FontWeight.bold,
-                                                font25Px(context: context)),
+                                              model.productName,
+                                              ConstantData.mainTextColor,
+                                              2,
+                                              TextAlign.start,
+                                              FontWeight.w600,
+                                              font22Px(context: context) * 1.2,
+                                            ),
                                             const Spacer(),
                                             Observer(builder: (_) {
                                               final adminStatus = loginStore
@@ -297,13 +177,12 @@ class ProductsDetailScreen extends StatelessWidget {
                                                             .mainTextColor,
                                                         2,
                                                         TextAlign.center,
-                                                        FontWeight.bold,
+                                                        FontWeight.w600,
                                                         font18Px(
                                                             context: context),
                                                       ),
                                                       ConstantWidget.getCustomText(
-                                                          model.quantity +
-                                                              ' units',
+                                                          '${model.quantity} units',
                                                           ConstantData
                                                               .mainTextColor,
                                                           2,
@@ -383,32 +262,19 @@ class ProductsDetailScreen extends StatelessWidget {
                                                   CrossAxisAlignment.center,
                                               children: [
                                                 ConstantWidget.getCustomText(
-                                                    '₹' + model.newMrp,
+                                                    '₹${model.newMrp}',
                                                     ConstantData.mainTextColor,
                                                     2,
                                                     TextAlign.start,
-                                                    FontWeight.bold,
+                                                    FontWeight.w600,
                                                     font22Px(context: context)),
                                                 SizedBox(
                                                   width: ((margin) / 4),
                                                 ),
-                                                // ConstantWidget.getCustomText(
-                                                //     (sModel.offPrice != null)
-                                                //         ? sModel.offPrice
-                                                //         : "",
-                                                //     Colors.grey,
-                                                //     2,
-                                                //     TextAlign.start,
-                                                //     FontWeight.w500,
-                                                //     ConstantWidget
-                                                //         .getScreenPercentSize(
-                                                //             context, 2)),
-
                                                 ConstantWidget.getLineTextView(
-                                                    '₹' + model.oldMrp,
+                                                    '₹${model.oldMrp}',
                                                     Colors.grey,
                                                     font18Px(context: context)),
-
                                                 Expanded(
                                                     child: ConstantWidget
                                                         .getCustomText(
@@ -418,7 +284,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                                                 .accentColor,
                                                             2,
                                                             TextAlign.end,
-                                                            FontWeight.bold,
+                                                            FontWeight.w600,
                                                             ConstantWidget
                                                                 .getScreenPercentSize(
                                                                     context,
@@ -428,7 +294,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                           } else {
                                             return const SizedBox();
                                           }
-                                        })
+                                        }),
                                       ],
                                     )
                                   ],
@@ -436,30 +302,82 @@ class ProductsDetailScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          // Container(
-                          //   child: Column(
-                          //     crossAxisAlignment: CrossAxisAlignment.start,
-                          //     children: [
-                          //       Padding(
-                          //         padding: EdgeInsets.only(
-                          //             left: margin, bottom: (margin)),
-                          //         child: ConstantWidget.getTextWidget(
-                          //             S.of(context).otherProduct,
-                          //             ConstantData.mainTextColor,
-                          //             TextAlign.start,
-                          //             FontWeight.w800,
-                          //             ConstantWidget.getScreenPercentSize(
-                          //                 context, 2.5)),
-                          //       ),
-                          //       // trendingList(),
-                          //     ],
-                          //   ),
-                          // ),
-                          SizedBox(
-                            height: blockSizeVertical(context: context) * 5,
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  blockSizeHorizontal(context: context) * 4,
+                              vertical: blockSizeVertical(context: context) * 2,
+                            ),
+                            child: Observer(builder: (_) {
+                              final adminStatus =
+                                  loginStore.loginModel.adminStatus;
+
+                              return Offstage(
+                                offstage: !adminStatus,
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      right:
+                                          blockSizeHorizontal(context: context),
+                                      bottom:
+                                          blockSizeVertical(context: context),
+                                    ),
+                                    child: Observer(builder: (_) {
+                                      final index = store.cartModel.productList
+                                          .indexWhere(
+                                        (element) => element.pid == model.pid,
+                                      );
+
+                                      if (index != -1) {
+                                        return Row(
+                                          children: [
+                                            RemoveButton(
+                                              store: store,
+                                              model: model,
+                                              width: 0,
+                                              height: height,
+                                              fontSize: 0,
+                                              isDetailPage: true,
+                                            ),
+                                            const Spacer(),
+                                            PlusMinusWidget(
+                                              model: model,
+                                              store: store,
+                                              iconSize: ConstantWidget
+                                                  .getWidthPercentSize(
+                                                      context, 5),
+                                              fontSize:
+                                                  font22Px(context: context),
+                                            ),
+                                          ],
+                                        );
+                                      } else {
+                                        return AddProductButton(
+                                          store: store,
+                                          model: model,
+                                          width: blockSizeVertical(
+                                                  context: context) *
+                                              2,
+                                          height: ConstantWidget
+                                              .getWidthPercentSize(context, 15),
+                                          fontSize:
+                                              font15Px(context: context) * 1.1,
+                                        );
+                                      }
+                                    }),
+                                  ),
+                                ),
+                              );
+                            }),
                           ),
                           SizedBox(
-                            width: double.infinity,
+                            height: blockSizeVertical(context: context) * 2,
+                          ),
+                          SizedBox(
+                            width: screenWidth(context: context),
+                            height: ConstantWidget.getScreenPercentSize(
+                                context, 33),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -470,114 +388,94 @@ class ProductsDetailScreen extends StatelessWidget {
                                 Padding(
                                   padding: EdgeInsets.only(left: margin),
                                   child: ConstantWidget.getTextWidget(
-                                      'More Prodcuts',
-                                      ConstantData.mainTextColor,
-                                      TextAlign.start,
-                                      FontWeight.w800,
-                                      ConstantWidget.getScreenPercentSize(
-                                          context, 2.5)),
+                                    'More Prodcuts',
+                                    ConstantData.mainTextColor,
+                                    TextAlign.start,
+                                    FontWeight.w600,
+                                    font22Px(context: context),
+                                  ),
                                 ),
                                 SizedBox(
                                   height: (height / 15),
                                 ),
-                                Observer(builder: (_) {
-                                  final category = model.category;
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Observer(builder: (_) {
+                                        final category =
+                                            categoriesfromValue(model.category);
 
-                                  switch (category) {
-                                    case 'Ethical':
-                                      final list = store.ethicalProductList;
-                                      // print(model.category);
-                                      list.shuffle();
-                                      return ProductsList(
-                                        list: list,
-                                        axis: Axis.horizontal,
-                                        itemCount: 7,
-                                        store: store,
-                                        loginStore: loginStore,
-                                      );
-                                    case 'Generic':
-                                      final list = store.genericProductList;
-                                      // print(model.category);
-                                      list.shuffle();
-                                      return ProductsList(
-                                        list: list,
-                                        axis: Axis.horizontal,
-                                        itemCount: 7,
-                                        store: store,
-                                        loginStore: loginStore,
-                                      );
-                                    case 'Surgical':
-                                      final list = store.surgicalProductList;
-                                      // print(model.category);
-                                      list.shuffle();
-                                      return ProductsList(
-                                        list: list,
-                                        axis: Axis.horizontal,
-                                        itemCount: 7,
-                                        store: store,
-                                        loginStore: loginStore,
-                                      );
+                                        switch (category) {
+                                          case CategoriesType.ETHICAL:
+                                            final list =
+                                                store.ethicalProductList;
 
-                                    case 'Veterinary':
-                                      final list = store.veterinaryProductList;
-                                      // print(model.category);
-                                      list.shuffle();
-                                      return ProductsList(
-                                        list: list,
-                                        axis: Axis.horizontal,
-                                        itemCount: 7,
-                                        store: store,
-                                        loginStore: loginStore,
-                                      );
+                                            return MoreProductsList(
+                                              list: list,
+                                              store: store,
+                                              loginStore: loginStore,
+                                            );
+                                          case CategoriesType.GENERIC:
+                                            final list =
+                                                store.genericProductList;
 
-                                    case 'Ayurvedic':
-                                      final list = store.ethicalProductList;
-                                      // print(model.category);
-                                      list.shuffle();
-                                      return ProductsList(
-                                        list: list,
-                                        axis: Axis.horizontal,
-                                        itemCount: 7,
-                                        store: store,
-                                        loginStore: loginStore,
-                                      );
+                                            return MoreProductsList(
+                                              list: list,
+                                              store: store,
+                                              loginStore: loginStore,
+                                            );
+                                          case CategoriesType.SURGICAL:
+                                            final list =
+                                                store.surgicalProductList;
 
-                                    case 'General':
-                                      final list = store.ethicalProductList;
-                                      // print(model.category);
-                                      list.shuffle();
-                                      return ProductsList(
-                                        list: list,
-                                        axis: Axis.horizontal,
-                                        itemCount: 7,
-                                        store: store,
-                                        loginStore: loginStore,
-                                      );
+                                            return MoreProductsList(
+                                              list: list,
+                                              store: store,
+                                              loginStore: loginStore,
+                                            );
+                                          case CategoriesType.VETERINARY:
+                                            final list =
+                                                store.veterinaryProductList;
 
-                                    default:
-                                      final list = store.allProducts;
-                                      // print(model.category);
-                                      list.shuffle();
-                                      return ProductsList(
-                                        list: list,
-                                        axis: Axis.horizontal,
-                                        itemCount: 7,
-                                        store: store,
-                                        loginStore: loginStore,
-                                      );
-                                  }
+                                            return MoreProductsList(
+                                              list: list,
+                                              store: store,
+                                              loginStore: loginStore,
+                                            );
+                                          case CategoriesType.AYURVEDIC:
+                                            final list =
+                                                store.ayurvedicProductList;
 
-                                  // return ListView.builder(
-                                  //   itemCount: 7,
-                                  //   scrollDirection: Axis.horizontal,
-                                  //   padding: EdgeInsets.zero,
-                                  //   shrinkWrap: true,
-                                  //   physics: const BouncingScrollPhysics(),
-                                  //   itemBuilder: (context, index) {
-                                  //     return ProductsList(list: list, axis: axis, itemCount: itemCount, store: store);
-                                  //   },
-                                  // );
-                                }),
+                                            return MoreProductsList(
+                                              list: list,
+                                              store: store,
+                                              loginStore: loginStore,
+                                            );
+                                          case CategoriesType.GENERAL:
+                                            final list =
+                                                store.generalProductList;
+
+                                            return MoreProductsList(
+                                              list: list,
+                                              store: store,
+                                              loginStore: loginStore,
+                                            );
+                                        }
+
+                                        // return ListView.builder(
+                                        //   itemCount: 7,
+                                        //   scrollDirection: Axis.horizontal,
+                                        //   padding: EdgeInsets.zero,
+                                        //   shrinkWrap: true,
+                                        //   physics: const BouncingScrollPhysics(),
+                                        //   itemBuilder: (context, index) {
+                                        //     return ProductsList(list: list, axis: axis, itemCount: itemCount, store: store);
+                                        //   },
+                                        // );
+                                      }),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           )
@@ -593,31 +491,60 @@ class ProductsDetailScreen extends StatelessWidget {
   }
 }
 
-class PlusMinusButton extends StatelessWidget {
-  const PlusMinusButton({
+class MoreProductsList extends StatelessWidget {
+  const MoreProductsList({
     Key? key,
-    required this.icon,
+    required this.list,
+    required this.store,
+    required this.loginStore,
   }) : super(key: key);
 
-  final IconData icon;
-  // final Function function;
+  final List<ProductModel> list;
+  final ProductsStore store;
+  final LoginStore loginStore;
 
   @override
   Widget build(BuildContext context) {
-    double height = ConstantWidget.getScreenPercentSize(context, 2.5);
+    double margin = ConstantWidget.getScreenPercentSize(context, 2);
+    double height = safeBlockHorizontal(context: context) * 45;
 
+    double width = ConstantWidget.getWidthPercentSize(context, 50);
+    double sideMargin = margin * 1.2;
+    double firstHeight = ConstantWidget.getPercentSize(height, 48);
+    double remainHeight = height - firstHeight;
+
+    double radius = ConstantWidget.getPercentSize(height, 5);
     return Container(
-      height: height,
-      // margin: EdgeInsets.symmetric(horizontal: ConstantWidget.getPercentSize(height, 30)),
-      width: height,
-      decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.transparent,
-          border: Border.all(color: Colors.grey, width: 1.5)),
-      child: Icon(
-        icon,
-        size: blockSizeVertical(context: context) * 2,
-        color: Colors.grey,
+      width: screenWidth(context: context),
+      height: ConstantWidget.getScreenPercentSize(context, 24),
+      child: ListView.builder(
+        // gridDelegate:
+        //     const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        padding: EdgeInsets.only(
+          left: blockSizeHorizontal(context: context) * 5,
+          right: blockSizeHorizontal(context: context) * 3,
+        ),
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: 7,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: EdgeInsets.only(
+                right: blockSizeHorizontal(context: context) * 3),
+            child: ProductsCard(
+              store: store,
+              loginStore: loginStore,
+              list: list,
+              width: width,
+              firstHeight: firstHeight,
+              radius: radius,
+              sideMargin: sideMargin,
+              remainHeight: remainHeight,
+              index: index,
+              // isMoreProducts: true,
+            ),
+          );
+        },
       ),
     );
   }
@@ -651,7 +578,7 @@ class CustomQuantity extends StatelessWidget {
                     ConstantData.mainTextColor,
                     2,
                     TextAlign.center,
-                    FontWeight.bold,
+                    FontWeight.w600,
                     font22Px(context: context)),
                 SizedBox(
                   height: blockSizeVertical(context: context) * 3,
@@ -665,10 +592,16 @@ class CustomQuantity extends StatelessWidget {
                       onFieldSubmitted: (value) async {
                         // final index = store.allProducts
                         //     .indexWhere((element) => element == model);
-                        await store.plusMinusCartManual(
-                            model: model, value: value);
+                        await store.updateCartQunatity(
+                          model: model,
+                          value: value,
+                          context: context,
+                        );
 
                         Navigator.of(context).pop();
+                      },
+                      onChanged: (value) {
+                        model.copyWith(cartQuantity: int.parse(value));
                       },
                       initialValue: '${model.cartQuantity}',
                       decoration: InputDecoration(

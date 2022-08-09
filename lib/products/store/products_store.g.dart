@@ -6,7 +6,7 @@ part of 'products_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ProductsStore on _ProductsStore, Store {
   late final _$catStateAtom =
@@ -22,6 +22,38 @@ mixin _$ProductsStore on _ProductsStore, Store {
   set catState(StoreState value) {
     _$catStateAtom.reportWrite(value, super.catState, () {
       super.catState = value;
+    });
+  }
+
+  late final _$messageAtom =
+      Atom(name: '_ProductsStore.message', context: context);
+
+  @override
+  String get message {
+    _$messageAtom.reportRead();
+    return super.message;
+  }
+
+  @override
+  set message(String value) {
+    _$messageAtom.reportWrite(value, super.message, () {
+      super.message = value;
+    });
+  }
+
+  late final _$categoriesTypeAtom =
+      Atom(name: '_ProductsStore.categoriesType', context: context);
+
+  @override
+  CategoriesType get categoriesType {
+    _$categoriesTypeAtom.reportRead();
+    return super.categoriesType;
+  }
+
+  @override
+  set categoriesType(CategoriesType value) {
+    _$categoriesTypeAtom.reportWrite(value, super.categoriesType, () {
+      super.categoriesType = value;
     });
   }
 
@@ -155,35 +187,83 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
-  late final _$allProductsAtom =
-      Atom(name: '_ProductsStore.allProducts', context: context);
+  late final _$homeStateAtom =
+      Atom(name: '_ProductsStore.homeState', context: context);
 
   @override
-  ObservableList<ProductModel> get allProducts {
-    _$allProductsAtom.reportRead();
-    return super.allProducts;
+  StoreState get homeState {
+    _$homeStateAtom.reportRead();
+    return super.homeState;
   }
 
   @override
-  set allProducts(ObservableList<ProductModel> value) {
-    _$allProductsAtom.reportWrite(value, super.allProducts, () {
-      super.allProducts = value;
+  set homeState(StoreState value) {
+    _$homeStateAtom.reportWrite(value, super.homeState, () {
+      super.homeState = value;
     });
   }
 
-  late final _$cartItemsListAtom =
-      Atom(name: '_ProductsStore.cartItemsList', context: context);
+  late final _$cartStateAtom =
+      Atom(name: '_ProductsStore.cartState', context: context);
 
   @override
-  ObservableList<ProductModel> get cartItemsList {
-    _$cartItemsListAtom.reportRead();
-    return super.cartItemsList;
+  StoreState get cartState {
+    _$cartStateAtom.reportRead();
+    return super.cartState;
   }
 
   @override
-  set cartItemsList(ObservableList<ProductModel> value) {
-    _$cartItemsListAtom.reportWrite(value, super.cartItemsList, () {
-      super.cartItemsList = value;
+  set cartState(StoreState value) {
+    _$cartStateAtom.reportWrite(value, super.cartState, () {
+      super.cartState = value;
+    });
+  }
+
+  late final _$searchStateAtom =
+      Atom(name: '_ProductsStore.searchState', context: context);
+
+  @override
+  StoreState get searchState {
+    _$searchStateAtom.reportRead();
+    return super.searchState;
+  }
+
+  @override
+  set searchState(StoreState value) {
+    _$searchStateAtom.reportWrite(value, super.searchState, () {
+      super.searchState = value;
+    });
+  }
+
+  late final _$searchControllerAtom =
+      Atom(name: '_ProductsStore.searchController', context: context);
+
+  @override
+  TextEditingController get searchController {
+    _$searchControllerAtom.reportRead();
+    return super.searchController;
+  }
+
+  @override
+  set searchController(TextEditingController value) {
+    _$searchControllerAtom.reportWrite(value, super.searchController, () {
+      super.searchController = value;
+    });
+  }
+
+  late final _$searchListAtom =
+      Atom(name: '_ProductsStore.searchList', context: context);
+
+  @override
+  ObservableList<ProductModel> get searchList {
+    _$searchListAtom.reportRead();
+    return super.searchList;
+  }
+
+  @override
+  set searchList(ObservableList<ProductModel> value) {
+    _$searchListAtom.reportWrite(value, super.searchList, () {
+      super.searchList = value;
     });
   }
 
@@ -200,6 +280,38 @@ mixin _$ProductsStore on _ProductsStore, Store {
   set cartModel(CartModel value) {
     _$cartModelAtom.reportWrite(value, super.cartModel, () {
       super.cartModel = value;
+    });
+  }
+
+  late final _$paymentOptionsAtom =
+      Atom(name: '_ProductsStore.paymentOptions', context: context);
+
+  @override
+  PaymentOptions get paymentOptions {
+    _$paymentOptionsAtom.reportRead();
+    return super.paymentOptions;
+  }
+
+  @override
+  set paymentOptions(PaymentOptions value) {
+    _$paymentOptionsAtom.reportWrite(value, super.paymentOptions, () {
+      super.paymentOptions = value;
+    });
+  }
+
+  late final _$checkoutStateAtom =
+      Atom(name: '_ProductsStore.checkoutState', context: context);
+
+  @override
+  StoreState get checkoutState {
+    _$checkoutStateAtom.reportRead();
+    return super.checkoutState;
+  }
+
+  @override
+  set checkoutState(StoreState value) {
+    _$checkoutStateAtom.reportWrite(value, super.checkoutState, () {
+      super.checkoutState = value;
     });
   }
 
@@ -265,47 +377,65 @@ mixin _$ProductsStore on _ProductsStore, Store {
         .run(() => super.getGenerallProducts());
   }
 
+  late final _$getSearchedResultsAsyncAction =
+      AsyncAction('_ProductsStore.getSearchedResults', context: context);
+
+  @override
+  Future<void> getSearchedResults({required String term}) {
+    return _$getSearchedResultsAsyncAction
+        .run(() => super.getSearchedResults(term: term));
+  }
+
   late final _$getCartItemsAsyncAction =
       AsyncAction('_ProductsStore.getCartItems', context: context);
 
   @override
-  Future<void> getCartItems() {
-    return _$getCartItemsAsyncAction.run(() => super.getCartItems());
+  Future<void> getCartItems({bool? isRemove}) {
+    return _$getCartItemsAsyncAction
+        .run(() => super.getCartItems(isRemove: isRemove));
   }
 
-  late final _$plusMinusToCartAsyncAction =
-      AsyncAction('_ProductsStore.plusMinusToCart', context: context);
+  late final _$_updateProductsAccordingToCartAsyncAction = AsyncAction(
+      '_ProductsStore._updateProductsAccordingToCart',
+      context: context);
 
   @override
-  Future<void> plusMinusToCart({required ProductModel model}) {
-    return _$plusMinusToCartAsyncAction
-        .run(() => super.plusMinusToCart(model: model));
+  Future<ProductModel> _updateProductsAccordingToCart(
+      {required ProductModel model}) {
+    return _$_updateProductsAccordingToCartAsyncAction
+        .run(() => super._updateProductsAccordingToCart(model: model));
   }
 
-  late final _$plusMinusCartManualAsyncAction =
-      AsyncAction('_ProductsStore.plusMinusCartManual', context: context);
+  late final _$updateCartQunatityAsyncAction =
+      AsyncAction('_ProductsStore.updateCartQunatity', context: context);
 
   @override
-  Future<void> plusMinusCartManual(
-      {required ProductModel model, required String value}) {
-    return _$plusMinusCartManualAsyncAction
-        .run(() => super.plusMinusCartManual(model: model, value: value));
+  Future<void> updateCartQunatity(
+      {required ProductModel model,
+      required String value,
+      required BuildContext context}) {
+    return _$updateCartQunatityAsyncAction.run(() =>
+        super.updateCartQunatity(model: model, value: value, context: context));
   }
 
   late final _$plusToCartAsyncAction =
       AsyncAction('_ProductsStore.plusToCart', context: context);
 
   @override
-  Future<void> plusToCart({required ProductModel model}) {
-    return _$plusToCartAsyncAction.run(() => super.plusToCart(model: model));
+  Future<void> plusToCart(
+      {required ProductModel model, required BuildContext context}) {
+    return _$plusToCartAsyncAction
+        .run(() => super.plusToCart(model: model, context: context));
   }
 
   late final _$minusToCartAsyncAction =
       AsyncAction('_ProductsStore.minusToCart', context: context);
 
   @override
-  Future<void> minusToCart({required ProductModel model}) {
-    return _$minusToCartAsyncAction.run(() => super.minusToCart(model: model));
+  Future<void> minusToCart(
+      {required ProductModel model, required BuildContext context}) {
+    return _$minusToCartAsyncAction
+        .run(() => super.minusToCart(model: model, context: context));
   }
 
   late final _$addToCartAsyncAction =
@@ -325,10 +455,54 @@ mixin _$ProductsStore on _ProductsStore, Store {
         .run(() => super.removeFromCart(model: model));
   }
 
+  late final _$checkoutAsyncAction =
+      AsyncAction('_ProductsStore.checkout', context: context);
+
+  @override
+  Future<String?> checkout({required BuildContext context}) {
+    return _$checkoutAsyncAction.run(() => super.checkout(context: context));
+  }
+
+  late final _$confirmPaymentAsyncAction =
+      AsyncAction('_ProductsStore.confirmPayment', context: context);
+
+  @override
+  Future<void> confirmPayment(
+      {required String orderId,
+      required BuildContext context,
+      required OrderHistoryStore orderHistoryStore}) {
+    return _$confirmPaymentAsyncAction.run(() => super.confirmPayment(
+        orderId: orderId,
+        context: context,
+        orderHistoryStore: orderHistoryStore));
+  }
+
+  late final _$successOrderAsyncAction =
+      AsyncAction('_ProductsStore.successOrder', context: context);
+
+  @override
+  Future<void> successOrder(
+      {required BuildContext context,
+      required LoginStore loginStore,
+      required ProfileStore profileStore,
+      required BottomNavigationStore bottomNavigationStore,
+      required OrderHistoryStore orderHistoryStore,
+      required ProductsStore productsStore}) {
+    return _$successOrderAsyncAction.run(() => super.successOrder(
+        context: context,
+        loginStore: loginStore,
+        profileStore: profileStore,
+        bottomNavigationStore: bottomNavigationStore,
+        orderHistoryStore: orderHistoryStore,
+        productsStore: productsStore));
+  }
+
   @override
   String toString() {
     return '''
 catState: ${catState},
+message: ${message},
+categoriesType: ${categoriesType},
 categories: ${categories},
 prodState: ${prodState},
 ethicalProductList: ${ethicalProductList},
@@ -337,9 +511,14 @@ surgicalProductList: ${surgicalProductList},
 veterinaryProductList: ${veterinaryProductList},
 ayurvedicProductList: ${ayurvedicProductList},
 generalProductList: ${generalProductList},
-allProducts: ${allProducts},
-cartItemsList: ${cartItemsList},
-cartModel: ${cartModel}
+homeState: ${homeState},
+cartState: ${cartState},
+searchState: ${searchState},
+searchController: ${searchController},
+searchList: ${searchList},
+cartModel: ${cartModel},
+paymentOptions: ${paymentOptions},
+checkoutState: ${checkoutState}
     ''';
   }
 }

@@ -19,9 +19,11 @@ class ProductModel {
     required this.subTotal,
     required this.expiryDate,
     required this.description,
+    required this.totalQtyPrice,
   });
 
-  factory ProductModel.fromJson({required Map<String, dynamic> json}) {
+  factory ProductModel.fromJson(
+      {required Map<String, dynamic> json, bool? isCart}) {
     // print(json['categorystr']);
     return ProductModel(
       pid: (json['pid'] ?? '') as String,
@@ -29,7 +31,7 @@ class ProductModel {
       priceId: (json['priceID'] ?? '') as String,
       salePrice: (json['saleprice'] ?? '') as String,
       productImg: (json['product_img'] ?? '') as String,
-      productName: (json['product_name'] as String)[0] +
+      productName: ((json['product_name'] ?? '') as String)[0] +
           (json['product_name'] as String).substring(1).toLowerCase(),
       category: (json['categorystr'] ?? '') as String,
       company: (json['compnaystr'] ?? '') as String,
@@ -38,7 +40,7 @@ class ProductModel {
       percentDiscount: (json['percent'] ?? '') as String,
       saleQtyType: (json['saleqtytypestr'] ?? '') as String,
       prodSaleTypeDetails: (json['prodsaletypedetails'] ?? '') as String,
-      quantity: (json['quantity'] ?? '') as String,
+      quantity: ((json['quantity'] ?? '') as String),
       cartQuantity: int.parse(
           (json['cartquantity'] == '' || json['cartquantity'] == null)
               ? '0'
@@ -47,6 +49,7 @@ class ProductModel {
       subTotal: (json['subtotal'] ?? '') as String,
       expiryDate: '',
       description: '',
+      totalQtyPrice: (json['totalqtymrp'] ?? '') as String,
     );
   }
 
@@ -60,6 +63,8 @@ class ProductModel {
     String? prodSaleTypeDetails,
     String? category,
     String? description,
+    String? subTotal,
+    String? totalQtyPrice,
   }) {
     return ProductModel(
       pid: pid,
@@ -79,9 +84,10 @@ class ProductModel {
       quantity: quantity,
       cartQuantity: cartQuantity ?? this.cartQuantity,
       mrp: mrp,
-      subTotal: subTotal,
+      subTotal: subTotal ?? this.subTotal,
       expiryDate: expiryDate ?? this.expiryDate,
       description: description ?? this.description,
+      totalQtyPrice: totalQtyPrice ?? this.totalQtyPrice,
     );
   }
 
@@ -104,4 +110,5 @@ class ProductModel {
   final String subTotal;
   final String expiryDate;
   final String description;
+  final String totalQtyPrice;
 }

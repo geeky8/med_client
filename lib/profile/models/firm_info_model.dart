@@ -13,6 +13,22 @@ class FirmInfoModel {
     required this.state,
   });
 
+  factory FirmInfoModel.fromJson({required Map<String, dynamic> json}) {
+    return FirmInfoModel(
+      firmName: (json['firm_name'] ?? '') as String,
+      email: (json['txtemail'] ?? '') as String,
+      phone: (json['phoneno'] ?? '') as String,
+      country: (json['countryid'] ?? '') as String,
+      city: (json['cityid'] ?? '') as String,
+      pin: (json['Areaid'] ?? '') as String,
+      address: (json['address'] ?? '') as String,
+      contactName: (json['PersonName'] ?? '') as String,
+      contactNo: (json['PersonNumber'] ?? '') as String,
+      altContactNo: (json['AlternateNumber'] ?? '') as String,
+      state: (json['stateid'] ?? '') as String,
+    );
+  }
+
   FirmInfoModel copyWith({
     String? firmName,
     String? email,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:medrpha_customer/enums/payment_status_type.dart';
+import 'package:medrpha_customer/order_history/models/order_history_model.dart';
 import 'package:medrpha_customer/profile/models/drug_license_model.dart';
 import 'package:medrpha_customer/profile/models/firm_info_model.dart';
 import 'package:medrpha_customer/profile/models/fssai_model.dart';
@@ -7,24 +9,42 @@ import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'size_config.dart';
 
 class ConstantData {
-  // static Color primaryColor = ("#1399C6".toColor() as Color);
-  static const primaryColor = Colors.blueAccent;
+  /// Colors [Color]
+  static Color primaryColor = '#233E99'.toColor();
   static Color accentColor = "#FF9800".toColor();
   static Color bgColor = "#ffffff".toColor();
+  static Color bgColor1 = '#F7F7F7'.toColor();
   static Color viewColor = "#F1F1F1".toColor();
   static Color cellColor = "#F1F1F1".toColor();
   // static Color cellColor = "#E4E6ED".toColor();
-  static String fontFamily = "SFProText";
+
+  /// Necessary URL's
   static String assetsPath = "assets/images/";
-
   static String catImgUrl = 'https://superadmin.medrpha.com/allimage/';
-
   static String productUrl = 'https://partnertest.medrpha.com/product_image/';
+  static String licenseUrl = 'https://test.medrpha.com/user_reg/';
+  static String invoiceUrl = 'https://test.medrpha.com/InvoicePDF/';
+  static String privacyPolicy = "https://google.com";
 
-  static String dateFormat = "EEE ,MMM dd,yyyy";
+  //Api-key Details
+  static String apiKey = 'rzp_test_3mRxTObsNw167K';
+  static String apiSecretKey = 'i67GTEvHsJpSIkAKcM3etMRh';
 
+  static String rupeeConversion({required String value}) {
+    final _numeric = double.parse(value);
+    if (int.parse((_numeric / 1000).toString()) > 1) {
+      // final _paramas = value.replaceRange(value.length - 3, value.length, 'K');
+      final _params = (_numeric / 1000).toString() + 'K';
+      return _params;
+    } else {
+      return value;
+    }
+  }
+
+  /// App Colors.
   static const double avatarRadius = 40;
   static Color mainTextColor = "#030303".toColor();
+  static String fontFamily = "Montserrat";
   static Color borderColor = Colors.grey.shade400;
   // static Color mainTextColor = "#084043".toColor();
   static Color textColor = "#4E4E4E".toColor();
@@ -34,11 +54,13 @@ class ConstantData {
   static Color color4 = "#FB9754".toColor();
   static Color color5 = "#E66474".toColor();
   static Color cartColor = "#F1F1F1".toColor();
+  static Color clrBorder = const Color(0xffBABABA);
+  static Color clrBlack30 = const Color(0xff303030);
+  static Color clrBlack20 = const Color(0xffC9C9C9);
 
   static Color shadowColor = ConstantData.primaryColor.withOpacity(0.2);
 
-  static String privacyPolicy = "https://google.com";
-
+  /// Constant snackbar
   SnackBar snackBarValidation(BuildContext context) {
     return SnackBar(
       content: ConstantWidget.getTextWidget(
@@ -51,6 +73,7 @@ class ConstantData {
     );
   }
 
+  /// Constant data models for initalization
   final initFirmInfoModel = FirmInfoModel(
     firmName: '',
     email: '',
@@ -76,6 +99,8 @@ class ConstantData {
     validity: '',
     license1Bytes: [],
     license2Bytes: [],
+    dlImg1: '',
+    dlImg2: '',
     toFill: false,
   );
 
@@ -83,46 +108,20 @@ class ConstantData {
     number: '',
     numberBytes: [],
     toFill: false,
+    fssaiImg: '',
   );
-  // static double font15Px = safeBlockVertical(context: ) / 0.6;
 
-// static double font12Px = SizeConfig().safeBlockVertical / 0.75;
-
-//   static double font18Px = SizeConfig().safeBlockVertical / 0.5;
-//   static double font22Px = SizeConfig().safeBlockVertical / 0.4;
-//   static double font25Px = SizeConfig().safeBlockVertical / 0.3;
   static const double padding = 20;
 
+  /// All constant formats
   static String timeFormat = "hh:mm aa";
+  static String dateFormat = "EEE ,MMM dd,yyyy";
+  static RegExp emailValidate = RegExp(
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+  static RegExp gstValidate =
+      RegExp(r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$');
 
-  static Color getOrderColor(String s) {
-    if (s.contains("On Delivery")) {
-      return "#FFEDCE".toColor();
-    } else if (s.contains("Completed")) {
-      return primaryColor;
-    } else {
-      return Colors.red;
-    }
-  }
-
-  static Color getPrescriptionColor(String s) {
-    if (s.contains("Submitted")) {
-      return accentColor;
-    } else if (s.contains("Approved")) {
-      return Colors.green;
-    } else {
-      return Colors.redAccent;
-    }
-  }
-
-  static Color getIconColor(String s) {
-    if (s.contains("On Delivery")) {
-      return accentColor;
-    } else {
-      return Colors.white;
-    }
-  }
-
+  /// color conversion
   static colorList() {
     List<Color> colorList = [];
     colorList.add(color1);

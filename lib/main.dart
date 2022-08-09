@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+
+import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
+import 'package:medrpha_customer/order_history/screens/order_history_screen.dart';
+import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
+import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/splash.dart';
 import 'package:provider/provider.dart';
@@ -21,14 +26,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+
+      /// Initializing all stores
       home: MultiProvider(
         providers: [
           Provider<LoginStore>(create: (_) => LoginStore()),
-          Provider<ProductsStore>(
-            create: (_) => ProductsStore(),
-          ),
+          Provider<ProductsStore>(create: (_) => ProductsStore()),
+          Provider<ProfileStore>(create: (_) => ProfileStore()),
+          Provider<BottomNavigationStore>(
+              create: (_) => BottomNavigationStore()),
+          Provider<OrderHistoryStore>(create: (_) => OrderHistoryStore()),
         ],
         child: const SplashScreen(),
+        // child: OrderHistory(),
         // child: const HomeScreen(),
         // child: const TestScreen(),
       ),

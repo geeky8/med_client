@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:medrpha_customer/utils/size_config.dart';
 
 import 'constant_data.dart';
 import 'constant_widget.dart';
@@ -6,7 +8,7 @@ import 'constant_widget.dart';
 class CustomDialogBox extends StatelessWidget {
   final String title, descriptions, text;
   final Image? img;
-  final Function func;
+  final AsyncCallback? func;
 
   const CustomDialogBox({
     Key? key,
@@ -57,19 +59,64 @@ class CustomDialogBox extends StatelessWidget {
               const SizedBox(
                 height: 22,
               ),
-              Container(
-                margin: const EdgeInsets.only(left: 15, right: 15),
-                width: double.infinity,
-                child: ConstantWidget.getRoundCornerButtonWithoutIcon(
-                  text,
-                  ConstantData.primaryColor,
-                  Colors.white,
-                  20,
-                  () {
-                    func;
-                  },
-                ),
-              )
+              Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: InkWell(
+                      onTap: () => func,
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 15, right: 15),
+                        decoration: BoxDecoration(
+                          color: (title != 'Checkout')
+                              ? ConstantData.primaryColor
+                              : Colors.grey,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: blockSizeVertical(context: context) * 2),
+                        child: ConstantWidget.getCustomText(
+                          'Cancel',
+                          ConstantData.bgColor,
+                          1,
+                          TextAlign.center,
+                          FontWeight.w500,
+                          font18Px(context: context),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Offstage(
+                      offstage: (title != 'Checkout'), child: const Spacer()),
+                  Offstage(
+                    offstage: (title != 'Checkout'),
+                    child: Expanded(
+                      flex: 3,
+                      child: InkWell(
+                        onTap: () => func,
+                        child: Container(
+                          margin: const EdgeInsets.only(left: 15, right: 15),
+                          decoration: BoxDecoration(
+                            color: ConstantData.primaryColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              vertical:
+                                  blockSizeVertical(context: context) * 2),
+                          child: ConstantWidget.getCustomText(
+                            'Confirm',
+                            ConstantData.bgColor,
+                            1,
+                            TextAlign.center,
+                            FontWeight.w500,
+                            font18Px(context: context),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

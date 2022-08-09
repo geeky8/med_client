@@ -5,6 +5,8 @@ class DataBox {
   final _pin = 'pin';
   final _adminStatus = 'adminStatus';
   final _completionStatus = 'completionStatus';
+  final _phone = 'phone';
+  final _payeLater = 'payLater';
 
   // Future<void> initDataBox() async {
   //   await GetStorage.init();
@@ -59,6 +61,30 @@ class DataBox {
     final _dataBox = await SharedPreferences.getInstance();
     final pin = (_dataBox.get(_pin) ?? '') as String;
     return pin;
+  }
+
+  Future<void> writePhoneNo({required String phone}) async {
+    final _dataBox = await SharedPreferences.getInstance();
+    await _dataBox.setString(_phone, phone);
+    // print('success');
+  }
+
+  Future<String> readPhoneNo() async {
+    final _dataBox = await SharedPreferences.getInstance();
+    final phone = (_dataBox.get(_phone) ?? '') as String;
+    return phone;
+  }
+
+  Future<void> writePayLater({required bool paylater}) async {
+    final _dataBox = await SharedPreferences.getInstance();
+    await _dataBox.setBool(_payeLater, paylater);
+    // print('success');
+  }
+
+  Future<bool> readPayLate() async {
+    final _dataBox = await SharedPreferences.getInstance();
+    final paylater = (_dataBox.get(_payeLater) ?? false) as bool;
+    return paylater;
   }
 
   Future<void> removeDataBox() async {

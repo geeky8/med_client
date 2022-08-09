@@ -7,14 +7,17 @@ import 'package:medrpha_customer/products/screens/products_view_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
-import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
+import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:provider/provider.dart';
 
 class CategoriesListScreen extends StatelessWidget {
-  const CategoriesListScreen({Key? key, required this.list}) : super(key: key);
+  const CategoriesListScreen({
+    Key? key,
+    this.isHome,
+  }) : super(key: key);
 
-  final List<CategoryModel> list;
+  final bool? isHome;
 
   @override
   Widget build(BuildContext context) {
@@ -32,29 +35,67 @@ class CategoriesListScreen extends StatelessWidget {
     final store = context.read<ProductsStore>();
     final loginStore = context.read<LoginStore>();
 
-    return Stack(
-      children: [
-        Scaffold(
-            backgroundColor: ConstantData.bgColor,
-            appBar: AppBar(
-              elevation: 0,
-              centerTitle: true,
-              backgroundColor: ConstantData.bgColor,
-              title: ConstantWidget.getAppBarText('Category', context),
-              leading: Builder(
-                builder: (BuildContext context) {
-                  return IconButton(
-                    icon: ConstantWidget.getAppBarIcon(),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+    final list = store.categories;
+
+    return Scaffold(
+        backgroundColor: ConstantData.bgColor,
+        appBar: ConstantWidget.customAppBar(
+          context: context,
+          title: 'CATEGORY',
+          isHome: isHome,
+        ),
+        // appBar: AppBar(
+        //   elevation: 0,
+        //   centerTitle: true,
+        //   backgroundColor: ConstantData.bgColor,
+        //   title: ConstantWidget.getAppBarText('Category', context),
+        //   leading: Builder(
+        //     builder: (BuildContext context) {
+        //       return IconButton(
+        //         icon: ConstantWidget.getAppBarIcon(),
+        //         onPressed: () {
+        //           Navigator.pop(context);
+        //         },
+        //       );
+        //     },
+        //   ),
+        // ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: Observer(builder: (_) {
+                  final adminStatus = loginStore.loginModel.adminStatus;
+                  return Offstage(
+                    offstage: adminStatus,
+                    child: ConstantWidget.adminStatusbanner(context),
                   );
-                },
+                }),
               ),
-            ),
-            body: Stack(
-              children: [
-                Container(
+              // AppBar(
+              //   elevation: 0,
+              //   centerTitle: true,
+              //   backgroundColor: ConstantData.bgColor,
+              //   title: ConstantWidget.getAppBarText('Category', context),
+              //   leading: Builder(
+              //     builder: (BuildContext context) {
+              //       return IconButton(
+              //         icon: ConstantWidget.getAppBarIcon(),
+              //         onPressed: () {
+              //           Navigator.pop(context);
+              //         },
+              //       );
+              //     },
+              //   ),
+              // ),
+
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: blockSizeVertical(context: context) * 2,
+                  horizontal: blockSizeHorizontal(context: context) * 2,
+                ),
+                child: Container(
                   margin: EdgeInsets.only(
                       bottom: MediaQuery.of(context).size.width * 0.01),
                   padding: EdgeInsets.symmetric(horizontal: margin),
@@ -80,38 +121,10 @@ class CategoriesListScreen extends StatelessWidget {
                     }),
                   ),
                 ),
-                // Align(
-                //   alignment: Alignment.topCenter,
-                //   child: Observer(builder: (_) {
-                //     final adminStatus = loginStore.loginModel.adminStatus;
-                //     return Offstage(
-                //       offstage: false,
-                //       child: Padding(
-                //         padding: EdgeInsets.only(
-                //             bottom: blockSizeVertical(context: context) * 10),
-                //         child: ConstantWidget.adminStatusbanner(context),
-                //       ),
-                //     );
-                //   }),
-                // ),
-              ],
-            )),
-        Align(
-          alignment: Alignment.topCenter,
-          child: Observer(builder: (_) {
-            final adminStatus = loginStore.loginModel.adminStatus;
-            return Offstage(
-              offstage: adminStatus,
-              child: Padding(
-                padding: EdgeInsets.only(
-                    bottom: blockSizeVertical(context: context) * 10),
-                child: ConstantWidget.adminStatusbanner(context),
               ),
-            );
-          }),
-        ),
-      ],
-    );
+            ],
+          ),
+        ));
   }
 }
 
@@ -332,9 +345,9 @@ class BackGroundTile extends StatelessWidget {
                           child: Provider.value(
                             value: loginStore,
                             child: ProductsViewScreen(
-                                list: store.allProducts,
+                                list: store.generalProductList,
                                 axis: Axis.vertical,
-                                itemCount: store.allProducts.length,
+                                itemCount: store.generalProductList.length,
                                 appBarTitle: 'All Prodcuts'),
                           ),
                         )));

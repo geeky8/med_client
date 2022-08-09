@@ -1,14 +1,24 @@
 import 'dart:convert';
 
+import 'package:medrpha_customer/profile/models/area_model.dart';
+import 'package:medrpha_customer/profile/models/city_model.dart';
+import 'package:medrpha_customer/profile/models/country_model.dart';
 import 'package:medrpha_customer/profile/models/drug_license_model.dart';
 import 'package:medrpha_customer/profile/models/firm_info_model.dart';
 import 'package:medrpha_customer/profile/models/fssai_model.dart';
 import 'package:medrpha_customer/profile/models/gst_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:medrpha_customer/profile/models/profile_model.dart';
+import 'package:medrpha_customer/profile/models/state_model.dart';
+import 'package:medrpha_customer/utils/constant_data.dart';
+import 'package:medrpha_customer/utils/storage.dart';
 
 class ProfileRepository {
+  /// Get Profile
+  final _getProfileUrl = 'https://apitest.medrpha.com/api/profile/getprofile';
+
   /// For Customer Profile
-  final _uploadProfileUrl = 'https://api.medrpha.com/api/register/register';
+  final _uploadProfileUrl = 'https://apitest.medrpha.com/api/register/register';
 
   /// For Customer Drug License Details.
   final _uploadDLUrl = 'https://apitest.medrpha.com/api/register/registerdlno';
@@ -19,6 +29,13 @@ class ProfileRepository {
   final _uploadGSTUrl =
       'https://apitest.medrpha.com/api/register/registergstno';
 
+  final _countryUrl = 'https://apitest.medrpha.com/api/register/getcountryall';
+  final _stateUrl = 'https://apitest.medrpha.com/api/register/getstateall';
+  final _cityUrl = 'https://apitest.medrpha.com/api/register/getcityall';
+
+  final _uploadFssaiUrl =
+      'https://apitest.medrpha.com/api/register/registerfssai';
+
   /// FOr Customer FSSAI Details.
   // final _uploadFSSAIUrl =
   //     'https://apitest.medrpha.com/api/register/registerfssai';
@@ -27,17 +44,131 @@ class ProfileRepository {
 
   final httpClient = http.Client();
 
+  Future<int?> deleteLicenses({required String url}) async {
+    final sessId = await DataBox().readSessId();
+    final body = {"sessid": sessId};
+
+    final resp = await httpClient.post(Uri.parse(url), body: body);
+    if (resp.statusCode == 200) {
+      final respBody = jsonDecode((resp.body)) as Map<String, dynamic>;
+      if (respBody['message'] == 'successful !!') {
+        print('deleted');
+        return 1;
+      }
+    }
+  }
+
+  Future<List<CountryModel>> getCountries() async {
+    final _sessId = await DataBox().readSessId();
+
+    final _body = {"sessid": _sessId};
+
+    final list = <CountryModel>[];
+
+    final resp = await httpClient.post(Uri.parse(_countryUrl), body: _body);
+    if (resp.statusCode == 200) {
+      final _respBody = jsonDecode(resp.body);
+      if (_respBody['status'] == '1') {
+        final _list = _respBody['data'] as List<dynamic>;
+        for (final i in _list) {
+          final model = CountryModel.fromJson(json: i as Map<String, dynamic>);
+          list.add(model);
+        }
+      }
+    }
+    list.add(CountryModel(countryName: 'India', countryId: 1));
+    return list;
+  }
+
+  Future<List<StateModel>> getState() async {
+    final _sessId = await DataBox().readSessId();
+
+    final _body = {
+      "sessid": _sessId,
+    };
+
+    final list = <StateModel>[];
+
+    final resp = await httpClient.post(Uri.parse(_stateUrl), body: _body);
+
+    if (resp.statusCode == 200) {
+      final _respBody = jsonDecode(resp.body);
+      if (_respBody['status'] == '1') {
+        final _list = _respBody['data'] as List<dynamic>;
+        for (final i in _list) {
+          final model = StateModel.fromJson(json: i as Map<String, dynamic>);
+          list.add(model);
+        }
+      }
+    }
+    return list;
+  }
+
+  Future<List<CityModel>> getCity() async {
+    final _sessId = await DataBox().readSessId();
+
+    final _body = {
+      "sessid": _sessId,
+    };
+
+    final list = <CityModel>[];
+
+    final resp = await httpClient.post(Uri.parse(_cityUrl), body: _body);
+
+    if (resp.statusCode == 200) {
+      final _respBody = jsonDecode(resp.body);
+      if (_respBody['status'] == '1') {
+        final _list = _respBody['data'] as List<dynamic>;
+        for (final i in _list) {
+          final model = CityModel.fromJson(json: i as Map<String, dynamic>);
+          list.add(model);
+        }
+      }
+    }
+    return list;
+  }
+
+  Future<List<AreaModel>> getArea({String? id}) async {
+    final sessId = await DataBox().readSessId();
+    String areaUrl = 'https://apitest.medrpha.com/api/register/getpincodeall';
+    Map<String, dynamic> body = {
+      "sessid": sessId,
+    };
+
+    if (id != null) {
+      areaUrl = 'https://apitest.medrpha.com/api/register/getpincode';
+      body = {"sessid": sessId, 'cityid': id};
+    }
+
+    final list = <AreaModel>[];
+
+    final resp = await httpClient.post(Uri.parse(areaUrl), body: body);
+
+    if (resp.statusCode == 200) {
+      final respBody = jsonDecode(resp.body);
+      print('---------${resp.body}');
+      if (respBody['status'] == '1') {
+        final respList = respBody['data'] as List<dynamic>;
+        for (final i in respList) {
+          final model = AreaModel.fromJson(json: i as Map<String, dynamic>);
+          list.add(model);
+        }
+      }
+    }
+    return list;
+  }
+
   Future<String> uploadProfile(
       {required String sessId, required FirmInfoModel model}) async {
     final _body = {
       "sessid": sessId,
       "firm_name": model.firmName,
       "txtemail": model.email,
-      "countryid": '1',
-      "stateid": '1',
+      "countryid": model.country,
+      "stateid": model.state,
       "phoneno": model.phone,
-      "cityid": '1',
-      "Areaid": '1',
+      "cityid": model.city,
+      "Areaid": model.pin,
       "address": model.address,
       "PersonName": model.contactName,
       "PersonNumber": model.contactNo,
@@ -85,13 +216,14 @@ class ProfileRepository {
     final _body = {
       "sessid": sessId,
       "txtdlno": model.number,
-      "valid": model.name,
-      "txtdlname": model.validity,
+      "valid": model.validity,
+      "txtdlname": model.name,
     };
 
     final resp = await httpClient.post(Uri.parse(_uploadDLUrl), body: _body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
+      print(respBody);
       if (respBody['status'] == '0' || respBody['status'] == null) {
         return '0';
       } else {
@@ -109,7 +241,7 @@ class ProfileRepository {
       "fssaiNo": model.number,
     };
 
-    final resp = await httpClient.post(Uri.parse(_uploadGSTUrl), body: _body);
+    final resp = await httpClient.post(Uri.parse(_uploadFssaiUrl), body: _body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       if (respBody['status'] == '0' || respBody['status'] == null) {
@@ -128,25 +260,52 @@ class ProfileRepository {
     required String path,
     required String url,
   }) async {
-    final body = {
-      "sessid": sessId,
-    };
+    final body = {"sessid": sessId};
     final headers = {
       'content-type': 'multipart/form-data',
       'Accept': 'application/json',
     };
-    final file = await http.MultipartFile.fromPath('file', path);
+    final file = await http.MultipartFile.fromPath('image', path);
     final request = http.MultipartRequest('POST', Uri.parse(url))
       ..fields.addAll(body)
-      ..files.add(file)
-      ..headers.addAll(headers);
+      ..files.add(file);
+    // ..headers.addAll(headers);
     final respStream = await request.send();
+    // print(object)
     final resp = await http.Response.fromStream(respStream);
     if (resp.statusCode == 200) {
+      print(resp.body);
       return '1';
     } else {
       // final output = await resp.stream.bytesToString();
       return '0';
     }
+  }
+
+  Future<ProfileModel> getProfile() async {
+    final _sessId = await DataBox().readSessId();
+
+    final _body = {
+      "sessid": _sessId,
+    };
+
+    ProfileModel profileModel = ProfileModel(
+      firmInfoModel: ConstantData().initFirmInfoModel,
+      gstModel: ConstantData().initGstModel,
+      drugLicenseModel: ConstantData().initDrugLicenseModel,
+      fssaiModel: ConstantData().initFssaiModel,
+    );
+
+    final resp = await httpClient.post(Uri.parse(_getProfileUrl), body: _body);
+
+    if (resp.statusCode == 200) {
+      final _respBody = jsonDecode(resp.body);
+      if (_respBody['status'] == '1') {
+        print(resp.body);
+        final json = _respBody['data'] as Map<String, dynamic>;
+        profileModel = ProfileModel.fromJson(json: json);
+      }
+    }
+    return profileModel;
   }
 }

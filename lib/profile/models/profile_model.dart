@@ -11,6 +11,22 @@ class ProfileModel {
     required this.fssaiModel,
   });
 
+  factory ProfileModel.fromJson({required Map<String, dynamic> json}) {
+    final _firmInfoModel = FirmInfoModel.fromJson(json: json);
+    final _gstModel = GSTModel.fromJson(json: json);
+    final _drugLicenseModel = DrugLicenseModel.fromJson(json: json);
+    final _fssaiModel = FSSAIModel.fromJson(json: json);
+
+    // print(_fssaiModel.fssaiImg);
+
+    return ProfileModel(
+      firmInfoModel: _firmInfoModel,
+      gstModel: _gstModel,
+      drugLicenseModel: _drugLicenseModel,
+      fssaiModel: _fssaiModel,
+    );
+  }
+
   ProfileModel copyWith({
     FirmInfoModel? firmInfoModel,
     GSTModel? gstModel,

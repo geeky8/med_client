@@ -9,7 +9,7 @@ class CartModel {
   });
 
   CartModel copyWith({
-    double? totalSalePrice,
+    String? totalSalePrice,
     int? noOfProducts,
     ObservableList<ProductModel>? productList,
   }) {
@@ -20,7 +20,7 @@ class CartModel {
     );
   }
 
-  final double totalSalePrice;
+  final String totalSalePrice;
   final int noOfProducts;
   final ObservableList<ProductModel> productList;
 }

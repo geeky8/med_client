@@ -4,6 +4,7 @@ class OTPModel {
     required this.sessId,
     required this.adminStatus,
     required this.completedStatus,
+    required this.payLater,
   });
 
   factory OTPModel.fromJson({required Map<String, dynamic> json}) {
@@ -12,6 +13,7 @@ class OTPModel {
       adminStatus: ((json['adminstatus'] as String) == 'False') ? false : true,
       completedStatus:
           ((json['complete_reg_status'] as String) == 'False') ? false : true,
+      payLater: ((json['paylater'] as String) == '0') ? false : true,
     );
   }
 
@@ -19,11 +21,13 @@ class OTPModel {
     String? sessId,
     bool? adminStatus,
     bool? completedStatus,
+    bool? payLater,
   }) {
     return OTPModel(
       sessId: sessId ?? this.sessId,
       adminStatus: adminStatus ?? this.adminStatus,
       completedStatus: completedStatus ?? this.completedStatus,
+      payLater: payLater ?? this.payLater,
     );
   }
 
@@ -42,4 +46,7 @@ class OTPModel {
 
   /// To store [completedStatus] of the user
   final bool completedStatus;
+
+  /// To store [payLater] of the user.
+  final bool payLater;
 }

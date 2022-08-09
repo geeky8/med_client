@@ -34,19 +34,20 @@ class LoginRepository {
     }
   }
 
+  /// Get current user status
   Future<OTPModel> getUserStatus({required OTPModel model}) async {
     final body = {"sessid": model.sessId};
     final resp = await httpClient.post(Uri.parse(checkStatus), body: body);
-    // print(resp.statusCode);
+    print(resp.body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body) as Map<String, dynamic>;
       // print(respBody);
       final _status = respBody['status'];
-      print(respBody);
+      // print(respBody);
       if (_status == '1') {
         final data = respBody['data'] as Map<String, dynamic>;
         // print(((data['complete_reg_status'] as String) == 'False'));
-        print((data['adminstatus'] as String));
+        // print('adminStatus : ${(data['adminstatus'] as String)}');
         final otpModel = model.copyWith(
           // sessId: model.sessId,
           adminStatus:
@@ -54,6 +55,7 @@ class LoginRepository {
           completedStatus: ((data['complete_reg_status'] as String) == 'False')
               ? false
               : true,
+          payLater: ((data['paylater'] as String) == '1') ? true : false,
         );
         // print(otpModel.completedStatus);
         return otpModel;
@@ -68,8 +70,8 @@ class LoginRepository {
   /// Function to verify the OTP and store the info in [OTPModel]
   Future<OTPModel> checkOTP(
       {required String phone, required String otp}) async {
-    print(otp);
-    print(phone);
+    // print(otp);
+    // print(phone);
     final body = {
       'contact': phone,
       'otp': otp,
@@ -90,6 +92,7 @@ class LoginRepository {
           sessId: '',
           adminStatus: false,
           completedStatus: false,
+          payLater: false,
         );
       }
     } else {
@@ -97,6 +100,7 @@ class LoginRepository {
         sessId: '',
         adminStatus: false,
         completedStatus: false,
+        payLater: false,
       );
     }
   }

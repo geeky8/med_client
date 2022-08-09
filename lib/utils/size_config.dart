@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 double screenWidth({required BuildContext context}) {
-  final _mediaQueryData = MediaQuery.of(context);
-  return _mediaQueryData.size.width;
+  final mediaQueryData = MediaQuery.of(context);
+  return mediaQueryData.size.width;
 }
 
 double screenHeight({required BuildContext context}) {
-  final _mediaQueryData = MediaQuery.of(context);
-  return _mediaQueryData.size.height;
+  final mediaQueryData = MediaQuery.of(context);
+  return mediaQueryData.size.height;
 }
 
 double blockSizeHorizontal({required BuildContext context}) {
@@ -21,17 +21,17 @@ double blockSizeVertical({required BuildContext context}) {
 }
 
 double safeAreaHorizontal({required BuildContext context}) {
-  final _mediaQueryData = MediaQuery.of(context);
-  final _safeAreaHorizontal =
-      _mediaQueryData.padding.left + _mediaQueryData.padding.right;
-  return _safeAreaHorizontal;
+  final mediaQueryData = MediaQuery.of(context);
+  final safeAreaHorizontal =
+      mediaQueryData.padding.left + mediaQueryData.padding.right;
+  return safeAreaHorizontal;
 }
 
 double safeAreaVertical({required BuildContext context}) {
-  final _mediaQueryData = MediaQuery.of(context);
-  final _safeAreaVertical =
-      _mediaQueryData.padding.top + _mediaQueryData.padding.bottom;
-  return _safeAreaVertical;
+  final mediaQueryData = MediaQuery.of(context);
+  final safeAreaVertical =
+      mediaQueryData.padding.top + mediaQueryData.padding.bottom;
+  return safeAreaVertical;
 }
 
 double safeBlockHorizontal({required BuildContext context}) {
@@ -51,19 +51,19 @@ double font12Px({required BuildContext context}) {
 }
 
 double font15Px({required BuildContext context}) {
-  return safeBlockVertical(context: context) / 0.60;
+  return safeBlockVertical(context: context) / 0.65;
 }
 
 double font18Px({required BuildContext context}) {
-  return safeBlockVertical(context: context) / 0.5;
+  return safeBlockVertical(context: context) / 0.58;
 }
 
 double font22Px({required BuildContext context}) {
-  return safeBlockVertical(context: context) / 0.4;
+  return safeBlockVertical(context: context) / 0.48;
 }
 
 double font25Px({required BuildContext context}) {
-  return safeBlockVertical(context: context) / 0.3;
+  return safeBlockVertical(context: context) / 0.35;
 }
 
 

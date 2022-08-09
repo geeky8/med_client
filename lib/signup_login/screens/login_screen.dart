@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:medrpha_customer/bottom_navigation/screens/home_screen.dart';
+import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/button_state.dart';
+import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
+// ignore: unused_import
 import 'package:medrpha_customer/products/screens/home_products_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/profile/screens/profile_screen.dart';
-import 'package:medrpha_customer/signup_login/screens/phone_verification.dart';
-import 'package:medrpha_customer/signup_login/screens/sign_up_page.dart';
+import 'package:medrpha_customer/profile/store/profile_store.dart';
+import 'package:medrpha_customer/signup_login/screens/phone_verification_screen.dart';
+import 'package:medrpha_customer/signup_login/screens/otp_screen.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
@@ -15,10 +21,9 @@ import 'package:medrpha_customer/utils/storage.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
-  LoginScreen({Key? key}) : super(key: key);
-
-  // final textEmailController = TextEditingController();
-  // final textPasswordController = TextEditingController();
+  LoginScreen({
+    Key? key,
+  }) : super(key: key);
 
   Future<bool> _requestPop() {
     Future.delayed(const Duration(milliseconds: 200), () {
@@ -33,11 +38,14 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = context.read<LoginStore>();
-    // SizeConfig().init(context);
-    // ConstantData.setThemePosition();
+
     double height = ConstantWidget.getScreenPercentSize(context, 18);
 
-    // bool _confirmEnabled = false;
+    // Defining all the stores
+    final _profileStore = context.read<ProfileStore>();
+    final _bottomNavigationStore = context.read<BottomNavigationStore>();
+    final _productStore = context.read<ProductsStore>();
+    final _orderHistoryStore = context.read<OrderHistoryStore>();
 
     return WillPopScope(
       onWillPop: _requestPop,
@@ -52,45 +60,40 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(
                   height: ConstantWidget.getScreenPercentSize(context, 2),
                 ),
-                // Center(
-                //   child: Image.asset(
-                //     ConstantData.assetsPath + "molecular-medicine.png",
-                //     height: height,
-                //   ),
-                // ),
+
+                //---> Logo
                 MedLogo(height: height),
                 SizedBox(
                   height: ConstantWidget.getScreenPercentSize(context, 2),
                 ),
-                // ConstantWidget.getTextWidget(
-                //     'Login',
-                //     ConstantData.mainTextColor,
-                //     TextAlign.center,
-                //     FontWeight.bold,
-                //     ConstantWidget.getScreenPercentSize(context, 4.2)),
                 SizedBox(
                   height: ConstantWidget.getScreenPercentSize(context, 2.5),
                 ),
+
+                //---> Pin Input field
                 PinInput(
                   pinEditingController: _pinController,
                   // enable: true,
                   isObscure: true,
                   action: TextInputAction.next,
                   label: 'Enter Pin',
-                  unfocus: true,
-                  func: () async {
-                    final _dataBox = DataBox();
-                    final _pin = await _dataBox.readPin();
-                    if (_pin == '') {
-                      final _snackBar = ConstantWidget.customSnackBar(
+                  onSubmit: (value) async {
+                    //---> Login func
+                    final dataBox = DataBox();
+                    final pin = await dataBox.readPin();
+                    if (pin == '') {
+                      final snackBar = ConstantWidget.customSnackBar(
                           text: 'Session expired, Please login again using OTP',
                           context: context);
-                      ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     } else {
-                      if (_pin == _pinController.text.trim()) {
+                      if (pin == value) {
+                        store.buttonState = ButtonState.LOADING;
                         await store.getUserStatus();
-                        // print(store.loginModel.toMap());
+
+                        //---> Check profile completion status
                         if (store.loginModel.completedStatus) {
+                          // if (!mounted) return;
                           final productsStore = context.read<ProductsStore>();
                           Navigator.pushReplacement(
                               context,
@@ -98,85 +101,65 @@ class LoginScreen extends StatelessWidget {
                                   builder: (_) => Provider.value(
                                       value: store,
                                       child: Provider.value(
-                                          value: productsStore..init(),
-                                          child: const HomeScreen()))));
+                                          value: productsStore,
+                                          child: Provider.value(
+                                              value: _bottomNavigationStore,
+                                              child: Provider.value(
+                                                  value: _profileStore,
+                                                  child: Provider.value(
+                                                      value: _orderHistoryStore,
+                                                      child:
+                                                          const HomeScreen())))))));
                         } else {
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (_) => const ProfilePage()));
+                          final phone = await DataBox().readPhoneNo();
+                          // print(phone);
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (_) => Provider.value(
+                                      value: _profileStore,
+                                      child: Provider.value(
+                                        value: store,
+                                        child: Provider.value(
+                                          value: _productStore,
+                                          child: Provider.value(
+                                            value: _bottomNavigationStore,
+                                            child: Provider.value(
+                                              value: _orderHistoryStore,
+                                              child: ProfilePage(
+                                                model:
+                                                    _profileStore.profileModel,
+                                                phone: phone,
+                                                beginToFill: '',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ))));
                         }
-                      } else {
-                        final _snackBar = ConstantWidget.customSnackBar(
+                        store.buttonState = ButtonState.SUCCESS;
+                      }
+                      //---> For incorrect pin
+                      else {
+                        final snackBar = ConstantWidget.customSnackBar(
                             text: 'Incorrect Pin', context: context);
-                        ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       }
                     }
                   },
+                  unfocus: true,
+                  func: () async {},
                 ),
 
-                // ConstantWidget.getDefaultTextFiledWidget(
-                //     context, 'Email', textEmailController),
-                // ConstantWidget.getPasswordTextFiled(
-                //     context, 'password', textPasswordController),
-                // Row(
-                //   children: [
-                //     InkWell(
-                //       child: Icon(
-                //         isRemember
-                //             ? Icons.check_box
-                //             : Icons.check_box_outline_blank,
-                //         color: ConstantData.mainTextColor,
-                //         size: ConstantWidget.getScreenPercentSize(context, 3),
-                //       ),
-                //       onTap: () {
-                //         // if (isRemember) {
-                //         //   isRemember = false;
-                //         // } else {
-                //         //   isRemember = true;
-                //         // }
-                //         // setState(() {});
-                //       },
-                //     ),
-                //     SizedBox(
-                //       width:
-                //           ConstantWidget.getScreenPercentSize(context, 0.5),
-                //     ),
-                //     ConstantWidget.getTextWidget(
-                //         'rememberMe',
-                //         ConstantData.mainTextColor,
-                //         TextAlign.left,
-                //         FontWeight.w400,
-                //         ConstantWidget.getScreenPercentSize(context, 1.8)),
-                //     Expanded(
-                //       child: InkWell(
-                //         child: ConstantWidget.getTextWidget(
-                //           'forgotPassword',
-                //           ConstantData.mainTextColor,
-                //           TextAlign.end,
-                //           FontWeight.w400,
-                //           ConstantWidget.getScreenPercentSize(context, 1.8),
-                //         ),
-                //         onTap: () {
-                //           // Navigator.push(
-                //           //     context,
-                //           //     MaterialPageRoute(
-                //           //       builder: (context) => ForgotPassword(),
-                //           //     ));
-                //         },
-                //       ),
-                //     )
-                //   ],
-                // ),
                 SizedBox(
                   height: ConstantWidget.getScreenPercentSize(context, 4),
                 ),
+
+                // Login Button
                 Observer(builder: (_) {
                   return InkWell(
+                    focusColor: Colors.transparent,
                     onTap: () async {
-                      // final focus = FocusScope.of(context);
-                      // if (focus.hasPrimaryFocus) {
-                      //   focus.unfocus();
-                      // }
+                      //---> Login func
                       final _dataBox = DataBox();
                       final _pin = await _dataBox.readPin();
                       if (_pin == '') {
@@ -184,17 +167,18 @@ class LoginScreen extends StatelessWidget {
                             text:
                                 'Session expired, Please login again using OTP',
                             context: context);
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(_snackBar);
                       } else {
                         if (_pin == _pinController.text.trim()) {
                           store.buttonState = ButtonState.LOADING;
                           await store.getUserStatus();
-                          // print(store.loginModel.toMap());
+
+                          //--> Check user's profile status
                           if (store.loginModel.completedStatus) {
                             final productsStore = context.read<ProductsStore>();
 
-                            await productsStore.init();
-
+                            // ignore: use_build_context_synchronously
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -202,44 +186,74 @@ class LoginScreen extends StatelessWidget {
                                         value: store,
                                         child: Provider.value(
                                             value: productsStore,
-                                            child: const HomeScreen()))));
+                                            child: Provider.value(
+                                                value: _bottomNavigationStore,
+                                                child: Provider.value(
+                                                    value: _profileStore,
+                                                    child:
+                                                        const HomeScreen()))))));
                           } else {
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (_) => const ProfilePage()));
+                            final phone = await DataBox().readPhoneNo();
+                            // print(phone);
+                            Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
+                                    builder: (_) => Provider.value(
+                                        value: _profileStore,
+                                        child: Provider.value(
+                                          value: store,
+                                          child: Provider.value(
+                                            value: _productStore,
+                                            child: Provider.value(
+                                              value: _bottomNavigationStore,
+                                              child: ProfilePage(
+                                                model:
+                                                    _profileStore.profileModel,
+                                                phone: phone,
+                                                beginToFill: '',
+                                              ),
+                                            ),
+                                          ),
+                                        ))));
                           }
                           store.buttonState = ButtonState.SUCCESS;
-                        } else {
+                        }
+                        //---> Incorrect pin
+                        else {
                           final _snackBar = ConstantWidget.customSnackBar(
                               text: 'Incorrect Pin', context: context);
                           ScaffoldMessenger.of(context).showSnackBar(_snackBar);
                         }
                       }
                     },
-                    child: Observer(builder: (_) {
-                      final state = store.buttonState;
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal:
+                              blockSizeHorizontal(context: context) * 30),
+                      child: Observer(builder: (_) {
+                        final state = store.buttonState;
 
-                      switch (state) {
-                        case ButtonState.LOADING:
-                          // return CircularProgressIndicator(
-                          //   color: ConstantData.primaryColor,
-                          // );
-                          return ConstantWidget.linearLoadingIndicator(
-                              context, ConstantData.mainTextColor, height);
-                        case ButtonState.SUCCESS:
-                          return ConstantWidget.getButtonWidget(
-                            context,
-                            'Login',
-                            ConstantData.primaryColor,
-                          );
-                        case ButtonState.ERROR:
-                          return ConstantWidget.getButtonWidget(
-                            context,
-                            'Login',
-                            ConstantData.primaryColor,
-                          );
-                      }
-                    }),
+                        switch (state) {
+                          case ButtonState.LOADING:
+                            return LoadingAnimationWidget.prograssiveDots(
+                              color: ConstantData.color1,
+                              size: ConstantWidget.getScreenPercentSize(
+                                  context, 10),
+                            );
+                          case ButtonState.SUCCESS:
+                            return ConstantWidget.getButtonWidget(
+                              context,
+                              'Login',
+                              ConstantData.primaryColor,
+                            );
+                          case ButtonState.ERROR:
+                            return ConstantWidget.getButtonWidget(
+                              context,
+                              'Login',
+                              ConstantData.primaryColor,
+                            );
+                        }
+                      }),
+                    ),
                   );
                 }),
 
@@ -247,42 +261,39 @@ class LoginScreen extends StatelessWidget {
                   height: blockSizeVertical(context: context) * 5,
                 ),
 
+                //---> Again login with OTP
                 InkWell(
                   onTap: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => Provider.value(
-                                value: store, child: SignUpPage())));
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => Provider.value(
+                          value: store,
+                          child: Provider.value(
+                            value: _productStore,
+                            child: Provider.value(
+                              value: _profileStore,
+                              child: Provider.value(
+                                value: _bottomNavigationStore,
+                                child: Provider.value(
+                                  value: _orderHistoryStore,
+                                  child: SignUpPage(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
                   },
                   child: ConstantWidget.getTextWidget(
-                      'Login with OTP?',
-                      ConstantData.mainTextColor,
-                      TextAlign.center,
-                      FontWeight.w500,
-                      font18Px(context: context)),
+                    'Login with OTP',
+                    ConstantData.clrBlack30,
+                    TextAlign.center,
+                    FontWeight.w600,
+                    font18Px(context: context) * 1.1,
+                  ),
                 ),
-                // Padding(
-                //   padding: EdgeInsets.symmetric(
-                //       vertical:
-                //           ConstantWidget.getScreenPercentSize(context, .5)),
-                //   child: Center(
-                //     child: ConstantWidget.getTextWidget(
-                //         'or',
-                //         ConstantData.textColor,
-                //         TextAlign.center,
-                //         FontWeight.w300,
-                //         ConstantWidget.getScreenPercentSize(context, 1.8)),
-                //   ),
-                // ),
-                // ConstantWidget.getButtonWidget(
-                //     context, 'signUp', ConstantData.primaryColor, () {
-                //   Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => SignUpPage(),
-                //       ));
-                // }),
               ],
             ),
           ),
