@@ -1,4 +1,4 @@
-package com.example.medrpha_customer
+package com.mederpha.medclient
 
 import io.flutter.embedding.android.FlutterActivity
 

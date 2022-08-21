@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:medrpha_customer/enums/delivery_status_type.dart';
 import 'package:medrpha_customer/order_history/models/order_history_model.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
@@ -111,6 +112,9 @@ class OrderHistoryRepository {
     final body = {"sessid": sessId, "order_id": id, "remarks": text};
 
     final resp = await _httpClient.post(Uri.parse(_cancelOrderUrl), body: body);
+    if (kDebugMode) {
+      print('cancel order ---------------- ${resp.body}');
+    }
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body) as Map<String, dynamic>;
       if (respBody['status'] == '1') {

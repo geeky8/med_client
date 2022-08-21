@@ -126,7 +126,7 @@ abstract class _OrderHistoryStore with Store {
                       fontSize: font18Px(context: context),
                       color: Colors.blue,
                       fontFamily: ConstantData.fontFamily,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.right,
                   ),
@@ -173,7 +173,7 @@ abstract class _OrderHistoryStore with Store {
                           fontSize: font18Px(context: context),
                           color: ConstantData.bgColor,
                           fontFamily: ConstantData.fontFamily,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -185,7 +185,7 @@ abstract class _OrderHistoryStore with Store {
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             });
           } on DioError catch (e) {
-            print(e.message);
+            // print(e.message);
             invoiceDwdState = StoreState.ERROR;
 
             final snackBar = ConstantWidget.customSnackBar(

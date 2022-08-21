@@ -24,15 +24,16 @@ class ProductModel {
 
   factory ProductModel.fromJson(
       {required Map<String, dynamic> json, bool? isCart}) {
-    // print(json['categorystr']);
     return ProductModel(
       pid: (json['pid'] ?? '') as String,
       wpid: (json['wpid'] ?? '') as String,
       priceId: (json['priceID'] ?? '') as String,
       salePrice: (json['saleprice'] ?? '') as String,
       productImg: (json['product_img'] ?? '') as String,
-      productName: ((json['product_name'] ?? '') as String)[0] +
-          (json['product_name'] as String).substring(1).toLowerCase(),
+      productName: (json['product_name'] != null)
+          ? (((json['product_name']) as String)[0] +
+              (json['product_name'] as String).substring(1).toLowerCase())
+          : '',
       category: (json['categorystr'] ?? '') as String,
       company: (json['compnaystr'] ?? '') as String,
       newMrp: (json['newmrp'] ?? '') as String,

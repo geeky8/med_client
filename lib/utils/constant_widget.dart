@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
-import 'package:medrpha_customer/utils/custom_dialog.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
-import 'package:sticky_headers/sticky_headers/widget.dart';
 
 class ConstantWidget {
   /// Size in terms of total value
@@ -34,7 +32,7 @@ class ConstantWidget {
     return ConstantWidget.getCustomTextWithoutAlign(
       s,
       ConstantData.mainTextColor,
-      FontWeight.w600,
+      FontWeight.w500,
       font18Px(context: context) * 1.1,
     );
   }
@@ -93,7 +91,7 @@ class ConstantWidget {
         //   ConstantData.mainTextColor,
         //   1,
         //   TextAlign.center,
-        //   FontWeight.w600,
+        //   FontWeight.w500,
         //   fontSize,
         // ),
       ],
@@ -120,7 +118,7 @@ class ConstantWidget {
   //       ),
   //       child: Center(
   //         child: ConstantWidget.getTextWidget(s, Colors.white, TextAlign.start,
-  //             FontWeight.w600, ConstantWidget.getPercentSize(bottomHeight, 30)),
+  //             FontWeight.w500, ConstantWidget.getPercentSize(bottomHeight, 30)),
   //       ),
   //     ),
   //   );
@@ -143,7 +141,7 @@ class ConstantWidget {
   //       ),
   //       child: Center(
   //         child: ConstantWidget.getTextWidget(s, Colors.white, TextAlign.start,
-  //             FontWeight.w600, ConstantWidget.getPercentSize(bottomHeight, 30)),
+  //             FontWeight.w500, ConstantWidget.getPercentSize(bottomHeight, 30)),
   //       ),
   //     ),
   //     onTap: () => function,
@@ -485,7 +483,7 @@ class ConstantWidget {
   //         fontSize: largeTextSize,
   //         color: color,
   //         fontFamily: ConstantData.fontFamily,
-  //         fontWeight: FontWeight.w600),
+  //         fontWeight: FontWeight.w500),
   //     maxLines: maxLine,
   //     textAlign: TextAlign.center,
   //     overflow: TextOverflow.ellipsis,
@@ -643,12 +641,15 @@ class ConstantWidget {
     required BuildContext context,
     required VoidCallback func,
     required String label,
+    required double height,
+    Color? labelColor,
+    Color? color,
   }) {
-    double bottomHeight = ConstantWidget.getScreenPercentSize(context, 6);
-    double subRadius = ConstantWidget.getPercentSize(bottomHeight, 10);
+    double bottomHeight = ConstantWidget.getScreenPercentSize(context, height);
+    // double subRadius = ConstantWidget.getPercentSize(bottomHeight, 10);
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: blockSizeHorizontal(context: context) * 6,
+          horizontal: blockSizeHorizontal(context: context) * 4,
           vertical: blockSizeVertical(context: context) * 1.3),
       child: InkWell(
         onTap: func,
@@ -659,7 +660,7 @@ class ConstantWidget {
           padding: EdgeInsets.symmetric(
               vertical: blockSizeVertical(context: context) * 2),
           decoration: BoxDecoration(
-            color: ConstantData.primaryColor,
+            color: color ?? ConstantData.primaryColor,
             borderRadius: BorderRadius.circular(
               font25Px(context: context) * 1.1,
             ),
@@ -667,7 +668,7 @@ class ConstantWidget {
           child: Center(
             child: ConstantWidget.getTextWidget(
               label,
-              Colors.white,
+              labelColor ?? Colors.white,
               TextAlign.start,
               FontWeight.w600,
               font18Px(context: context) * 1.1,
@@ -858,7 +859,7 @@ class ConstantWidget {
         child: getDefaultTextWidget(
           s,
           TextAlign.center,
-          FontWeight.w600,
+          FontWeight.w500,
           fontSize,
           (color == ConstantData.primaryColor || color == ConstantData.color1)
               ? Colors.white
@@ -953,17 +954,30 @@ class ConstantWidget {
               ConstantData.mainTextColor,
               4,
               TextAlign.center,
-              FontWeight.w600,
+              FontWeight.w500,
               font18Px(context: context),
             ),
           ),
         ],
       ),
-      content: ConstantWidget.getBottomButton(
-        context: context,
-        func: func,
-        label: buttonText,
+      content: Container(
+        height: ConstantWidget.getScreenPercentSize(context, 10),
+        child: ConstantWidget.getBottomButton(
+          context: context,
+          func: func,
+          label: buttonText,
+          height: 5,
+        ),
       ),
+    );
+  }
+
+  ///Custom loading indicator
+  static Widget loadingWidget({required double size}) {
+    return SizedBox(
+      height: size,
+      width: size,
+      child: const CircularProgressIndicator(),
     );
   }
 
@@ -1045,7 +1059,7 @@ class ConstantWidget {
                 ConstantData.bgColor,
                 1,
                 TextAlign.center,
-                FontWeight.w600,
+                FontWeight.w500,
                 font15Px(context: context)),
           ),
         ),

@@ -299,6 +299,38 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$orderIdAtom =
+      Atom(name: '_ProductsStore.orderId', context: context);
+
+  @override
+  String get orderId {
+    _$orderIdAtom.reportRead();
+    return super.orderId;
+  }
+
+  @override
+  set orderId(String value) {
+    _$orderIdAtom.reportWrite(value, super.orderId, () {
+      super.orderId = value;
+    });
+  }
+
+  late final _$payableAmountAtom =
+      Atom(name: '_ProductsStore.payableAmount', context: context);
+
+  @override
+  String get payableAmount {
+    _$payableAmountAtom.reportRead();
+    return super.payableAmount;
+  }
+
+  @override
+  set payableAmount(String value) {
+    _$payableAmountAtom.reportWrite(value, super.payableAmount, () {
+      super.payableAmount = value;
+    });
+  }
+
   late final _$checkoutStateAtom =
       Atom(name: '_ProductsStore.checkoutState', context: context);
 
@@ -459,8 +491,18 @@ mixin _$ProductsStore on _ProductsStore, Store {
       AsyncAction('_ProductsStore.checkout', context: context);
 
   @override
-  Future<String?> checkout({required BuildContext context}) {
+  Future<String> checkout({required BuildContext context}) {
     return _$checkoutAsyncAction.run(() => super.checkout(context: context));
+  }
+
+  late final _$confirmCheckoutAsyncAction =
+      AsyncAction('_ProductsStore.confirmCheckout', context: context);
+
+  @override
+  Future<String> confirmCheckout(
+      {required BuildContext context, String? orderId}) {
+    return _$confirmCheckoutAsyncAction
+        .run(() => super.confirmCheckout(context: context, orderId: orderId));
   }
 
   late final _$confirmPaymentAsyncAction =
@@ -518,6 +560,8 @@ searchController: ${searchController},
 searchList: ${searchList},
 cartModel: ${cartModel},
 paymentOptions: ${paymentOptions},
+orderId: ${orderId},
+payableAmount: ${payableAmount},
 checkoutState: ${checkoutState}
     ''';
   }

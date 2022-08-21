@@ -203,7 +203,7 @@ abstract class _ProfileStore with Store {
     final sessId = await DataBox().readSessId();
     final snackBar =
         ConstantWidget.customSnackBar(text: 'Uploading...', context: context);
-    // ignore: use_build_context_synchronously
+
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     final s = await _repository.uploadPhoto(
         sessId: sessId, bytes: bytes, path: path, url: url);
@@ -240,7 +240,7 @@ abstract class _ProfileStore with Store {
   }) async {
     final sessId = await DataBox().readSessId();
     final gstToFIll = profileModel.gstModel.toFill;
-    final dlToFill = profileModel.drugLicenseModel.toFill;
+    // final dlToFill = profileModel.drugLicenseModel.toFill;
     final fssaiToFill = profileModel.fssaiModel.toFill;
 
     saveState = ButtonState.LOADING;

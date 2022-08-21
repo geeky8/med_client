@@ -49,6 +49,28 @@ mixin _$LoginStore on _LoginStore, Store {
     return _$initAsyncAction.run(() => super.init());
   }
 
+  late final _$loginAsyncAction =
+      AsyncAction('_LoginStore.login', context: context);
+
+  @override
+  Future<void> login(
+      {required String value,
+      required BuildContext context,
+      required ProductsStore productsStore,
+      required LoginStore loginStore,
+      required ProfileStore profileStore,
+      required BottomNavigationStore bottomNavigationStore,
+      required OrderHistoryStore orderHistoryStore}) {
+    return _$loginAsyncAction.run(() => super.login(
+        value: value,
+        context: context,
+        productsStore: productsStore,
+        loginStore: loginStore,
+        profileStore: profileStore,
+        bottomNavigationStore: bottomNavigationStore,
+        orderHistoryStore: orderHistoryStore));
+  }
+
   @override
   String toString() {
     return '''

@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
@@ -327,7 +328,9 @@ abstract class _ProductsStore with Store {
   );
 
   @action
-  Future<void> getCartItems({bool? isRemove}) async {
+  Future<void> getCartItems({
+    bool? isRemove,
+  }) async {
     final model = await _productsRepository.getCart();
     if (isRemove != null) {
       cartModel = cartModel.copyWith(
@@ -547,37 +550,92 @@ abstract class _ProductsStore with Store {
 
   //----------------------------------- Checkout ----------------------------------------------//
   @observable
-  PaymentOptions paymentOptions = PaymentOptions.ONLINE;
+  PaymentOptions paymentOptions = PaymentOptions.PAYONDELIVERY;
+
+  @observable
+  String orderId = '';
+
+  @observable
+  String payableAmount = '';
 
   @action
-  Future<String?> checkout({
+  Future<String> checkout({required BuildContext context}) async {
+// final payLater = (paymentOptions == PaymentOptions.PAYLATER) ? '2' : '1';
+    // await Future.delayed(
+    //   Duration.zero,
+    //   () async {
+    // final value = await _productsRepository.checkout(
+    //   amount: cartModel.totalSalePrice.toString(),
+    //   payLater: payLater,
+    // );
+    // Future.delayed(
+    //   Duration.zero,
+    //   () async {
+    String ans = '';
+    checkoutState = StoreState.LOADING;
+    SnackBar snackBar = ConstantWidget.customSnackBar(
+      text: 'Failure, order not successful',
+      context: context,
+    );
+    final payLater = (paymentOptions == PaymentOptions.PAYLATER) ? '2' : '1';
+    final value = await _productsRepository.checkout(
+        amount: cartModel.totalSalePrice, payLater: payLater);
+
+    payableAmount = cartModel.totalSalePrice;
+
+    if (value != null) {
+      orderId = value;
+      snackBar = ConstantWidget.customSnackBar(
+        text: 'Successful, checkout',
+        context: context,
+      );
+      ans = value;
+    }
+    await getCartItems();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    checkoutState = StoreState.SUCCESS;
+
+    return ans;
+    // return value;
+    //   },
+    // );
+
+    // return '';
+    //   },
+    // );
+  }
+
+  @action
+  Future<String> confirmCheckout({
     required BuildContext context,
+    String? orderId,
   }) async {
     // String status;
-    cartState = StoreState.LOADING;
+    checkoutState = StoreState.LOADING;
 
-    final payLater = (paymentOptions == PaymentOptions.PAYLATER) ? '2' : '1';
+    if (kDebugMode) {
+      print('------ order check -------$orderId');
+    }
 
-    final value = await _productsRepository.checkout(
-      amount: cartModel.totalSalePrice.toString(),
-      payLater: payLater,
-    );
-    if (value != null) {
+    String confirm = '';
+
+    if (orderId != null) {
+      int payStatus = 1;
       //----------- Payment confirmation -----------------------------
       if (paymentOptions == PaymentOptions.ONLINE) {
-        final payStatus =
-            await _productsRepository.paymentConfirmation(orderId: value);
+        payStatus =
+            await _productsRepository.paymentConfirmation(orderId: orderId);
+        if (kDebugMode) {
+          print('------ payment check -------$payStatus');
+        }
 
         if (payStatus == 1) {
-          //---------- Confirm Checkout -----------------------------
           // print('options ---------${paymentOptions.toPaymentOption()}');
-          final confirmValue = await _productsRepository.checkoutConfirm(
-            orderId: value,
-            paymentOptionsType: paymentOptions,
+          final snackBar = ConstantWidget.customSnackBar(
+            text: 'Your payment has been confirmed',
+            context: context,
           );
-
-          cartState = StoreState.SUCCESS;
-          return confirmValue;
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else {
           final snackBar = ConstantWidget.customSnackBar(
             text:
@@ -586,20 +644,27 @@ abstract class _ProductsStore with Store {
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
-      } else {
-        //---------- Confirm Checkout -----------------------------
+      }
+
+      //---------- Confirm Checkout -----------------------------
+      if (payStatus == 1) {
         final confirmValue = await _productsRepository.checkoutConfirm(
-          orderId: value,
+          orderId: orderId,
           paymentOptionsType: paymentOptions,
         );
+        if (kDebugMode) {
+          print('------ confirm checkout check -------$confirmValue');
+        }
 
-        cartState = StoreState.SUCCESS;
+        if (confirmValue != '') {
+          confirm = confirmValue;
+        }
         return confirmValue;
       }
-    } else {
-      cartState = StoreState.SUCCESS;
     }
-    return null;
+    checkoutState = StoreState.SUCCESS;
+
+    return confirm;
   }
 
   @observable
@@ -659,94 +724,132 @@ abstract class _ProductsStore with Store {
     required BottomNavigationStore bottomNavigationStore,
     required OrderHistoryStore orderHistoryStore,
     required ProductsStore productsStore,
+    // required String orderId,
   }) async {
     checkoutState = StoreState.LOADING;
-    final status = await checkout(context: context);
-    if (status != null) {
-      await getCartItems();
-      await orderHistoryStore.getOrdersList();
+    await loginStore.getUserStatus();
 
-      checkoutState = StoreState.SUCCESS;
+    if (!loginStore.loginModel.adminStatus) {
+      final snackBar = ConstantWidget.customSnackBar(
+          text: 'Your account has been deactivated', context: context);
 
-      // if (fromOrders == null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => Provider.value(
-            value: productsStore,
-            child: Provider.value(
-              value: loginStore,
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      final status = await confirmCheckout(
+        context: context,
+        orderId: orderId,
+      );
+
+      if (status != '') {
+        await getCartItems();
+        await orderHistoryStore.getOrdersList();
+
+        checkoutState = StoreState.SUCCESS;
+
+        // if (fromOrders == null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => Provider.value(
+              value: productsStore,
               child: Provider.value(
-                value: profileStore,
+                value: loginStore,
                 child: Provider.value(
-                  value: orderHistoryStore,
+                  value: profileStore,
                   child: Provider.value(
-                    value: bottomNavigationStore,
-                    child: const HomeScreen(),
+                    value: orderHistoryStore,
+                    child: Provider.value(
+                      value: bottomNavigationStore,
+                      child: const HomeScreen(),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      );
-      // }
-      showDialog(
-        context: context,
-        builder: (context) => OrderDialog(
-          func: () async {
-            final repo = OrderHistoryRepository();
-            final orderHistoryResponseModel =
-                await repo.getOrdersResponseModel(orderId: status);
-            final orderHistoryModel = await repo.getListOrdersHistory(
-                orderNo: orderHistoryResponseModel.orderNo);
-            Navigator.pop(context);
+        );
+        // }
+        showDialog(
+          context: context,
+          builder: (context) => OrderDialog(
+            func: () async {
+              final repo = OrderHistoryRepository();
+              final orderHistoryResponseModel =
+                  await repo.getOrdersResponseModel(orderId: status);
+              final orderHistoryModel = await repo.getListOrdersHistory(
+                  orderNo: orderHistoryResponseModel.orderNo);
+              Navigator.pop(context);
 
-            // if (fromOrders == null) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => Provider.value(
-                  value: orderHistoryStore,
-                  child: Provider.value(
-                    value: loginStore,
+              // if (fromOrders == null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => Provider.value(
+                    value: orderHistoryStore,
                     child: Provider.value(
-                      value: productsStore,
+                      value: loginStore,
                       child: Provider.value(
-                        value: profileStore,
-                        child: OrderHistoryDetailsScreen(
-                          model: orderHistoryModel.first,
+                        value: productsStore,
+                        child: Provider.value(
+                          value: profileStore,
+                          child: OrderHistoryDetailsScreen(
+                            model: orderHistoryModel.first,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
+              );
+              // }
+            },
+            image: 'order-confirmed.png',
+            text: 'Thank you for placing your order',
+            label: 'Check status',
+          ),
+        );
+        // _relocateToHome();
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => Provider.value(
+              value: productsStore,
+              child: Provider.value(
+                value: loginStore,
+                child: Provider.value(
+                  value: profileStore,
+                  child: Provider.value(
+                    value: orderHistoryStore,
+                    child: Provider.value(
+                      value: bottomNavigationStore,
+                      child: const HomeScreen(),
+                    ),
+                  ),
+                ),
               ),
-            );
-            // }
-          },
-          image: 'order-confirmed.png',
-          text: 'Thank you for placing your order',
-          label: 'Check status',
-        ),
-      );
-      // _relocateToHome();
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => OrderDialog(
-          func: () {
-            Navigator.pop(context);
-          },
-          image: 'online-payment-error.png',
-          text:
-              'Oops...something went wrong. If money is deducted it will be refunded to your account.',
-          label: 'Cancel',
-        ),
-      );
-      final snackBar = ConstantWidget.customSnackBar(
-          text: 'Failed to place the order', context: context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            ),
+          ),
+        );
+        showDialog(
+          context: context,
+          builder: (context) => OrderDialog(
+            func: () {
+              Navigator.pop(context);
+            },
+            image: 'online-payment-error.png',
+            text:
+                'Oops...something went wrong. If money is deducted it will be refunded to your account.',
+            label: 'Cancel',
+          ),
+        );
+        final snackBar = ConstantWidget.customSnackBar(
+            text: 'Failed to place the order', context: context);
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        checkoutState = StoreState.SUCCESS;
+      }
     }
+
+    // checkoutState = StoreState.SUCCESS;
   }
 }

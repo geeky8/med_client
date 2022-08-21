@@ -11,7 +11,6 @@ import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/screens/create_pin_screen.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
-import 'package:medrpha_customer/utils/custom_dialog_box.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -20,7 +19,7 @@ import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class PhoneVerification extends StatefulWidget {
-  PhoneVerification({
+  const PhoneVerification({
     Key? key,
     required this.phone,
   }) : super(key: key);
@@ -113,79 +112,77 @@ class _PhoneVerificationState extends State<PhoneVerification> {
 
               //---> Pin input
               Center(
-                child: Observer(builder: (_) {
-                  return PinInput(
-                    pinEditingController: _pinEditingController,
-                    isObscure: false,
-                    action: TextInputAction.go,
-                    // enable: _enable,
-                    onSubmit: (value) async {
-                      final i = await store.verifyOTP(
-                        mobile: widget.phone,
-                        otp: value,
-                      );
-                      // int i = 1;
-                      // print(i);
-                      // _pinEditingController.clear();
-                      if (i == 1) {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomAlertDialog(
-                                header: 'Success',
-                                description: 'Successfully Verified!',
-                                image: 'security.png',
-                                buttonText: 'Continue',
-                                func: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => Provider.value(
-                                        value: store,
+                child: PinInput(
+                  pinEditingController: _pinEditingController,
+                  isObscure: false,
+                  action: TextInputAction.go,
+                  // enable: _enable,
+                  onSubmit: (value) async {
+                    final i = await store.verifyOTP(
+                      mobile: widget.phone,
+                      otp: value,
+                    );
+                    // int i = 1;
+                    // print(i);
+                    // _pinEditingController.clear();
+                    if (i == 1) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomAlertDialog(
+                              header: 'Success',
+                              description: 'Successfully Verified!',
+                              image: 'med_logo.png',
+                              buttonText: 'Continue',
+                              func: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => Provider.value(
+                                      value: store,
+                                      child: Provider.value(
+                                        value: productStore,
                                         child: Provider.value(
-                                          value: productStore,
+                                          value: profileStore,
                                           child: Provider.value(
-                                            value: profileStore,
+                                            value: orderHistoryStore,
                                             child: Provider.value(
-                                              value: orderHistoryStore,
-                                              child: Provider.value(
-                                                value: bottomNavigationStore,
-                                                child: SignInPage(),
-                                              ),
+                                              value: bottomNavigationStore,
+                                              child: SignInPage(),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  );
+                                  ),
+                                );
+                              },
+                            );
+                          });
+                      // Navigator.pushReplacement(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => Provider.value(
+                      //           value: store, child: SignInPage()),
+                      //     ));
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomAlertDialog(
+                                header: 'Failure',
+                                image: 'med_logo.png',
+                                description:
+                                    'Failed to verify please try again',
+                                func: () {
+                                  Navigator.pop(context);
                                 },
-                              );
-                            });
-                        // Navigator.pushReplacement(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => Provider.value(
-                        //           value: store, child: SignInPage()),
-                        //     ));
-                      } else {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomAlertDialog(
-                                  header: 'Failure',
-                                  image: 'security.png',
-                                  description:
-                                      'Failed to verify please try again',
-                                  func: () {
-                                    Navigator.pop(context);
-                                  },
-                                  buttonText: 'Cancel');
-                            });
-                      }
-                    },
-                    label: 'OTP',
-                  );
-                }),
+                                buttonText: 'Cancel');
+                          });
+                    }
+                  },
+                  label: 'OTP',
+                ),
               ),
               SizedBox(
                 height: safeBlockVertical(context: context) * 5,
@@ -247,7 +244,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     //                                       .mainTextColor,
                     //                                   1,
                     //                                   TextAlign.center,
-                    //                                   FontWeight.w600,
+                    //                                   FontWeight.w500,
                     //                                   20),
                     //                               const SizedBox(
                     //                                 height: 10,
@@ -328,7 +325,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     //                                                 .avatarRadius)),
                     //                                 child: Image.asset(
                     //                                   ConstantData.assetsPath +
-                    //                                       "security.png",
+                    //                                       "med_logo.png",
                     //                                   color: ConstantData
                     //                                       .mainTextColor,
                     //                                 )),
@@ -426,7 +423,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                                 child: ConstantWidget.getDefaultTextWidget(
                                   'Resend',
                                   TextAlign.center,
-                                  FontWeight.w600,
+                                  FontWeight.w500,
                                   font22Px(context: context),
                                   Colors.white,
                                 ),
@@ -543,7 +540,7 @@ class CustomAlertDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ConstantWidget.getCustomText(header, ConstantData.mainTextColor,
-                    1, TextAlign.center, FontWeight.w600, 20),
+                    1, TextAlign.center, FontWeight.w500, 20),
                 const SizedBox(
                   height: 10,
                 ),
@@ -581,7 +578,7 @@ class CustomAlertDialog extends StatelessWidget {
                       Radius.circular(ConstantData.avatarRadius)),
                   child: Image.asset(
                     "${ConstantData.assetsPath}$image",
-                    color: ConstantData.mainTextColor,
+                    // color: ConstantData.mainTextColor,
                   )),
             ),
           ),
@@ -642,7 +639,7 @@ class PinInput extends StatelessWidget {
           vertical: safeBlockVertical(context: context) * 2,
           horizontal: blockSizeHorizontal(context: context) * 5),
       child: SizedBox(
-        width: safeBlockHorizontal(context: context) * 70,
+        width: ConstantWidget.getWidthPercentSize(context, 80),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -650,7 +647,7 @@ class PinInput extends StatelessWidget {
               '$label :',
               ConstantData.mainTextColor,
               TextAlign.center,
-              FontWeight.w600,
+              FontWeight.w500,
               font18Px(context: context) * 1.2,
             ),
             SizedBox(
@@ -660,28 +657,29 @@ class PinInput extends StatelessWidget {
               cursorColor: ConstantData.mainTextColor,
               // cursorHeight: ConstantWidget.getWidthPercentSize(context, 20),
               // cursorWidth: blockSizeHorizontal(context: context) * 4,
+
               textStyle: TextStyle(
                 color: ConstantData.mainTextColor,
                 fontSize: font18Px(context: context),
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
               obscureText: isObscure,
+              showCursor: false,
               obscuringCharacter: '*',
               pinTheme: PinTheme(
-                shape: PinCodeFieldShape.box,
+                shape: PinCodeFieldShape.circle,
                 borderRadius: BorderRadius.circular(8),
                 borderWidth: 1,
-
-                activeColor: ConstantData.clrBorder,
+                activeColor: ConstantData.primaryColor,
                 disabledColor: ConstantData.clrBorder,
                 inactiveColor: ConstantData.clrBorder,
                 selectedColor: ConstantData.clrBorder,
                 errorBorderColor: ConstantData.clrBorder,
                 activeFillColor: ConstantData.bgColor,
                 inactiveFillColor: ConstantData.bgColor,
-                selectedFillColor: ConstantData.bgColor,
+                selectedFillColor: Colors.blueAccent,
                 fieldWidth: ConstantWidget.getWidthPercentSize(context, 15),
-                // fieldHeight: ConstantWidget.getScreenPercentSize(context, 20),
+                fieldHeight: ConstantWidget.getWidthPercentSize(context, 15),
               ),
               keyboardType: TextInputType.number,
               appContext: context,
@@ -692,60 +690,6 @@ class PinInput extends StatelessWidget {
               onChanged: (v) {},
               onCompleted: onSubmit,
             ),
-            // PinInputTextFormField(
-            //   // key: _formKey,
-            //   pinLength: 4,
-
-            //   decoration: BoxLooseDecoration(
-            //     textStyle: TextStyle(
-            //         color: ConstantData.mainTextColor,
-            //         fontFamily: ConstantData.fontFamily,
-            //         fontWeight: FontWeight.w600,
-            //         fontSize: font18Px(context: context)),
-
-            //     strokeColorBuilder: PinListenColorBuilder(
-            //         ConstantData.textColor, ConstantData.primaryColor),
-
-            //     obscureStyle: ObscureStyle(
-            //       isTextObscure: isObscure,
-            //       obscureText: '*',
-            //     ),
-            //     // hintText: _kDefaultHint,
-            //   ),
-            //   controller: pinEditingController,
-            //   textInputAction: action,
-            //   enabled: true,
-            //   keyboardType: TextInputType.number,
-            //   textCapitalization: TextCapitalization.characters,
-            //   onSubmit: onSubmit,
-
-            //   onChanged: (pin) {
-            //     // setState(() {
-            //     //   debugPrint('onChanged execute. pin:$pin');
-            //     // });
-            //   },
-            //   onSaved: (pin) {
-            //     // print('onSaved pin:$pin');
-            //   },
-            //   validator: (pin) {
-            //     if (pin!.isEmpty) {
-            //       // setState(() {
-            //       //   // _hasError = true;
-            //       // });
-            //       return 'Pin cannot empty.';
-            //     }
-            //     // setState(() {
-            //     //   // _hasError = false;
-            //     // });
-            //     return null;
-            //   },
-            //   cursor: Cursor(
-            //     width: 2,
-            //     color: Colors.white,
-            //     radius: const Radius.circular(1),
-            //     enabled: true,
-            //   ),
-            // ),
           ],
         ),
       ),

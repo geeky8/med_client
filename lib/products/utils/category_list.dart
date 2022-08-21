@@ -63,134 +63,135 @@ class CategoryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        height: safeBlockHorizontal(context: context) * 20,
-        // margin: EdgeInsets.only(bottom: margin),
-        child: ListView.builder(
-            padding: EdgeInsets.only(right: sideMargin),
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-            itemCount: list.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              double height = safeBlockHorizontal(context: context) * 20;
-              double imageSize = ConstantWidget.getPercentSize(height, 65);
-              double remainSize = height - imageSize;
+      height: safeBlockHorizontal(context: context) * 20,
+      // margin: EdgeInsets.only(bottom: margin),
+      child: ListView.builder(
+        padding: EdgeInsets.only(right: sideMargin),
+        shrinkWrap: true,
+        physics: const BouncingScrollPhysics(),
+        itemCount: list.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          double height = safeBlockHorizontal(context: context) * 20;
+          double imageSize = ConstantWidget.getPercentSize(height, 65);
+          double remainSize = height - imageSize;
 
-              return InkWell(
-                onTap: () {
-                  store.categoriesType =
-                      categoriesfromValue(list[index].categoryName);
-                  // switch (categoryType) {
-                  //   case CategoriesType.ETHICAL:
-                  //     if (store.ethicalProductList.isNotEmpty) {
-                  //       store.categoriesType =
-                  //           categoriesfromValue(list[index].categoryName);
-                  //     }
-                  //     break;
-                  //   case CategoriesType.GENERIC:
-                  //     if (store.genericProductList.isNotEmpty) {
-                  //       store.categoriesType =
-                  //           categoriesfromValue(list[index].categoryName);
-                  //     }
-                  //     break;
-                  //   case CategoriesType.SURGICAL:
-                  //     if (store.surgicalProductList.isNotEmpty) {
-                  //       store.categoriesType =
-                  //           categoriesfromValue(list[index].categoryName);
-                  //     }
-                  //     break;
-                  //   case CategoriesType.VETERINARY:
-                  //     if (store.veterinaryProductList.isNotEmpty) {
-                  //       store.categoriesType =
-                  //           categoriesfromValue(list[index].categoryName);
-                  //     }
-                  //     break;
-                  //   case CategoriesType.AYURVEDIC:
-                  //     if (store.ayurvedicProductList.isNotEmpty) {
-                  //       store.categoriesType =
-                  //           categoriesfromValue(list[index].categoryName);
-                  //     }
-                  //     break;
-                  //   case CategoriesType.GENERAL:
-                  //     if (store.generalProductList.isNotEmpty) {
-                  //       store.categoriesType =
-                  //           categoriesfromValue(list[index].categoryName);
-                  //     }
-                  //     break;
-                  // }
-                  // if (list.isNotEmpty) {
+          return InkWell(
+            onTap: () {
+              store.categoriesType =
+                  categoriesfromValue(list[index].categoryName);
+              // switch (categoryType) {
+              //   case CategoriesType.ETHICAL:
+              //     if (store.ethicalProductList.isNotEmpty) {
+              //       store.categoriesType =
+              //           categoriesfromValue(list[index].categoryName);
+              //     }
+              //     break;
+              //   case CategoriesType.GENERIC:
+              //     if (store.genericProductList.isNotEmpty) {
+              //       store.categoriesType =
+              //           categoriesfromValue(list[index].categoryName);
+              //     }
+              //     break;
+              //   case CategoriesType.SURGICAL:
+              //     if (store.surgicalProductList.isNotEmpty) {
+              //       store.categoriesType =
+              //           categoriesfromValue(list[index].categoryName);
+              //     }
+              //     break;
+              //   case CategoriesType.VETERINARY:
+              //     if (store.veterinaryProductList.isNotEmpty) {
+              //       store.categoriesType =
+              //           categoriesfromValue(list[index].categoryName);
+              //     }
+              //     break;
+              //   case CategoriesType.AYURVEDIC:
+              //     if (store.ayurvedicProductList.isNotEmpty) {
+              //       store.categoriesType =
+              //           categoriesfromValue(list[index].categoryName);
+              //     }
+              //     break;
+              //   case CategoriesType.GENERAL:
+              //     if (store.generalProductList.isNotEmpty) {
+              //       store.categoriesType =
+              //           categoriesfromValue(list[index].categoryName);
+              //     }
+              //     break;
+              // }
+              // if (list.isNotEmpty) {
 
-                  // }
-                },
-                child: SizedBox(
-                  width: height,
-                  child: Container(
-                    margin: EdgeInsets.only(left: sideMargin),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Observer(builder: (_) {
-                          return Stack(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(
-                                    ConstantWidget.getPercentSize(
-                                        imageSize, 25)),
-                                height: imageSize,
-                                width: imageSize,
-                                decoration: BoxDecoration(
-                                  // color: ConstantData.color1,
-                                  border: (store.categoriesType ==
-                                          categoriesfromValue(
-                                              list[index].categoryName))
-                                      ? Border.all(
-                                          color: ConstantData.accentColor,
-                                          width: 3)
-                                      : Border.all(
-                                          color: ConstantData.mainTextColor,
-                                          width: 1.5),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: CachedNetworkImage(
-                                  imageUrl: ConstantData.catImgUrl +
-                                      list[index].categoryImgUrl,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              // Container(
-                              //   height: imageSize,
-                              //   width: imageSize,
-                              //   decoration: BoxDecoration(
-                              //     color: getShadow(
-                              //       categoryName: list[index].categoryName,
-                              //     ),
-                              //     shape: BoxShape.circle,
-                              //   ),
-                              // ),
-                            ],
-                          );
-                        }),
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              top:
-                                  ConstantWidget.getPercentSize(remainSize, 20),
+              // }
+            },
+            child: SizedBox(
+              width: height,
+              child: Container(
+                margin: EdgeInsets.only(left: sideMargin),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Observer(builder: (_) {
+                      return Stack(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(
+                                ConstantWidget.getPercentSize(imageSize, 25)),
+                            height: imageSize,
+                            width: imageSize,
+                            decoration: BoxDecoration(
+                              // color: ConstantData.color1,
+                              border: (store.categoriesType ==
+                                      categoriesfromValue(
+                                          list[index].categoryName))
+                                  ? Border.all(
+                                      color: ConstantData.accentColor,
+                                      width: 4,
+                                    )
+                                  : Border.all(
+                                      color: ConstantData.mainTextColor,
+                                      width: 1.5),
+                              shape: BoxShape.circle,
                             ),
-                            child: ConstantWidget.getCustomText(
-                                list[index].categoryName,
-                                ConstantData.mainTextColor,
-                                1,
-                                TextAlign.start,
-                                FontWeight.w500,
-                                font15Px(context: context)),
+                            child: CachedNetworkImage(
+                              imageUrl: ConstantData.catImgUrl +
+                                  list[index].categoryImgUrl,
+                              fit: BoxFit.fill,
+                            ),
                           ),
-                        )
-                      ],
-                    ),
-                  ),
+                          // Container(
+                          //   height: imageSize,
+                          //   width: imageSize,
+                          //   decoration: BoxDecoration(
+                          //     color: getShadow(
+                          //       categoryName: list[index].categoryName,
+                          //     ),
+                          //     shape: BoxShape.circle,
+                          //   ),
+                          // ),
+                        ],
+                      );
+                    }),
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: ConstantWidget.getPercentSize(remainSize, 20),
+                        ),
+                        child: ConstantWidget.getCustomText(
+                            list[index].categoryName,
+                            ConstantData.mainTextColor,
+                            1,
+                            TextAlign.start,
+                            FontWeight.w400,
+                            font15Px(context: context)),
+                      ),
+                    )
+                  ],
                 ),
-              );
-            }));
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
