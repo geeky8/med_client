@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/quantity_dialog.dart';
@@ -74,16 +76,29 @@ class PlusMinusWidget extends StatelessWidget {
         InkWell(
           onTap: () async {
             if (model.cartQuantity! > 0) {
+              store.minusRemoveState = StoreState.LOADING;
               await store.minusToCart(
                 model: model,
                 context: context,
               );
+              store.minusRemoveState = StoreState.SUCCESS;
             }
           },
-          child: PlusMinusButton(
-            icon: CupertinoIcons.minus,
-            iconSize: iconSize,
-          ),
+          child: Observer(builder: (_) {
+            if (kDebugMode) {
+              print(store.minusRemoveState);
+            }
+            if (store.minusRemoveState == StoreState.LOADING) {
+              return ConstantWidget.loadingWidget(
+                size: blockSizeHorizontal(context: context) * 4,
+              );
+            } else {
+              return PlusMinusButton(
+                icon: CupertinoIcons.minus,
+                iconSize: iconSize,
+              );
+            }
+          }),
         ),
         InkWell(
           onTap: () {
@@ -114,15 +129,28 @@ class PlusMinusWidget extends StatelessWidget {
         ),
         InkWell(
           onTap: () async {
+            store.plusState = StoreState.LOADING;
             await store.plusToCart(
               model: model,
               context: context,
             );
+            store.plusState = StoreState.SUCCESS;
           },
-          child: PlusMinusButton(
-            icon: CupertinoIcons.plus,
-            iconSize: iconSize,
-          ),
+          child: Observer(builder: (_) {
+            if (kDebugMode) {
+              print(store.plusState);
+            }
+            if (store.plusState == StoreState.LOADING) {
+              return ConstantWidget.loadingWidget(
+                size: blockSizeHorizontal(context: context) * 4,
+              );
+            } else {
+              return PlusMinusButton(
+                icon: CupertinoIcons.plus,
+                iconSize: iconSize,
+              );
+            }
+          }),
         ),
       ],
     );
@@ -233,63 +261,77 @@ class RemoveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () async {
-        await store.removeFromCart(model: model);
-      },
-      // child: Container(
-      //   padding: EdgeInsets.symmetric(
-      //     vertical: width,
-      //     horizontal: height,
-      //   ),
-      //   decoration: BoxDecoration(
-      //     color: ConstantData.primaryColor,
-      //     borderRadius: BorderRadius.circular(12),
-      //   ),
-      //   // child: ConstantWidget.getCustomText('Remove', ConstantData.bgColor, 1,
-      //   //     TextAlign.center, FontWeight.w500, fontSize),
-      //   child: Icon(
-      //     Icons.delete_rounded,
-      //     size: font22Px(context: context),
-      //     color: ConstantData.clrBlack20,
-      //   ),
-      // ),
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: blockSizeHorizontal(context: context) * 2,
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: ConstantData.primaryColor,
-            shape:
-                (isDetailPage ?? false) ? BoxShape.rectangle : BoxShape.circle,
-            borderRadius:
-                (isDetailPage ?? false) ? BorderRadius.circular(12) : null,
+    return Observer(builder: (_) {
+      if (store.removeState == StoreState.LOADING) {
+        return ConstantWidget.loadingWidget(
+          size: blockSizeVertical(context: context),
+        );
+      } else {
+        return InkWell(
+          onTap: () async {
+            store.removeState = StoreState.LOADING;
+            await store.removeFromCart(
+              model: model,
+              context: context,
+            );
+            store.removeState = StoreState.SUCCESS;
+          },
+          // child: Container(
+          //   padding: EdgeInsets.symmetric(
+          //     vertical: width,
+          //     horizontal: height,
+          //   ),
+          //   decoration: BoxDecoration(
+          //     color: ConstantData.primaryColor,
+          //     borderRadius: BorderRadius.circular(12),
+          //   ),
+          //   // child: ConstantWidget.getCustomText('Remove', ConstantData.bgColor, 1,
+          //   //     TextAlign.center, FontWeight.w500, fontSize),
+          //   child: Icon(
+          //     Icons.delete_rounded,
+          //     size: font22Px(context: context),
+          //     color: ConstantData.clrBlack20,
+          //   ),
+          // ),
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: blockSizeHorizontal(context: context) * 2,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: ConstantData.primaryColor,
+                shape: (isDetailPage ?? false)
+                    ? BoxShape.rectangle
+                    : BoxShape.circle,
+                borderRadius:
+                    (isDetailPage ?? false) ? BorderRadius.circular(12) : null,
+              ),
+              padding: (isDetailPage ?? false)
+                  ? EdgeInsets.symmetric(
+                      horizontal: blockSizeHorizontal(context: context) * 8,
+                      vertical: blockSizeVertical(context: context),
+                    )
+                  : EdgeInsets.all(
+                      blockSizeHorizontal(context: context) * 1.8,
+                    ),
+              child: (isDetailPage ?? false)
+                  ? ConstantWidget.getCustomText(
+                      'Delete',
+                      ConstantData.bgColor,
+                      1,
+                      TextAlign.center,
+                      FontWeight.w500,
+                      font18Px(context: context),
+                    )
+                  : Icon(
+                      Icons.delete_rounded,
+                      size: font22Px(context: context),
+                      color: ConstantData.bgColor,
+                    ),
+            ),
           ),
-          padding: (isDetailPage ?? false)
-              ? EdgeInsets.symmetric(
-                  horizontal: blockSizeHorizontal(context: context) * 8,
-                  vertical: blockSizeVertical(context: context),
-                )
-              : EdgeInsets.all(
-                  blockSizeHorizontal(context: context) * 1.8,
-                ),
-          child: (isDetailPage ?? false)
-              ? ConstantWidget.getCustomText(
-                  'Delete',
-                  ConstantData.bgColor,
-                  1,
-                  TextAlign.center,
-                  FontWeight.w500,
-                  font18Px(context: context),
-                )
-              : Icon(
-                  Icons.delete_rounded,
-                  size: font22Px(context: context),
-                  color: ConstantData.bgColor,
-                ),
-        ),
-      ),
-    );
+        );
+      }
+    });
   }
 }

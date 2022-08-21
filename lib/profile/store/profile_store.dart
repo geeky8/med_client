@@ -286,7 +286,7 @@ abstract class _ProfileStore with Store {
       // saveState = ButtonState.ERROR;
     } else if (beginToFill == null) {
       final resp = await _repository.deleteLicenses(
-          url: 'https://apitest.medrpha.com/api/register/registergstnodelete');
+          url: 'https://api.medrpha.com/api/register/registergstnodelete');
       if (resp == null) {
         final snackBar = ConstantWidget.customSnackBar(
             text: 'Error in updating GST details, Please try again',
@@ -312,7 +312,7 @@ abstract class _ProfileStore with Store {
       // saveState = ButtonState.ERROR;
     } else if (beginToFill == null) {
       final resp = await _repository.deleteLicenses(
-          url: 'https://apitest.medrpha.com/api/register/registerfssaidelete');
+          url: 'https://api.medrpha.com/api/register/registerfssaidelete');
       if (resp == null) {
         final snackBar = ConstantWidget.customSnackBar(
             text: 'Error in updating FSSAI details, Please try again',

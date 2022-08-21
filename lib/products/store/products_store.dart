@@ -451,11 +451,21 @@ abstract class _ProductsStore with Store {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  @observable
+  StoreState plusState = StoreState.SUCCESS;
+
+  @observable
+  StoreState minusRemoveState = StoreState.SUCCESS;
+
+  @observable
+  StoreState removeState = StoreState.SUCCESS;
+
   @action
   Future<void> plusToCart({
     required ProductModel model,
     required BuildContext context,
   }) async {
+    // plusMinusRemoveState = StoreState.LOADING;
     int qty = model.cartQuantity! + 1;
     if (qty > int.parse(model.quantity)) {
       final snackBar = ConstantWidget.customSnackBar(
@@ -468,10 +478,24 @@ abstract class _ProductsStore with Store {
       cartModel.productList
         ..removeAt(index)
         ..insert(index, currModel);
-      await _productsRepository.plusTheCart(model: currModel);
+      final value = await _productsRepository.plusTheCart(model: currModel);
+      SnackBar snackBar;
+      if (value != null) {
+        snackBar = ConstantWidget.customSnackBar(
+          text: 'Updated the cart',
+          context: context,
+        );
+      } else {
+        snackBar = ConstantWidget.customSnackBar(
+          text: 'Failed to update the cart',
+          context: context,
+        );
+      }
       await getCartItems();
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       // plusMinusToCart(model: currModel);
     }
+    // plusMinusRemoveState = StoreState.SUCCESS;
   }
 
   @action
@@ -479,6 +503,7 @@ abstract class _ProductsStore with Store {
     required ProductModel model,
     required BuildContext context,
   }) async {
+    SnackBar snackBar;
     if (model.cartQuantity! > 1) {
       int qty = model.cartQuantity! - 1;
       final currModel = model.copyWith(cartQuantity: qty);
@@ -487,14 +512,33 @@ abstract class _ProductsStore with Store {
       cartModel.productList
         ..removeAt(index)
         ..insert(index, currModel);
-      await _productsRepository.minusTheCart(model: currModel);
+      final value = await _productsRepository.minusTheCart(model: currModel);
+
+      if (value != null) {
+        snackBar = ConstantWidget.customSnackBar(
+          text: 'Updated the cart',
+          context: context,
+        );
+      } else {
+        snackBar = ConstantWidget.customSnackBar(
+          text: 'Failed to update the cart',
+          context: context,
+        );
+      }
       await getCartItems();
       // plusMinusToCart(model: currModel);
       // Future.delayed(const Duration(milliseconds: 500), () {
       //   c
       // });
     } else if (model.cartQuantity == 1) {
-      await removeFromCart(model: model);
+      await removeFromCart(
+        model: model,
+        context: context,
+      );
+      snackBar = ConstantWidget.customSnackBar(
+        text: 'Removed from cart',
+        context: context,
+      );
       // int qty = model.cartQuantity! - 1;
       // final currModel = model.copyWith(cartQuantity: qty);
       // final _index = cartModel.productList
@@ -503,10 +547,11 @@ abstract class _ProductsStore with Store {
       //   ..removeAt(_index)
       //   ..insert(_index, currModel);
     } else {
-      final snackBar = ConstantWidget.customSnackBar(
+      snackBar = ConstantWidget.customSnackBar(
           text: 'Selection below minimum quantity', context: context);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @action
@@ -531,15 +576,31 @@ abstract class _ProductsStore with Store {
   }
 
   @action
-  Future<void> removeFromCart({required ProductModel model}) async {
+  Future<void> removeFromCart({
+    required ProductModel model,
+    required BuildContext context,
+  }) async {
     final index =
         cartModel.productList.indexWhere((element) => element.pid == model.pid);
     // print(index);
     if (index != -1) {
-      await _productsRepository.removeFromCart(model: model);
+      final value = await _productsRepository.removeFromCart(model: model);
+      SnackBar snackBar;
+      if (value != null) {
+        snackBar = ConstantWidget.customSnackBar(
+          text: 'Removed from cart',
+          context: context,
+        );
+      } else {
+        snackBar = ConstantWidget.customSnackBar(
+          text: 'Failed to remove from cart',
+          context: context,
+        );
+      }
       await getCartItems(isRemove: true);
       _updateProductsAccordingToCart(model: model.copyWith(cartQuantity: 0));
       cartModel.productList.removeAt(index);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       // plusMinusToCart(model: _currModel);
       // final totalPrice =
       //     (int.parse(model.salePrice) * int.parse(model.cartQuantity)) +

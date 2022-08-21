@@ -20,9 +20,9 @@ class ConstantData {
   /// Necessary URL's
   static String assetsPath = "assets/images/";
   static String catImgUrl = 'https://superadmin.medrpha.com/allimage/';
-  static String productUrl = 'https://partnertest.medrpha.com/product_image/';
-  static String licenseUrl = 'https://test.medrpha.com/user_reg/';
-  static String invoiceUrl = 'https://test.medrpha.com/InvoicePDF/';
+  static String productUrl = 'https://partner.medrpha.com/product_image/';
+  static String licenseUrl = 'https://medrpha.com/user_reg/';
+  static String invoiceUrl = 'https://medrpha.com/InvoicePDF/';
   static String privacyPolicy = "https://google.com";
 
   //Api-key Details

@@ -3320,7 +3320,7 @@ class UploadIconButton extends StatelessWidget {
 
               if (img != null) {
                 const uploadDLImage2 =
-                    'https://test.medrpha.com/api/register/registerdl1';
+                    'https://medrpha.com/api/register/registerdl1';
                 final bytes = await img.readAsBytes();
                 store.saveCertificate(
                   path: img.path,
@@ -3355,7 +3355,7 @@ class UploadIconButton extends StatelessWidget {
 
               if (img != null) {
                 const uploadDLImage2 =
-                    'https://test.medrpha.com/api/register/registerdl2';
+                    'https://medrpha.com/api/register/registerdl2';
                 final bytes = await img.readAsBytes();
                 store.saveCertificate(
                   path: img.path,
@@ -3386,7 +3386,7 @@ class UploadIconButton extends StatelessWidget {
                   await store.takeCertificate(source: ImageSource.camera);
               if (img != null) {
                 const uploadFSSAIImage1 =
-                    'https://test.medrpha.com/api/register/registerfssaiimg';
+                    'https://medrpha.com/api/register/registerfssaiimg';
                 final bytes = await img.readAsBytes();
                 store.saveCertificate(
                   path: img.path,
@@ -3415,7 +3415,7 @@ class UploadIconButton extends StatelessWidget {
                   await store.takeCertificate(source: ImageSource.gallery);
               if (img != null) {
                 const uploadFSSAIImage1 =
-                    'https://test.medrpha.com/api/register/registerfssaiimg';
+                    'https://medrpha.com/api/register/registerfssaiimg';
                 final bytes = await img.readAsBytes();
                 store.saveCertificate(
                   path: img.path,

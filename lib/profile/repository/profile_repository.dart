@@ -16,30 +16,28 @@ import 'package:medrpha_customer/utils/storage.dart';
 
 class ProfileRepository {
   /// Get Profile
-  final _getProfileUrl = 'https://apitest.medrpha.com/api/profile/getprofile';
+  final _getProfileUrl = 'https://api.medrpha.com/api/profile/getprofile';
 
   /// For Customer Profile
-  final _uploadProfileUrl = 'https://apitest.medrpha.com/api/register/register';
+  final _uploadProfileUrl = 'https://api.medrpha.com/api/register/register';
 
   /// For Customer Drug License Details.
-  final _uploadDLUrl = 'https://apitest.medrpha.com/api/register/registerdlno';
+  final _uploadDLUrl = 'https://api.medrpha.com/api/register/registerdlno';
   // final _uploadDLImage1 = 'https://medrpha.com/api/register/registerdl1';
   // final _uploadDLImage2 = 'https://medrpha.com/api/register/registerdl2';
 
   /// For Customer GST Details.
-  final _uploadGSTUrl =
-      'https://apitest.medrpha.com/api/register/registergstno';
+  final _uploadGSTUrl = 'https://api.medrpha.com/api/register/registergstno';
 
-  final _countryUrl = 'https://apitest.medrpha.com/api/register/getcountryall';
-  final _stateUrl = 'https://apitest.medrpha.com/api/register/getstateall';
-  final _cityUrl = 'https://apitest.medrpha.com/api/register/getcityall';
+  final _countryUrl = 'https://api.medrpha.com/api/register/getcountryall';
+  final _stateUrl = 'https://api.medrpha.com/api/register/getstateall';
+  final _cityUrl = 'https://api.medrpha.com/api/register/getcityall';
 
-  final _uploadFssaiUrl =
-      'https://apitest.medrpha.com/api/register/registerfssai';
+  final _uploadFssaiUrl = 'https://api.medrpha.com/api/register/registerfssai';
 
   /// FOr Customer FSSAI Details.
   // final _uploadFSSAIUrl =
-  //     'https://apitest.medrpha.com/api/register/registerfssai';
+  //     'https://api.medrpha.com/api/register/registerfssai';
   // final _uploadFSSAImageUrl =
   //     'https://test.medrpha.com/api/register/registerfssaiimg';
 
@@ -134,13 +132,13 @@ class ProfileRepository {
 
   Future<List<AreaModel>> getArea({String? id}) async {
     final sessId = await DataBox().readSessId();
-    String areaUrl = 'https://apitest.medrpha.com/api/register/getpincodeall';
+    String areaUrl = 'https://api.medrpha.com/api/register/getpincodeall';
     Map<String, dynamic> body = {
       "sessid": sessId,
     };
 
     if (id != null) {
-      areaUrl = 'https://apitest.medrpha.com/api/register/getpincode';
+      areaUrl = 'https://api.medrpha.com/api/register/getpincode';
       body = {"sessid": sessId, 'cityid': id};
     }
 

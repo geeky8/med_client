@@ -34,7 +34,7 @@ class ProfileDetailsScreen extends StatelessWidget {
         final model = store.profileModel;
         return ConstantWidget.getBottomButton(
           context: context,
-          height: 10,
+          height: blockSizeVertical(context: context),
           func: () async {
             final phone = await DataBox().readPhoneNo();
             Navigator.push(

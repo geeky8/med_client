@@ -283,6 +283,38 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$plusStateAtom =
+      Atom(name: '_ProductsStore.plusState', context: context);
+
+  @override
+  StoreState get plusState {
+    _$plusStateAtom.reportRead();
+    return super.plusState;
+  }
+
+  @override
+  set plusState(StoreState value) {
+    _$plusStateAtom.reportWrite(value, super.plusState, () {
+      super.plusState = value;
+    });
+  }
+
+  late final _$minusRemoveStateAtom =
+      Atom(name: '_ProductsStore.minusRemoveState', context: context);
+
+  @override
+  StoreState get minusRemoveState {
+    _$minusRemoveStateAtom.reportRead();
+    return super.minusRemoveState;
+  }
+
+  @override
+  set minusRemoveState(StoreState value) {
+    _$minusRemoveStateAtom.reportWrite(value, super.minusRemoveState, () {
+      super.minusRemoveState = value;
+    });
+  }
+
   late final _$paymentOptionsAtom =
       Atom(name: '_ProductsStore.paymentOptions', context: context);
 
@@ -482,9 +514,10 @@ mixin _$ProductsStore on _ProductsStore, Store {
       AsyncAction('_ProductsStore.removeFromCart', context: context);
 
   @override
-  Future<void> removeFromCart({required ProductModel model}) {
+  Future<void> removeFromCart(
+      {required ProductModel model, required BuildContext context}) {
     return _$removeFromCartAsyncAction
-        .run(() => super.removeFromCart(model: model));
+        .run(() => super.removeFromCart(model: model, context: context));
   }
 
   late final _$checkoutAsyncAction =
@@ -559,6 +592,8 @@ searchState: ${searchState},
 searchController: ${searchController},
 searchList: ${searchList},
 cartModel: ${cartModel},
+plusState: ${plusState},
+minusRemoveState: ${minusRemoveState},
 paymentOptions: ${paymentOptions},
 orderId: ${orderId},
 payableAmount: ${payableAmount},

@@ -31,8 +31,10 @@ class ProductModel {
       salePrice: (json['saleprice'] ?? '') as String,
       productImg: (json['product_img'] ?? '') as String,
       productName: (json['product_name'] != null)
-          ? (((json['product_name']) as String)[0] +
-              (json['product_name'] as String).substring(1).toLowerCase())
+          ? (((json['product_name']) as String) != '')
+              ? (((json['product_name']) as String)[0] +
+                  (json['product_name'] as String).substring(1).toLowerCase())
+              : ''
           : '',
       category: (json['categorystr'] ?? '') as String,
       company: (json['compnaystr'] ?? '') as String,

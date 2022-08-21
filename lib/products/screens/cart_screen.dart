@@ -438,192 +438,203 @@ class ListItem extends StatelessWidget {
     double radius = ConstantWidget.getScreenPercentSize(context, 1.5);
 
     // setThemePosition();
-    return Observer(builder: (_) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(radius),
-          border: Border.all(
-              color: ConstantData.borderColor,
-              width: ConstantWidget.getWidthPercentSize(context, 0.08)),
-        ),
-        margin: EdgeInsets.only(top: margin, bottom: margin),
-        height: height,
-        child: Row(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                height: imageSize,
-                width: imageSize,
-                margin: EdgeInsets.all(margin),
-                padding: EdgeInsets.all((margin / 5)),
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  // color: ConstantData.bgColor,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(radius),
+        border: Border.all(
+            color: ConstantData.borderColor,
+            width: ConstantWidget.getWidthPercentSize(context, 0.08)),
+      ),
+      margin: EdgeInsets.only(top: margin, bottom: margin),
+      height: height,
+      child: Row(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              height: imageSize,
+              width: imageSize,
+              margin: EdgeInsets.all(margin),
+              padding: EdgeInsets.all((margin / 5)),
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                // color: ConstantData.bgColor,
 
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(
-                      font18Px(context: context),
-                    ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(
+                    font18Px(context: context),
                   ),
-                  image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                      ConstantData.productUrl + model.productImg,
-                    ),
-                    fit: BoxFit.cover,
+                ),
+                image: DecorationImage(
+                  image: CachedNetworkImageProvider(
+                    ConstantData.productUrl + model.productImg,
                   ),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.symmetric(vertical: (margin * 1.2)),
-                // child: Row(
-                child: Stack(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ConstantWidget.getCustomText(
-                                model.productName,
-                                ConstantData.mainTextColor,
-                                1,
-                                TextAlign.start,
-                                FontWeight.w500,
-                                font18Px(context: context),
-                              ),
+          ),
+          Expanded(
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: (margin * 1.2)),
+              // child: Row(
+              child: Stack(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ConstantWidget.getCustomText(
+                              model.productName,
+                              ConstantData.mainTextColor,
+                              1,
+                              TextAlign.start,
+                              FontWeight.w500,
+                              font18Px(context: context),
                             ),
-                          ],
-                        ),
-                        // SizedBox(
-                        //   width: ConstantWidget.getPercentSize(height, 7),
-                        // ),
-                        // ConstantWidget.getCustomText(
-                        //     model.company,
-                        //     Colors.grey,
-                        //     1,
-                        //     TextAlign.start,
-                        //     FontWeight.w500,
-                        //     font15Px(context: context)),
-                        SizedBox(
-                          height:
-                              ConstantWidget.getWidthPercentSize(context, 1.2),
-                        ),
-                        ConstantWidget.getLineTextView('₹${model.oldMrp}',
-                            Colors.grey, font15Px(context: context)),
-                        SizedBox(
-                          height:
-                              ConstantWidget.getWidthPercentSize(context, 1.2),
-                        ),
-                        ConstantWidget.getCustomText(
-                            '₹${model.newMrp}',
-                            ConstantData.accentColor,
+                          ),
+                        ],
+                      ),
+                      // SizedBox(
+                      //   width: ConstantWidget.getPercentSize(height, 7),
+                      // ),
+                      // ConstantWidget.getCustomText(
+                      //     model.company,
+                      //     Colors.grey,
+                      //     1,
+                      //     TextAlign.start,
+                      //     FontWeight.w500,
+                      //     font15Px(context: context)),
+                      SizedBox(
+                        height:
+                            ConstantWidget.getWidthPercentSize(context, 1.2),
+                      ),
+                      ConstantWidget.getLineTextView('₹${model.oldMrp}',
+                          Colors.grey, font15Px(context: context)),
+                      SizedBox(
+                        height:
+                            ConstantWidget.getWidthPercentSize(context, 1.2),
+                      ),
+                      ConstantWidget.getCustomText(
+                          '₹${model.newMrp}',
+                          ConstantData.accentColor,
+                          1,
+                          TextAlign.start,
+                          FontWeight.w800,
+                          font18Px(context: context)),
+                      SizedBox(
+                        height: blockSizeVertical(context: context) * 1.5,
+                      ),
+                      const Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ConstantWidget.getCustomText(
+                            'Sub-Total:',
+                            ConstantData.mainTextColor,
                             1,
-                            TextAlign.start,
-                            FontWeight.w800,
-                            font18Px(context: context)),
-                        SizedBox(
-                          height: blockSizeVertical(context: context) * 1.5,
-                        ),
-                        const Divider(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ConstantWidget.getCustomText(
-                              'Sub-Total:',
+                            TextAlign.center,
+                            FontWeight.w500,
+                            font18Px(context: context),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                right:
+                                    blockSizeHorizontal(context: context) * 2),
+                            child: ConstantWidget.getCustomText(
+                              '₹${model.subTotal}',
                               ConstantData.mainTextColor,
                               1,
                               TextAlign.center,
                               FontWeight.w500,
                               font18Px(context: context),
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  right: blockSizeHorizontal(context: context) *
-                                      2),
-                              child: ConstantWidget.getCustomText(
-                                '₹${model.subTotal}',
-                                ConstantData.mainTextColor,
-                                1,
-                                TextAlign.center,
-                                FontWeight.w500,
-                                font18Px(context: context),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  ///------------------- Remove from cart ---------------------------------
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: blockSizeHorizontal(context: context) * 2,
+                      ),
+                      child: Observer(builder: (_) {
+                        if (store.removeState == StoreState.LOADING) {
+                          return ConstantWidget.loadingWidget(
+                            size: blockSizeVertical(context: context) * 2,
+                          );
+                        } else {
+                          return InkWell(
+                            onTap: () async {
+                              store.removeState = StoreState.LOADING;
+                              await store.removeFromCart(
+                                model: model,
+                                context: context,
+                              );
+                              store.removeState = StoreState.SUCCESS;
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: ConstantData.clrBlack20,
+                                shape: BoxShape.circle,
+                              ),
+                              padding: EdgeInsets.all(
+                                  blockSizeHorizontal(context: context) * 1.5),
+                              child: Icon(
+                                Icons.close,
+                                color: ConstantData.textColor,
+                                size: ConstantWidget.getWidthPercentSize(
+                                    context, 4),
                               ),
                             ),
-                          ],
-                        ),
-                      ],
+                          );
+                        }
+                      }),
                     ),
-
-                    ///------------------- Remove from cart ---------------------------------
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: blockSizeHorizontal(context: context) * 2,
-                        ),
-                        child: InkWell(
-                          onTap: () async {
-                            await store.removeFromCart(model: model);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: ConstantData.clrBlack20,
-                              shape: BoxShape.circle,
-                            ),
-                            padding: EdgeInsets.all(
-                                blockSizeHorizontal(context: context) * 1.5),
-                            child: Icon(
-                              Icons.close,
-                              color: ConstantData.textColor,
-                              size: ConstantWidget.getWidthPercentSize(
-                                  context, 4),
-                            ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: blockSizeHorizontal(context: context) * 2,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Observer(builder: (_) {
+                                return PlusMinusWidget(
+                                    model: model, store: store);
+                              }),
+                            ],
                           ),
-                        ),
+                          SizedBox(
+                            width:
+                                ConstantWidget.getWidthPercentSize(context, 3),
+                          ),
+                        ],
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: blockSizeHorizontal(context: context) * 2,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Observer(builder: (_) {
-                                  return PlusMinusWidget(
-                                      model: model, store: store);
-                                }),
-                              ],
-                            ),
-                            SizedBox(
-                              width: ConstantWidget.getWidthPercentSize(
-                                  context, 3),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      );
-    });
+          ),
+        ],
+      ),
+    );
   }
 
   getCartButton(var icon, Function function, BuildContext context) {
