@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
@@ -85,7 +84,7 @@ class CartScreen extends StatelessWidget {
                             ConstantData.primaryColor,
                             1,
                             TextAlign.start,
-                            FontWeight.w600,
+                            FontWeight.w500,
                             font18Px(context: context),
                             // 1.2,
                           ),
@@ -101,7 +100,7 @@ class CartScreen extends StatelessWidget {
                               ConstantData.mainTextColor,
                               1,
                               TextAlign.end,
-                              FontWeight.w600,
+                              FontWeight.w500,
                               font18Px(context: context) * 1.1,
                             );
                           })
@@ -165,7 +164,7 @@ class CartScreen extends StatelessWidget {
                             ConstantData.bgColor,
                             1,
                             TextAlign.center,
-                            FontWeight.w600,
+                            FontWeight.w500,
                             font18Px(context: context),
                           ),
                         ),
@@ -241,9 +240,8 @@ class CartScreen extends StatelessWidget {
                       color: Colors.grey.withOpacity(0.6),
                     ),
                     child: Center(
-                      child: LoadingAnimationWidget.twoRotatingArc(
-                        color: ConstantData.primaryColor,
-                        size: ConstantWidget.getScreenPercentSize(context, 10),
+                      child: ConstantWidget.loadingWidget(
+                        size: blockSizeVertical(context: context) * 5,
                       ),
                     ),
                   ),
@@ -266,12 +264,12 @@ class CartScreen extends StatelessWidget {
         Expanded(
           flex: 1,
           child: ConstantWidget.getCustomText(s, ConstantData.textColor, 1,
-              TextAlign.start, FontWeight.w600, font18Px(context: context)),
+              TextAlign.start, FontWeight.w500, font18Px(context: context)),
         ),
         Expanded(
           flex: 1,
           child: ConstantWidget.getCustomText(s1, ConstantData.textColor, 1,
-              TextAlign.end, FontWeight.w600, font18Px(context: context)),
+              TextAlign.end, FontWeight.w500, font18Px(context: context)),
         )
       ],
     );
@@ -319,7 +317,7 @@ class CartScreen extends StatelessWidget {
 //                   ConstantData.mainTextColor,
 //                   1,
 //                   TextAlign.center,
-//                   FontWeight.w600,
+//                   FontWeight.w500,
 //                   20),
 //               const SizedBox(
 //                 height: 10,
@@ -407,7 +405,7 @@ class CartScreen extends StatelessWidget {
 //                 borderRadius: const BorderRadius.all(
 //                     Radius.circular(ConstantData.avatarRadius)),
 //                 child: Image.asset(
-//                   "${ConstantData.assetsPath}security.png",
+//                   "${ConstantData.assetsPath}med_logo.png",
 //                   color: ConstantData.mainTextColor,
 //                 )),
 //           ),
@@ -496,7 +494,7 @@ class ListItem extends StatelessWidget {
                                 ConstantData.mainTextColor,
                                 1,
                                 TextAlign.start,
-                                FontWeight.w600,
+                                FontWeight.w500,
                                 font18Px(context: context),
                               ),
                             ),
@@ -553,7 +551,7 @@ class ListItem extends StatelessWidget {
                                 ConstantData.mainTextColor,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w600,
+                                FontWeight.w500,
                                 font18Px(context: context),
                               ),
                             ),

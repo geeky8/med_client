@@ -280,7 +280,7 @@ class RemoveButton extends StatelessWidget {
                   ConstantData.bgColor,
                   1,
                   TextAlign.center,
-                  FontWeight.w600,
+                  FontWeight.w500,
                   font18Px(context: context),
                 )
               : Icon(

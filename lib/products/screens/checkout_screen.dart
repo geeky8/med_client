@@ -1,7 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/payment_options.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
@@ -49,7 +50,6 @@ class CheckoutScreen extends StatelessWidget {
     double topMargin = blockSizeVertical(context: context) * 2;
 
     final profileStore = context.read<ProfileStore>();
-
     final productStore = context.read<ProductsStore>();
     final loginStore = context.read<LoginStore>();
     final orderHistoryStore = context.read<OrderHistoryStore>();
@@ -60,172 +60,50 @@ class CheckoutScreen extends StatelessWidget {
         backgroundColor: ConstantData.bgColor,
         appBar:
             ConstantWidget.customAppBar(context: context, title: 'Checkout'),
-        // appBar: AppBar(
-        //   elevation: 0,
-        //   // centerTitle: true,
-        //   backgroundColor: ConstantData.primaryColor,
-        //   title: ConstantWidget.getCustomTextWithoutAlign(
-        //     'Checkout',
-        //     ConstantData.bgColor,
-        //     FontWeight.w600,
-        //     font22Px(context: context),
-        //   ),
-        //   leading: Builder(
-        //     builder: (BuildContext context) {
-        //       return IconButton(
-        //         icon: const Icon(
-        //           Icons.keyboard_backspace_outlined,
-        //           // color: ConstantData.bg,
-        //         ),
-        //         color: ConstantData.bgColor,
-        //         onPressed: () {
-        //           Navigator.pop(context);
-        //         },
-        //       );
-        //     },
-        //   ),
-        // ),
-        bottomNavigationBar: ConstantWidget.getBottomButton(
-          context: context,
-          func: () async {
-            // _startTimer();
-            // await _loginStore.getUserStatus();
-            // if (_loginStore.loginModel.adminStatus) {
-            //   if (_productStore.paymentOptions == PaymentOptions.ONLINE) {
-            // ignore: use_build_context_synchronously
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => Provider.value(
-                  value: productStore,
-                  child: Provider.value(
-                    value: profileStore,
-                    child: Provider.value(
-                      value: orderHistoryStore,
+        bottomNavigationBar: Container(
+          height: ConstantWidget.getScreenPercentSize(context, 9),
+          child: ConstantWidget.getBottomButton(
+            context: context,
+            height: 10,
+            func: () async {
+              // _startTimer();
+              // await _loginStore.getUserStatus();
+              // if (_loginStore.loginModel.adminStatus) {
+              //   if (_productStore.paymentOptions == PaymentOptions.ONLINE) {
+              productStore.checkoutState = StoreState.LOADING;
+              final value = await productStore.checkout(context: context);
+              productStore.checkoutState = StoreState.SUCCESS;
+              // print('orderid------------------${productStore.orderId}');
+              if (value != '') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => Provider.value(
+                      value: productStore,
                       child: Provider.value(
-                        value: loginStore,
+                        value: profileStore,
                         child: Provider.value(
-                          value: bottomNavigationStore,
-                          child: OnlinePaymentScreen(
-                            model: productStore.cartModel,
-                            profileModel: profileStore.profileModel,
+                          value: orderHistoryStore,
+                          child: Provider.value(
+                            value: loginStore,
+                            child: Provider.value(
+                              value: bottomNavigationStore,
+                              child: OnlinePaymentScreen(
+                                model: productStore.cartModel,
+                                profileModel: profileStore.profileModel,
+                                orderId: productStore.orderId,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            );
-            //   } else if (_productStore.paymentOptions ==
-            //           PaymentOptions.PAYLATER &&
-            //       !_loginStore.loginModel.payLater) {
-            //     final snackBar = ConstantWidget.customSnackBar(
-            //         text: 'Your paylater has been deactivated',
-            //         context: context);
-            //     // ignore: use_build_context_synchronously
-            //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            //   } else {
-            //     await _productStore.successOrder(
-            //       context: context,
-            //       loginStore: _loginStore,
-            //       profileStore: _profileStore,
-            //       bottomNavigationStore: _bottomNavigationStore,
-            //       orderHistoryStore: _orderHistoryStore,
-            //       productsStore: _productStore,
-            //     );
-            //     // final status = await _productStore.checkout(
-            //     //   context: context,
-            //     //   func: () {},
-            //     // );
-            //     // if (status != '') {
-            //     //   await _productStore.getCartItems();
-            //     //   await _orderHistoryStore.getOrdersList();
-            //     //   // ignore: use_build_context_synchronously
-            //     //   Navigator.pushReplacement(
-            //     //     context,
-            //     //     MaterialPageRoute(
-            //     //       builder: (_) => Provider.value(
-            //     //         value: _productStore,
-            //     //         child: Provider.value(
-            //     //           value: _loginStore,
-            //     //           child: Provider.value(
-            //     //             value: _profileStore,
-            //     //             child: Provider.value(
-            //     //               value: _orderHistoryStore..getOrdersList(),
-            //     //               child: Provider.value(
-            //     //                 value: _bottomNavigationStore,
-            //     //                 child: const HomeScreen(),
-            //     //               ),
-            //     //             ),
-            //     //           ),
-            //     //         ),
-            //     //       ),
-            //     //     ),
-            //     //   );
-            //     //   showDialog(
-            //     //     context: context,
-            //     //     builder: (context) => OrderDialog(
-            //     //       func: () async {
-            //     //         final repo = OrderHistoryRepository();
-            //     //         final orderHistoryResponseModel =
-            //     //             await repo.getOrdersResponseModel(orderId: status);
-
-            //     //         // print('----orderId $status');
-
-            //     //         final orderHistoryModel = await repo.getListOrdersHistory(
-            //     //           orderNo: orderHistoryResponseModel.orderNo,
-            //     //         );
-
-            //     //         // print(
-            //     //         //     // '-order payment status -${orderHistoryModel.first.paymentStatusType.name}');
-            //     //         // ignore: use_build_context_synchronously
-            //     //         Navigator.pop(context);
-            //     //         // ignore: use_build_context_synchronously
-            //     //         Navigator.push(
-            //     //           context,
-            //     //           MaterialPageRoute(
-            //     //             builder: (_) => Provider.value(
-            //     //               value: _orderHistoryStore,
-            //     //               child: OrderHistoryDetailsScreen(
-            //     //                 model: orderHistoryModel.first,
-            //     //               ),
-            //     //             ),
-            //     //           ),
-            //     //         );
-            //     //       },
-            //     //       image: 'order-confirmed.png',
-            //     //       text: 'Thank you for placing your order',
-            //     //       label: 'Check status',
-            //     //     ),
-            //     //   );
-            //     // } else {
-            //     //   showDialog(
-            //     //     context: context,
-            //     //     builder: (context) => OrderDialog(
-            //     //       func: () {
-            //     //         Navigator.pop(context);
-            //     //       },
-            //     //       image: 'online-payment-error.png',
-            //     //       text:
-            //     //           'Oops...something went wrong. If money is deducted it will be refunded to your account.',
-            //     //       label: 'Cancel',
-            //     //     ),
-            //     //   );
-            //     //   final snackBar = ConstantWidget.customSnackBar(
-            //     //       text: 'Failed to place the order', context: context);
-            //     //   // ignore: use_build_context_synchronously
-            //     //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            //     // }
-            //   }
-            // } else {
-            //   final snackBar = ConstantWidget.customSnackBar(
-            //       text: 'Your account has been deactivated', context: context);
-            //   // ignore: use_build_context_synchronously
-            //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            // }
-          },
-          label: 'Confirm',
+                );
+              }
+            },
+            label: 'Confirm',
+          ),
         ),
         body: Stack(
           children: [
@@ -304,7 +182,7 @@ class CheckoutScreen extends StatelessWidget {
                                         ConstantData.mainTextColor,
                                         1,
                                         TextAlign.center,
-                                        FontWeight.w600,
+                                        FontWeight.w500,
                                         font15Px(context: context) * 1.2,
                                       ),
                                       ConstantWidget.getCustomText(
@@ -324,7 +202,7 @@ class CheckoutScreen extends StatelessWidget {
                                   ConstantData.mainTextColor,
                                   1,
                                   TextAlign.center,
-                                  FontWeight.w600,
+                                  FontWeight.w500,
                                   font15Px(context: context) * 1.2,
                                 )
                               ],
@@ -348,7 +226,7 @@ class CheckoutScreen extends StatelessWidget {
                                 'Address',
                                 ConstantData.mainTextColor,
                                 TextAlign.start,
-                                FontWeight.w600,
+                                FontWeight.w500,
                                 font18Px(context: context) * 1.2,
                               ),
                             ],
@@ -436,7 +314,7 @@ class CheckoutScreen extends StatelessWidget {
                     //             'Options',
                     //             ConstantData.mainTextColor,
                     //             TextAlign.start,
-                    //             FontWeight.w600,
+                    //             FontWeight.w500,
                     //             font18Px(context: context) * 1.2,
                     //           ),
                     //         ],
@@ -489,7 +367,7 @@ class CheckoutScreen extends StatelessWidget {
                             ConstantData.mainTextColor,
                             1,
                             TextAlign.center,
-                            FontWeight.w600,
+                            FontWeight.w500,
                             font18Px(context: context) * 1.2,
                           ),
                           SizedBox(
@@ -512,7 +390,7 @@ class CheckoutScreen extends StatelessWidget {
                                 Colors.black45,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w600,
+                                FontWeight.w500,
                                 font15Px(context: context) * 1.1,
                               ),
                             ],
@@ -528,7 +406,7 @@ class CheckoutScreen extends StatelessWidget {
                                 ConstantData.mainTextColor,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w600,
+                                FontWeight.w500,
                                 font15Px(context: context) * 1.25,
                               ),
                               const Spacer(),
@@ -537,7 +415,7 @@ class CheckoutScreen extends StatelessWidget {
                                 ConstantData.primaryColor,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w600,
+                                FontWeight.w500,
                                 font15Px(context: context) * 1.30,
                               ),
                             ],
@@ -557,9 +435,8 @@ class CheckoutScreen extends StatelessWidget {
                   color: Colors.grey.withOpacity(0.6),
                 ),
                 child: Center(
-                  child: LoadingAnimationWidget.twoRotatingArc(
-                    color: ConstantData.primaryColor,
-                    size: ConstantWidget.getScreenPercentSize(context, 10),
+                  child: ConstantWidget.loadingWidget(
+                    size: blockSizeVertical(context: context) * 5,
                   ),
                 ),
               ),
@@ -628,13 +505,15 @@ class PaymentOptionsWidget extends StatelessWidget {
                 // ),
                 ConstantWidget.getCustomText(
                   label,
-                  ConstantData.mainTextColor,
+                  (_productStore.paymentOptions == options)
+                      ? ConstantData.primaryColor
+                      : ConstantData.mainTextColor,
                   1,
                   TextAlign.center,
                   (_productStore.paymentOptions == options)
-                      ? FontWeight.w600
+                      ? FontWeight.w500
                       : FontWeight.w400,
-                  font15Px(context: context) * 1.1,
+                  font18Px(context: context) * 1.1,
                 ),
               ],
             ),
@@ -648,7 +527,7 @@ class PaymentOptionsWidget extends StatelessWidget {
                 (_productStore.paymentOptions == options)
                     ? Icons.check_circle
                     : Icons.circle_outlined,
-                size: font22Px(context: context) * 1.2,
+                size: font25Px(context: context) * 1.2,
                 color: (_productStore.paymentOptions == options)
                     ? ConstantData.primaryColor
                     : ConstantData.textColor,

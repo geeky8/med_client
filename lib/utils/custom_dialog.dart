@@ -99,7 +99,7 @@ class _CustomDialog extends State<CustomDialog> {
                 'ok',
                 ConstantData.accentColor,
                 TextAlign.start,
-                FontWeight.w600,
+                FontWeight.w500,
                 font22Px(context: context),
               ),
               onTap: () {

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 // import 'package:dio/dio.dart';
 // import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:flutter/foundation.dart';
 import 'package:medrpha_customer/enums/payment_options.dart';
 import 'package:medrpha_customer/products/models/cart_model.dart';
 import 'package:medrpha_customer/products/models/category_model.dart';
@@ -52,6 +53,10 @@ class ProductsRepository {
       "sessid": sessId,
     };
     final resp = await _httpClient.post(Uri.parse(_categoryUrl), body: body);
+
+    if (kDebugMode) {
+      print('category resp -----------${resp.body}');
+    }
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
@@ -234,6 +239,8 @@ class ProductsRepository {
 
     final resp = await _httpClient.post(Uri.parse(_addToCartUrl), body: body);
 
+    // print('------ add to cart${resp.body}');
+
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       // print(respBody);
@@ -281,7 +288,7 @@ class ProductsRepository {
 
     final resp = await _httpClient.post(Uri.parse(_getCartUrl), body: body);
 
-    // print(resp.body);
+    // print('------ get cart${resp.body}');
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
@@ -333,9 +340,11 @@ class ProductsRepository {
 
     final resp = await _httpClient.post(Uri.parse(_checkoutUrl), body: body);
 
+    // print('------ checkout${resp.body}');
+
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      // print(respBody);
+      // print('---------- checkout ${respBody}');
       if (respBody['status'] == '1') {
         return respBody['order_id'] as String;
       }
@@ -343,7 +352,7 @@ class ProductsRepository {
     return null;
   }
 
-  Future<String?> checkoutConfirm({
+  Future<String> checkoutConfirm({
     required String orderId,
     required PaymentOptions paymentOptionsType,
   }) async {
@@ -354,16 +363,20 @@ class ProductsRepository {
       "payment_mode": paymentOptionsType.toPaymentOption()
     };
 
+    String confirm = '';
+
     final resp =
         await _httpClient.post(Uri.parse(_checkoutConfirmUrl), body: body);
-    print('---------- Confirm checkout ---------- ${resp.body}');
+    if (kDebugMode) {
+      print('---------- Confirm checkout ---------- ${resp.body}');
+    }
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body) as Map<String, dynamic>;
       if (respBody['status'] == '1') {
-        return (respBody['order_id'] as String);
+        confirm = respBody['order_id'] as String;
       }
     }
-    return null;
+    return confirm;
   }
 
   Future<int> paymentConfirmation({required String orderId}) async {

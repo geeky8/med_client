@@ -703,7 +703,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ConstantData.bgColor,
                                   1,
                                   TextAlign.center,
-                                  FontWeight.w600,
+                                  FontWeight.w500,
                                   font15Px(context: context),
                                 ),
                               );
@@ -753,7 +753,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       //             ConstantData.bgColor,
                       //             1,
                       //             TextAlign.center,
-                      //             FontWeight.w600,
+                      //             FontWeight.w500,
                       //             font15Px(context: context),
                       //           ),
                       //         );
@@ -802,7 +802,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ConstantData.bgColor,
                                   1,
                                   TextAlign.center,
-                                  FontWeight.w600,
+                                  FontWeight.w500,
                                   font15Px(context: context),
                                 ),
                               );
@@ -1168,7 +1168,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: ConstantWidget.getCustomTextWithoutAlign(
                               'FSSAI Details',
                               ConstantData.mainTextColor,
-                              FontWeight.w600,
+                              FontWeight.w500,
                               font22Px(context: context)),
                         ),
                         SizedBox(
@@ -1235,7 +1235,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: ConstantWidget.getCustomTextWithoutAlign(
                               'Upload FSSAI Certificate',
                               ConstantData.mainTextColor,
-                              FontWeight.w600,
+                              FontWeight.w500,
                               font22Px(context: context)),
                         ),
                         SizedBox(
@@ -1344,7 +1344,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: ConstantWidget.getCustomTextWithoutAlign(
                               'Certificate',
                               ConstantData.mainTextColor,
-                              FontWeight.w600,
+                              FontWeight.w500,
                               font22Px(context: context)),
                         ),
                         SizedBox(
@@ -1671,7 +1671,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ConstantWidget.getCustomTextWithoutAlign(
                             'Drug License Details',
                             ConstantData.mainTextColor,
-                            FontWeight.w600,
+                            FontWeight.w500,
                             font22Px(context: context)),
                       ),
                       SizedBox(
@@ -1786,7 +1786,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ConstantWidget.getCustomTextWithoutAlign(
                             'Upload License Certificate',
                             ConstantData.mainTextColor,
-                            FontWeight.w600,
+                            FontWeight.w500,
                             font22Px(context: context)),
                       ),
                       SizedBox(
@@ -1886,7 +1886,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ConstantWidget.getCustomTextWithoutAlign(
                             'Certificate',
                             ConstantData.mainTextColor,
-                            FontWeight.w600,
+                            FontWeight.w500,
                             font22Px(context: context)),
                       ),
                       SizedBox(
@@ -2370,7 +2370,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: ConstantWidget.getCustomTextWithoutAlign(
                           'GST Details',
                           ConstantData.mainTextColor,
-                          FontWeight.w600,
+                          FontWeight.w500,
                           font22Px(context: context)),
                     ),
                     SizedBox(
@@ -2630,7 +2630,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ConstantWidget.getCustomTextWithoutAlign(
                             'Firm Info',
                             ConstantData.mainTextColor,
-                            FontWeight.w600,
+                            FontWeight.w500,
                             font22Px(context: context)),
                       ),
                       SizedBox(
@@ -2994,7 +2994,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ConstantWidget.getCustomTextWithoutAlign(
                             'Contact Details',
                             ConstantData.mainTextColor,
-                            FontWeight.w600,
+                            FontWeight.w500,
                             font22Px(context: context)),
                       ),
                       SizedBox(

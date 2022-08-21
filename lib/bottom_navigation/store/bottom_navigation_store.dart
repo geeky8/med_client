@@ -8,5 +8,5 @@ class BottomNavigationStore = _BottomNavigationStore
 abstract class _BottomNavigationStore with Store {
   /// current screen
   @observable
-  int currentPage = 1;
+  int currentPage = 0;
 }

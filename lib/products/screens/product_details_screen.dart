@@ -149,7 +149,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                               ConstantData.mainTextColor,
                                               2,
                                               TextAlign.start,
-                                              FontWeight.w600,
+                                              FontWeight.w500,
                                               font22Px(context: context) * 1.2,
                                             ),
                                             const Spacer(),
@@ -178,7 +178,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                                             .mainTextColor,
                                                         2,
                                                         TextAlign.center,
-                                                        FontWeight.w600,
+                                                        FontWeight.w500,
                                                         font18Px(
                                                             context: context),
                                                       ),
@@ -227,12 +227,13 @@ class ProductsDetailScreen extends StatelessWidget {
                                               CrossAxisAlignment.center,
                                           children: [
                                             ConstantWidget.getCustomText(
-                                                "Expiry Date :",
-                                                ConstantData.textColor,
-                                                2,
-                                                TextAlign.start,
-                                                FontWeight.w500,
-                                                font18Px(context: context)),
+                                              "Expiry Date :",
+                                              ConstantData.textColor,
+                                              2,
+                                              TextAlign.start,
+                                              FontWeight.w300,
+                                              font18Px(context: context),
+                                            ),
                                             SizedBox(
                                               width: blockSizeHorizontal(
                                                       context: context) *
@@ -267,7 +268,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                                     ConstantData.mainTextColor,
                                                     2,
                                                     TextAlign.start,
-                                                    FontWeight.w600,
+                                                    FontWeight.w500,
                                                     font22Px(context: context)),
                                                 SizedBox(
                                                   width: ((margin) / 4),
@@ -285,7 +286,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                                                 .accentColor,
                                                             2,
                                                             TextAlign.end,
-                                                            FontWeight.w600,
+                                                            FontWeight.w500,
                                                             ConstantWidget
                                                                 .getScreenPercentSize(
                                                                     context,
@@ -392,7 +393,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                     'More Prodcuts',
                                     ConstantData.mainTextColor,
                                     TextAlign.start,
-                                    FontWeight.w600,
+                                    FontWeight.w500,
                                     font22Px(context: context),
                                   ),
                                 ),
@@ -579,7 +580,7 @@ class CustomQuantity extends StatelessWidget {
                     ConstantData.mainTextColor,
                     2,
                     TextAlign.center,
-                    FontWeight.w600,
+                    FontWeight.w500,
                     font22Px(context: context)),
                 SizedBox(
                   height: blockSizeVertical(context: context) * 3,
@@ -606,19 +607,20 @@ class CustomQuantity extends StatelessWidget {
                       },
                       initialValue: '${model.cartQuantity}',
                       decoration: InputDecoration(
-                          hintText: '${model.cartQuantity}',
-                          hintStyle: TextStyle(
-                              fontSize: font18Px(context: context),
-                              color: ConstantData.mainTextColor),
-                          labelText: 'Qunatity',
-                          labelStyle: TextStyle(
-                              fontSize: font18Px(context: context),
-                              color: ConstantData.mainTextColor),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                  color: ConstantData.mainTextColor,
-                                  width: 1.5))),
+                        hintText: '${model.cartQuantity}',
+                        hintStyle: TextStyle(
+                            fontSize: font18Px(context: context),
+                            color: ConstantData.mainTextColor),
+                        labelText: 'Qunatity',
+                        labelStyle: TextStyle(
+                            fontSize: font18Px(context: context),
+                            color: ConstantData.mainTextColor),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: ConstantData.mainTextColor, width: 1.5),
+                        ),
+                      ),
                     ),
                   );
                 }),

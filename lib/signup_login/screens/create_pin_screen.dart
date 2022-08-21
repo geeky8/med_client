@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
@@ -100,8 +98,8 @@ class SignInPage extends StatelessWidget {
                   //---> Pin confirmation button
                   InkWell(
                     onTap: () async {
-                      print(pin);
-                      print(confirmPin);
+                      // print(pin);
+                      // print(confirmPin);
                       if (pin == confirmPin) {
                         final dataBox = DataBox();
                         await dataBox.writePin(pin: pin);
@@ -111,7 +109,7 @@ class SignInPage extends StatelessWidget {
                             builder: (_) {
                               return CustomAlertDialog(
                                 header: 'Success',
-                                image: 'security.png',
+                                image: 'med_logo.png',
                                 description: 'Pin successfully created',
                                 func: () {
                                   Navigator.of(context).pushReplacement(

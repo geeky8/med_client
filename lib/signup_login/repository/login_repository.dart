@@ -26,10 +26,10 @@ class LoginRepository {
     );
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body) as Map<String, dynamic>;
-      print(respBody);
+      // print(respBody);
       return respBody['status'] as String;
     } else {
-      print('error');
+      // print('error');
       return 'error';
     }
   }
@@ -38,13 +38,13 @@ class LoginRepository {
   Future<OTPModel> getUserStatus({required OTPModel model}) async {
     final body = {"sessid": model.sessId};
     final resp = await httpClient.post(Uri.parse(checkStatus), body: body);
-    print(resp.body);
+    // print(resp.body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body) as Map<String, dynamic>;
       // print(respBody);
-      final _status = respBody['status'];
+      final status = respBody['status'];
       // print(respBody);
-      if (_status == '1') {
+      if (status == '1') {
         final data = respBody['data'] as Map<String, dynamic>;
         // print(((data['complete_reg_status'] as String) == 'False'));
         // print('adminStatus : ${(data['adminstatus'] as String)}');
@@ -78,13 +78,13 @@ class LoginRepository {
     };
 
     final resp = await httpClient.post(Uri.parse(checkOTPUrl), body: body);
-    print(resp.body.toString());
+    // print(resp.body.toString());
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body) as Map<String, dynamic>;
       final status = respBody['status'] as String;
       if (status == '1') {
         final data = respBody['data'] as Map<String, dynamic>;
-        print(data.toString());
+        // print(data.toString());
         final model = OTPModel.fromJson(json: data);
         return model;
       } else {

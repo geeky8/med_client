@@ -1,4 +1,6 @@
 // import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
+// ignore_for_file: prefer_interpolation_to_compose_strings
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/bottom_navigation/screens/setting_page_screen.dart';
@@ -20,11 +22,11 @@ class HomeScreen extends StatelessWidget {
 
     /// List pages toggled using bottom navigation
     final pages = [
-      const OrderHistoryScreen(),
       const ProductHomeScreen(),
       const CategoriesListScreen(
         isHome: false,
       ),
+      const OrderHistoryScreen(),
       const SettingsPageScreen(),
     ];
 
@@ -285,7 +287,7 @@ class HomeScreen extends StatelessWidget {
               selectedLabelStyle: TextStyle(
                 fontFamily: ConstantData.fontFamily,
                 fontSize: font12Px(context: context),
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 color: ConstantData.primaryColor,
               ),
               unselectedLabelStyle: TextStyle(
@@ -294,20 +296,47 @@ class HomeScreen extends StatelessWidget {
                 color: ConstantData.clrBlack30,
               ),
               items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.shopping_bag_outlined),
-                  activeIcon: Icon(Icons.shopping_bag),
-                  label: 'Orders',
-                ),
+                // BottomNavigationBarItem(
+                //   icon: Image.asset(ConstantData.assetsPath + 'home.png'),
+                //   activeIcon: Image.asset(
+                //     '${ConstantData.assetsPath}home.png',
+                //     color: ConstantData.primaryColor,
+                //     colorBlendMode: BlendMode.srcIn,
+                //   ),
+                //   label: 'Home',
+                // ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home_outlined),
                   activeIcon: Icon(Icons.home),
                   label: 'Home',
                 ),
+                // BottomNavigationBarItem(
+                //   icon: Image.asset(ConstantData.assetsPath + 'categories.png'),
+                //   activeIcon: Image.asset(
+                //     '${ConstantData.assetsPath}categories.png',
+                //     color: ConstantData.primaryColor,
+                //     colorBlendMode: BlendMode.srcIn,
+                //   ),
+                //   label: 'Category',
+                // ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.grid_view_outlined),
                   activeIcon: Icon(Icons.grid_view_rounded),
                   label: 'Categories',
+                ),
+                // BottomNavigationBarItem(
+                //   icon: Image.asset(ConstantData.assetsPath + 'bag.png'),
+                //   activeIcon: Image.asset(
+                //     '${ConstantData.assetsPath}bag.png',
+                //     color: ConstantData.primaryColor,
+                //     colorBlendMode: BlendMode.srcIn,
+                //   ),
+                //   label: 'Orders',
+                // ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.shopping_bag_outlined),
+                  activeIcon: Icon(Icons.shopping_bag),
+                  label: 'Orders',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.settings_outlined),

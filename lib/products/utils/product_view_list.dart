@@ -139,7 +139,7 @@ class ProductViewList extends StatelessWidget {
                                         ConstantData.mainTextColor,
                                         1,
                                         TextAlign.start,
-                                        FontWeight.w600,
+                                        FontWeight.w500,
                                         font18Px(context: context)),
                                     SizedBox(
                                       height:
@@ -152,7 +152,7 @@ class ProductViewList extends StatelessWidget {
                                         Colors.grey,
                                         1,
                                         TextAlign.start,
-                                        FontWeight.w600,
+                                        FontWeight.w500,
                                         font12Px(context: context)),
                                   ],
                                 ),
@@ -250,7 +250,7 @@ class ProductViewList extends StatelessWidget {
                                               ConstantData.mainTextColor,
                                               1,
                                               TextAlign.start,
-                                              FontWeight.w600,
+                                              FontWeight.w500,
                                               font15Px(context: context) * 1.1,
                                             ),
                                             SizedBox(

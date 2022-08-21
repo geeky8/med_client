@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
@@ -86,7 +88,7 @@ class _ThankYouDialog extends State<ThankYouDialog> {
                   'thankYou',
                   ConstantData.mainTextColor,
                   TextAlign.center,
-                  FontWeight.w600,
+                  FontWeight.w500,
                   ConstantWidget.getPercentSize(height, 7)),
               SizedBox(
                 height: ConstantWidget.getPercentSize(
@@ -100,7 +102,7 @@ class _ThankYouDialog extends State<ThankYouDialog> {
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     style: TextStyle(
-                      // fontWeight: FontWeight.w600,
+                      // fontWeight: FontWeight.w500,
                       fontSize: font18Px(context: context),
                       fontFamily: ConstantData.fontFamily,
                       color: ConstantData.mainTextColor,
@@ -111,7 +113,7 @@ class _ThankYouDialog extends State<ThankYouDialog> {
                           text: ' #345678 ',
                           style: TextStyle(
                               fontSize: font18Px(context: context),
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               color: ConstantData.textColor)),
                       const TextSpan(text: 'is Completed.'),
                     ],
@@ -146,7 +148,7 @@ class _ThankYouDialog extends State<ThankYouDialog> {
                         text: '\nOrder Tracking ',
                         style: TextStyle(
                             decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                             fontSize: font22Px(context: context),
                             color: ConstantData.accentColor)),
                     TextSpan(

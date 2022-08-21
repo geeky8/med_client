@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/categories.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
@@ -47,17 +46,9 @@ class ProductHomeScreen extends StatelessWidget {
             store.message == 'Products not servicable in your selected area!') {
           return Container(
             height: ConstantWidget.getWidthPercentSize(context, 15),
-
             decoration: BoxDecoration(
-              color: ConstantData.accentColor,
-              // border: Border(
-              //   top: BorderSide(color: ConstantData.clrBlack20, width: 1.2),
-              //   bottom: BorderSide(color: ConstantData.clrBlack20, width: 1.2),
-              // ),
+              color: ConstantData.accentColor.withOpacity(0.5),
             ),
-            // padding: EdgeInsets.symmetric(
-            //     horizontal: blockSizeHorizontal(context: context) * 2,
-            //     ),
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: blockSizeHorizontal(context: context) * 4,
@@ -71,7 +62,7 @@ class ProductHomeScreen extends StatelessWidget {
                       children: [
                         ConstantWidget.getCustomText(
                           'Total Payable:',
-                          ConstantData.bgColor,
+                          ConstantData.mainTextColor,
                           1,
                           TextAlign.center,
                           FontWeight.w600,
@@ -82,11 +73,11 @@ class ProductHomeScreen extends StatelessWidget {
                         ),
                         ConstantWidget.getCustomText(
                           '₹${store.cartModel.totalSalePrice}',
-                          ConstantData.bgColor,
+                          ConstantData.mainTextColor,
                           1,
                           TextAlign.center,
                           FontWeight.w600,
-                          font15Px(context: context) * 1.1,
+                          font18Px(context: context),
                         ),
                       ],
                     ),
@@ -120,7 +111,7 @@ class ProductHomeScreen extends StatelessWidget {
                           },
                           child: ConstantWidget.getCustomText(
                             'View in Cart',
-                            ConstantData.bgColor,
+                            ConstantData.mainTextColor,
                             1,
                             TextAlign.center,
                             FontWeight.w600,
@@ -227,7 +218,7 @@ class ProductHomeScreen extends StatelessWidget {
                                           Colors.white,
                                           1,
                                           TextAlign.center,
-                                          FontWeight.w600,
+                                          FontWeight.w500,
                                           font12Px(context: context) / 1.2,
                                         );
                                       }),
@@ -285,7 +276,7 @@ class ProductHomeScreen extends StatelessWidget {
               //             ConstantData.mainTextColor,
               //             1,
               //             TextAlign.start,
-              //             FontWeight.w600,
+              //             FontWeight.w500,
               //             font18Px(context: context),
               //           ),
               //           const SizedBox(
@@ -296,7 +287,7 @@ class ProductHomeScreen extends StatelessWidget {
               //             Colors.orange,
               //             1,
               //             TextAlign.start,
-              //             FontWeight.w600,
+              //             FontWeight.w500,
               //             font18Px(context: context),
               //           ),
               //         ],
@@ -449,7 +440,7 @@ class ProductHomeScreen extends StatelessWidget {
                                   hintStyle: TextStyle(
                                     color: Colors.grey,
                                     fontFamily: ConstantData.fontFamily,
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.w300,
                                     fontSize: font15Px(context: context) * 1.2,
                                   ),
                                   filled: true,
@@ -491,14 +482,14 @@ class ProductHomeScreen extends StatelessWidget {
                             ConstantWidget.getCustomTextWithoutAlign(
                               'Categories',
                               ConstantData.mainTextColor,
-                              FontWeight.w600,
+                              FontWeight.w500,
                               font22Px(context: context),
                             ),
                             const Spacer(),
                             InkWell(
                               child: ConstantWidget.getCustomTextWithoutAlign(
                                   'View All',
-                                  ConstantData.accentColor,
+                                  ConstantData.primaryColor,
                                   FontWeight.w600,
                                   font18Px(context: context)),
                               onTap: () {
@@ -525,10 +516,17 @@ class ProductHomeScreen extends StatelessWidget {
 
                         switch (state) {
                           case StoreState.LOADING:
-                            return LoadingAnimationWidget.dotsTriangle(
-                              color: ConstantData.accentColor,
-                              size: ConstantWidget.getScreenPercentSize(
-                                  context, 7),
+                            // return LoadingAnimationWidget.dotsTriangle(
+                            //   color: ConstantData.accentColor,
+                            //   size: ConstantWidget.getScreenPercentSize(
+                            //       context, 7),
+                            // );
+                            return SizedBox(
+                              height: ConstantWidget.getWidthPercentSize(
+                                  context, 10),
+                              width: ConstantWidget.getWidthPercentSize(
+                                  context, 10),
+                              child: const CircularProgressIndicator(),
                             );
 
                           case StoreState.SUCCESS:
@@ -569,7 +567,7 @@ class ProductHomeScreen extends StatelessWidget {
                                 return ConstantWidget.getCustomTextWithoutAlign(
                                   '${categoryType.categoryString()} Products',
                                   ConstantData.mainTextColor,
-                                  FontWeight.w600,
+                                  FontWeight.w500,
                                   font22Px(context: context),
                                 );
                               }),
@@ -711,7 +709,7 @@ class ViewAllToggle extends StatelessWidget {
     return InkWell(
       child: ConstantWidget.getCustomTextWithoutAlign(
         'View All',
-        ConstantData.accentColor,
+        ConstantData.primaryColor,
         FontWeight.w600,
         font18Px(context: context),
       ),

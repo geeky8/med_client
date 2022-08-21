@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
@@ -45,7 +47,7 @@ class CustomDialogBox extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ConstantWidget.getCustomText(title, ConstantData.mainTextColor, 1,
-                  TextAlign.center, FontWeight.w600, 20),
+                  TextAlign.center, FontWeight.w500, 20),
               const SizedBox(
                 height: 10,
               ),
@@ -131,7 +133,7 @@ class CustomDialogBox extends StatelessWidget {
                 borderRadius: const BorderRadius.all(
                     Radius.circular(ConstantData.avatarRadius)),
                 child: Image.asset(
-                  ConstantData.assetsPath + "security.png",
+                  ConstantData.assetsPath + "med_logo.png",
                   color: ConstantData.mainTextColor,
                 )),
           ),

@@ -71,111 +71,58 @@ class SearchScreen extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(radius)),
                   ),
 
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          ConstantWidget.getCustomText(
-                            "Hey,",
-                            ConstantData.mainTextColor,
-                            1,
-                            TextAlign.start,
-                            FontWeight.w600,
-                            font18Px(context: context),
-                          ),
-                          const SizedBox(
-                            width: 0.5,
-                          ),
-                          ConstantWidget.getCustomText(
-                            "Welcome",
-                            Colors.orange,
-                            1,
-                            TextAlign.start,
-                            FontWeight.w600,
-                            font18Px(context: context),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: (margin / 2.5),
-                      ),
-                      ConstantWidget.getCustomText(
-                        "Can I help you something?",
-                        ConstantData.textColor,
-                        1,
-                        TextAlign.start,
-                        FontWeight.w200,
-                        font15Px(context: context) * 1.2,
-                      ),
-                      SizedBox(
-                        height: ((margin / 1.2)),
-                      ),
-                      Observer(builder: (_) {
-                        return InkWell(
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: searchHeight,
-                            child: TextFormField(
-                              autofocus: true,
-                              style: TextStyle(
-                                fontFamily: ConstantData.fontFamily,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              onChanged: (value) async {
-                                await store.getSearchedResults(term: value);
-                              },
-                              // controller: store.searchController,
-                              // onFieldSubmitted: (value) async {
-                              //   await store.getSearchedResults(term: value);
-                              // },
-                              maxLines: 1,
-                              enabled: true,
-                              textAlignVertical: TextAlignVertical.center,
-                              textAlign: TextAlign.left,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                hintText: 'Search....',
-                                // prefixIcon: Icon(Icons.search),
+                  child: TextFormField(
+                    enabled: true,
+                    autofocus: true,
+                    style: TextStyle(
+                      fontFamily: ConstantData.fontFamily,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    onChanged: (value) async {
+                      await store.getSearchedResults(term: value);
+                    },
+                    // onFieldSubmitted: (value) async {
+                    //   await store.getSearchedResults(term: value);
+                    // },
+                    maxLines: 1,
+                    // controller: store.searchController,
+                    // enabled: false,
+                    textAlignVertical: TextAlignVertical.center,
+                    textAlign: TextAlign.left,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.zero,
+                      hintText: 'Find Products',
+                      // prefixIcon: Icon(Icons.search),
 
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  color: Colors.grey,
-                                  size: font18Px(context: context) * 1.2,
-                                ),
-                                hintStyle: TextStyle(
-                                  color: Colors.grey,
-                                  fontFamily: ConstantData.fontFamily,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: font15Px(context: context) * 1.2,
-                                ),
-                                filled: true,
-                                fillColor: Colors.white,
-                                disabledBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(radius)),
-                                  borderSide: const BorderSide(
-                                      color: Colors.white, width: 2),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(radius)),
-                                  borderSide: const BorderSide(
-                                      color: Colors.white, width: 2),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(radius)),
-                                  borderSide: const BorderSide(
-                                      color: Colors.white, width: 2),
-                                ),
-                              ),
-                            ),
-                          ),
-                          onTap: () {},
-                        );
-                      }),
-                    ],
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                        size: font25Px(context: context) * 1.2,
+                      ),
+                      hintStyle: TextStyle(
+                        color: Colors.grey,
+                        fontFamily: ConstantData.fontFamily,
+                        fontWeight: FontWeight.w300,
+                        fontSize: font15Px(context: context) * 1.2,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(radius)),
+                        borderSide:
+                            BorderSide(color: ConstantData.cellColor, width: 2),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(radius)),
+                        borderSide:
+                            BorderSide(color: ConstantData.cellColor, width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(radius)),
+                        borderSide:
+                            BorderSide(color: ConstantData.cellColor, width: 2),
+                      ),
+                    ),
                   ),
                 ),
               ),

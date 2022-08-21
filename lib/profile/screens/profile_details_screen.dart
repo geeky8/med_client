@@ -34,6 +34,7 @@ class ProfileDetailsScreen extends StatelessWidget {
         final model = store.profileModel;
         return ConstantWidget.getBottomButton(
           context: context,
+          height: 10,
           func: () async {
             final phone = await DataBox().readPhoneNo();
             Navigator.push(
@@ -182,7 +183,7 @@ class FSSAIInfoModule extends StatelessWidget {
             child: ConstantWidget.getCustomTextWithoutAlign(
               'FSSAI License',
               ConstantData.mainTextColor,
-              FontWeight.w600,
+              FontWeight.w500,
               font18Px(context: context) * 1.1,
             ),
           ),
@@ -296,7 +297,7 @@ class DrugLicenseInfoModule extends StatelessWidget {
             child: ConstantWidget.getCustomTextWithoutAlign(
               'Drug License',
               ConstantData.mainTextColor,
-              FontWeight.w600,
+              FontWeight.w500,
               font18Px(context: context) * 1.1,
             ),
           ),
@@ -460,7 +461,7 @@ class GSTInfoModule extends StatelessWidget {
             child: ConstantWidget.getCustomTextWithoutAlign(
               'GST Details',
               ConstantData.mainTextColor,
-              FontWeight.w600,
+              FontWeight.w500,
               font18Px(context: context) * 1.1,
             ),
           ),
@@ -514,7 +515,7 @@ class FirmInfoModule extends StatelessWidget {
             child: ConstantWidget.getCustomTextWithoutAlign(
               'Firm Details',
               ConstantData.mainTextColor,
-              FontWeight.w600,
+              FontWeight.w500,
               font18Px(context: context) * 1.1,
             ),
           ),

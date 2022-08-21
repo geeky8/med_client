@@ -138,7 +138,7 @@ class SignUpPage extends StatelessWidget {
                     child: ConstantWidget.getDefaultTextWidget(
                       'OTP',
                       TextAlign.center,
-                      FontWeight.w600,
+                      FontWeight.w500,
                       font22Px(context: context),
                       Colors.white,
                     ),
@@ -198,7 +198,7 @@ class SignUpPage extends StatelessWidget {
                 //             child: ConstantWidget.getDefaultTextWidget(
                 //               'OTP',
                 //               TextAlign.center,
-                //               FontWeight.w600,
+                //               FontWeight.w500,
                 //               font22Px(context: context),
                 //               Colors.white,
                 //             ),
@@ -243,7 +243,7 @@ class SignUpPage extends StatelessWidget {
                   'Already have an account?\nLogin with pin',
                   ConstantData.accentColor,
                   TextAlign.center,
-                  FontWeight.w600,
+                  FontWeight.w500,
                   font18Px(context: context),
                 ),
               ),
@@ -351,7 +351,7 @@ class PhoneInput extends StatelessWidget {
               child: TextField(
                 controller: controller,
                 onChanged: (value) async {
-                  print(value.length);
+                  // print(value.length);
                   if (value.length >= 10) {
                     FocusManager.instance.primaryFocus?.unfocus();
                   }

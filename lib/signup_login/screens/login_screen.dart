@@ -3,15 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/button_state.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 // ignore: unused_import
 import 'package:medrpha_customer/products/screens/home_products_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
-import 'package:medrpha_customer/profile/screens/profile_screen.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/screens/phone_verification_screen.dart';
 import 'package:medrpha_customer/signup_login/screens/otp_screen.dart';
@@ -19,7 +16,6 @@ import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
-import 'package:medrpha_customer/utils/storage.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -44,228 +40,88 @@ class LoginScreen extends StatelessWidget {
     double height = ConstantWidget.getScreenPercentSize(context, 18);
 
     // Defining all the stores
-    final _profileStore = context.read<ProfileStore>();
-    final _bottomNavigationStore = context.read<BottomNavigationStore>();
-    final _productStore = context.read<ProductsStore>();
-    final _orderHistoryStore = context.read<OrderHistoryStore>();
+    final profileStore = context.read<ProfileStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
+    final productsStore = context.read<ProductsStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
 
     return WillPopScope(
       onWillPop: _requestPop,
       child: Scaffold(
-        backgroundColor: ConstantData.bgColor,
-        body: SafeArea(
-          child: Container(
-            padding: EdgeInsets.all(
-                ConstantWidget.getScreenPercentSize(context, 2.5)),
-            child: ListView(
+        body: Scaffold(
+          backgroundColor: ConstantData.bgColor,
+          bottomNavigationBar: Container(
+            height: ConstantWidget.getScreenPercentSize(context, 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: ConstantWidget.getScreenPercentSize(context, 2),
-                ),
-
-                //---> Logo
-                MedLogo(height: height),
-                SizedBox(
-                  height: ConstantWidget.getScreenPercentSize(context, 2),
-                ),
-                SizedBox(
-                  height: ConstantWidget.getScreenPercentSize(context, 2.5),
-                ),
-
-                //---> Pin Input field
-                PinInput(
-                  pinEditingController: _pinController,
-                  // enable: true,
-                  isObscure: true,
-                  action: TextInputAction.next,
-                  label: 'Enter Pin',
-                  onSubmit: (value) async {
-                    //---> Login func
-                    final dataBox = DataBox();
-                    final pin = await dataBox.readPin();
-                    if (pin == '') {
-                      final snackBar = ConstantWidget.customSnackBar(
-                          text: 'Session expired, Please login again using OTP',
-                          context: context);
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    } else {
-                      if (pin == value) {
-                        store.buttonState = ButtonState.LOADING;
-                        await store.getUserStatus();
-
-                        //---> Check profile completion status
-                        if (store.loginModel.completedStatus) {
-                          // if (!mounted) return;
-                          final productsStore = context.read<ProductsStore>();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => Provider.value(
-                                value: store,
-                                child: Provider.value(
-                                  value: productsStore,
-                                  child: Provider.value(
-                                    value: _bottomNavigationStore,
-                                    child: Provider.value(
-                                      value: _profileStore,
-                                      child: Provider.value(
-                                        value: _orderHistoryStore,
-                                        child: const HomeScreen(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          final phone = await DataBox().readPhoneNo();
-                          // print(phone);
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                                  builder: (_) => Provider.value(
-                                      value: _profileStore,
-                                      child: Provider.value(
-                                        value: store,
-                                        child: Provider.value(
-                                          value: _productStore,
-                                          child: Provider.value(
-                                            value: _bottomNavigationStore,
-                                            child: Provider.value(
-                                              value: _orderHistoryStore,
-                                              child: ProfilePage(
-                                                model:
-                                                    _profileStore.profileModel,
-                                                phone: phone,
-                                                beginToFill: '',
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ))));
-                        }
-                        store.buttonState = ButtonState.SUCCESS;
-                      }
-                      //---> For incorrect pin
-                      else {
-                        final snackBar = ConstantWidget.customSnackBar(
-                            text: 'Incorrect Pin', context: context);
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      }
-                    }
-                  },
-                  unfocus: true,
-                  func: () async {},
-                ),
-
-                SizedBox(
-                  height: ConstantWidget.getScreenPercentSize(context, 4),
-                ),
-
-                // Login Button
-                InkWell(
-                  focusColor: Colors.transparent,
-                  onTap: () async {
-                    //---> Login func
-                    final dataBox = DataBox();
-                    final pin = await dataBox.readPin();
-                    if (pin == '') {
-                      final snackBar = ConstantWidget.customSnackBar(
-                          text: 'Session expired, Please login again using OTP',
-                          context: context);
-
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    } else {
-                      if (pin == _pinController.text.trim()) {
-                        store.buttonState = ButtonState.LOADING;
-                        await store.getUserStatus();
-
-                        //--> Check user's profile status
-                        if (store.loginModel.completedStatus) {
-                          final productsStore = context.read<ProductsStore>();
-
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => Provider.value(
-                                value: store,
-                                child: Provider.value(
-                                  value: productsStore,
-                                  child: Provider.value(
-                                    value: _bottomNavigationStore,
-                                    child: Provider.value(
-                                      value: _profileStore,
-                                      child: const HomeScreen(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          final phone = await DataBox().readPhoneNo();
-                          // print(phone);
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                                  builder: (_) => Provider.value(
-                                      value: _profileStore,
-                                      child: Provider.value(
-                                        value: store,
-                                        child: Provider.value(
-                                          value: _productStore,
-                                          child: Provider.value(
-                                            value: _bottomNavigationStore,
-                                            child: ProfilePage(
-                                              model: _profileStore.profileModel,
-                                              phone: phone,
-                                              beginToFill: '',
-                                            ),
-                                          ),
-                                        ),
-                                      ))));
-                        }
-                        store.buttonState = ButtonState.SUCCESS;
-                      }
-                      //---> Incorrect pin
-                      else {
-                        final snackBar = ConstantWidget.customSnackBar(
-                            text: 'Incorrect Pin', context: context);
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      }
-                    }
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: blockSizeHorizontal(context: context) * 30),
-                    child: Observer(builder: (_) {
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Observer(builder: (_) {
                       final state = store.buttonState;
-
+                      // print('change in buttonState ${store.buttonState}');
                       switch (state) {
                         case ButtonState.LOADING:
-                          return LoadingAnimationWidget.prograssiveDots(
-                            color: ConstantData.color1,
-                            size: ConstantWidget.getScreenPercentSize(
-                                context, 10),
+                          return SizedBox(
+                            height: ConstantWidget.getWidthPercentSize(
+                              context,
+                              10,
+                            ),
+                            width: ConstantWidget.getWidthPercentSize(
+                              context,
+                              10,
+                            ),
+                            child: const CircularProgressIndicator(),
                           );
                         case ButtonState.SUCCESS:
-                          return ConstantWidget.getButtonWidget(
-                            context,
-                            'Login',
-                            ConstantData.primaryColor,
+                          return Expanded(
+                            child: ConstantWidget.getBottomButton(
+                              context: context,
+                              func: () async {
+                                store.buttonState = ButtonState.LOADING;
+                                await store.login(
+                                  value: _pinController.text.trim(),
+                                  context: context,
+                                  productsStore: productsStore,
+                                  loginStore: store,
+                                  profileStore: profileStore,
+                                  bottomNavigationStore: bottomNavigationStore,
+                                  orderHistoryStore: orderHistoryStore,
+                                );
+                                store.buttonState = ButtonState.SUCCESS;
+                              },
+                              label: 'Login',
+                              color: ConstantData.primaryColor,
+                              height: 7,
+                            ),
                           );
                         case ButtonState.ERROR:
-                          return ConstantWidget.getButtonWidget(
-                            context,
-                            'Login',
-                            ConstantData.primaryColor,
+                          return Expanded(
+                            child: ConstantWidget.getBottomButton(
+                              context: context,
+                              func: () async {
+                                await store.login(
+                                  value: _pinController.text.trim(),
+                                  context: context,
+                                  productsStore: productsStore,
+                                  loginStore: store,
+                                  profileStore: profileStore,
+                                  bottomNavigationStore: bottomNavigationStore,
+                                  orderHistoryStore: orderHistoryStore,
+                                );
+                              },
+                              label: 'Login',
+                              color: ConstantData.primaryColor,
+                              height: 7,
+                            ),
                           );
                       }
                     }),
-                  ),
+                  ],
                 ),
-
                 SizedBox(
-                  height: blockSizeVertical(context: context) * 5,
+                  height: blockSizeVertical(context: context) * 2,
                 ),
 
                 //---> Again login with OTP
@@ -277,13 +133,13 @@ class LoginScreen extends StatelessWidget {
                         builder: (_) => Provider.value(
                           value: store,
                           child: Provider.value(
-                            value: _productStore,
+                            value: productsStore,
                             child: Provider.value(
-                              value: _profileStore,
+                              value: profileStore,
                               child: Provider.value(
-                                value: _bottomNavigationStore,
+                                value: bottomNavigationStore,
                                 child: Provider.value(
-                                  value: _orderHistoryStore,
+                                  value: orderHistoryStore,
                                   child: SignUpPage(),
                                 ),
                               ),
@@ -297,11 +153,67 @@ class LoginScreen extends StatelessWidget {
                     'Login with OTP',
                     ConstantData.clrBlack30,
                     TextAlign.center,
-                    FontWeight.w600,
-                    font18Px(context: context) * 1.1,
+                    FontWeight.w500,
+                    font18Px(context: context),
                   ),
                 ),
               ],
+            ),
+          ),
+          body: Container(
+            padding: EdgeInsets.symmetric(
+              // horizontal: blockSizeHorizontal(context: context) * 4,
+              vertical: blockSizeVertical(context: context) * 5,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: ConstantWidget.getScreenPercentSize(context, 5),
+                  ),
+
+                  //---> Logo
+                  MedLogo(height: height),
+
+                  SizedBox(
+                    height: ConstantWidget.getScreenPercentSize(context, 4.5),
+                  ),
+                  // const Spacer(),
+
+                  //---> Pin Input field
+                  PinInput(
+                    pinEditingController: _pinController,
+                    // enable: true,
+                    isObscure: true,
+                    action: TextInputAction.next,
+                    label: 'Enter Pin',
+                    onSubmit: (value) async {
+                      //---> Login func
+                      store.buttonState = ButtonState.LOADING;
+                      // print('buttonstate ${store.buttonState}');
+                      await store.login(
+                        value: value,
+                        context: context,
+                        productsStore: productsStore,
+                        loginStore: store,
+                        profileStore: profileStore,
+                        bottomNavigationStore: bottomNavigationStore,
+                        orderHistoryStore: orderHistoryStore,
+                      );
+                      store.buttonState = ButtonState.SUCCESS;
+                      // print('buttonstate ${store.buttonState}');
+                    },
+                    unfocus: true,
+                    func: () async {},
+                  ),
+
+                  // SizedBox(
+                  //   height: ConstantWidget.getScreenPercentSize(context, 4),
+                  // ),
+                  // const Spacer(),
+                  // Login Button
+                ],
+              ),
             ),
           ),
         ),

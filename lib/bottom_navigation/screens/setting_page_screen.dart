@@ -72,7 +72,7 @@ class SettingsPageScreen extends StatelessWidget {
                                 ConstantWidget.getCustomTextWithoutAlign(
                                     profileModel.firmName,
                                     ConstantData.mainTextColor,
-                                    FontWeight.w600,
+                                    FontWeight.w500,
                                     font22Px(context: context)),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 2),
@@ -272,7 +272,7 @@ class SettingsPageScreen extends StatelessWidget {
   //       ConstantData.mainTextColor,
   //       1,
   //       TextAlign.center,
-  //       FontWeight.w600,
+  //       FontWeight.w500,
   //       font22Px(context: context),
   //     ),
   //   ),
@@ -321,7 +321,7 @@ class GetCell extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   fontSize: font18Px(context: context),
                   fontFamily: ConstantData.fontFamily,
                   color: ConstantData.textColor,

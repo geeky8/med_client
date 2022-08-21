@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:medrpha_customer/enums/payment_status_type.dart';
-import 'package:medrpha_customer/order_history/models/order_history_model.dart';
 import 'package:medrpha_customer/profile/models/drug_license_model.dart';
 import 'package:medrpha_customer/profile/models/firm_info_model.dart';
 import 'package:medrpha_customer/profile/models/fssai_model.dart';
@@ -10,8 +8,9 @@ import 'size_config.dart';
 
 class ConstantData {
   /// Colors [Color]
-  static Color primaryColor = '#233E99'.toColor();
-  static Color accentColor = "#FF9800".toColor();
+  static Color primaryColor = '#0188A6'.toColor();
+  static Color accentColor = "#55D6BE".toColor();
+  static Color secondaryColor = '#ACFCD9'.toColor();
   static Color bgColor = "#ffffff".toColor();
   static Color bgColor1 = '#F7F7F7'.toColor();
   static Color viewColor = "#F1F1F1".toColor();
@@ -31,11 +30,11 @@ class ConstantData {
   static String apiSecretKey = 'i67GTEvHsJpSIkAKcM3etMRh';
 
   static String rupeeConversion({required String value}) {
-    final _numeric = double.parse(value);
-    if (int.parse((_numeric / 1000).toString()) > 1) {
+    final numeric = double.parse(value);
+    if (int.parse((numeric / 1000).toString()) > 1) {
       // final _paramas = value.replaceRange(value.length - 3, value.length, 'K');
-      final _params = (_numeric / 1000).toString() + 'K';
-      return _params;
+      final params = '${numeric / 1000}K';
+      return params;
     } else {
       return value;
     }
@@ -44,7 +43,7 @@ class ConstantData {
   /// App Colors.
   static const double avatarRadius = 40;
   static Color mainTextColor = "#030303".toColor();
-  static String fontFamily = "Montserrat";
+  static String fontFamily = "Gilroy";
   static Color borderColor = Colors.grey.shade400;
   // static Color mainTextColor = "#084043".toColor();
   static Color textColor = "#4E4E4E".toColor();
@@ -164,7 +163,7 @@ extension ColorExtension on String {
   toColor() {
     var hexColor = replaceAll("#", "");
     if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
+      hexColor = "FF$hexColor";
     }
     if (hexColor.length == 8) {
       return Color(int.parse("0x$hexColor"));

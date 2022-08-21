@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/screens/product_details_screen.dart';
@@ -35,10 +34,17 @@ class CategoryProducts extends StatelessWidget {
 
       switch (state1) {
         case StoreState.LOADING:
+          // return Center(
+          //   child: LoadingAnimationWidget.dotsTriangle(
+          //     color: ConstantData.accentColor,
+          //     size: ConstantWidget.getScreenPercentSize(context, 7),
+          //   ),
+          // );
           return Center(
-            child: LoadingAnimationWidget.dotsTriangle(
-              color: ConstantData.accentColor,
-              size: ConstantWidget.getScreenPercentSize(context, 7),
+            child: SizedBox(
+              height: ConstantWidget.getWidthPercentSize(context, 10),
+              width: ConstantWidget.getWidthPercentSize(context, 10),
+              child: const CircularProgressIndicator(),
             ),
           );
 
@@ -256,7 +262,7 @@ class ProductsCard extends StatelessWidget {
                         // ConstantData.accentColor,
                         1,
                         TextAlign.start,
-                        FontWeight.w400,
+                        FontWeight.w600,
                         font12Px(context: context)),
                   ),
                 ),
@@ -312,7 +318,7 @@ class ProductsCard extends StatelessWidget {
                                   ConstantData.mainTextColor,
                                   1,
                                   TextAlign.start,
-                                  FontWeight.w600,
+                                  FontWeight.w500,
                                   font15Px(context: context),
                                 ),
                                 SizedBox(
@@ -344,7 +350,7 @@ class ProductsCard extends StatelessWidget {
                               ConstantData.mainTextColor,
                               1,
                               TextAlign.start,
-                              FontWeight.w600,
+                              FontWeight.w500,
                               font15Px(context: context),
                             ),
                           ),
@@ -358,7 +364,7 @@ class ProductsCard extends StatelessWidget {
                         ConstantData.textColor,
                         1,
                         TextAlign.start,
-                        FontWeight.w600,
+                        FontWeight.w500,
                         font12Px(context: context),
                       ),
                     ],
