@@ -215,6 +215,7 @@ class AddProductButton extends StatelessWidget {
     required this.width,
     required this.height,
     required this.fontSize,
+    required this.contextReq,
   }) : super(key: key);
 
   final ProductModel model;
@@ -222,6 +223,7 @@ class AddProductButton extends StatelessWidget {
   final double width;
   final double height;
   final double fontSize;
+  final BuildContext contextReq;
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +233,7 @@ class AddProductButton extends StatelessWidget {
             .indexWhere((element) => element.pid == model.pid);
         SnackBar snackBar;
         if (index == -1) {
-          await store.addToCart(model: model);
+          await store.addToCart(model: model, context: contextReq);
           snackBar = ConstantWidget.customSnackBar(
               text: 'Added To Cart', context: context);
         } else {

@@ -20,6 +20,7 @@ import 'package:medrpha_customer/products/utils/order_dialog.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
+import 'package:medrpha_customer/utils/storage.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'dart:collection';
@@ -158,6 +159,16 @@ abstract class _ProductsStore with Store {
     } else {
       prodState = StoreState.EMPTY;
     }
+  }
+
+  @action
+  Future<ProductModel> getProductDetails({required ProductModel model}) async {
+    final sessId = await DataBox().readSessId();
+    final fetchModel = await _productsRepository.getProductDetails(
+      model: model,
+      sessId: sessId,
+    );
+    return fetchModel;
   }
 
   @action
@@ -518,11 +529,10 @@ abstract class _ProductsStore with Store {
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
+        getCartItems();
         stopwatch.stop();
-        await getCartItems();
-
         if (kDebugMode) {
-          print('seconds ${stopwatch.elapsedMilliseconds}');
+          print('plus cart seconds ${stopwatch.elapsedMilliseconds}');
         }
         // plusMinusToCart(model: currModel);
       }
@@ -536,6 +546,7 @@ abstract class _ProductsStore with Store {
     required ProductModel model,
     required BuildContext context,
   }) async {
+    final stopWatch = Stopwatch()..start();
     SnackBar snackBar;
     if (model.cartQuantity! > 1) {
       int qty = model.cartQuantity! - 1;
@@ -554,7 +565,9 @@ abstract class _ProductsStore with Store {
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
-      await getCartItems();
+      getCartItems();
+      stopWatch.stop();
+      print('subtract seconds ------ ${stopWatch.elapsedMilliseconds}');
       // plusMinusToCart(model: currModel);
       // Future.delayed(const Duration(milliseconds: 500), () {
       //   c
@@ -584,17 +597,31 @@ abstract class _ProductsStore with Store {
   }
 
   @action
-  Future<void> addToCart({required ProductModel model}) async {
+  Future<void> addToCart({
+    required ProductModel model,
+    required BuildContext context,
+  }) async {
     // final index =
     //     cartItemsList.indexWhere((element) => element.pid == model.pid);
     // if (index == -1) {
     // print(model.cartQuantity);
+    if (int.parse(model.quantity) > 0) {
+      final stopWatch = Stopwatch()..start();
+      int qty = model.cartQuantity! + 1;
+      final currModel = model.copyWith(cartQuantity: qty);
+      cartModel.productList.add(currModel);
+      await _productsRepository.addToCart(model: currModel);
+      await getCartItems();
+      stopWatch.stop();
+      print('adding to cart --- ${stopWatch.elapsedMilliseconds}');
+    } else {
+      final snackBar = ConstantWidget.customSnackBar(
+        text: 'Product quantity not available',
+        context: context,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
 
-    int qty = model.cartQuantity! + 1;
-    final currModel = model.copyWith(cartQuantity: qty);
-    cartModel.productList.add(currModel);
-    await _productsRepository.addToCart(model: currModel);
-    await getCartItems();
     // plusMinusToCart(model: _currModel);
 
     // final totalPrice =

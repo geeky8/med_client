@@ -49,84 +49,6 @@ class OrderHistoryScreen extends StatelessWidget {
 
     return Scaffold(
         backgroundColor: ConstantData.cellColor,
-        // appBar: AppBar(
-        //   backgroundColor: ConstantData.bgColor,
-        //   elevation: 1,
-        //   leading: (fromSettingsPage == true)
-        //       ? IconButton(
-        //           icon: ConstantWidget.getAppBarIcon(),
-        //           onPressed: () {
-        //             Navigator.pop(context);
-        //           },
-        //         )
-        //       : null,
-        // bottom: TabBar(
-        //   onTap: (index) {
-        //     // Tab index when user select it, it start from zero
-        //   },
-        //   indicatorWeight: blockSizeVertical(context: context) / 2,
-        //   indicatorSize: TabBarIndicatorSize.tab,
-        //   physics: const BouncingScrollPhysics(),
-        //   labelColor: ConstantData.primaryColor,
-        //   labelStyle: TextStyle(
-        //     fontFamily: ConstantData.fontFamily,
-        //     fontWeight: FontWeight.w600,
-        //     fontSize: font18Px(context: context) * 1.05,
-        //   ),
-        //   unselectedLabelColor: ConstantData.textColor,
-        //   unselectedLabelStyle: TextStyle(
-        //     fontFamily: ConstantData.fontFamily,
-        //     fontWeight: FontWeight.w600,
-        //     fontSize: font18Px(context: context) * 1.05,
-        //   ),
-        //   // overlayColor: MaterialStateProperty.resolveWith(
-        //   //     (states) => ConstantData.bgColor),
-        //   tabs: const [
-        //     Tab(
-        //       // icon: ConstantWidget.getCustomText(
-        //       //   'All',
-        //       //   ConstantData.mainTextColor,
-        //       //   1,
-        //       //   TextAlign.center,
-        //       //   FontWeight.w600,
-        //       //   font18Px(context: context) * 1.1,
-        //       // ),
-        //       text: 'All',
-        //     ),
-        //     Tab(
-        //       // icon: ConstantWidget.getCustomText(
-        //       //   'Dispatched',
-        //       //   ConstantData.mainTextColor,
-        //       //   1,
-        //       //   TextAlign.center,
-        //       //   FontWeight.w600,
-        //       //   font18Px(context: context) * 1.1,
-        //       // ),
-        //       text: 'Dispatched',
-        //     ),
-        //     Tab(
-        //       // icon: ConstantWidget.getCustomText(
-        //       //   'Delivered',
-        //       //   ConstantData.mainTextColor,
-        //       //   1,
-        //       //   TextAlign.center,
-        //       //   FontWeight.w600,
-        //       //   font18Px(context: context) * 1.1,
-        //       // ),
-        //       text: 'Delivered',
-        //     ),
-        //   ],
-        // ),
-        //   title: ConstantWidget.getCustomText(
-        //     'ORDERS',
-        //     ConstantData.mainTextColor,
-        //     1,
-        //     TextAlign.center,
-        //     FontWeight.w600,
-        //     font18Px(context: context) * 1.1,
-        //   ),
-        //   // centerTitle: true,
-        // ),
         appBar: ConstantWidget.customAppBar(
           context: context,
           title: 'ORDERS',
@@ -303,7 +225,7 @@ class OrderHistoryScreen extends StatelessWidget {
                     ),
                     child: Center(
                       child: ConstantWidget.loadingWidget(
-                        size: blockSizeVertical(context: context) * 2,
+                        size: blockSizeVertical(context: context) * 5,
                       ),
                     ),
                   ),

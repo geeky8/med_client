@@ -436,6 +436,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                               fontSize:
                                                   font18Px(context: context) *
                                                       1.1,
+                                              contextReq: context,
                                             ),
                                           ],
                                         );
