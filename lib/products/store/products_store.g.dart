@@ -573,13 +573,10 @@ mixin _$ProductsStore on _ProductsStore, Store {
       {required String orderId,
       required BuildContext context,
       required OrderHistoryStore orderHistoryStore}) {
-    return _$confirmPaymentAsyncAction.run(
-      () => super.confirmPayment(
+    return _$confirmPaymentAsyncAction.run(() => super.confirmPayment(
         orderId: orderId,
         context: context,
-        orderHistoryStore: orderHistoryStore,
-      ),
-    );
+        orderHistoryStore: orderHistoryStore));
   }
 
   late final _$successOrderAsyncAction =
