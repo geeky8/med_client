@@ -84,7 +84,7 @@ class CartScreen extends StatelessWidget {
                             ConstantData.primaryColor,
                             1,
                             TextAlign.start,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font18Px(context: context),
                             // 1.2,
                           ),
@@ -100,7 +100,7 @@ class CartScreen extends StatelessWidget {
                               ConstantData.mainTextColor,
                               1,
                               TextAlign.end,
-                              FontWeight.w500,
+                              FontWeight.w600,
                               font18Px(context: context) * 1.1,
                             );
                           })
@@ -156,7 +156,8 @@ class CartScreen extends StatelessWidget {
                             //     blockSizeHorizontal(context: context) * 8,
                           ),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(
+                                font25Px(context: context)),
                             color: ConstantData.primaryColor,
                           ),
                           child: ConstantWidget.getCustomText(
@@ -164,7 +165,7 @@ class CartScreen extends StatelessWidget {
                             ConstantData.bgColor,
                             1,
                             TextAlign.center,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font18Px(context: context),
                           ),
                         ),
@@ -264,12 +265,12 @@ class CartScreen extends StatelessWidget {
         Expanded(
           flex: 1,
           child: ConstantWidget.getCustomText(s, ConstantData.textColor, 1,
-              TextAlign.start, FontWeight.w500, font18Px(context: context)),
+              TextAlign.start, FontWeight.w600, font18Px(context: context)),
         ),
         Expanded(
           flex: 1,
           child: ConstantWidget.getCustomText(s1, ConstantData.textColor, 1,
-              TextAlign.end, FontWeight.w500, font18Px(context: context)),
+              TextAlign.end, FontWeight.w600, font18Px(context: context)),
         )
       ],
     );
@@ -317,7 +318,7 @@ class CartScreen extends StatelessWidget {
 //                   ConstantData.mainTextColor,
 //                   1,
 //                   TextAlign.center,
-//                   FontWeight.w500,
+//                   FontWeight.w600,
 //                   20),
 //               const SizedBox(
 //                 height: 10,
@@ -353,7 +354,7 @@ class CartScreen extends StatelessWidget {
 //                           ConstantData.bgColor,
 //                           1,
 //                           TextAlign.center,
-//                           FontWeight.w500,
+//                           FontWeight.w600,
 //                           font18Px(context: context),
 //                         ),
 //                       ),
@@ -383,7 +384,7 @@ class CartScreen extends StatelessWidget {
 //                           ConstantData.bgColor,
 //                           1,
 //                           TextAlign.center,
-//                           FontWeight.w500,
+//                           FontWeight.w600,
 //                           font18Px(context: context),
 //                         ),
 //                       ),
@@ -493,7 +494,7 @@ class ListItem extends StatelessWidget {
                               ConstantData.mainTextColor,
                               1,
                               TextAlign.start,
-                              FontWeight.w500,
+                              FontWeight.w600,
                               font18Px(context: context),
                             ),
                           ),
@@ -507,7 +508,7 @@ class ListItem extends StatelessWidget {
                       //     Colors.grey,
                       //     1,
                       //     TextAlign.start,
-                      //     FontWeight.w500,
+                      //     FontWeight.w600,
                       //     font15Px(context: context)),
                       SizedBox(
                         height:
@@ -538,7 +539,7 @@ class ListItem extends StatelessWidget {
                             ConstantData.mainTextColor,
                             1,
                             TextAlign.center,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font18Px(context: context),
                           ),
                           Padding(
@@ -550,7 +551,7 @@ class ListItem extends StatelessWidget {
                               ConstantData.mainTextColor,
                               1,
                               TextAlign.center,
-                              FontWeight.w500,
+                              FontWeight.w600,
                               font18Px(context: context),
                             ),
                           ),
@@ -566,12 +567,13 @@ class ListItem extends StatelessWidget {
                       padding: EdgeInsets.symmetric(
                         horizontal: blockSizeHorizontal(context: context) * 2,
                       ),
-                      child: Observer(builder: (_) {
-                        if (store.removeState == StoreState.LOADING) {
-                          return ConstantWidget.loadingWidget(
-                            size: blockSizeVertical(context: context) * 2,
-                          );
-                        } else {
+                      child: Observer(
+                        builder: (_) {
+                          // if (store.removeState == StoreState.LOADING) {
+                          //   return ConstantWidget.loadingWidget(
+                          //     size: blockSizeVertical(context: context) * 2,
+                          //   );
+                          // } else {
                           return InkWell(
                             onTap: () async {
                               store.removeState = StoreState.LOADING;
@@ -596,8 +598,9 @@ class ListItem extends StatelessWidget {
                               ),
                             ),
                           );
-                        }
-                      }),
+                          // }
+                        },
+                      ),
                     ),
                   ),
                   Align(
@@ -614,10 +617,14 @@ class ListItem extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Observer(builder: (_) {
-                                return PlusMinusWidget(
-                                    model: model, store: store);
-                              }),
+                              Observer(
+                                builder: (_) {
+                                  return PlusMinusWidget(
+                                    model: model,
+                                    store: store,
+                                  );
+                                },
+                              ),
                             ],
                           ),
                           SizedBox(

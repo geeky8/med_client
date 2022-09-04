@@ -72,7 +72,7 @@ class SettingsPageScreen extends StatelessWidget {
                                 ConstantWidget.getCustomTextWithoutAlign(
                                     profileModel.firmName,
                                     ConstantData.mainTextColor,
-                                    FontWeight.w500,
+                                    FontWeight.w600,
                                     font22Px(context: context)),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 2),
@@ -80,7 +80,7 @@ class SettingsPageScreen extends StatelessWidget {
                                       ConstantWidget.getCustomTextWithoutAlign(
                                           profileModel.email,
                                           ConstantData.mainTextColor,
-                                          FontWeight.w500,
+                                          FontWeight.w600,
                                           font15Px(context: context)),
                                 )
                               ],
@@ -112,7 +112,10 @@ class SettingsPageScreen extends StatelessWidget {
                             value: productStore,
                             child: Provider.value(
                               value: bottomNavigationStore,
-                              child: const ProfileDetailsScreen(),
+                              child: Provider.value(
+                                value: orderHistoryStore,
+                                child: const ProfileDetailsScreen(),
+                              ),
                             ),
                           ),
                         ),
@@ -222,12 +225,12 @@ class SettingsPageScreen extends StatelessWidget {
               //     sendAction(WriteReviewPage());
               //   },
               // ),
-              InkWell(
-                child: const GetCell(label: 'About Us', icon: Icons.info),
-                onTap: () {
-                  // sendAction(AboutUsPage());
-                },
-              ),
+              // InkWell(
+              //   child: const GetCell(label: 'About Us', icon: Icons.info),
+              //   onTap: () {
+              //     // sendAction(AboutUsPage());
+              //   },
+              // ),
               InkWell(
                 child: const GetCell(label: 'Logout', icon: Icons.logout),
                 onTap: () {
@@ -272,7 +275,7 @@ class SettingsPageScreen extends StatelessWidget {
   //       ConstantData.mainTextColor,
   //       1,
   //       TextAlign.center,
-  //       FontWeight.w500,
+  //       FontWeight.w600,
   //       font22Px(context: context),
   //     ),
   //   ),
@@ -321,7 +324,7 @@ class GetCell extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   fontSize: font18Px(context: context),
                   fontFamily: ConstantData.fontFamily,
                   color: ConstantData.textColor,

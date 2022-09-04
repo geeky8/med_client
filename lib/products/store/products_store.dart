@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
@@ -20,6 +22,7 @@ import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
+import 'dart:collection';
 
 part 'products_store.g.dart';
 
@@ -292,6 +295,9 @@ abstract class _ProductsStore with Store {
   Future<void> getSearchedResults({required String term}) async {
     // print(term);
     if (term.isNotEmpty) {
+      if (kDebugMode) {
+        print(term);
+      }
       searchState = StoreState.LOADING;
       Future.delayed(Duration.zero, () async {
         final productRespModel =
@@ -315,6 +321,7 @@ abstract class _ProductsStore with Store {
         }
       });
     } else {
+      searchList.clear();
       searchState = StoreState.EMPTY;
     }
   }
@@ -355,17 +362,24 @@ abstract class _ProductsStore with Store {
   @action
   Future<ProductModel> _updateProductsAccordingToCart(
       {required ProductModel model}) async {
+    if (model.category == '') {
+      return model;
+    }
     final category = categoriesfromValue(model.category);
     // print(model.cartQuantity);
+
     switch (category) {
       case CategoriesType.ETHICAL:
         final index = ethicalProductList
             .indexWhere((element) => element.pid == model.pid);
+        // final fModel = ethicalProductList.f
         final cartModel = ethicalProductList[index].copyWith(
             cartQuantity: model.cartQuantity, subTotal: model.subTotal);
         ethicalProductList
           ..removeAt(index)
           ..insert(index, cartModel);
+        // ethicalProductList[index] = cartModel;
+
         return cartModel;
       case CategoriesType.GENERIC:
         final index = genericProductList
@@ -442,7 +456,8 @@ abstract class _ProductsStore with Store {
       cartModel.productList
         ..removeAt(index)
         ..insert(index, currModel);
-      await _productsRepository.updateQuantity(model: currModel);
+      await _updateProductsAccordingToCart(model: currModel);
+      _productsRepository.updateQuantity(model: currModel);
       await getCartItems();
       snackBar = ConstantWidget.customSnackBar(
           text: 'Successfully updated the quantity', context: context);
@@ -466,6 +481,7 @@ abstract class _ProductsStore with Store {
     required BuildContext context,
   }) async {
     // plusMinusRemoveState = StoreState.LOADING;
+    Stopwatch stopwatch = Stopwatch()..start();
     int qty = model.cartQuantity! + 1;
     if (qty > int.parse(model.quantity)) {
       final snackBar = ConstantWidget.customSnackBar(
@@ -478,21 +494,27 @@ abstract class _ProductsStore with Store {
       cartModel.productList
         ..removeAt(index)
         ..insert(index, currModel);
+      await _updateProductsAccordingToCart(model: currModel);
       final value = await _productsRepository.plusTheCart(model: currModel);
       SnackBar snackBar;
       if (value != null) {
-        snackBar = ConstantWidget.customSnackBar(
-          text: 'Updated the cart',
-          context: context,
-        );
+        // snackBar = ConstantWidget.customSnackBar(
+        //   text: 'Updated the cart',
+        //   context: context,
+        // );
       } else {
         snackBar = ConstantWidget.customSnackBar(
           text: 'Failed to update the cart',
           context: context,
         );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
+      stopwatch.stop();
       await getCartItems();
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      if (kDebugMode) {
+        print('seconds ${stopwatch.elapsedMilliseconds}');
+      }
       // plusMinusToCart(model: currModel);
     }
     // plusMinusRemoveState = StoreState.SUCCESS;
@@ -512,18 +534,14 @@ abstract class _ProductsStore with Store {
       cartModel.productList
         ..removeAt(index)
         ..insert(index, currModel);
+      await _updateProductsAccordingToCart(model: currModel);
       final value = await _productsRepository.minusTheCart(model: currModel);
-
-      if (value != null) {
-        snackBar = ConstantWidget.customSnackBar(
-          text: 'Updated the cart',
-          context: context,
-        );
-      } else {
+      if (value == null) {
         snackBar = ConstantWidget.customSnackBar(
           text: 'Failed to update the cart',
           context: context,
         );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
       await getCartItems();
       // plusMinusToCart(model: currModel);
@@ -539,6 +557,7 @@ abstract class _ProductsStore with Store {
         text: 'Removed from cart',
         context: context,
       );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       // int qty = model.cartQuantity! - 1;
       // final currModel = model.copyWith(cartQuantity: qty);
       // final _index = cartModel.productList
@@ -551,7 +570,6 @@ abstract class _ProductsStore with Store {
           text: 'Selection below minimum quantity', context: context);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @action
@@ -597,9 +615,9 @@ abstract class _ProductsStore with Store {
           context: context,
         );
       }
-      await getCartItems(isRemove: true);
       _updateProductsAccordingToCart(model: model.copyWith(cartQuantity: 0));
       cartModel.productList.removeAt(index);
+      await getCartItems(isRemove: true);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       // plusMinusToCart(model: _currModel);
       // final totalPrice =

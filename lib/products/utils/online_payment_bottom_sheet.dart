@@ -7,6 +7,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/payment_options.dart';
+import 'package:medrpha_customer/enums/payment_status_type.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/cart_model.dart';
@@ -271,7 +272,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                                     'Select Payment Options',
                                     ConstantData.mainTextColor,
                                     TextAlign.start,
-                                    FontWeight.w500,
+                                    FontWeight.w600,
                                     font22Px(context: context) * 1.1,
                                   ),
                                 ],
@@ -334,7 +335,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                       //         ConstantData.mainTextColor,
                       //         1,
                       //         TextAlign.center,
-                      //         FontWeight.w500,
+                      //         FontWeight.w600,
                       //         font25Px(context: context) * 2,
                       //       ),
                       //       SizedBox(
@@ -348,7 +349,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                       //           //   ConstantData.textColor,
                       //           //   1,
                       //           //   TextAlign.center,
-                      //           //   FontWeight.w500,
+                      //           //   FontWeight.w600,
                       //           //   font22Px(context: context),
                       //           // ),
                       //           // const Spacer(),
@@ -359,7 +360,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                       //               ConstantData.textColor,
                       //               5,
                       //               TextAlign.center,
-                      //               FontWeight.w500,
+                      //               FontWeight.w600,
                       //               font18Px(context: context),
                       //             ),
                       //           ),
@@ -438,7 +439,10 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                                     //       .showSnackBar(snackBar);
                                     // }
                                   },
-                                  label: 'Pay Now',
+                                  label: (productStore.paymentOptions ==
+                                          PaymentOptions.ONLINE)
+                                      ? 'Pay Now'
+                                      : 'Place Order',
                                 );
                               }),
                             ),

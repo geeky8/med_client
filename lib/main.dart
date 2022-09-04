@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         child: const SplashScreen(),
         // child: OrderHistory(),
         // child: const HomeScreen(),
-        // child: const TestScreen(),
+        // child: const UpdateAppScreen(),
       ),
     );
   }

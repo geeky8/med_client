@@ -188,7 +188,7 @@ class BackGroundTile extends StatelessWidget {
                     ConstantData.mainTextColor,
                     2,
                     TextAlign.start,
-                    FontWeight.w500,
+                    FontWeight.w600,
                     ConstantWidget.getPercentSize(cellHeight, 15)))
           ],
         ),

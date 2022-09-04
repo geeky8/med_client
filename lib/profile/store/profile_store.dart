@@ -285,8 +285,13 @@ abstract class _ProfileStore with Store {
       }
       // saveState = ButtonState.ERROR;
     } else if (beginToFill == null) {
+      // const url = 'https://api.medrpha.com/api/register/registergstnodelete';
+      const url =
+          'https://apitest.medrpha.com/api/register/registergstnodelete';
+
       final resp = await _repository.deleteLicenses(
-          url: 'https://api.medrpha.com/api/register/registergstnodelete');
+        url: url,
+      );
       if (resp == null) {
         final snackBar = ConstantWidget.customSnackBar(
             text: 'Error in updating GST details, Please try again',
@@ -311,8 +316,13 @@ abstract class _ProfileStore with Store {
       }
       // saveState = ButtonState.ERROR;
     } else if (beginToFill == null) {
+      // const url = 'https://api.medrpha.com/api/register/registerfssaidelete';
+      const url =
+          'https://apitest.medrpha.com/api/register/registerfssaidelete';
+
       final resp = await _repository.deleteLicenses(
-          url: 'https://api.medrpha.com/api/register/registerfssaidelete');
+        url: url,
+      );
       if (resp == null) {
         final snackBar = ConstantWidget.customSnackBar(
             text: 'Error in updating FSSAI details, Please try again',
@@ -336,7 +346,7 @@ abstract class _ProfileStore with Store {
       final snackBar = ConstantWidget.customSnackBar(
           text: 'Success, profile updated', context: context);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.pop(context);
+      // Navigator.pop(context);
     }
   }
 

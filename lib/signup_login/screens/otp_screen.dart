@@ -138,7 +138,7 @@ class SignUpPage extends StatelessWidget {
                     child: ConstantWidget.getDefaultTextWidget(
                       'OTP',
                       TextAlign.center,
-                      FontWeight.w500,
+                      FontWeight.w600,
                       font22Px(context: context),
                       Colors.white,
                     ),
@@ -198,7 +198,7 @@ class SignUpPage extends StatelessWidget {
                 //             child: ConstantWidget.getDefaultTextWidget(
                 //               'OTP',
                 //               TextAlign.center,
-                //               FontWeight.w500,
+                //               FontWeight.w600,
                 //               font22Px(context: context),
                 //               Colors.white,
                 //             ),
@@ -207,7 +207,7 @@ class SignUpPage extends StatelessWidget {
                 //           return ConstantWidget.getDefaultTextWidget(
                 //               'Get OTP',
                 //               TextAlign.center,
-                //               FontWeight.w500,
+                //               FontWeight.w600,
                 //               ConstantWidget.getPercentSize(height, 10),
                 //               Colors.white);
                 //       }
@@ -243,7 +243,7 @@ class SignUpPage extends StatelessWidget {
                   'Already have an account?\nLogin with pin',
                   ConstantData.accentColor,
                   TextAlign.center,
-                  FontWeight.w500,
+                  FontWeight.w600,
                   font18Px(context: context),
                 ),
               ),
@@ -318,7 +318,7 @@ class PhoneInput extends StatelessWidget {
               textStyle: TextStyle(
                 color: ConstantData.mainTextColor,
                 fontFamily: ConstantData.fontFamily,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
               dialogTextStyle: TextStyle(
                 color: ConstantData.mainTextColor,
@@ -368,14 +368,14 @@ class PhoneInput extends StatelessWidget {
                   hintStyle: TextStyle(
                     fontFamily: ConstantData.fontFamily,
                     color: ConstantData.textColor,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     fontSize: hintFontSize,
                   ),
                 ),
                 style: TextStyle(
                   fontFamily: ConstantData.fontFamily,
                   color: ConstantData.textColor,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   fontSize: fontSize,
                 ),
                 keyboardType: TextInputType.number,

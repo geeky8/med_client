@@ -53,7 +53,7 @@ class CustomDropDown extends StatelessWidget {
           //           ConstantData.mainTextColor,
           //           1,
           //           TextAlign.center,
-          //           FontWeight.w500,
+          //           FontWeight.w600,
           //           font18Px(context: context),
           //         ),
           //       ),

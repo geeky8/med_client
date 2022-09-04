@@ -23,6 +23,7 @@ class HomeScreen extends StatelessWidget {
     /// List pages toggled using bottom navigation
     final pages = [
       const ProductHomeScreen(),
+      // const OrderHistoryScreen(),
       const CategoriesListScreen(
         isHome: false,
       ),
@@ -287,7 +288,7 @@ class HomeScreen extends StatelessWidget {
               selectedLabelStyle: TextStyle(
                 fontFamily: ConstantData.fontFamily,
                 fontSize: font12Px(context: context),
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: ConstantData.primaryColor,
               ),
               unselectedLabelStyle: TextStyle(
@@ -391,7 +392,7 @@ class BottomNavWidgets extends StatelessWidget {
           //       : ConstantData.clrBlack30,
           //   1,
           //   TextAlign.center,
-          //   FontWeight.w500,
+          //   FontWeight.w600,
           //   (store.currentPage == index)
           //       ? font15Px(context: context) * 1.2
           //       : font15Px(context: context) * 1.1,

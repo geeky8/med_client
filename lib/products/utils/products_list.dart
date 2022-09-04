@@ -87,7 +87,7 @@ class CategoryProducts extends StatelessWidget {
                           ConstantData.mainTextColor,
                           3,
                           TextAlign.center,
-                          FontWeight.w500,
+                          FontWeight.w600,
                           font18Px(context: context) * 1.1,
                         ),
                       ),
@@ -318,7 +318,7 @@ class ProductsCard extends StatelessWidget {
                                   ConstantData.mainTextColor,
                                   1,
                                   TextAlign.start,
-                                  FontWeight.w500,
+                                  FontWeight.w600,
                                   font15Px(context: context),
                                 ),
                                 SizedBox(
@@ -350,7 +350,7 @@ class ProductsCard extends StatelessWidget {
                               ConstantData.mainTextColor,
                               1,
                               TextAlign.start,
-                              FontWeight.w500,
+                              FontWeight.w600,
                               font15Px(context: context),
                             ),
                           ),
@@ -364,7 +364,7 @@ class ProductsCard extends StatelessWidget {
                         ConstantData.textColor,
                         1,
                         TextAlign.start,
-                        FontWeight.w500,
+                        FontWeight.w600,
                         font12Px(context: context),
                       ),
                     ],
@@ -414,8 +414,8 @@ class ProductsCard extends StatelessWidget {
                         return AddProductButton(
                           store: store,
                           model: list[index],
-                          width: blockSizeVertical(context: context) / 1.2,
-                          height: blockSizeHorizontal(context: context) * 4,
+                          width: blockSizeHorizontal(context: context) * 4,
+                          height: blockSizeVertical(context: context) / 1.2,
                           fontSize: font12Px(context: context),
                         );
                       }

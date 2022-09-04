@@ -70,7 +70,8 @@ class PlusMinusWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment:
+          (iconSize != null) ? MainAxisAlignment.center : MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         InkWell(
@@ -88,16 +89,16 @@ class PlusMinusWidget extends StatelessWidget {
             if (kDebugMode) {
               print(store.minusRemoveState);
             }
-            if (store.minusRemoveState == StoreState.LOADING) {
-              return ConstantWidget.loadingWidget(
-                size: blockSizeHorizontal(context: context) * 4,
-              );
-            } else {
-              return PlusMinusButton(
-                icon: CupertinoIcons.minus,
-                iconSize: iconSize,
-              );
-            }
+            // if (store.minusRemoveState == StoreState.LOADING) {
+            //   return ConstantWidget.loadingWidget(
+            //     size: blockSizeHorizontal(context: context) * 4,
+            //   );
+            // } else {
+            return PlusMinusButton(
+              icon: CupertinoIcons.minus,
+              iconSize: iconSize,
+            );
+            // }
           }),
         ),
         InkWell(
@@ -115,13 +116,17 @@ class PlusMinusWidget extends StatelessWidget {
                 updateCurrProduct(category: category, store: store);
             return Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: blockSizeHorizontal(context: context) * 3),
+                horizontal: blockSizeHorizontal(context: context) * 3,
+                vertical: (iconSize != null)
+                    ? blockSizeVertical(context: context)
+                    : 0,
+              ),
               child: ConstantWidget.getCustomText(
                 '${(currModel.cartQuantity!.toString().length > 4) ? '${currModel.cartQuantity!.toString().substring(0, 3)}...' : currModel.cartQuantity!}',
                 ConstantData.mainTextColor,
                 2,
                 TextAlign.center,
-                FontWeight.w500,
+                FontWeight.w600,
                 fontSize ?? font15Px(context: context),
               ),
             );
@@ -140,16 +145,16 @@ class PlusMinusWidget extends StatelessWidget {
             if (kDebugMode) {
               print(store.plusState);
             }
-            if (store.plusState == StoreState.LOADING) {
-              return ConstantWidget.loadingWidget(
-                size: blockSizeHorizontal(context: context) * 4,
-              );
-            } else {
-              return PlusMinusButton(
-                icon: CupertinoIcons.plus,
-                iconSize: iconSize,
-              );
-            }
+            // if (store.plusState == StoreState.LOADING) {
+            //   return ConstantWidget.loadingWidget(
+            //     size: blockSizeHorizontal(context: context) * 4,
+            //   );
+            // } else {
+            return PlusMinusButton(
+              icon: CupertinoIcons.plus,
+              iconSize: iconSize,
+            );
+            // }
           }),
         ),
       ],
@@ -176,10 +181,16 @@ class PlusMinusButton extends StatelessWidget {
       // height: height,
       // // margin: EdgeInsets.symmetric(horizontal: ConstantWidget.getPercentSize(height, 30)),
       // width: height,
+      padding: (iconSize != null)
+          ? EdgeInsets.all(
+              blockSizeHorizontal(context: context) * 2,
+            )
+          : null,
       decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.transparent,
-          border: Border.all(color: Colors.grey, width: 1.5)),
+        shape: BoxShape.circle,
+        color: Colors.transparent,
+        border: Border.all(color: Colors.grey, width: 1.5),
+      ),
       child: Icon(
         icon,
         size: iconSize ?? blockSizeVertical(context: context) * 1.5,
@@ -227,15 +238,23 @@ class AddProductButton extends StatelessWidget {
       },
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: width,
-          horizontal: height,
+          vertical: height,
+          horizontal: width,
         ),
         decoration: BoxDecoration(
           color: ConstantData.primaryColor,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            font25Px(context: context) * 1.1,
+          ),
         ),
-        child: ConstantWidget.getCustomText('Add', ConstantData.bgColor, 1,
-            TextAlign.center, FontWeight.w500, fontSize),
+        child: ConstantWidget.getCustomText(
+          'Add',
+          ConstantData.bgColor,
+          1,
+          TextAlign.center,
+          FontWeight.w600,
+          fontSize,
+        ),
       ),
     );
   }
@@ -261,77 +280,71 @@ class RemoveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (_) {
-      if (store.removeState == StoreState.LOADING) {
-        return ConstantWidget.loadingWidget(
-          size: blockSizeVertical(context: context),
+    // return Observer(builder: (_) {
+    //   if (store.removeState == StoreState.LOADING) {
+    //     return ConstantWidget.loadingWidget(
+    //       size: blockSizeVertical(context: context),
+    //     );
+    //   } else {
+    return InkWell(
+      onTap: () async {
+        store.removeState = StoreState.LOADING;
+        await store.removeFromCart(
+          model: model,
+          context: context,
         );
-      } else {
-        return InkWell(
-          onTap: () async {
-            store.removeState = StoreState.LOADING;
-            await store.removeFromCart(
-              model: model,
-              context: context,
-            );
-            store.removeState = StoreState.SUCCESS;
-          },
-          // child: Container(
-          //   padding: EdgeInsets.symmetric(
-          //     vertical: width,
-          //     horizontal: height,
-          //   ),
-          //   decoration: BoxDecoration(
-          //     color: ConstantData.primaryColor,
-          //     borderRadius: BorderRadius.circular(12),
-          //   ),
-          //   // child: ConstantWidget.getCustomText('Remove', ConstantData.bgColor, 1,
-          //   //     TextAlign.center, FontWeight.w500, fontSize),
-          //   child: Icon(
-          //     Icons.delete_rounded,
-          //     size: font22Px(context: context),
-          //     color: ConstantData.clrBlack20,
-          //   ),
-          // ),
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: blockSizeHorizontal(context: context) * 2,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: ConstantData.primaryColor,
-                shape: (isDetailPage ?? false)
-                    ? BoxShape.rectangle
-                    : BoxShape.circle,
-                borderRadius:
-                    (isDetailPage ?? false) ? BorderRadius.circular(12) : null,
+        store.removeState = StoreState.SUCCESS;
+      },
+      // child: Container(
+      //   padding: EdgeInsets.symmetric(
+      //     vertical: width,
+      //     horizontal: height,
+      //   ),
+      //   decoration: BoxDecoration(
+      //     color: ConstantData.primaryColor,
+      //     borderRadius: BorderRadius.circular(12),
+      //   ),
+      //   // child: ConstantWidget.getCustomText('Remove', ConstantData.bgColor, 1,
+      //   //     TextAlign.center, FontWeight.w600, fontSize),
+      //   child: Icon(
+      //     Icons.delete_rounded,
+      //     size: font22Px(context: context),
+      //     color: ConstantData.clrBlack20,
+      //   ),
+      // ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: ConstantData.primaryColor,
+          shape: (isDetailPage ?? false) ? BoxShape.rectangle : BoxShape.circle,
+          borderRadius: (isDetailPage ?? false)
+              ? BorderRadius.circular(font25Px(context: context) * 1.1)
+              : null,
+        ),
+        padding: (isDetailPage ?? false)
+            ? EdgeInsets.symmetric(
+                // horizontal: blockSizeHorizontal(context: context) * 8,
+                vertical: blockSizeVertical(context: context) * 2.5,
+              )
+            : EdgeInsets.all(
+                blockSizeHorizontal(context: context) * 1.8,
               ),
-              padding: (isDetailPage ?? false)
-                  ? EdgeInsets.symmetric(
-                      horizontal: blockSizeHorizontal(context: context) * 8,
-                      vertical: blockSizeVertical(context: context),
-                    )
-                  : EdgeInsets.all(
-                      blockSizeHorizontal(context: context) * 1.8,
-                    ),
-              child: (isDetailPage ?? false)
-                  ? ConstantWidget.getCustomText(
-                      'Delete',
-                      ConstantData.bgColor,
-                      1,
-                      TextAlign.center,
-                      FontWeight.w500,
-                      font18Px(context: context),
-                    )
-                  : Icon(
-                      Icons.delete_rounded,
-                      size: font22Px(context: context),
-                      color: ConstantData.bgColor,
-                    ),
-            ),
-          ),
-        );
-      }
-    });
+        child: (isDetailPage ?? false)
+            ? ConstantWidget.getCustomText(
+                'Remove',
+                ConstantData.bgColor,
+                1,
+                TextAlign.center,
+                FontWeight.w600,
+                font18Px(context: context),
+              )
+            : Icon(
+                Icons.delete_rounded,
+                size: font22Px(context: context),
+                color: ConstantData.bgColor,
+              ),
+      ),
+    );
+    //     }
+    //   });
   }
 }

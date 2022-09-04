@@ -47,7 +47,7 @@ class CustomDialogBox extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ConstantWidget.getCustomText(title, ConstantData.mainTextColor, 1,
-                  TextAlign.center, FontWeight.w500, 20),
+                  TextAlign.center, FontWeight.w600, 20),
               const SizedBox(
                 height: 10,
               ),
@@ -82,7 +82,7 @@ class CustomDialogBox extends StatelessWidget {
                           ConstantData.bgColor,
                           1,
                           TextAlign.center,
-                          FontWeight.w500,
+                          FontWeight.w600,
                           font18Px(context: context),
                         ),
                       ),
@@ -110,7 +110,7 @@ class CustomDialogBox extends StatelessWidget {
                             ConstantData.bgColor,
                             1,
                             TextAlign.center,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font18Px(context: context),
                           ),
                         ),

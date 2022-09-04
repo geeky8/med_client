@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_string_interpolations
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
@@ -101,8 +103,9 @@ class ProductHomeScreen extends StatelessWidget {
                                         child: Provider.value(
                                           value: orderHistoryStore,
                                           child: Provider.value(
-                                              value: bottomNavigationStore,
-                                              child: const CartScreen()),
+                                            value: bottomNavigationStore,
+                                            child: const CartScreen(),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -218,7 +221,7 @@ class ProductHomeScreen extends StatelessWidget {
                                           Colors.white,
                                           1,
                                           TextAlign.center,
-                                          FontWeight.w500,
+                                          FontWeight.w600,
                                           font12Px(context: context) / 1.2,
                                         );
                                       }),
@@ -239,8 +242,9 @@ class ProductHomeScreen extends StatelessWidget {
                                             child: Provider.value(
                                               value: orderHistoryStore,
                                               child: Provider.value(
-                                                  value: bottomNavigationStore,
-                                                  child: const CartScreen()),
+                                                value: bottomNavigationStore,
+                                                child: const CartScreen(),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -276,7 +280,7 @@ class ProductHomeScreen extends StatelessWidget {
               //             ConstantData.mainTextColor,
               //             1,
               //             TextAlign.start,
-              //             FontWeight.w500,
+              //             FontWeight.w600,
               //             font18Px(context: context),
               //           ),
               //           const SizedBox(
@@ -287,7 +291,7 @@ class ProductHomeScreen extends StatelessWidget {
               //             Colors.orange,
               //             1,
               //             TextAlign.start,
-              //             FontWeight.w500,
+              //             FontWeight.w600,
               //             font18Px(context: context),
               //           ),
               //         ],
@@ -482,7 +486,7 @@ class ProductHomeScreen extends StatelessWidget {
                             ConstantWidget.getCustomTextWithoutAlign(
                               'Categories',
                               ConstantData.mainTextColor,
-                              FontWeight.w500,
+                              FontWeight.w600,
                               font22Px(context: context),
                             ),
                             const Spacer(),
@@ -565,9 +569,9 @@ class ProductHomeScreen extends StatelessWidget {
                               Observer(builder: (_) {
                                 final categoryType = store.categoriesType;
                                 return ConstantWidget.getCustomTextWithoutAlign(
-                                  '${categoryType.categoryString()} Products',
+                                  '${categoryType.categoryString()}',
                                   ConstantData.mainTextColor,
-                                  FontWeight.w500,
+                                  FontWeight.w600,
                                   font22Px(context: context),
                                 );
                               }),

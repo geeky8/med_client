@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
+import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/profile/models/profile_model.dart';
 import 'package:medrpha_customer/profile/screens/profile_screen.dart';
@@ -28,6 +29,7 @@ class ProfileDetailsScreen extends StatelessWidget {
     final loginStore = context.read<LoginStore>();
     final productStore = context.read<ProductsStore>();
     final bottomNavigationStore = context.read<BottomNavigationStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
 
     return Scaffold(
       bottomNavigationBar: Observer(builder: (_) {
@@ -48,10 +50,13 @@ class ProfileDetailsScreen extends StatelessWidget {
                             value: productStore,
                             child: Provider.value(
                               value: bottomNavigationStore,
-                              child: ProfilePage(
-                                model: model,
-                                phone: phone,
-                                // beginToFill: '',
+                              child: Provider.value(
+                                value: orderHistoryStore,
+                                child: ProfilePage(
+                                  model: model,
+                                  phone: phone,
+                                  // beginToFill: '',
+                                ),
                               ),
                             ),
                           ),
@@ -62,7 +67,7 @@ class ProfileDetailsScreen extends StatelessWidget {
       }),
       body: Column(
         children: [
-          ConstantWidget.customAppBar(context: context, title: 'Profile'),
+          ConstantWidget.customAppBar(context: context, title: 'PROFILE'),
           Observer(builder: (_) {
             final adminStatus = loginStore.loginModel.adminStatus;
             return Offstage(
@@ -183,7 +188,7 @@ class FSSAIInfoModule extends StatelessWidget {
             child: ConstantWidget.getCustomTextWithoutAlign(
               'FSSAI License',
               ConstantData.mainTextColor,
-              FontWeight.w500,
+              FontWeight.w600,
               font18Px(context: context) * 1.1,
             ),
           ),
@@ -242,7 +247,7 @@ class CertiifcateView extends StatelessWidget {
         ConstantWidget.getCustomTextWithoutAlign(
           label,
           ConstantData.mainTextColor,
-          FontWeight.w500,
+          FontWeight.w600,
           font15Px(context: context) * 1.1,
         ),
         SizedBox(
@@ -297,7 +302,7 @@ class DrugLicenseInfoModule extends StatelessWidget {
             child: ConstantWidget.getCustomTextWithoutAlign(
               'Drug License',
               ConstantData.mainTextColor,
-              FontWeight.w500,
+              FontWeight.w600,
               font18Px(context: context) * 1.1,
             ),
           ),
@@ -461,7 +466,7 @@ class GSTInfoModule extends StatelessWidget {
             child: ConstantWidget.getCustomTextWithoutAlign(
               'GST Details',
               ConstantData.mainTextColor,
-              FontWeight.w500,
+              FontWeight.w600,
               font18Px(context: context) * 1.1,
             ),
           ),
@@ -515,7 +520,7 @@ class FirmInfoModule extends StatelessWidget {
             child: ConstantWidget.getCustomTextWithoutAlign(
               'Firm Details',
               ConstantData.mainTextColor,
-              FontWeight.w500,
+              FontWeight.w600,
               font18Px(context: context) * 1.1,
             ),
           ),

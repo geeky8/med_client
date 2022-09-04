@@ -70,13 +70,13 @@ class OrderHistoryScreen extends StatelessWidget {
         //   labelColor: ConstantData.primaryColor,
         //   labelStyle: TextStyle(
         //     fontFamily: ConstantData.fontFamily,
-        //     fontWeight: FontWeight.w500,
+        //     fontWeight: FontWeight.w600,
         //     fontSize: font18Px(context: context) * 1.05,
         //   ),
         //   unselectedLabelColor: ConstantData.textColor,
         //   unselectedLabelStyle: TextStyle(
         //     fontFamily: ConstantData.fontFamily,
-        //     fontWeight: FontWeight.w500,
+        //     fontWeight: FontWeight.w600,
         //     fontSize: font18Px(context: context) * 1.05,
         //   ),
         //   // overlayColor: MaterialStateProperty.resolveWith(
@@ -88,7 +88,7 @@ class OrderHistoryScreen extends StatelessWidget {
         //       //   ConstantData.mainTextColor,
         //       //   1,
         //       //   TextAlign.center,
-        //       //   FontWeight.w500,
+        //       //   FontWeight.w600,
         //       //   font18Px(context: context) * 1.1,
         //       // ),
         //       text: 'All',
@@ -99,7 +99,7 @@ class OrderHistoryScreen extends StatelessWidget {
         //       //   ConstantData.mainTextColor,
         //       //   1,
         //       //   TextAlign.center,
-        //       //   FontWeight.w500,
+        //       //   FontWeight.w600,
         //       //   font18Px(context: context) * 1.1,
         //       // ),
         //       text: 'Dispatched',
@@ -110,7 +110,7 @@ class OrderHistoryScreen extends StatelessWidget {
         //       //   ConstantData.mainTextColor,
         //       //   1,
         //       //   TextAlign.center,
-        //       //   FontWeight.w500,
+        //       //   FontWeight.w600,
         //       //   font18Px(context: context) * 1.1,
         //       // ),
         //       text: 'Delivered',
@@ -122,14 +122,14 @@ class OrderHistoryScreen extends StatelessWidget {
         //     ConstantData.mainTextColor,
         //     1,
         //     TextAlign.center,
-        //     FontWeight.w500,
+        //     FontWeight.w600,
         //     font18Px(context: context) * 1.1,
         //   ),
         //   // centerTitle: true,
         // ),
         appBar: ConstantWidget.customAppBar(
           context: context,
-          title: 'Orders',
+          title: 'ORDERS',
           isHome: (fromSettingsPage ?? false) ? true : false,
         ),
         body: Observer(
@@ -149,28 +149,29 @@ class OrderHistoryScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    blockSizeHorizontal(context: context) * 4,
-                                vertical:
-                                    blockSizeVertical(context: context) * 2,
-                              ),
-                              child: ConstantWidget.getCustomText(
-                                'Your Orders',
-                                ConstantData.mainTextColor,
-                                1,
-                                TextAlign.left,
-                                FontWeight.w500,
-                                font18Px(context: context) * 1.1,
-                              ),
-                            ),
+                            // Padding(
+                            //   padding: EdgeInsets.symmetric(
+                            //     horizontal:
+                            //         blockSizeHorizontal(context: context) * 4,
+                            //     vertical:
+                            //         blockSizeVertical(context: context) * 2,
+                            //   ),
+                            //   child: ConstantWidget.getCustomText(
+                            //     'Your Orders',
+                            //     ConstantData.mainTextColor,
+                            //     1,
+                            //     TextAlign.left,
+                            //     FontWeight.w600,
+                            //     font18Px(context: context) * 1.1,
+                            //   ),
+                            // ),
                             // SizedBox(
                             //   height: blockSizeVertical(context: context) * 2,
                             // ),
                             Padding(
                               padding: EdgeInsets.symmetric(
-                                vertical: blockSizeVertical(context: context),
+                                vertical:
+                                    blockSizeVertical(context: context) * 2,
                               ),
                               child: Container(
                                 child: SingleChildScrollView(
@@ -355,7 +356,7 @@ class CurrentOrderStatusTile extends StatelessWidget {
               ConstantData.mainTextColor,
               1,
               TextAlign.center,
-              FontWeight.w500,
+              FontWeight.w600,
               font15Px(context: context),
             ),
           ),
@@ -571,7 +572,7 @@ class _OrderTileState extends State<OrderTile> {
                 ConstantData.mainTextColor,
                 1,
                 TextAlign.center,
-                FontWeight.w500,
+                FontWeight.w600,
                 font18Px(context: context),
               ),
             ),
@@ -589,7 +590,7 @@ class _OrderTileState extends State<OrderTile> {
                 ConstantData.mainTextColor,
                 1,
                 TextAlign.center,
-                FontWeight.w500,
+                FontWeight.w600,
                 font18Px(context: context),
               ),
             ),
@@ -635,7 +636,7 @@ class _OrderTileState extends State<OrderTile> {
                             ConstantData.mainTextColor,
                             1,
                             TextAlign.center,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font12Px(context: context),
                           ),
                         ),
@@ -661,7 +662,7 @@ class _OrderTileState extends State<OrderTile> {
                                       ConstantData.mainTextColor,
                                       2,
                                       TextAlign.left,
-                                      FontWeight.w500,
+                                      FontWeight.w600,
                                       font15Px(context: context) * 1.1,
                                     );
                                   },
@@ -688,7 +689,7 @@ class _OrderTileState extends State<OrderTile> {
                               ConstantData.mainTextColor,
                               1,
                               TextAlign.center,
-                              FontWeight.w500,
+                              FontWeight.w600,
                               font15Px(context: context),
                             ),
                           ],
@@ -769,7 +770,7 @@ class _OrderTileState extends State<OrderTile> {
                               ConstantData.bgColor,
                               1,
                               TextAlign.center,
-                              FontWeight.w500,
+                              FontWeight.w600,
                               font12Px(context: context) * 1.1,
                             ),
                           ),
@@ -873,7 +874,7 @@ class AllOrdersList extends StatelessWidget {
                                               ConstantData.mainTextColor,
                                               1,
                                               TextAlign.start,
-                                              FontWeight.w500,
+                                              FontWeight.w600,
                                               font18Px(context: context) * 1.1,
                                             ),
                                           ),
@@ -909,7 +910,7 @@ class AllOrdersList extends StatelessWidget {
                                                 ConstantData.textColor,
                                                 1,
                                                 TextAlign.start,
-                                                FontWeight.w500,
+                                                FontWeight.w600,
                                                 font18Px(context: context),
                                               ),
                                             ],
@@ -1101,7 +1102,7 @@ class DropDownListTile extends StatelessWidget {
                         ConstantData.mainTextColor,
                         1,
                         TextAlign.start,
-                        FontWeight.w500,
+                        FontWeight.w600,
                         ConstantWidget.getScreenPercentSize(context, 1.8)),
                   ),
                   Row(
@@ -1112,7 +1113,7 @@ class DropDownListTile extends StatelessWidget {
                           ConstantData.textColor,
                           1,
                           TextAlign.start,
-                          FontWeight.w500,
+                          FontWeight.w600,
                           ConstantWidget.getScreenPercentSize(context, 1.5)),
                     ],
                   )
@@ -1233,7 +1234,7 @@ class OrdersList extends StatelessWidget {
                                       //       fontFamily: ConstantData.fontFamily,
                                       //       fontSize:
                                       //           font18Px(context: context),
-                                      //       fontWeight: FontWeight.w500,
+                                      //       fontWeight: FontWeight.w600,
                                       //     ),
                                       //     children: [
                                       //       TextSpan(
@@ -1244,7 +1245,7 @@ class OrdersList extends StatelessWidget {
                                       //           fontSize:
                                       //               font18Px(context: context) *
                                       //                   1.2,
-                                      //           fontWeight: FontWeight.w500,
+                                      //           fontWeight: FontWeight.w600,
                                       //         ),
                                       //       ),
                                       //     ],
@@ -1255,7 +1256,7 @@ class OrdersList extends StatelessWidget {
                                         ConstantData.mainTextColor,
                                         1,
                                         TextAlign.start,
-                                        FontWeight.w500,
+                                        FontWeight.w600,
                                         font18Px(context: context) * 1.1,
                                       ),
                                       Padding(
@@ -1266,7 +1267,7 @@ class OrdersList extends StatelessWidget {
                                           ConstantData.textColor,
                                           1,
                                           TextAlign.start,
-                                          FontWeight.w500,
+                                          FontWeight.w600,
                                           font18Px(context: context),
                                         ),
                                       ),
@@ -1304,7 +1305,7 @@ class OrdersList extends StatelessWidget {
                                                 .getCustomTextWithoutAlign(
                                               'Re-order',
                                               Colors.white,
-                                              FontWeight.w500,
+                                              FontWeight.w600,
                                               fontSize,
                                             ),
                                           ),
@@ -1340,7 +1341,7 @@ class OrdersList extends StatelessWidget {
                                               .getCustomTextWithoutAlign(
                                                   'Invoice',
                                                   ConstantData.mainTextColor,
-                                                  FontWeight.w500,
+                                                  FontWeight.w600,
                                                   fontSize),
                                         ),
                                       ),
@@ -1480,7 +1481,7 @@ class InvoiceView extends StatelessWidget {
             //       ConstantData.bgColor,
             //       1,
             //       TextAlign.center,
-            //       FontWeight.w500,
+            //       FontWeight.w600,
             //       font18Px(context: context),
             //     ),
             //   ),

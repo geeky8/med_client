@@ -115,6 +115,7 @@ class CheckoutScreen extends StatelessWidget {
                 child: ListView(
                   padding: EdgeInsets.symmetric(
                       vertical: blockSizeVertical(context: context) * 2),
+                  physics: const BouncingScrollPhysics(),
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(
@@ -130,30 +131,37 @@ class CheckoutScreen extends StatelessWidget {
                           itemBuilder: (_, index) {
                             return Row(
                               children: [
-                                Container(
-                                  height: ConstantWidget.getScreenPercentSize(
-                                      context, 8),
-                                  width: ConstantWidget.getWidthPercentSize(
-                                      context, 16),
-                                  padding: EdgeInsets.all(
-                                      blockSizeHorizontal(context: context) *
-                                          2),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        font18Px(context: context)),
-                                    border: Border.all(
-                                      color: ConstantData.borderColor,
-                                      width: 1.2,
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical:
+                                        blockSizeHorizontal(context: context) *
+                                            3,
+                                  ),
+                                  child: Container(
+                                    height: ConstantWidget.getScreenPercentSize(
+                                        context, 8),
+                                    width: ConstantWidget.getWidthPercentSize(
+                                        context, 16),
+                                    padding: EdgeInsets.all(
+                                        blockSizeHorizontal(context: context) *
+                                            2),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          font18Px(context: context)),
+                                      border: Border.all(
+                                        color: ConstantData.borderColor,
+                                        width: 1.2,
+                                      ),
+                                      image: DecorationImage(
+                                          image: CachedNetworkImageProvider(
+                                            ConstantData.productUrl +
+                                                productStore
+                                                    .cartModel
+                                                    .productList[index]
+                                                    .productImg,
+                                          ),
+                                          fit: BoxFit.cover),
                                     ),
-                                    image: DecorationImage(
-                                        image: CachedNetworkImageProvider(
-                                          ConstantData.productUrl +
-                                              productStore
-                                                  .cartModel
-                                                  .productList[index]
-                                                  .productImg,
-                                        ),
-                                        fit: BoxFit.cover),
                                   ),
                                 ),
                                 // ClipRRect(
@@ -182,7 +190,7 @@ class CheckoutScreen extends StatelessWidget {
                                         ConstantData.mainTextColor,
                                         1,
                                         TextAlign.center,
-                                        FontWeight.w500,
+                                        FontWeight.w600,
                                         font15Px(context: context) * 1.2,
                                       ),
                                       ConstantWidget.getCustomText(
@@ -190,7 +198,7 @@ class CheckoutScreen extends StatelessWidget {
                                         Colors.black45,
                                         1,
                                         TextAlign.center,
-                                        FontWeight.w500,
+                                        FontWeight.w600,
                                         font15Px(context: context) * 1.1,
                                       ),
                                     ],
@@ -202,7 +210,7 @@ class CheckoutScreen extends StatelessWidget {
                                   ConstantData.mainTextColor,
                                   1,
                                   TextAlign.center,
-                                  FontWeight.w500,
+                                  FontWeight.w600,
                                   font15Px(context: context) * 1.2,
                                 )
                               ],
@@ -226,7 +234,7 @@ class CheckoutScreen extends StatelessWidget {
                                 'Address',
                                 ConstantData.mainTextColor,
                                 TextAlign.start,
-                                FontWeight.w500,
+                                FontWeight.w600,
                                 font18Px(context: context) * 1.2,
                               ),
                             ],
@@ -314,7 +322,7 @@ class CheckoutScreen extends StatelessWidget {
                     //             'Options',
                     //             ConstantData.mainTextColor,
                     //             TextAlign.start,
-                    //             FontWeight.w500,
+                    //             FontWeight.w600,
                     //             font18Px(context: context) * 1.2,
                     //           ),
                     //         ],
@@ -367,7 +375,7 @@ class CheckoutScreen extends StatelessWidget {
                             ConstantData.mainTextColor,
                             1,
                             TextAlign.center,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font18Px(context: context) * 1.2,
                           ),
                           SizedBox(
@@ -381,7 +389,7 @@ class CheckoutScreen extends StatelessWidget {
                                 Colors.black45,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w500,
+                                FontWeight.w600,
                                 font15Px(context: context) * 1.1,
                               ),
                               const Spacer(),
@@ -390,7 +398,7 @@ class CheckoutScreen extends StatelessWidget {
                                 Colors.black45,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w500,
+                                FontWeight.w600,
                                 font15Px(context: context) * 1.1,
                               ),
                             ],
@@ -406,7 +414,7 @@ class CheckoutScreen extends StatelessWidget {
                                 ConstantData.mainTextColor,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w500,
+                                FontWeight.w600,
                                 font15Px(context: context) * 1.25,
                               ),
                               const Spacer(),
@@ -415,7 +423,7 @@ class CheckoutScreen extends StatelessWidget {
                                 ConstantData.primaryColor,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w500,
+                                FontWeight.w600,
                                 font15Px(context: context) * 1.30,
                               ),
                             ],
@@ -511,7 +519,7 @@ class PaymentOptionsWidget extends StatelessWidget {
                   1,
                   TextAlign.center,
                   (_productStore.paymentOptions == options)
-                      ? FontWeight.w500
+                      ? FontWeight.w600
                       : FontWeight.w400,
                   font18Px(context: context) * 1.1,
                 ),

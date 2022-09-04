@@ -120,94 +120,107 @@ class ProductViewList extends StatelessWidget {
                               width: blockSizeHorizontal(context: context) * 5,
                             ),
 
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: ConstantWidget.getPercentSize(
-                                          remainHeight, 8),
-                                    ),
-                                    //-----> Product Name
-                                    ConstantWidget.getCustomText(
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: ConstantWidget.getPercentSize(
+                                            remainHeight, 8),
+                                      ),
+                                      //-----> Product Name
+                                      ConstantWidget.getCustomText(
                                         list[index].productName,
                                         ConstantData.mainTextColor,
                                         1,
                                         TextAlign.start,
-                                        FontWeight.w500,
-                                        font18Px(context: context)),
-                                    SizedBox(
-                                      height:
-                                          blockSizeVertical(context: context),
-                                    ),
+                                        FontWeight.w600,
+                                        font18Px(context: context),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            blockSizeVertical(context: context),
+                                      ),
 
-                                    //-----> Product description
-                                    ConstantWidget.getCustomText(
-                                        list[index].description,
-                                        Colors.grey,
-                                        1,
-                                        TextAlign.start,
-                                        FontWeight.w500,
-                                        font12Px(context: context)),
-                                  ],
-                                ),
+                                      //-----> Product description
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ConstantWidget.getCustomText(
+                                                list[index].description,
+                                                Colors.grey,
+                                                1,
+                                                TextAlign.start,
+                                                FontWeight.w600,
+                                                font12Px(context: context)),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
 
-                                //----> Add,Remove buttons
-                                Observer(builder: (_) {
-                                  final adminStatus =
-                                      loginStore.loginModel.adminStatus;
+                                  //----> Add,Remove buttons
+                                  Observer(builder: (_) {
+                                    final adminStatus =
+                                        loginStore.loginModel.adminStatus;
 
-                                  return Offstage(
-                                    offstage: !adminStatus,
-                                    child: Observer(builder: (_) {
-                                      final _index = store.cartModel.productList
-                                          .indexWhere((element) =>
-                                              element.pid == list[index].pid);
+                                    return Offstage(
+                                      offstage: !adminStatus,
+                                      child: Observer(builder: (_) {
+                                        final _index = store
+                                            .cartModel.productList
+                                            .indexWhere((element) =>
+                                                element.pid == list[index].pid);
 
-                                      if (list[index].cartQuantity! >= 1 &&
-                                          _index != -1) {
-                                        return Row(
-                                          children: [
-                                            PlusMinusWidget(
-                                              model: list[index],
-                                              store: store,
-                                            ),
-                                            SizedBox(
-                                              width: blockSizeHorizontal(
-                                                      context: context) *
-                                                  2,
-                                            ),
-                                            RemoveButton(
-                                              store: store,
-                                              model: list[index],
-                                              width: width,
-                                              height: height,
-                                              fontSize:
-                                                  font12Px(context: context),
-                                            ),
-                                          ],
-                                        );
-                                      } else {
-                                        return AddProductButton(
-                                          store: store,
-                                          model: list[index],
-                                          width: blockSizeVertical(
-                                              context: context),
-                                          height: blockSizeHorizontal(
-                                                  context: context) *
-                                              8,
-                                          fontSize: font18Px(context: context),
-                                        );
-                                      }
-                                    }),
-                                  );
-                                }),
-                              ],
+                                        if (list[index].cartQuantity! >= 1 &&
+                                            _index != -1) {
+                                          return Row(
+                                            children: [
+                                              PlusMinusWidget(
+                                                model: list[index],
+                                                store: store,
+                                              ),
+                                              SizedBox(
+                                                width: blockSizeHorizontal(
+                                                        context: context) *
+                                                    2,
+                                              ),
+                                              RemoveButton(
+                                                store: store,
+                                                model: list[index],
+                                                width: width,
+                                                height: height,
+                                                fontSize:
+                                                    font12Px(context: context),
+                                              ),
+                                            ],
+                                          );
+                                        } else {
+                                          return AddProductButton(
+                                            store: store,
+                                            model: list[index],
+                                            width: blockSizeHorizontal(
+                                                    context: context) *
+                                                5,
+                                            height: blockSizeVertical(
+                                                context: context),
+                                            fontSize:
+                                                font18Px(context: context),
+                                          );
+                                        }
+                                      }),
+                                    );
+                                  }),
+                                ],
+                              ),
                             ),
                             // const Spacer(),
                             //----> MRP widgets
@@ -250,7 +263,7 @@ class ProductViewList extends StatelessWidget {
                                               ConstantData.mainTextColor,
                                               1,
                                               TextAlign.start,
-                                              FontWeight.w500,
+                                              FontWeight.w600,
                                               font15Px(context: context) * 1.1,
                                             ),
                                             SizedBox(

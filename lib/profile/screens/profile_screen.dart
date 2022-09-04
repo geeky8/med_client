@@ -13,6 +13,7 @@ import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/button_state.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
+import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/profile/models/firm_info_model.dart';
 import 'package:medrpha_customer/profile/models/profile_model.dart';
@@ -95,9 +96,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String? getLicenseValidation({required String value}) {
     if (value.isEmpty) {
+      print(value);
       return 'This Field cannot be empty';
-    } else if (value.length < 15) {
-      return 'Invalid license number';
     }
     return null;
   }
@@ -157,6 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final loginstore = context.read<LoginStore>();
     final productStore = context.read<ProductsStore>();
     final bottomNavigationStore = context.read<BottomNavigationStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
 
     // SizeConfig().init(context);
 
@@ -224,395 +225,610 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
             }
           }),
-          bottomNavigationBar: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: blockSizeHorizontal(context: context) * 3,
-            ),
-            child: Row(
-              children: [
-                Observer(builder: (_) {
-                  return Expanded(
-                    flex: 1,
-                    child: Container(
-                      height: ConstantWidget.getScreenPercentSize(context, 7.5),
-                      // margin: EdgeInsets.symmetric(
-                      //     vertical: ConstantWidget.getScreenPercentSize(
-                      //         context, 1.2)),
-                      decoration: BoxDecoration(
-                        color: ConstantData.primaryColor,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(ConstantWidget.getPercentSize(
-                              ConstantWidget.getScreenPercentSize(context, 7.5),
-                              20)),
-                        ),
-                      ),
-                      child: Observer(builder: (_) {
-                        final page = store.page;
-                        // final dlToFill =
-                        //     store.profileModel.drugLicenseModel.toFill;
-                        // final gstToFIll = store.profileModel.gstModel.toFill;
-                        final fssaiToFill =
-                            store.profileModel.fssaiModel.toFill;
+          bottomNavigationBar: Observer(builder: (_) {
+            if (store.saveState == ButtonState.LOADING) {
+              return ConstantWidget.getCustomText(
+                'UPLOADING..........',
+                ConstantData.primaryColor,
+                1,
+                TextAlign.center,
+                FontWeight.w600,
+                font22Px(context: context),
+              );
+            } else {
+              return ConstantWidget.getBottomButton(
+                context: context,
+                func: () async {
+                  switch (store.page) {
+                    case 0:
+                      if (firmtNameController.text.isNotEmpty &&
+                          addressController.text.isNotEmpty &&
+                          mailController.text.isNotEmpty &&
+                          phoneController.text.isNotEmpty &&
+                          // pinController.text.isNotEmpty &&
+                          (country != null) &&
+                          (city != null) &&
+                          (state != null) &&
+                          (area != null) &&
+                          contactNameController.text.isNotEmpty &&
+                          contactController.text.isNotEmpty &&
+                          altContactController.text.isNotEmpty) {
+                        final countryIndex = store.countryList.indexWhere(
+                            (element) => element.countryName == country);
+                        final stateIndex = store.stateList.indexWhere(
+                            (element) => element.stateName == state);
 
-                        switch (page) {
-                          case 0:
-                            return InkWell(
-                              onTap: () {
-                                if (firmtNameController.text.isNotEmpty &&
-                                    addressController.text.isNotEmpty &&
-                                    mailController.text.isNotEmpty &&
-                                    phoneController.text.isNotEmpty &&
-                                    // pinController.text.isNotEmpty &&
-                                    (country != null) &&
-                                    (city != null) &&
-                                    (state != null) &&
-                                    (area != null) &&
-                                    contactNameController.text.isNotEmpty &&
-                                    contactController.text.isNotEmpty &&
-                                    altContactController.text.isNotEmpty) {
-                                  final countryIndex = store.countryList
-                                      .indexWhere((element) =>
-                                          element.countryName == country);
-                                  final stateIndex = store.stateList.indexWhere(
-                                      (element) => element.stateName == state);
+                        final cityIndex = store.cityList
+                            .indexWhere((element) => element.cityName == city);
 
-                                  final cityIndex = store.cityList.indexWhere(
-                                      (element) => element.cityName == city);
+                        final areaIndex = store.areaList
+                            .indexWhere((element) => element.areaName == area);
+                        if (countryIndex != -1 &&
+                            stateIndex != -1 &&
+                            cityIndex != -1 &&
+                            areaIndex != -1) {
+                          final firmInfoModel = FirmInfoModel(
+                            firmName: firmtNameController.text.trim(),
+                            email: mailController.text.trim(),
+                            phone: phoneController.text.trim(),
+                            country: store.countryList[countryIndex].countryId
+                                .toString(),
+                            city: store.cityList[cityIndex].cityId.toString(),
+                            state:
+                                store.stateList[stateIndex].stateId.toString(),
+                            pin: store.areaList[areaIndex].areaId.toString(),
+                            address: addressController.text.trim(),
+                            contactName: contactNameController.text.trim(),
+                            contactNo: contactController.text.trim(),
+                            altContactNo: altContactController.text.trim(),
+                          );
 
-                                  final areaIndex = store.areaList.indexWhere(
-                                      (element) => element.areaName == area);
-                                  if (countryIndex != -1 &&
-                                      stateIndex != -1 &&
-                                      cityIndex != -1 &&
-                                      areaIndex != -1) {
-                                    final firmInfoModel = FirmInfoModel(
-                                      firmName: firmtNameController.text.trim(),
-                                      email: mailController.text.trim(),
-                                      phone: phoneController.text.trim(),
-                                      country: store
-                                          .countryList[countryIndex].countryId
-                                          .toString(),
-                                      city: store.cityList[cityIndex].cityId
-                                          .toString(),
-                                      state: store.stateList[stateIndex].stateId
-                                          .toString(),
-                                      pin: store.areaList[areaIndex].areaId
-                                          .toString(),
-                                      address: addressController.text.trim(),
-                                      contactName:
-                                          contactNameController.text.trim(),
-                                      contactNo: contactController.text.trim(),
-                                      altContactNo:
-                                          altContactController.text.trim(),
-                                    );
+                          store.profileModel = store.profileModel
+                              .copyWith(firmInfoModel: firmInfoModel);
 
-                                    store.profileModel = store.profileModel
-                                        .copyWith(firmInfoModel: firmInfoModel);
-
-                                    store.page += 1;
-                                  }
-                                } else {
-                                  // print(firmtNameController.text);
-                                  // print(contactController.text);
-                                  // print(mailController.text);
-                                  // print(altContactController.text);
-                                  // print(addressController.text);
-                                  // print(phoneController.text);
-                                  // print(contactNameController.text);
-                                  // print(pinController.text);
-                                  final snackBar = ConstantData()
-                                      .snackBarValidation(context);
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                }
-                              },
-                              child: ConstantWidget.getButtonWidget(
-                                context,
-                                'Next',
-                                ConstantData.primaryColor,
-                                // ConstantData.bgColor,
-                                // Icons.arrow_back_ios_new,
-                                // 12,
-                              ),
-                            );
-                          case 1:
-                            return InkWell(
-                              onTap: () {
-                                if (store.profileModel.gstModel.toFill) {
-                                  if (gstNoController.text.isNotEmpty &&
-                                      getLicenseValidation(
-                                              value: gstNoController.text) ==
-                                          null) {
-                                    final gstModel = store.profileModel.gstModel
-                                        .copyWith(
-                                            gstNo: gstNoController.text.trim());
-                                    store.profileModel = store.profileModel
-                                        .copyWith(gstModel: gstModel);
-                                    store.page += 1;
-                                  } else {
-                                    final snackBar = ConstantData()
-                                        .snackBarValidation(context);
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
-                                  }
-                                  // } else {
-                                  //   store.page += 1;
-                                } else {
-                                  store.profileModel =
-                                      store.profileModel.copyWith(
-                                    gstModel: ConstantData().initGstModel,
-                                  );
-                                  store.page += 1;
-                                }
-                              },
-                              child: ConstantWidget.getButtonWidget(
-                                context,
-                                'Next',
-                                ConstantData.primaryColor,
-                                // ConstantData.bgColor,
-                                // Icons.arrow_back_ios_new,
-                                // 12,
-                              ),
-                            );
-                          case 2:
-                            return InkWell(
-                              onTap: () {
-                                // if (store
-                                //     .profileModel.drugLicenseModel.toFill) {
-                                final license1 =
-                                    store.profileModel.drugLicenseModel.dlImg1;
-                                final license2 =
-                                    store.profileModel.drugLicenseModel.dlImg2;
-                                // print(license1);
-                                // print(license2);
-                                if ((drugLiscenseNo.text.isNotEmpty ||
-                                        drugLiscenseNo.text != '') &&
-                                    (drugLicenseName.text.isNotEmpty ||
-                                        drugLicenseName.text != '') &&
-                                    (drugLicenseValidity.text.isNotEmpty ||
-                                        drugLicenseValidity.text != '') &&
-                                    license1.isNotEmpty &&
-                                    license2.isNotEmpty &&
-                                    getLicenseValidation(
-                                            value: drugLiscenseNo.text) ==
-                                        null &&
-                                    getTextValidation(
-                                            value: drugLicenseName.text) ==
-                                        null &&
-                                    getTextValidation(
-                                            value: drugLicenseValidity.text) ==
-                                        null) {
-                                  final drugLicenseModel = store
-                                      .profileModel.drugLicenseModel
-                                      .copyWith(
-                                    name: drugLicenseName.text.trim(),
-                                    number: drugLiscenseNo.text.trim(),
-                                    validity: drugLicenseValidity.text.trim(),
-                                    // licenseBytes: drugImgBytes,
-                                  );
-                                  store.profileModel = store.profileModel
-                                      .copyWith(
-                                          drugLicenseModel: drugLicenseModel);
-                                  store.page += 1;
-                                } else {
-                                  final snackBar = ConstantData()
-                                      .snackBarValidation(context);
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                }
-                                // } else {
-                                //   store.page += 1;
-                                // } else {
-                                //   store.profileModel =
-                                //       store.profileModel.copyWith(
-                                //     drugLicenseModel:
-                                //         ConstantData().initDrugLicenseModel,
-                                //   );
-                                //   store.page += 1;
-                                // }
-                              },
-                              child: ConstantWidget.getButtonWidget(
-                                context,
-                                'Next',
-                                ConstantData.primaryColor,
-                                // ConstantData.bgColor,
-                                // Icons.arrow_back_ios_new,
-                                // 12,
-                              ),
-                            );
-                          case 3:
-                            return Center(child: Observer(builder: (_) {
-                              final state = store.saveState;
-
-                              switch (state) {
-                                case ButtonState.LOADING:
-                                  return CircularProgressIndicator(
-                                    color: ConstantData.bgColor,
-                                  );
-                                case ButtonState.ERROR:
-                                  return InkWell(
-                                    onTap: () async {
-                                      if (fssaiToFill) {
-                                        final license = store
-                                            .profileModel.fssaiModel.fssaiImg;
-                                        if ((fssaiNoController
-                                                    .text.isNotEmpty ||
-                                                fssaiNoController.text != '') &&
-                                            license.isNotEmpty) {
-                                          final fssaiModel = store
-                                              .profileModel.fssaiModel
-                                              .copyWith(
-                                            number:
-                                                fssaiNoController.text.trim(),
-                                          );
-
-                                          store.profileModel = store
-                                              .profileModel
-                                              .copyWith(fssaiModel: fssaiModel);
-                                        } else {
-                                          final snackBar = ConstantData()
-                                              .snackBarValidation(context);
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(snackBar);
-                                        }
-                                      }
-                                      await store.updateProfile(
-                                        context: context,
-                                        loginStore: loginstore,
-                                      );
-
-                                      final state = store.saveState;
-                                      if (state == ButtonState.SUCCESS) {
-                                        if (widget.beginToFill != null) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => Provider.value(
-                                                value: store,
-                                                child: Provider.value(
-                                                  value: loginstore,
-                                                  child: Provider.value(
-                                                    value: productStore,
-                                                    child: Provider.value(
-                                                      value:
-                                                          bottomNavigationStore,
-                                                      child: const HomeScreen(),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        } else {
-                                          Navigator.pop(context);
-                                        }
-                                      }
-                                    },
-                                    child: ConstantWidget.getDefaultTextWidget(
-                                        'Save',
-                                        TextAlign.center,
-                                        FontWeight.w500,
-                                        font22Px(context: context),
-                                        ConstantData.bgColor),
-                                  );
-                                case ButtonState.SUCCESS:
-                                  return InkWell(
-                                    onTap: () async {
-                                      /// Checking if fssai needs to be filled.
-                                      if (fssaiToFill) {
-                                        if (fssaiNoController.text.isNotEmpty) {
-                                          final fssaiModel = store
-                                              .profileModel.fssaiModel
-                                              .copyWith(
-                                            number:
-                                                fssaiNoController.text.trim(),
-                                            numberBytes: [],
-                                          );
-
-                                          store.profileModel = store
-                                              .profileModel
-                                              .copyWith(fssaiModel: fssaiModel);
-                                        } else {
-                                          final snackBar = ConstantData()
-                                              .snackBarValidation(context);
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(snackBar);
-                                        }
-                                      } else {
-                                        final fssaiModel =
-                                            ConstantData().initFssaiModel;
-                                        store.profileModel = store.profileModel
-                                            .copyWith(fssaiModel: fssaiModel);
-                                      }
-
-                                      /// Profile uploading
-                                      if (widget.beginToFill != null) {
-                                        await store.updateProfile(
-                                          context: context,
-                                          beginToFill: true,
-                                          loginStore: loginstore,
-                                        );
-                                      } else {
-                                        await store.updateProfile(
-                                          context: context,
-                                          loginStore: loginstore,
-                                        );
-                                      }
-
-                                      /// Check for navigation for first time and regular users.
-                                      final state = store.saveState;
-                                      if (state == ButtonState.SUCCESS) {
-                                        if (widget.beginToFill != null) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => Provider.value(
-                                                value: store,
-                                                child: Provider.value(
-                                                  value: loginstore,
-                                                  child: Provider.value(
-                                                    value: productStore,
-                                                    child: Provider.value(
-                                                      value:
-                                                          bottomNavigationStore,
-                                                      child: const HomeScreen(),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        } else {
-                                          Navigator.pop(context);
-                                        }
-                                      }
-                                    },
-                                    child: ConstantWidget.getButtonWidget(
-                                        context,
-                                        'Save',
-                                        ConstantData.primaryColor),
-                                  );
-                              }
-                            }));
-                          default:
-                            return FloatingActionButton(
-                              onPressed: () {
-                                store.page -= 1;
-                              },
-                              child: Icon(
-                                Icons.arrow_back,
-                                size: font22Px(context: context),
-                                color: ConstantData.bgColor,
-                              ),
-                            );
+                          store.page += 1;
                         }
-                      }),
-                    ),
-                  );
-                }),
-              ],
-            ),
-          ),
+                      } else {
+                        // print(firmtNameController.text);
+                        // print(contactController.text);
+                        // print(mailController.text);
+                        // print(altContactController.text);
+                        // print(addressController.text);
+                        // print(phoneController.text);
+                        // print(contactNameController.text);
+                        // print(pinController.text);
+                        final snackBar =
+                            ConstantData().snackBarValidation(context);
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                      break;
+                    case 1:
+                      if (store.profileModel.gstModel.toFill) {
+                        if (gstNoController.text.isNotEmpty) {
+                          final gstModel = store.profileModel.gstModel
+                              .copyWith(gstNo: gstNoController.text.trim());
+                          store.profileModel =
+                              store.profileModel.copyWith(gstModel: gstModel);
+                          store.page += 1;
+                        } else {
+                          final snackBar =
+                              ConstantData().snackBarValidation(context);
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+                        // } else {
+                        //   store.page += 1;
+                      } else {
+                        store.profileModel = store.profileModel.copyWith(
+                          gstModel: ConstantData().initGstModel,
+                        );
+                        store.page += 1;
+                      }
+                      break;
+                    case 2:
+                      // if (store
+                      //         .profileModel.drugLicenseModel.toFill) {
+                      final license1 =
+                          store.profileModel.drugLicenseModel.dlImg1;
+                      final license2 =
+                          store.profileModel.drugLicenseModel.dlImg2;
+                      // print(license1);
+                      // print(license2);
+                      if ((drugLiscenseNo.text.isNotEmpty ||
+                              drugLiscenseNo.text != '') &&
+                          (drugLicenseName.text.isNotEmpty ||
+                              drugLicenseName.text != '') &&
+                          (drugLicenseValidity.text.isNotEmpty ||
+                              drugLicenseValidity.text != '') &&
+                          license1.isNotEmpty &&
+                          license2.isNotEmpty &&
+                          getLicenseValidation(value: drugLiscenseNo.text) ==
+                              null &&
+                          getTextValidation(value: drugLicenseName.text) ==
+                              null &&
+                          getTextValidation(value: drugLicenseValidity.text) ==
+                              null) {
+                        final drugLicenseModel =
+                            store.profileModel.drugLicenseModel.copyWith(
+                          name: drugLicenseName.text.trim(),
+                          number: drugLiscenseNo.text.trim(),
+                          validity: drugLicenseValidity.text.trim(),
+                          // licenseBytes: drugImgBytes,
+                        );
+                        store.profileModel = store.profileModel
+                            .copyWith(drugLicenseModel: drugLicenseModel);
+                        store.page += 1;
+                      } else {
+                        final snackBar =
+                            ConstantData().snackBarValidation(context);
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                      break;
+                    case 3:
+
+                      /// Checking if fssai needs to be filled.
+                      store.saveState = ButtonState.LOADING;
+                      if (store.profileModel.fssaiModel.toFill) {
+                        if (fssaiNoController.text.isNotEmpty) {
+                          final fssaiModel =
+                              store.profileModel.fssaiModel.copyWith(
+                            number: fssaiNoController.text.trim(),
+                            numberBytes: [],
+                          );
+
+                          store.profileModel = store.profileModel
+                              .copyWith(fssaiModel: fssaiModel);
+                        } else {
+                          final snackBar =
+                              ConstantData().snackBarValidation(context);
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+                      } else {
+                        final fssaiModel = ConstantData().initFssaiModel;
+                        store.profileModel =
+                            store.profileModel.copyWith(fssaiModel: fssaiModel);
+                      }
+
+                      /// Profile uploading
+                      if (widget.beginToFill != null) {
+                        await store.updateProfile(
+                          context: context,
+                          beginToFill: true,
+                          loginStore: loginstore,
+                        );
+                      } else {
+                        await store.updateProfile(
+                          context: context,
+                          loginStore: loginstore,
+                        );
+                      }
+                      store.saveState = ButtonState.SUCCESS;
+
+                      /// Check for navigation for first time and regular users.
+
+                      // if (state == ButtonState.SUCCESS) {
+                      if (widget.beginToFill != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => Provider.value(
+                              value: store,
+                              child: Provider.value(
+                                value: loginstore,
+                                child: Provider.value(
+                                  value: productStore,
+                                  child: Provider.value(
+                                    value: bottomNavigationStore
+                                      ..currentPage = 0,
+                                    child: Provider.value(
+                                      value: orderHistoryStore,
+                                      child: const HomeScreen(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    // }
+                  }
+                },
+                label: store.page == 3 ? 'Save' : 'Next',
+                height: blockSizeVertical(context: context),
+              );
+            }
+          }),
+          // bottomNavigationBar: Padding(
+          //   padding: EdgeInsets.symmetric(
+          //     horizontal: blockSizeHorizontal(context: context) * 3,
+          //   ),
+          //   child: Observer(builder: (_) {
+          //     return Expanded(
+          //       flex: 1,
+          //       child: Container(
+          //         height: ConstantWidget.getScreenPercentSize(context, 7.5),
+          //         // margin: EdgeInsets.symmetric(
+          //         //     vertical: ConstantWidget.getScreenPercentSize(
+          //         //         context, 1.2)),
+          //         decoration: BoxDecoration(
+          //           color: ConstantData.primaryColor,
+          //           borderRadius: BorderRadius.all(
+          //             Radius.circular(ConstantWidget.getPercentSize(
+          //                 ConstantWidget.getScreenPercentSize(context, 7.5),
+          //                 20)),
+          //           ),
+          //         ),
+          //         child: Observer(builder: (_) {
+          //           final page = store.page;
+          //           // final dlToFill =
+          //           //     store.profileModel.drugLicenseModel.toFill;
+          //           // final gstToFIll = store.profileModel.gstModel.toFill;
+          //           final fssaiToFill =
+          //               store.profileModel.fssaiModel.toFill;
+
+          //           switch (page) {
+          //             case 0:
+          //               return InkWell(
+          //                 onTap: () {
+          //                   if (firmtNameController.text.isNotEmpty &&
+          //                       addressController.text.isNotEmpty &&
+          //                       mailController.text.isNotEmpty &&
+          //                       phoneController.text.isNotEmpty &&
+          //                       // pinController.text.isNotEmpty &&
+          //                       (country != null) &&
+          //                       (city != null) &&
+          //                       (state != null) &&
+          //                       (area != null) &&
+          //                       contactNameController.text.isNotEmpty &&
+          //                       contactController.text.isNotEmpty &&
+          //                       altContactController.text.isNotEmpty) {
+          //                     final countryIndex = store.countryList
+          //                         .indexWhere((element) =>
+          //                             element.countryName == country);
+          //                     final stateIndex = store.stateList.indexWhere(
+          //                         (element) => element.stateName == state);
+
+          //                     final cityIndex = store.cityList.indexWhere(
+          //                         (element) => element.cityName == city);
+
+          //                     final areaIndex = store.areaList.indexWhere(
+          //                         (element) => element.areaName == area);
+          //                     if (countryIndex != -1 &&
+          //                         stateIndex != -1 &&
+          //                         cityIndex != -1 &&
+          //                         areaIndex != -1) {
+          //                       final firmInfoModel = FirmInfoModel(
+          //                         firmName: firmtNameController.text.trim(),
+          //                         email: mailController.text.trim(),
+          //                         phone: phoneController.text.trim(),
+          //                         country: store
+          //                             .countryList[countryIndex].countryId
+          //                             .toString(),
+          //                         city: store.cityList[cityIndex].cityId
+          //                             .toString(),
+          //                         state: store.stateList[stateIndex].stateId
+          //                             .toString(),
+          //                         pin: store.areaList[areaIndex].areaId
+          //                             .toString(),
+          //                         address: addressController.text.trim(),
+          //                         contactName:
+          //                             contactNameController.text.trim(),
+          //                         contactNo: contactController.text.trim(),
+          //                         altContactNo:
+          //                             altContactController.text.trim(),
+          //                       );
+
+          //                       store.profileModel = store.profileModel
+          //                           .copyWith(firmInfoModel: firmInfoModel);
+
+          //                       store.page += 1;
+          //                     }
+          //                   } else {
+          //                     // print(firmtNameController.text);
+          //                     // print(contactController.text);
+          //                     // print(mailController.text);
+          //                     // print(altContactController.text);
+          //                     // print(addressController.text);
+          //                     // print(phoneController.text);
+          //                     // print(contactNameController.text);
+          //                     // print(pinController.text);
+          //                     final snackBar = ConstantData()
+          //                         .snackBarValidation(context);
+          //                     ScaffoldMessenger.of(context)
+          //                         .showSnackBar(snackBar);
+          //                   }
+          //                 },
+          //                 child: ConstantWidget.getButtonWidget(
+          //                   context,
+          //                   'Next',
+          //                   ConstantData.primaryColor,
+          //                   // ConstantData.bgColor,
+          //                   // Icons.arrow_back_ios_new,
+          //                   // 12,
+          //                 ),
+          //               );
+          //             case 1:
+          //               return InkWell(
+          //                 onTap: () {
+          //                   if (store.profileModel.gstModel.toFill) {
+          //                     if (gstNoController.text.isNotEmpty &&
+          //                         getLicenseValidation(
+          //                                 value: gstNoController.text) ==
+          //                             null) {
+          //                       final gstModel = store.profileModel.gstModel
+          //                           .copyWith(
+          //                               gstNo: gstNoController.text.trim());
+          //                       store.profileModel = store.profileModel
+          //                           .copyWith(gstModel: gstModel);
+          //                       store.page += 1;
+          //                     } else {
+          //                       final snackBar = ConstantData()
+          //                           .snackBarValidation(context);
+          //                       ScaffoldMessenger.of(context)
+          //                           .showSnackBar(snackBar);
+          //                     }
+          //                     // } else {
+          //                     //   store.page += 1;
+          //                   } else {
+          //                     store.profileModel =
+          //                         store.profileModel.copyWith(
+          //                       gstModel: ConstantData().initGstModel,
+          //                     );
+          //                     store.page += 1;
+          //                   }
+          //                 },
+          //                 child: ConstantWidget.getButtonWidget(
+          //                   context,
+          //                   'Next',
+          //                   ConstantData.primaryColor,
+          //                   // ConstantData.bgColor,
+          //                   // Icons.arrow_back_ios_new,
+          //                   // 12,
+          //                 ),
+          //               );
+          //             case 2:
+          //               return InkWell(
+          //                 onTap: () {
+          //                   // if (store
+          //                   //     .profileModel.drugLicenseModel.toFill) {
+          //                   final license1 =
+          //                       store.profileModel.drugLicenseModel.dlImg1;
+          //                   final license2 =
+          //                       store.profileModel.drugLicenseModel.dlImg2;
+          //                   // print(license1);
+          //                   // print(license2);
+          //                   if ((drugLiscenseNo.text.isNotEmpty ||
+          //                               drugLiscenseNo.text != '') &&
+          //                           (drugLicenseName.text.isNotEmpty ||
+          //                               drugLicenseName.text != '') &&
+          //                           (drugLicenseValidity.text.isNotEmpty ||
+          //                               drugLicenseValidity.text != '') &&
+          //                           license1.isNotEmpty &&
+          //                           license2.isNotEmpty
+          //                       // getLicenseValidation(
+          //                       //         value: drugLiscenseNo.text) ==
+          //                       //     null &&
+          //                       // getTextValidation(
+          //                       //         value: drugLicenseName.text) ==
+          //                       //     null &&
+          //                       // getTextValidation(
+          //                       //         value: drugLicenseValidity.text) ==
+          //                       // null
+          //                       ) {
+          //                     final drugLicenseModel = store
+          //                         .profileModel.drugLicenseModel
+          //                         .copyWith(
+          //                       name: drugLicenseName.text.trim(),
+          //                       number: drugLiscenseNo.text.trim(),
+          //                       validity: drugLicenseValidity.text.trim(),
+          //                       // licenseBytes: drugImgBytes,
+          //                     );
+          //                     store.profileModel = store.profileModel
+          //                         .copyWith(
+          //                             drugLicenseModel: drugLicenseModel);
+          //                     store.page += 1;
+          //                   } else {
+          //                     final snackBar = ConstantData()
+          //                         .snackBarValidation(context);
+          //                     ScaffoldMessenger.of(context)
+          //                         .showSnackBar(snackBar);
+          //                   }
+          //                   // } else {
+          //                   //   store.page += 1;
+          //                   // } else {
+          //                   //   store.profileModel =
+          //                   //       store.profileModel.copyWith(
+          //                   //     drugLicenseModel:
+          //                   //         ConstantData().initDrugLicenseModel,
+          //                   //   );
+          //                   //   store.page += 1;
+          //                   // }
+          //                 },
+          //                 child: ConstantWidget.getButtonWidget(
+          //                   context,
+          //                   'Next',
+          //                   ConstantData.primaryColor,
+          //                   // ConstantData.bgColor,
+          //                   // Icons.arrow_back_ios_new,
+          //                   // 12,
+          //                 ),
+          //               );
+          //             case 3:
+          //               return Center(child: Observer(builder: (_) {
+          //                 final state = store.saveState;
+
+          //                 switch (state) {
+          //                   case ButtonState.LOADING:
+          //                     return CircularProgressIndicator(
+          //                       color: ConstantData.bgColor,
+          //                     );
+          //                   case ButtonState.ERROR:
+          //                     return InkWell(
+          //                       onTap: () async {
+          //                         if (fssaiToFill) {
+          //                           final license = store
+          //                               .profileModel.fssaiModel.fssaiImg;
+          //                           if ((fssaiNoController
+          //                                       .text.isNotEmpty ||
+          //                                   fssaiNoController.text != '') &&
+          //                               license.isNotEmpty) {
+          //                             final fssaiModel = store
+          //                                 .profileModel.fssaiModel
+          //                                 .copyWith(
+          //                               number:
+          //                                   fssaiNoController.text.trim(),
+          //                             );
+
+          //                             store.profileModel = store
+          //                                 .profileModel
+          //                                 .copyWith(fssaiModel: fssaiModel);
+          //                           } else {
+          //                             final snackBar = ConstantData()
+          //                                 .snackBarValidation(context);
+          //                             ScaffoldMessenger.of(context)
+          //                                 .showSnackBar(snackBar);
+          //                           }
+          //                         }
+          //                         await store.updateProfile(
+          //                           context: context,
+          //                           loginStore: loginstore,
+          //                         );
+
+          //                         final state = store.saveState;
+          //                         if (state == ButtonState.SUCCESS) {
+          //                           // if (widget.beginToFill == null) {
+          //                           Navigator.push(
+          //                             context,
+          //                             MaterialPageRoute(
+          //                               builder: (_) => Provider.value(
+          //                                 value: store,
+          //                                 child: Provider.value(
+          //                                   value: loginstore,
+          //                                   child: Provider.value(
+          //                                     value: productStore,
+          //                                     child: Provider.value(
+          //                                       value:
+          //                                           bottomNavigationStore,
+          //                                       child: const HomeScreen(),
+          //                                     ),
+          //                                   ),
+          //                                 ),
+          //                               ),
+          //                             ),
+          //                           );
+          //                           // } else {
+          //                           //   Navigator.pop(context);
+          //                           // }
+          //                         }
+          //                       },
+          //                       child: ConstantWidget.getDefaultTextWidget(
+          //                           'Save',
+          //                           TextAlign.center,
+          //                           FontWeight.w600,
+          //                           font22Px(context: context),
+          //                           ConstantData.bgColor),
+          //                     );
+          //                   case ButtonState.SUCCESS:
+          //                     return InkWell(
+          //                       onTap: () async {
+          //                         /// Checking if fssai needs to be filled.
+          //                         if (fssaiToFill) {
+          //                           if (fssaiNoController.text.isNotEmpty) {
+          //                             final fssaiModel = store
+          //                                 .profileModel.fssaiModel
+          //                                 .copyWith(
+          //                               number:
+          //                                   fssaiNoController.text.trim(),
+          //                               numberBytes: [],
+          //                             );
+
+          //                             store.profileModel = store
+          //                                 .profileModel
+          //                                 .copyWith(fssaiModel: fssaiModel);
+          //                           } else {
+          //                             final snackBar = ConstantData()
+          //                                 .snackBarValidation(context);
+          //                             ScaffoldMessenger.of(context)
+          //                                 .showSnackBar(snackBar);
+          //                           }
+          //                         } else {
+          //                           final fssaiModel =
+          //                               ConstantData().initFssaiModel;
+          //                           store.profileModel = store.profileModel
+          //                               .copyWith(fssaiModel: fssaiModel);
+          //                         }
+
+          //                         /// Profile uploading
+          //                         if (widget.beginToFill != null) {
+          //                           await store.updateProfile(
+          //                             context: context,
+          //                             beginToFill: true,
+          //                             loginStore: loginstore,
+          //                           );
+          //                         } else {
+          //                           await store.updateProfile(
+          //                             context: context,
+          //                             loginStore: loginstore,
+          //                           );
+          //                         }
+
+          //                         /// Check for navigation for first time and regular users.
+          //                         final state = store.saveState;
+          //                         if (state == ButtonState.SUCCESS) {
+          //                           // if (widget.beginToFill != null) {
+          //                           Navigator.push(
+          //                             context,
+          //                             MaterialPageRoute(
+          //                               builder: (_) => Provider.value(
+          //                                 value: store,
+          //                                 child: Provider.value(
+          //                                   value: loginstore,
+          //                                   child: Provider.value(
+          //                                     value: productStore,
+          //                                     child: Provider.value(
+          //                                       value: bottomNavigationStore
+          //                                         ..currentPage = 0,
+          //                                       child: Provider.value(
+          //                                         value: orderHistoryStore,
+          //                                         child: const HomeScreen(),
+          //                                       ),
+          //                                     ),
+          //                                   ),
+          //                                 ),
+          //                               ),
+          //                             ),
+          //                           );
+          //                           // } else {
+          //                           //   Navigator.pop(context);
+          //                           // }
+          //                         }
+          //                       },
+          //                       child: ConstantWidget.getButtonWidget(
+          //                           context,
+          //                           'Save',
+          //                           ConstantData.primaryColor),
+          //                     );
+          //                 }
+          //               }));
+          //             default:
+          //               return FloatingActionButton(
+          //                 onPressed: () {
+          //                   store.page -= 1;
+          //                 },
+          //                 child: Icon(
+          //                   Icons.arrow_back,
+          //                   size: font22Px(context: context),
+          //                   color: ConstantData.bgColor,
+          //                 ),
+          //               );
+          //           }
+          //         }),
+          //       ),
+          //     );
+          //   }),
+          // ),
           // appBar: AppBar(
           //   elevation: 0,
           //   centerTitle: true,
@@ -662,11 +878,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 switch (page) {
                   case 0:
                     return ConstantWidget.customAppBar(
-                        context: context, title: 'Edit Profile');
+                        context: context, title: 'EDIT FIRM PROFILE');
                   case 1:
                     return ConstantWidget.customAppBar(
                       context: context,
-                      title: 'Edit GST Profile',
+                      title: 'EDIT GST PROFILE',
                       widgetList: [
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -703,7 +919,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ConstantData.bgColor,
                                   1,
                                   TextAlign.center,
-                                  FontWeight.w500,
+                                  FontWeight.w600,
                                   font15Px(context: context),
                                 ),
                               );
@@ -715,7 +931,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   case 2:
                     return ConstantWidget.customAppBar(
                       context: context,
-                      title: 'Edit DL Profile',
+                      title: 'EDIT DL PROFILE',
                       // widgetList: [
                       //   Padding(
                       //     padding: EdgeInsets.symmetric(
@@ -753,7 +969,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       //             ConstantData.bgColor,
                       //             1,
                       //             TextAlign.center,
-                      //             FontWeight.w500,
+                      //             FontWeight.w600,
                       //             font15Px(context: context),
                       //           ),
                       //         );
@@ -765,7 +981,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   case 3:
                     return ConstantWidget.customAppBar(
                       context: context,
-                      title: 'Edit FSSAI Profile',
+                      title: 'EDIT FSSAI PROFILE',
                       widgetList: [
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -802,7 +1018,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ConstantData.bgColor,
                                   1,
                                   TextAlign.center,
-                                  FontWeight.w500,
+                                  FontWeight.w600,
                                   font15Px(context: context),
                                 ),
                               );
@@ -813,7 +1029,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   default:
                     return ConstantWidget.customAppBar(
-                        context: context, title: 'Edit Profile');
+                        context: context, title: 'EDIT FIRM PROFILE');
                 }
               }),
               Observer(builder: (_) {
@@ -1055,7 +1271,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       'Do you want to fill FSSAI License details?',
                       ConstantData.mainTextColor,
                       TextAlign.center,
-                      FontWeight.w500,
+                      FontWeight.w600,
                       font18Px(context: context),
                     ),
                     SizedBox(
@@ -1065,7 +1281,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         'Please select the appropriate option below',
                         ConstantData.mainTextColor,
                         TextAlign.center,
-                        FontWeight.w500,
+                        FontWeight.w600,
                         font18Px(context: context)),
                     SizedBox(
                       height: blockSizeVertical(context: context) * 5,
@@ -1097,7 +1313,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ConstantData.mainTextColor,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w500,
+                                FontWeight.w600,
                                 font22Px(context: context),
                               ),
                             ],
@@ -1140,7 +1356,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ConstantData.mainTextColor,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w500,
+                                FontWeight.w600,
                                 font22Px(context: context),
                               ),
                             ],
@@ -1168,7 +1384,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: ConstantWidget.getCustomTextWithoutAlign(
                               'FSSAI Details',
                               ConstantData.mainTextColor,
-                              FontWeight.w500,
+                              FontWeight.w600,
                               font22Px(context: context)),
                         ),
                         SizedBox(
@@ -1188,7 +1404,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 func: (value) {
                                   if (value != null) {
                                     if (value.isEmpty) {
-                                      return 'Enter DL number';
+                                      return 'Enter FSSAI number';
                                     } else {
                                       if (value.length != 14) {
                                         return 'Enter a valid license number';
@@ -1235,7 +1451,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: ConstantWidget.getCustomTextWithoutAlign(
                               'Upload FSSAI Certificate',
                               ConstantData.mainTextColor,
-                              FontWeight.w500,
+                              FontWeight.w600,
                               font22Px(context: context)),
                         ),
                         SizedBox(
@@ -1252,37 +1468,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 source: ImageSource.camera,
                                 text: 'Camera',
                                 store: store,
-                                // func: () async {
-                                //   if (store.profileModel.fssaiModel.numberBytes
-                                //       .isNotEmpty) {
-                                //     final _snackBar =
-                                //         ConstantWidget.customSnackBar(
-                                //             text: 'Already Uploaded',
-                                //             context: context);
-                                //     ScaffoldMessenger.of(context)
-                                //         .showSnackBar(_snackBar);
-                                //   } else {
-                                //     final img = await store.takeCertificate(
-                                //         source: ImageSource.camera);
-                                //     if (img != null) {
-                                //       const _uploadFSSAIImage1 =
-                                //           'https://medrpha.com/api/register/registerfssaiimg';
-                                //       final _bytes = await img.readAsBytes();
-                                //       store.saveCertificate(
-                                //         path: img.path,
-                                //         bytes: _bytes,
-                                //         url: _uploadFSSAIImage1,
-                                //       );
-                                //     } else {
-                                //       final _snackBar =
-                                //           ConstantWidget.customSnackBar(
-                                //               text: 'No Image Uploaded',
-                                //               context: context);
-                                //       ScaffoldMessenger.of(context)
-                                //           .showSnackBar(_snackBar);
-                                //     }
-                                //   }
-                                // },
                                 certificateType: 2,
                               );
                             }),
@@ -1294,37 +1479,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 source: ImageSource.gallery,
                                 store: store,
                                 text: 'Gallery',
-                                // func: () async {
-                                //   if (store.profileModel.fssaiModel.numberBytes
-                                //       .isNotEmpty) {
-                                //     final _snackBar =
-                                //         ConstantWidget.customSnackBar(
-                                //             text: 'Already Uploaded',
-                                //             context: context);
-                                //     ScaffoldMessenger.of(context)
-                                //         .showSnackBar(_snackBar);
-                                //   } else {
-                                //     final img = await store.takeCertificate(
-                                //         source: ImageSource.gallery);
-                                //     if (img != null) {
-                                //       const _uploadFSSAIImage1 =
-                                //           'https://medrpha.com/api/register/registerfssaiimg';
-                                //       final _bytes = await img.readAsBytes();
-                                //       store.saveCertificate(
-                                //         path: img.path,
-                                //         bytes: _bytes,
-                                //         url: _uploadFSSAIImage1,
-                                //       );
-                                //     } else {
-                                //       final _snackBar =
-                                //           ConstantWidget.customSnackBar(
-                                //               text: 'No Image Uploaded',
-                                //               context: context);
-                                //       ScaffoldMessenger.of(context)
-                                //           .showSnackBar(_snackBar);
-                                //     }
-                                //   }
-                                // },
                                 certificateType: 3,
                               );
                             }),
@@ -1344,7 +1498,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: ConstantWidget.getCustomTextWithoutAlign(
                               'Certificate',
                               ConstantData.mainTextColor,
-                              FontWeight.w500,
+                              FontWeight.w600,
                               font22Px(context: context)),
                         ),
                         SizedBox(
@@ -1473,7 +1627,7 @@ class _ProfilePageState extends State<ProfilePage> {
             //                     child: ConstantWidget.getDefaultTextWidget(
             //                         'Save',
             //                         TextAlign.center,
-            //                         FontWeight.w500,
+            //                         FontWeight.w600,
             //                         font22Px(context: context),
             //                         ConstantData.bgColor),
             //                   );
@@ -1671,7 +1825,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ConstantWidget.getCustomTextWithoutAlign(
                             'Drug License Details',
                             ConstantData.mainTextColor,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font22Px(context: context)),
                       ),
                       SizedBox(
@@ -1751,7 +1905,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           style: TextStyle(
                             fontFamily: ConstantData.fontFamily,
                             color: ConstantData.mainTextColor,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             fontSize: font18Px(context: context),
                           ),
                           decoration: InputDecoration(
@@ -1786,7 +1940,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ConstantWidget.getCustomTextWithoutAlign(
                             'Upload License Certificate',
                             ConstantData.mainTextColor,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font22Px(context: context)),
                       ),
                       SizedBox(
@@ -1886,7 +2040,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ConstantWidget.getCustomTextWithoutAlign(
                             'Certificate',
                             ConstantData.mainTextColor,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font22Px(context: context)),
                       ),
                       SizedBox(
@@ -1992,7 +2146,7 @@ class _ProfilePageState extends State<ProfilePage> {
             //           'Do you want to fill Drug License details?',
             //           ConstantData.mainTextColor,
             //           TextAlign.center,
-            //           FontWeight.w500,
+            //           FontWeight.w600,
             //           font18Px(context: context),
             //         ),
             //         SizedBox(
@@ -2002,7 +2156,7 @@ class _ProfilePageState extends State<ProfilePage> {
             //             'Please select the appropriate option below',
             //             ConstantData.mainTextColor,
             //             TextAlign.center,
-            //             FontWeight.w500,
+            //             FontWeight.w600,
             //             font18Px(context: context)),
             //         SizedBox(
             //           height: blockSizeVertical(context: context) * 5,
@@ -2226,12 +2380,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           height: profileHeight,
                           width: profileHeight,
                           decoration: BoxDecoration(
+                            color: ConstantData.primaryColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(
                               color: ConstantData.primaryColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: ConstantData.primaryColor,
-                                  width: ConstantWidget.getScreenPercentSize(
-                                      context, 0.2))),
+                              width: ConstantWidget.getScreenPercentSize(
+                                  context, 0.2),
+                            ),
+                          ),
                           child: ClipOval(
                             child: Material(
                               // color: ConstantData.primaryColor,
@@ -2261,7 +2417,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       'Do you want to fill GST details?',
                       ConstantData.mainTextColor,
                       TextAlign.center,
-                      FontWeight.w500,
+                      FontWeight.w600,
                       font18Px(context: context),
                     ),
                     SizedBox(
@@ -2271,7 +2427,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         'Please select the appropriate option below',
                         ConstantData.mainTextColor,
                         TextAlign.center,
-                        FontWeight.w500,
+                        FontWeight.w600,
                         font18Px(context: context)),
                     SizedBox(
                       height: blockSizeVertical(context: context) * 5,
@@ -2303,7 +2459,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ConstantData.mainTextColor,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w500,
+                                FontWeight.w600,
                                 font22Px(context: context),
                               ),
                             ],
@@ -2345,7 +2501,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ConstantData.mainTextColor,
                                 1,
                                 TextAlign.center,
-                                FontWeight.w500,
+                                FontWeight.w600,
                                 font22Px(context: context),
                               ),
                             ],
@@ -2370,7 +2526,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: ConstantWidget.getCustomTextWithoutAlign(
                           'GST Details',
                           ConstantData.mainTextColor,
-                          FontWeight.w500,
+                          FontWeight.w600,
                           font22Px(context: context)),
                     ),
                     SizedBox(
@@ -2381,7 +2537,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Expanded(
                           flex: 3,
                           child: InputField(
-                            controller: fssaiNoController,
+                            controller: gstNoController,
                             action: TextInputAction.next,
                             hint: 'GST Number',
                             keyboardType: TextInputType.text,
@@ -2630,11 +2786,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ConstantWidget.getCustomTextWithoutAlign(
                             'Firm Info',
                             ConstantData.mainTextColor,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font22Px(context: context)),
                       ),
                       SizedBox(
-                        height: (defaultMargin / 2),
+                        height: blockSizeVertical(context: context) * 2,
                       ),
                       InputField(
                         controller: firmtNameController,
@@ -2795,7 +2951,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ConstantData.mainTextColor,
                                     1,
                                     TextAlign.center,
-                                    FontWeight.w500,
+                                    FontWeight.w600,
                                     font15Px(context: context),
                                   ),
                                 );
@@ -2994,7 +3150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: ConstantWidget.getCustomTextWithoutAlign(
                             'Contact Details',
                             ConstantData.mainTextColor,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font22Px(context: context)),
                       ),
                       SizedBox(
@@ -3255,7 +3411,7 @@ class _ProfilePageState extends State<ProfilePage> {
 //           'Already Uploaded',
 //           ConstantData.bgColor,
 //           TextAlign.left,
-//           FontWeight.w500,
+//           FontWeight.w600,
 //           font18Px(context: context))));
 // } else {
 //   final imgBytes = await store.uploadertificate(source: source);
@@ -3271,7 +3427,7 @@ class _ProfilePageState extends State<ProfilePage> {
 //                       'Already Uploaded',
 //                       ConstantData.bgColor,
 //                       TextAlign.left,
-//                       FontWeight.w500,
+//                       FontWeight.w600,
 //                       font18Px(context: context))));
 //             } else {
 //               final imgBytes = await store.uploadertificate(source: source);
@@ -3304,165 +3460,173 @@ class UploadIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () async {
-          switch (certificateType) {
-            case 0:
-              // if (store
-              //     .profileModel.drugLicenseModel.license2Bytes.isNotEmpty) {
-              //   final snackBar = ConstantWidget.customSnackBar(
-              //       text: 'Already Uploaded', context: context);
-              //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              // } else {
-              final img =
-                  await store.takeCertificate(source: ImageSource.gallery);
+      onTap: () async {
+        switch (certificateType) {
+          case 0:
+            // if (store
+            //     .profileModel.drugLicenseModel.license2Bytes.isNotEmpty) {
+            //   final snackBar = ConstantWidget.customSnackBar(
+            //       text: 'Already Uploaded', context: context);
+            //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            // } else {
+            final img =
+                await store.takeCertificate(source: ImageSource.gallery);
 
-              store.certi1 = StoreState.LOADING;
+            store.certi1 = StoreState.LOADING;
 
-              if (img != null) {
-                const uploadDLImage2 =
-                    'https://medrpha.com/api/register/registerdl1';
-                final bytes = await img.readAsBytes();
-                store.saveCertificate(
-                  path: img.path,
-                  bytes: bytes,
-                  url: uploadDLImage2,
-                  context: context,
-                );
-                final model = store.profileModel.drugLicenseModel
-                    .copyWith(license1Bytes: bytes);
-                store.profileModel =
-                    store.profileModel.copyWith(drugLicenseModel: model);
-                store.certi1 = StoreState.SUCCESS;
-              } else {
-                final snackBar = ConstantWidget.customSnackBar(
-                    text: 'No Image Uploaded', context: context);
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                store.certi1 = StoreState.ERROR;
-              }
-              // }
-              break;
-            case 1:
-              // if (store
-              //     .profileModel.drugLicenseModel.license2Bytes.isNotEmpty) {
-              //   final snackBar = ConstantWidget.customSnackBar(
-              //       text: 'Already Uploaded', context: context);
-              //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              // } else {
-              final img =
-                  await store.takeCertificate(source: ImageSource.gallery);
+            if (img != null) {
+              // const uploadDLImage2 =
+              //     'https://medrpha.com/api/register/registerdl1';
+              const uploadDLImage2 =
+                  'https://test.medrpha.com/api/register/registerdl1';
+              final bytes = await img.readAsBytes();
+              store.saveCertificate(
+                path: img.path,
+                bytes: bytes,
+                url: uploadDLImage2,
+                context: context,
+              );
+              final model = store.profileModel.drugLicenseModel
+                  .copyWith(license1Bytes: bytes);
+              store.profileModel =
+                  store.profileModel.copyWith(drugLicenseModel: model);
+              store.certi1 = StoreState.SUCCESS;
+            } else {
+              final snackBar = ConstantWidget.customSnackBar(
+                  text: 'No Image Uploaded', context: context);
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              store.certi1 = StoreState.ERROR;
+            }
+            // }
+            break;
+          case 1:
+            // if (store
+            //     .profileModel.drugLicenseModel.license2Bytes.isNotEmpty) {
+            //   final snackBar = ConstantWidget.customSnackBar(
+            //       text: 'Already Uploaded', context: context);
+            //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            // } else {
+            final img =
+                await store.takeCertificate(source: ImageSource.gallery);
 
-              store.certi2 = StoreState.LOADING;
+            store.certi2 = StoreState.LOADING;
 
-              if (img != null) {
-                const uploadDLImage2 =
-                    'https://medrpha.com/api/register/registerdl2';
-                final bytes = await img.readAsBytes();
-                store.saveCertificate(
-                  path: img.path,
-                  bytes: bytes,
-                  url: uploadDLImage2,
-                  context: context,
-                );
-                final model = store.profileModel.drugLicenseModel
-                    .copyWith(license2Bytes: bytes);
-                store.profileModel =
-                    store.profileModel.copyWith(drugLicenseModel: model);
-                store.certi2 = StoreState.SUCCESS;
-              } else {
-                final snackBar = ConstantWidget.customSnackBar(
-                    text: 'No Image Uploaded', context: context);
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                store.certi2 = StoreState.ERROR;
-              }
-              // }
-              break;
-            case 2:
-              // if (store.profileModel.fssaiModel.numberBytes.isNotEmpty) {
-              //   final snackBar = ConstantWidget.customSnackBar(
-              //       text: 'Already Uploaded', context: context);
-              //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              // } else {
-              final img =
-                  await store.takeCertificate(source: ImageSource.camera);
-              if (img != null) {
-                const uploadFSSAIImage1 =
-                    'https://medrpha.com/api/register/registerfssaiimg';
-                final bytes = await img.readAsBytes();
-                store.saveCertificate(
-                  path: img.path,
-                  bytes: bytes,
-                  url: uploadFSSAIImage1,
-                  context: context,
-                );
-                final model =
-                    store.profileModel.fssaiModel.copyWith(numberBytes: bytes);
-                store.profileModel =
-                    store.profileModel.copyWith(fssaiModel: model);
-              } else {
-                final snackBar = ConstantWidget.customSnackBar(
-                    text: 'No Image Uploaded', context: context);
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }
-              // }
-              break;
-            case 3:
-              // if (store.profileModel.fssaiModel.numberBytes.isNotEmpty) {
-              //   final snackBar = ConstantWidget.customSnackBar(
-              //       text: 'Already Uploaded', context: context);
-              //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              // } else {
-              final img =
-                  await store.takeCertificate(source: ImageSource.gallery);
-              if (img != null) {
-                const uploadFSSAIImage1 =
-                    'https://medrpha.com/api/register/registerfssaiimg';
-                final bytes = await img.readAsBytes();
-                store.saveCertificate(
-                  path: img.path,
-                  bytes: bytes,
-                  url: uploadFSSAIImage1,
-                  context: context,
-                );
-                final model =
-                    store.profileModel.fssaiModel.copyWith(numberBytes: bytes);
-                store.profileModel =
-                    store.profileModel.copyWith(fssaiModel: model);
-              } else {
-                final snackBar = ConstantWidget.customSnackBar(
-                    text: 'No Image Uploaded', context: context);
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }
-              // }
-              break;
-          }
-        },
-        child: Container(
-          padding: EdgeInsets.all(blockSizeHorizontal(context: context) * 4),
-          decoration: BoxDecoration(
-            color: ConstantData.bgColor,
-            borderRadius: BorderRadius.circular(
-                blockSizeHorizontal(context: context) * 5),
-            border: Border.all(
-              color: ConstantData.mainTextColor,
+            if (img != null) {
+              // const uploadDLImage2 =
+              //     'https://medrpha.com/api/register/registerdl2';
+              const uploadDLImage2 =
+                  'https://test.medrpha.com/api/register/registerdl2';
+              final bytes = await img.readAsBytes();
+              store.saveCertificate(
+                path: img.path,
+                bytes: bytes,
+                url: uploadDLImage2,
+                context: context,
+              );
+              final model = store.profileModel.drugLicenseModel
+                  .copyWith(license2Bytes: bytes);
+              store.profileModel =
+                  store.profileModel.copyWith(drugLicenseModel: model);
+              store.certi2 = StoreState.SUCCESS;
+            } else {
+              final snackBar = ConstantWidget.customSnackBar(
+                  text: 'No Image Uploaded', context: context);
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              store.certi2 = StoreState.ERROR;
+            }
+            // }
+            break;
+          case 2:
+            // if (store.profileModel.fssaiModel.numberBytes.isNotEmpty) {
+            //   final snackBar = ConstantWidget.customSnackBar(
+            //       text: 'Already Uploaded', context: context);
+            //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            // } else {
+            final img = await store.takeCertificate(source: ImageSource.camera);
+            if (img != null) {
+              // const uploadFSSAIImage1 =
+              //     'https://medrpha.com/api/register/registerfssaiimg';
+              const uploadFSSAIImage1 =
+                  'https://test.medrpha.com/api/register/registerfssaiimg';
+              final bytes = await img.readAsBytes();
+              store.saveCertificate(
+                path: img.path,
+                bytes: bytes,
+                url: uploadFSSAIImage1,
+                context: context,
+              );
+              final model =
+                  store.profileModel.fssaiModel.copyWith(numberBytes: bytes);
+              store.profileModel =
+                  store.profileModel.copyWith(fssaiModel: model);
+            } else {
+              final snackBar = ConstantWidget.customSnackBar(
+                  text: 'No Image Uploaded', context: context);
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }
+            // }
+            break;
+          case 3:
+            // if (store.profileModel.fssaiModel.numberBytes.isNotEmpty) {
+            //   final snackBar = ConstantWidget.customSnackBar(
+            //       text: 'Already Uploaded', context: context);
+            //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            // } else {
+            final img =
+                await store.takeCertificate(source: ImageSource.gallery);
+            if (img != null) {
+              // const uploadFSSAIImage1 =
+              //     'https://medrpha.com/api/register/registerfssaiimg';
+              const uploadFSSAIImage1 =
+                  'https://test.medrpha.com/api/register/registerfssaiimg';
+              final bytes = await img.readAsBytes();
+              store.saveCertificate(
+                path: img.path,
+                bytes: bytes,
+                url: uploadFSSAIImage1,
+                context: context,
+              );
+              final model =
+                  store.profileModel.fssaiModel.copyWith(numberBytes: bytes);
+              store.profileModel =
+                  store.profileModel.copyWith(fssaiModel: model);
+            } else {
+              final snackBar = ConstantWidget.customSnackBar(
+                  text: 'No Image Uploaded', context: context);
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }
+            // }
+            break;
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.all(blockSizeHorizontal(context: context) * 4),
+        decoration: BoxDecoration(
+          color: ConstantData.bgColor,
+          borderRadius:
+              BorderRadius.circular(blockSizeHorizontal(context: context) * 5),
+          border: Border.all(
+            color: ConstantData.mainTextColor,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              Icons.note_add_outlined,
+              color: color,
+              size: blockSizeHorizontal(context: context) * 12,
             ),
-          ),
-          child: Column(
-            children: [
-              Icon(
-                Icons.note_add_outlined,
-                color: color,
-                size: blockSizeHorizontal(context: context) * 12,
-              ),
-              ConstantWidget.getTextWidget(
-                text,
-                ConstantData.mainTextColor,
-                TextAlign.center,
-                FontWeight.w500,
-                font18Px(context: context),
-              )
-            ],
-          ),
-        ));
+            ConstantWidget.getTextWidget(
+              text,
+              ConstantData.mainTextColor,
+              TextAlign.center,
+              FontWeight.w500,
+              font18Px(context: context),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -3504,7 +3668,7 @@ class UploadIconButton extends StatelessWidget {
 //               value ?? label,
 //               ConstantData.mainTextColor,
 //               TextAlign.center,
-//               FontWeight.w500,
+//               FontWeight.w600,
 //               font18Px(context: context),
 //             );
 //           },

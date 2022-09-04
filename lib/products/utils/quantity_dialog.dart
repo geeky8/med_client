@@ -56,7 +56,7 @@ class QuantityDialog extends StatelessWidget {
                         ConstantData.mainTextColor,
                         1,
                         TextAlign.center,
-                        FontWeight.w500,
+                        FontWeight.w600,
                         font18Px(context: context),
                       ),
                       const Spacer(),
@@ -89,15 +89,25 @@ class QuantityDialog extends StatelessWidget {
                               //     blockSizeHorizontal(context: context),
 
                               onFieldSubmitted: (value) async {
-                                // final index = store.allProducts
-                                //     .indexWhere((element) => element == model);
-                                // await store.updateCartQunatity(
-                                //   model: model,
-                                //   value: value,
-                                //   context: context,
-                                // );
+                                // if (value != '') {
+                                if (int.parse(value) <
+                                    int.parse(model.quantity)) {
+                                  await store.updateCartQunatity(
+                                    model: model,
+                                    value: value,
+                                    context: context,
+                                  );
 
-                                // Navigator.of(context).pop();
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.of(context).pop();
+                                } else {
+                                  final snackBar =
+                                      ConstantWidget.customSnackBar(
+                                          text: 'Quantity not available',
+                                          context: context);
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                }
                               },
                               onChanged: (value) {
                                 if (value != '') {
@@ -141,7 +151,7 @@ class QuantityDialog extends StatelessWidget {
                   //           ConstantData.mainTextColor,
                   //           1,
                   //           TextAlign.center,
-                  //           FontWeight.w500,
+                  //           FontWeight.w600,
                   //           font15Px(context: context),
                   //         ),
                   //       ),
@@ -181,7 +191,7 @@ class QuantityDialog extends StatelessWidget {
                         ConstantData.primaryColor,
                         1,
                         TextAlign.center,
-                        FontWeight.w500,
+                        FontWeight.w600,
                         font15Px(context: context) * 1.2,
                       ),
                     ),
@@ -230,7 +240,7 @@ class QuantityDialog extends StatelessWidget {
                         ConstantData.mainTextColor,
                         1,
                         TextAlign.center,
-                        FontWeight.w500,
+                        FontWeight.w600,
                         font15Px(context: context) * 1.2,
                       ),
                     ),

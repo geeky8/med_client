@@ -315,6 +315,22 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$removeStateAtom =
+      Atom(name: '_ProductsStore.removeState', context: context);
+
+  @override
+  StoreState get removeState {
+    _$removeStateAtom.reportRead();
+    return super.removeState;
+  }
+
+  @override
+  set removeState(StoreState value) {
+    _$removeStateAtom.reportWrite(value, super.removeState, () {
+      super.removeState = value;
+    });
+  }
+
   late final _$paymentOptionsAtom =
       Atom(name: '_ProductsStore.paymentOptions', context: context);
 
@@ -594,6 +610,7 @@ searchList: ${searchList},
 cartModel: ${cartModel},
 plusState: ${plusState},
 minusRemoveState: ${minusRemoveState},
+removeState: ${removeState},
 paymentOptions: ${paymentOptions},
 orderId: ${orderId},
 payableAmount: ${payableAmount},

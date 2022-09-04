@@ -145,7 +145,7 @@ class SignInPage extends StatelessWidget {
                                 'Pin does not match, kindly enter the same pin',
                                 ConstantData.bgColor,
                                 TextAlign.left,
-                                FontWeight.w500,
+                                FontWeight.w600,
                                 font18Px(context: context)));
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       }

@@ -244,7 +244,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     //                                       .mainTextColor,
                     //                                   1,
                     //                                   TextAlign.center,
-                    //                                   FontWeight.w500,
+                    //                                   FontWeight.w600,
                     //                                   20),
                     //                               const SizedBox(
                     //                                 height: 10,
@@ -377,7 +377,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                             ConstantData.mainTextColor,
                             1,
                             TextAlign.center,
-                            FontWeight.w500,
+                            FontWeight.w600,
                             font18Px(context: context),
                           ),
                         if (_start == 0)
@@ -423,7 +423,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                                 child: ConstantWidget.getDefaultTextWidget(
                                   'Resend',
                                   TextAlign.center,
-                                  FontWeight.w500,
+                                  FontWeight.w600,
                                   font22Px(context: context),
                                   Colors.white,
                                 ),
@@ -450,7 +450,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     //               ConstantData.mainTextColor,
                     //               1,
                     //               TextAlign.center,
-                    //               FontWeight.w500,
+                    //               FontWeight.w600,
                     //               font18Px(context: context),
                     //             ),
                     //           if (_start == 0)
@@ -540,7 +540,7 @@ class CustomAlertDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ConstantWidget.getCustomText(header, ConstantData.mainTextColor,
-                    1, TextAlign.center, FontWeight.w500, 20),
+                    1, TextAlign.center, FontWeight.w600, 20),
                 const SizedBox(
                   height: 10,
                 ),
@@ -647,7 +647,7 @@ class PinInput extends StatelessWidget {
               '$label :',
               ConstantData.mainTextColor,
               TextAlign.center,
-              FontWeight.w500,
+              FontWeight.w600,
               font18Px(context: context) * 1.2,
             ),
             SizedBox(
@@ -661,7 +661,7 @@ class PinInput extends StatelessWidget {
               textStyle: TextStyle(
                 color: ConstantData.mainTextColor,
                 fontSize: font18Px(context: context),
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
               obscureText: isObscure,
               showCursor: false,

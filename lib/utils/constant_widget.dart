@@ -32,7 +32,7 @@ class ConstantWidget {
     return ConstantWidget.getCustomTextWithoutAlign(
       s,
       ConstantData.mainTextColor,
-      FontWeight.w500,
+      FontWeight.w600,
       font18Px(context: context) * 1.1,
     );
   }
@@ -91,7 +91,7 @@ class ConstantWidget {
         //   ConstantData.mainTextColor,
         //   1,
         //   TextAlign.center,
-        //   FontWeight.w500,
+        //   FontWeight.w600,
         //   fontSize,
         // ),
       ],
@@ -118,7 +118,7 @@ class ConstantWidget {
   //       ),
   //       child: Center(
   //         child: ConstantWidget.getTextWidget(s, Colors.white, TextAlign.start,
-  //             FontWeight.w500, ConstantWidget.getPercentSize(bottomHeight, 30)),
+  //             FontWeight.w600, ConstantWidget.getPercentSize(bottomHeight, 30)),
   //       ),
   //     ),
   //   );
@@ -141,7 +141,7 @@ class ConstantWidget {
   //       ),
   //       child: Center(
   //         child: ConstantWidget.getTextWidget(s, Colors.white, TextAlign.start,
-  //             FontWeight.w500, ConstantWidget.getPercentSize(bottomHeight, 30)),
+  //             FontWeight.w600, ConstantWidget.getPercentSize(bottomHeight, 30)),
   //       ),
   //     ),
   //     onTap: () => function,
@@ -156,7 +156,7 @@ class ConstantWidget {
   //         ConstantData.textColor,
   //         1,
   //         TextAlign.start,
-  //         FontWeight.w500,
+  //         FontWeight.w600,
   //         ConstantWidget.getScreenPercentSize(context, 2.3)),
   //     leading: ConstantWidget.getCustomIcon(context, icon),
   //     onTap: () => function,
@@ -366,7 +366,7 @@ class ConstantWidget {
 
   //           child: Center(
   //             child: getCustomText(
-  //                 texts, textColor, 1, TextAlign.center, FontWeight.w500, 18),
+  //                 texts, textColor, 1, TextAlign.center, FontWeight.w600, 18),
   //           ),
   //         )
   //       ],
@@ -465,7 +465,7 @@ class ConstantWidget {
   //           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
   //           child: Center(
   //             child: getCustomText(
-  //                 texts, textColor, 1, TextAlign.center, FontWeight.w500, 18),
+  //                 texts, textColor, 1, TextAlign.center, FontWeight.w600, 18),
   //           ),
   //         )
   //       ],
@@ -483,7 +483,7 @@ class ConstantWidget {
   //         fontSize: largeTextSize,
   //         color: color,
   //         fontFamily: ConstantData.fontFamily,
-  //         fontWeight: FontWeight.w500),
+  //         fontWeight: FontWeight.w600),
   //     maxLines: maxLine,
   //     textAlign: TextAlign.center,
   //     overflow: TextOverflow.ellipsis,
@@ -827,7 +827,7 @@ class ConstantWidget {
         text,
         ConstantData.bgColor,
         TextAlign.left,
-        FontWeight.w500,
+        FontWeight.w600,
         font18Px(context: context),
       ),
       duration: const Duration(seconds: 2),
@@ -859,7 +859,7 @@ class ConstantWidget {
         child: getDefaultTextWidget(
           s,
           TextAlign.center,
-          FontWeight.w500,
+          FontWeight.w600,
           fontSize,
           (color == ConstantData.primaryColor || color == ConstantData.color1)
               ? Colors.white
@@ -903,7 +903,7 @@ class ConstantWidget {
                       ConstantData.mainTextColor,
                       1,
                       TextAlign.center,
-                      FontWeight.w500,
+                      FontWeight.w600,
                       font18Px(context: context),
                     ),
                   ),
@@ -923,7 +923,7 @@ class ConstantWidget {
             //           radius: 12,
             //           text: 'Check Status',
             //           fontSize: font15Px(context: context),
-            //           fontWeight: FontWeight.w500,
+            //           fontWeight: FontWeight.w600,
             //           padding: EdgeInsets.symmetric(
             //               vertical: blockSizeVertical(context: context) * 2.5),
             //           textColor: ConstantData.bgColor,
@@ -954,7 +954,7 @@ class ConstantWidget {
               ConstantData.mainTextColor,
               4,
               TextAlign.center,
-              FontWeight.w500,
+              FontWeight.w600,
               font18Px(context: context),
             ),
           ),
@@ -1007,7 +1007,7 @@ class ConstantWidget {
           child: getDefaultTextWidget(
               s,
               TextAlign.center,
-              FontWeight.w500,
+              FontWeight.w600,
               fontSize,
               (color == ConstantData.primaryColor)
                   ? Colors.white
@@ -1059,7 +1059,7 @@ class ConstantWidget {
                 ConstantData.bgColor,
                 1,
                 TextAlign.center,
-                FontWeight.w500,
+                FontWeight.w600,
                 font15Px(context: context)),
           ),
         ),

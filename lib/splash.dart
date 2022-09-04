@@ -1,5 +1,7 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
@@ -10,7 +12,10 @@ import 'package:medrpha_customer/signup_login/screens/otp_screen.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/storage.dart';
+import 'package:medrpha_customer/utils/update_app_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -28,10 +33,19 @@ class _SplashScreenState extends State<SplashScreen> {
     required BottomNavigationStore bottomNavigationStore,
     required OrderHistoryStore orderHistoryStore,
   }) async {
-    final _sessId = await DataBox().readSessId();
-    if (_sessId == '') {
+    // final value = await _checkVersion();
+    // if (value == 0) {
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (_) => const UpdateAppScreen(),
+    //     ),
+    //   );
+    // } else {
+    final sessId = await DataBox().readSessId();
+    if (sessId == '') {
       /// For first time user
-      // ignore: use_build_context_synchronously
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -55,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     } else {
       /// Regular users
-      // ignore: use_build_context_synchronously
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -64,17 +78,48 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Provider.value(
               value: productsStore..init(),
               child: Provider.value(
-                  value: profileStore..init(),
+                value: profileStore..init(),
+                child: Provider.value(
+                  value: bottomNavigationStore,
                   child: Provider.value(
-                      value: bottomNavigationStore,
-                      child: Provider.value(
-                          value: orderHistoryStore..getOrdersList(),
-                          child: LoginScreen()))),
+                    value: orderHistoryStore..getOrdersList(),
+                    child: LoginScreen(),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
       );
     }
+    // }
+  }
+
+  Future<int> _checkVersion() async {
+    final httpClient = http.Client();
+    // const url = 'https://api.medrpha.com/api/Default/latestappversion';
+    const url = 'https://apitest.medrpha.com/api/Default/latestappversion';
+    final packageInfo = await PackageInfo.fromPlatform();
+    if (kDebugMode) {
+      print(packageInfo.buildNumber);
+    }
+    int versionTrue = 1;
+    final resp = await httpClient.get(Uri.parse(url));
+    if (resp.statusCode == 200) {
+      final respBody = jsonDecode(resp.body) as Map<String, dynamic>;
+      if (respBody['status'] as String == '1') {
+        if (respBody['version'] as String != packageInfo.buildNumber) {
+          if (kDebugMode) {
+            print('update is req');
+          }
+          versionTrue = 0;
+          // if (mounted) {
+
+          // }
+        }
+      }
+    }
+    return versionTrue;
   }
 
   @override

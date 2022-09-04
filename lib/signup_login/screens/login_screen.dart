@@ -153,7 +153,7 @@ class LoginScreen extends StatelessWidget {
                     'Login with OTP',
                     ConstantData.clrBlack30,
                     TextAlign.center,
-                    FontWeight.w500,
+                    FontWeight.w600,
                     font18Px(context: context),
                   ),
                 ),

@@ -129,6 +129,8 @@ class SearchScreen extends StatelessWidget {
               Observer(builder: (_) {
                 final state = store.searchState;
 
+                print('Search state $state');
+
                 final list = store.searchList;
 
                 switch (state) {
@@ -173,7 +175,7 @@ class SearchScreen extends StatelessWidget {
                                     ConstantData.mainTextColor,
                                     3,
                                     TextAlign.center,
-                                    FontWeight.w500,
+                                    FontWeight.w600,
                                     font18Px(context: context) * 1.1,
                                   ),
                                 ),
