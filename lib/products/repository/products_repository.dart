@@ -77,6 +77,8 @@ class ProductsRepository {
 
   Future<ProductResponseModel?> getProducts(
       {String? categoryId, bool? refresh, String? term}) async {
+    Stopwatch stopwatch = Stopwatch()..start();
+
     final productlist = <ProductModel>[];
     final sessId = await DataBox().readSessId();
     final body = {
@@ -106,20 +108,24 @@ class ProductsRepository {
           // print(i);
           final model = ProductModel.fromJson(json: i);
           // print(model.pid);
-          final updatedModel =
-              await _getProductDetails(model: model, sessId: sessId);
+          // final updatedModel =
+          //     await _getProductDetails(model: model, sessId: sessId);
 
-          productlist.add(updatedModel);
+          productlist.add(model);
         }
         productRespModel = productRespModel.copyWith(productList: productlist);
         // print('lenght ---${productRespModel.productList.length}');
+      }
+      stopwatch.stop();
+      if (kDebugMode) {
+        print('time taken by products ---- ${stopwatch.elapsedMilliseconds}');
       }
       return productRespModel;
     }
     return null;
   }
 
-  Future<ProductModel> _getProductDetails({
+  Future<ProductModel> getProductDetails({
     required ProductModel model,
     required String sessId,
   }) async {
@@ -337,7 +343,8 @@ class ProductsRepository {
   final _checkoutUrl = 'https://test.medrpha.com/api/checkout/checkout';
   final _ordersPayment = 'https://api.razorpay.com/v1/orders';
   // final _paymentConfirmUrl = 'https://medrpha.com/api/order/payconfirmed';
-  final _paymentConfirmUrl = 'https://test.medrpha.com/api/order/payconfirmed';
+  final _paymentConfirmUrl =
+      'https://apitest.medrpha.com/api/order/payconfirmed';
   // final _checkoutConfirmUrl =
   //     'https://medrpha.com/api/checkout/checkoutconfirm';
   final _checkoutConfirmUrl =
@@ -409,7 +416,7 @@ class ProductsRepository {
     final resp =
         await _httpClient.post(Uri.parse(_paymentConfirmUrl), body: body);
 
-    // print('--------Payement resp ${resp.body}');
+    print('--------Payement resp ${resp.body}');
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body) as Map<String, dynamic>;

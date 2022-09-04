@@ -412,6 +412,15 @@ mixin _$ProductsStore on _ProductsStore, Store {
         .run(() => super.getEthicalProducts());
   }
 
+  late final _$getProductDetailsAsyncAction =
+      AsyncAction('_ProductsStore.getProductDetails', context: context);
+
+  @override
+  Future<ProductModel> getProductDetails({required ProductModel model}) {
+    return _$getProductDetailsAsyncAction
+        .run(() => super.getProductDetails(model: model));
+  }
+
   late final _$getGenericProductsAsyncAction =
       AsyncAction('_ProductsStore.getGenericProducts', context: context);
 
@@ -522,8 +531,10 @@ mixin _$ProductsStore on _ProductsStore, Store {
       AsyncAction('_ProductsStore.addToCart', context: context);
 
   @override
-  Future<void> addToCart({required ProductModel model}) {
-    return _$addToCartAsyncAction.run(() => super.addToCart(model: model));
+  Future<void> addToCart(
+      {required ProductModel model, required BuildContext context}) {
+    return _$addToCartAsyncAction
+        .run(() => super.addToCart(model: model, context: context));
   }
 
   late final _$removeFromCartAsyncAction =
@@ -562,10 +573,13 @@ mixin _$ProductsStore on _ProductsStore, Store {
       {required String orderId,
       required BuildContext context,
       required OrderHistoryStore orderHistoryStore}) {
-    return _$confirmPaymentAsyncAction.run(() => super.confirmPayment(
+    return _$confirmPaymentAsyncAction.run(
+      () => super.confirmPayment(
         orderId: orderId,
         context: context,
-        orderHistoryStore: orderHistoryStore));
+        orderHistoryStore: orderHistoryStore,
+      ),
+    );
   }
 
   late final _$successOrderAsyncAction =

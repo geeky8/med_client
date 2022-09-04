@@ -73,13 +73,14 @@ class CheckoutScreen extends StatelessWidget {
               productStore.checkoutState = StoreState.LOADING;
               final value = await productStore.checkout(context: context);
               productStore.checkoutState = StoreState.SUCCESS;
+
               // print('orderid------------------${productStore.orderId}');
               if (value != '') {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => Provider.value(
-                      value: productStore,
+                      value: productStore..init(),
                       child: Provider.value(
                         value: profileStore,
                         child: Provider.value(
