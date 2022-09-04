@@ -29,6 +29,7 @@ class PlusMinusWidget extends StatelessWidget {
     required String category,
     required ProductsStore store,
   }) {
+    if (category == '') {}
     switch (category) {
       case 'Ethical':
         final index = store.ethicalProductList
@@ -112,8 +113,13 @@ class PlusMinusWidget extends StatelessWidget {
           },
           child: Observer(builder: (_) {
             final category = model.category;
-            final currModel =
-                updateCurrProduct(category: category, store: store);
+
+            ProductModel currModel = model;
+
+            if (model.category != '') {
+              currModel = updateCurrProduct(category: category, store: store);
+            }
+
             return Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: blockSizeHorizontal(context: context) * 3,

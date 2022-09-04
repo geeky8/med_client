@@ -363,7 +363,13 @@ abstract class _ProductsStore with Store {
   Future<ProductModel> _updateProductsAccordingToCart(
       {required ProductModel model}) async {
     if (model.category == '') {
-      return model;
+      final currModel = model.copyWith(
+        subTotal: '0.0',
+        totalQtyPrice: '0.0',
+        productName: 'Prices have been changed',
+        description: 'Please add the product again by removing this one.',
+      );
+      return currModel;
     }
     final category = categoriesfromValue(model.category);
     // print(model.cartQuantity);
@@ -443,12 +449,13 @@ abstract class _ProductsStore with Store {
     required BuildContext context,
   }) async {
     SnackBar snackBar;
+    print('$value ------- ${model.quantity}');
     if (int.parse(value) > int.parse(model.quantity)) {
       snackBar = ConstantWidget.customSnackBar(
-          text: 'Selection exceeded avl quantity', context: context);
+          text: 'Quantity not available', context: context);
     } else if (int.parse(value) <= 0) {
       snackBar = ConstantWidget.customSnackBar(
-          text: 'Selection below minimum quantity', context: context);
+          text: 'Quantity not available', context: context);
     } else {
       final currModel = model.copyWith(cartQuantity: int.parse(value));
       final index = cartModel.productList
@@ -460,8 +467,9 @@ abstract class _ProductsStore with Store {
       _productsRepository.updateQuantity(model: currModel);
       await getCartItems();
       snackBar = ConstantWidget.customSnackBar(
-          text: 'Successfully updated the quantity', context: context);
+          text: 'Qunatity updated', context: context);
       // plusMinusToCart(model: currModel);
+      Navigator.pop(context);
     }
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
@@ -483,40 +491,43 @@ abstract class _ProductsStore with Store {
     // plusMinusRemoveState = StoreState.LOADING;
     Stopwatch stopwatch = Stopwatch()..start();
     int qty = model.cartQuantity! + 1;
-    if (qty > int.parse(model.quantity)) {
-      final snackBar = ConstantWidget.customSnackBar(
-          text: 'Selection exceeded avl quantity', context: context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } else {
-      final currModel = model.copyWith(cartQuantity: qty);
-      final index = cartModel.productList
-          .indexWhere((element) => element.pid == currModel.pid);
-      cartModel.productList
-        ..removeAt(index)
-        ..insert(index, currModel);
-      await _updateProductsAccordingToCart(model: currModel);
-      final value = await _productsRepository.plusTheCart(model: currModel);
-      SnackBar snackBar;
-      if (value != null) {
-        // snackBar = ConstantWidget.customSnackBar(
-        //   text: 'Updated the cart',
-        //   context: context,
-        // );
-      } else {
-        snackBar = ConstantWidget.customSnackBar(
-          text: 'Failed to update the cart',
-          context: context,
-        );
+    if (int.parse(model.quantity) > 0) {
+      if (qty > int.parse(model.quantity)) {
+        final snackBar = ConstantWidget.customSnackBar(
+            text: 'Quantity not available', context: context);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-      stopwatch.stop();
-      await getCartItems();
+      } else {
+        final currModel = model.copyWith(cartQuantity: qty);
+        final index = cartModel.productList
+            .indexWhere((element) => element.pid == currModel.pid);
+        cartModel.productList
+          ..removeAt(index)
+          ..insert(index, currModel);
+        await _updateProductsAccordingToCart(model: currModel);
+        final value = await _productsRepository.plusTheCart(model: currModel);
+        SnackBar snackBar;
+        if (value != null) {
+          // snackBar = ConstantWidget.customSnackBar(
+          //   text: 'Updated the cart',
+          //   context: context,
+          // );
+        } else {
+          snackBar = ConstantWidget.customSnackBar(
+            text: 'Failed to update the cart',
+            context: context,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+        stopwatch.stop();
+        await getCartItems();
 
-      if (kDebugMode) {
-        print('seconds ${stopwatch.elapsedMilliseconds}');
+        if (kDebugMode) {
+          print('seconds ${stopwatch.elapsedMilliseconds}');
+        }
+        // plusMinusToCart(model: currModel);
       }
-      // plusMinusToCart(model: currModel);
     }
+
     // plusMinusRemoveState = StoreState.SUCCESS;
   }
 
@@ -567,7 +578,7 @@ abstract class _ProductsStore with Store {
       //   ..insert(_index, currModel);
     } else {
       snackBar = ConstantWidget.customSnackBar(
-          text: 'Selection below minimum quantity', context: context);
+          text: 'Quantity not available', context: context);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
