@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
@@ -87,54 +89,40 @@ class QuantityDialog extends StatelessWidget {
                               controller: quantityController,
                               // cursorHeight:
                               //     blockSizeHorizontal(context: context),
+                              cursorColor: Colors.black45,
+                              style: TextStyle(
+                                fontFamily: ConstantData.fontFamily,
+                                color: ConstantData.mainTextColor,
+                                fontSize: font18Px(context: context),
+                                fontWeight: FontWeight.w500,
+                              ),
 
                               onFieldSubmitted: (value) async {
-                                // if (value != '') {
-                                if (int.parse(value) <
-                                    int.parse(model.quantity)) {
+                                if (value != '') {
                                   await store.updateCartQunatity(
                                     model: model,
                                     value: value,
                                     context: context,
                                   );
-
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.of(context).pop();
-                                } else {
-                                  final snackBar =
-                                      ConstantWidget.customSnackBar(
-                                          text: 'Quantity not available',
-                                          context: context);
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
+                                  // Navigator.pop(context);
                                 }
                               },
-                              onChanged: (value) {
-                                if (value != '') {
-                                  model.copyWith(
-                                      cartQuantity: int.parse(value));
-                                }
-                              },
+                              onChanged: (value) {},
                               // initialValue: '${model.cartQuantity}',
                               decoration: InputDecoration(
-                                  // hintText: '${model.cartQuantity}',
-                                  // hintStyle: TextStyle(
-                                  //     fontSize: font18Px(context: context),
-                                  //     color: ConstantData.mainTextColor),
-                                  // errorText:
-                                  //     'Quantity selected more than available quantity',
-                                  // errorStyle: TextStyle(
-                                  //     fontSize: font15Px(context: context),
-                                  //     color: Colors.red),
-                                  labelText: 'Qunatity',
-                                  labelStyle: TextStyle(
-                                      fontSize: font18Px(context: context),
-                                      color: ConstantData.textColor),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                          color: ConstantData.mainTextColor,
-                                          width: 1.5))),
+                                labelText: 'Qunatity',
+                                labelStyle: TextStyle(
+                                  fontSize: font18Px(context: context),
+                                  color: ConstantData.textColor,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: ConstantData.mainTextColor,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -202,20 +190,13 @@ class QuantityDialog extends StatelessWidget {
                   flex: 4,
                   child: InkWell(
                     onTap: () async {
-                      if (int.parse(quantityController.text.trim()) <
-                          int.parse(model.quantity)) {
+                      if (quantityController.text.trim() != '') {
                         await store.updateCartQunatity(
                           model: model,
                           value: quantityController.text.trim(),
                           context: context,
                         );
-
-                        // ignore: use_build_context_synchronously
-                        Navigator.of(context).pop();
-                      } else {
-                        final snackBar = ConstantWidget.customSnackBar(
-                            text: 'Quantity not available', context: context);
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        // Navigator.pop(context);
                       }
                     },
                     child: Container(

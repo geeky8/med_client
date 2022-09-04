@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -210,21 +212,30 @@ class ProductsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: () async {
         // print(list[index].category);
+        ProductModel model = list[index];
+
+        if (list[index].expiryDate == '') {
+          model = await store.getProductDetails(model: list[index]);
+        }
+
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (_) => Provider.value(
-                    value: store,
-                    child: Provider.value(
-                      value: loginStore,
-                      child: ProductsDetailScreen(
-                        model: list[index],
-                        // modelIndex: index,
-                        // list: list,
-                      ),
-                    ))));
+          context,
+          MaterialPageRoute(
+            builder: (_) => Provider.value(
+              value: store,
+              child: Provider.value(
+                value: loginStore,
+                child: ProductsDetailScreen(
+                  model: model,
+                  // modelIndex: index,
+                  // list: list,
+                ),
+              ),
+            ),
+          ),
+        );
       },
       child: Container(
         // margin: EdgeInsets.only(left: sideMargin),
@@ -417,6 +428,7 @@ class ProductsCard extends StatelessWidget {
                           width: blockSizeHorizontal(context: context) * 4,
                           height: blockSizeVertical(context: context) / 1.2,
                           fontSize: font12Px(context: context),
+                          contextReq: context,
                         );
                       }
                     }),

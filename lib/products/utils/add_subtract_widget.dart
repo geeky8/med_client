@@ -29,6 +29,7 @@ class PlusMinusWidget extends StatelessWidget {
     required String category,
     required ProductsStore store,
   }) {
+    if (category == '') {}
     switch (category) {
       case 'Ethical':
         final index = store.ethicalProductList
@@ -112,8 +113,13 @@ class PlusMinusWidget extends StatelessWidget {
           },
           child: Observer(builder: (_) {
             final category = model.category;
-            final currModel =
-                updateCurrProduct(category: category, store: store);
+
+            ProductModel currModel = model;
+
+            if (model.category != '') {
+              currModel = updateCurrProduct(category: category, store: store);
+            }
+
             return Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: blockSizeHorizontal(context: context) * 3,
@@ -209,6 +215,7 @@ class AddProductButton extends StatelessWidget {
     required this.width,
     required this.height,
     required this.fontSize,
+    required this.contextReq,
   }) : super(key: key);
 
   final ProductModel model;
@@ -216,6 +223,7 @@ class AddProductButton extends StatelessWidget {
   final double width;
   final double height;
   final double fontSize;
+  final BuildContext contextReq;
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +233,7 @@ class AddProductButton extends StatelessWidget {
             .indexWhere((element) => element.pid == model.pid);
         SnackBar snackBar;
         if (index == -1) {
-          await store.addToCart(model: model);
+          await store.addToCart(model: model, context: contextReq);
           snackBar = ConstantWidget.customSnackBar(
               text: 'Added To Cart', context: context);
         } else {

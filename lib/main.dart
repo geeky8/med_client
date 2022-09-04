@@ -24,6 +24,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        textSelectionTheme: const TextSelectionThemeData(
+          selectionHandleColor: Colors.transparent,
+        ),
       ),
 
       /// Initializing all stores

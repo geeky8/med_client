@@ -38,6 +38,11 @@ class SearchScreen extends StatelessWidget {
     /// Initalisation of required stores [ProductsStore,LoginStore,ProfileStore,OrderHistoryStore]
 
     return Scaffold(
+      backgroundColor: ConstantData.bgColor,
+      appBar: ConstantWidget.customAppBar(
+        context: context,
+        title: 'Products',
+      ),
       body: Observer(builder: (_) {
         return SafeArea(
           child: Column(
@@ -63,13 +68,13 @@ class SearchScreen extends StatelessWidget {
                 ),
                 child: Container(
                   // height: height,
-                  margin: EdgeInsets.symmetric(horizontal: margin),
+                  // margin: EdgeInsets.symmetric(horizontal: margin),
                   padding: EdgeInsets.all((margin * 1.2)),
 
-                  decoration: BoxDecoration(
-                    color: ConstantData.cellColor,
-                    borderRadius: BorderRadius.all(Radius.circular(radius)),
-                  ),
+                  // decoration: BoxDecoration(
+                  //   color: ConstantData.cellColor,
+                  //   borderRadius: BorderRadius.all(Radius.circular(radius)),
+                  // ),
 
                   child: TextFormField(
                     enabled: true,
