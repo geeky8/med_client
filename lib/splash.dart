@@ -33,72 +33,72 @@ class _SplashScreenState extends State<SplashScreen> {
     required BottomNavigationStore bottomNavigationStore,
     required OrderHistoryStore orderHistoryStore,
   }) async {
-    // final value = await _checkVersion();
-    // if (value == 0) {
-    //   Navigator.pushReplacement(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (_) => const UpdateAppScreen(),
-    //     ),
-    //   );
-    // } else {
-    final sessId = await DataBox().readSessId();
-    if (sessId == '') {
-      /// For first time user
-
+    final value = await _checkVersion();
+    if (value == 0) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => Provider.value(
-            value: store,
-            child: Provider.value(
-              value: productsStore,
-              child: Provider.value(
-                value: profileStore,
-                child: Provider.value(
-                  value: bottomNavigationStore,
-                  child: Provider.value(
-                    value: orderHistoryStore,
-                    child: SignUpPage(),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          builder: (_) => const UpdateAppScreen(),
         ),
       );
     } else {
-      /// Regular users
+      final sessId = await DataBox().readSessId();
+      if (sessId == '') {
+        /// For first time user
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => Provider.value(
-            value: store..init(),
-            child: Provider.value(
-              value: productsStore..init(),
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => Provider.value(
+              value: store,
               child: Provider.value(
-                value: profileStore..init(),
+                value: productsStore,
                 child: Provider.value(
-                  value: bottomNavigationStore,
+                  value: profileStore,
                   child: Provider.value(
-                    value: orderHistoryStore..getOrdersList(),
-                    child: LoginScreen(),
+                    value: bottomNavigationStore,
+                    child: Provider.value(
+                      value: orderHistoryStore,
+                      child: SignUpPage(),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      );
+        );
+      } else {
+        /// Regular users
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => Provider.value(
+              value: store..init(),
+              child: Provider.value(
+                value: productsStore..init(),
+                child: Provider.value(
+                  value: profileStore..init(),
+                  child: Provider.value(
+                    value: bottomNavigationStore,
+                    child: Provider.value(
+                      value: orderHistoryStore..getOrdersList(),
+                      child: LoginScreen(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
     }
-    // }
   }
 
   Future<int> _checkVersion() async {
     final httpClient = http.Client();
-    // const url = 'https://api.medrpha.com/api/Default/latestappversion';
-    const url = 'https://apitest.medrpha.com/api/Default/latestappversion';
+    const url = 'https://api.medrpha.com/api/Default/latestappversion';
+    // const url = 'https://apitest.medrpha.com/api/Default/latestappversion';
     final packageInfo = await PackageInfo.fromPlatform();
     if (kDebugMode) {
       print(packageInfo.buildNumber);

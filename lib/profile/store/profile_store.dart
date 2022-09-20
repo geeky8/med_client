@@ -285,9 +285,9 @@ abstract class _ProfileStore with Store {
       }
       // saveState = ButtonState.ERROR;
     } else if (beginToFill == null) {
-      // const url = 'https://api.medrpha.com/api/register/registergstnodelete';
-      const url =
-          'https://apitest.medrpha.com/api/register/registergstnodelete';
+      const url = 'https://api.medrpha.com/api/register/registergstnodelete';
+      // const url =
+      // 'https://apitest.medrpha.com/api/register/registergstnodelete';
 
       final resp = await _repository.deleteLicenses(
         url: url,
@@ -316,9 +316,9 @@ abstract class _ProfileStore with Store {
       }
       // saveState = ButtonState.ERROR;
     } else if (beginToFill == null) {
-      // const url = 'https://api.medrpha.com/api/register/registerfssaidelete';
-      const url =
-          'https://apitest.medrpha.com/api/register/registerfssaidelete';
+      const url = 'https://api.medrpha.com/api/register/registerfssaidelete';
+      // const url =
+      //     'https://apitest.medrpha.com/api/register/registerfssaidelete';
 
       final resp = await _repository.deleteLicenses(
         url: url,

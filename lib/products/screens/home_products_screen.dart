@@ -43,7 +43,7 @@ class ProductHomeScreen extends StatelessWidget {
 
     return Scaffold(
       bottomNavigationBar: Observer(builder: (_) {
-        if ((store.cartModel.totalSalePrice != '0' &&
+        if (((store.cartModel.totalSalePrice != '0') &&
                 loginStore.loginModel.adminStatus) ||
             store.message == 'Products not servicable in your selected area!') {
           return Container(

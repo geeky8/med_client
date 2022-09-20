@@ -19,21 +19,21 @@ class ConstantData {
 
   /// Necessary URL's
   static String assetsPath = "assets/images/";
-  // static String catImgUrl = 'https://superadmin.medrpha.com/allimage/';
-  static String catImgUrl = 'https://superadmintest.medrpha.com/allimage/';
-  // static String productUrl = 'https://partner.medrpha.com/product_image/';
-  static String productUrl = 'https://partnertest.medrpha.com/product_image/';
-  // static String licenseUrl = 'https://medrpha.com/user_reg/';
-  static String licenseUrl = 'https://test.medrpha.com/user_reg/';
-  // static String invoiceUrl = 'https://medrpha.com/InvoicePDF/';
-  static String invoiceUrl = 'https://test.medrpha.com/InvoicePDF/';
+  static String catImgUrl = 'https://superadmin.medrpha.com/allimage/';
+  // static String catImgUrl = 'https://superadmintest.medrpha.com/allimage/';
+  static String productUrl = 'https://partner.medrpha.com/product_image/';
+  // static String productUrl = 'https://partnertest.medrpha.com/product_image/';
+  static String licenseUrl = 'https://medrpha.com/user_reg/';
+  // static String licenseUrl = 'https://test.medrpha.com/user_reg/';
+  static String invoiceUrl = 'https://medrpha.com/InvoicePDF/';
+  // static String invoiceUrl = 'https://test.medrpha.com/InvoicePDF/';
   static String privacyPolicy = "https://google.com";
 
   //Api-key Details
-  static String apiKey = 'rzp_test_3mRxTObsNw167K';
-  // static String apiKey = 'rzp_live_kfbonxeuRfZYaL';
-  static String apiSecretKey = 'i67GTEvHsJpSIkAKcM3etMRh';
-  // static String apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
+  // static String apiKey = 'rzp_test_3mRxTObsNw167K';
+  static String apiKey = 'rzp_live_kfbonxeuRfZYaL';
+  // static String apiSecretKey = 'i67GTEvHsJpSIkAKcM3etMRh';
+  static String apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
 
   static String rupeeConversion({required String value}) {
     final numeric = double.parse(value);

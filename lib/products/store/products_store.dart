@@ -23,8 +23,6 @@ import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
-import 'dart:collection';
-
 part 'products_store.g.dart';
 
 class ProductsStore = _ProductsStore with _$ProductsStore;

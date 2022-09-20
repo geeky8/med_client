@@ -80,47 +80,6 @@ class CategoryList extends StatelessWidget {
             onTap: () {
               store.categoriesType =
                   categoriesfromValue(list[index].categoryName);
-              // switch (categoryType) {
-              //   case CategoriesType.ETHICAL:
-              //     if (store.ethicalProductList.isNotEmpty) {
-              //       store.categoriesType =
-              //           categoriesfromValue(list[index].categoryName);
-              //     }
-              //     break;
-              //   case CategoriesType.GENERIC:
-              //     if (store.genericProductList.isNotEmpty) {
-              //       store.categoriesType =
-              //           categoriesfromValue(list[index].categoryName);
-              //     }
-              //     break;
-              //   case CategoriesType.SURGICAL:
-              //     if (store.surgicalProductList.isNotEmpty) {
-              //       store.categoriesType =
-              //           categoriesfromValue(list[index].categoryName);
-              //     }
-              //     break;
-              //   case CategoriesType.VETERINARY:
-              //     if (store.veterinaryProductList.isNotEmpty) {
-              //       store.categoriesType =
-              //           categoriesfromValue(list[index].categoryName);
-              //     }
-              //     break;
-              //   case CategoriesType.AYURVEDIC:
-              //     if (store.ayurvedicProductList.isNotEmpty) {
-              //       store.categoriesType =
-              //           categoriesfromValue(list[index].categoryName);
-              //     }
-              //     break;
-              //   case CategoriesType.GENERAL:
-              //     if (store.generalProductList.isNotEmpty) {
-              //       store.categoriesType =
-              //           categoriesfromValue(list[index].categoryName);
-              //     }
-              //     break;
-              // }
-              // if (list.isNotEmpty) {
-
-              // }
             },
             child: SizedBox(
               width: height,
@@ -130,47 +89,39 @@ class CategoryList extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Observer(builder: (_) {
-                      return Stack(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(
-                                ConstantWidget.getPercentSize(imageSize, 25)),
-                            height: imageSize,
-                            width: imageSize,
-                            decoration: BoxDecoration(
-                              // color: ConstantData.color1,
-                              border: (store.categoriesType ==
-                                      categoriesfromValue(
-                                          list[index].categoryName))
-                                  ? Border.all(
-                                      color: ConstantData.accentColor,
-                                      width: 4,
-                                    )
-                                  : Border.all(
-                                      color: ConstantData.mainTextColor,
-                                      width: 1.5),
-                              shape: BoxShape.circle,
+                    Observer(
+                      builder: (_) {
+                        return Stack(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(
+                                  ConstantWidget.getPercentSize(imageSize, 25)),
+                              height: imageSize,
+                              width: imageSize,
+                              decoration: BoxDecoration(
+                                // color: ConstantData.color1,
+                                border: (store.categoriesType ==
+                                        categoriesfromValue(
+                                            list[index].categoryName))
+                                    ? Border.all(
+                                        color: ConstantData.accentColor,
+                                        width: 4,
+                                      )
+                                    : Border.all(
+                                        color: ConstantData.mainTextColor,
+                                        width: 1.5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl: ConstantData.catImgUrl +
+                                    list[index].categoryImgUrl,
+                                fit: BoxFit.fill,
+                              ),
                             ),
-                            child: CachedNetworkImage(
-                              imageUrl: ConstantData.catImgUrl +
-                                  list[index].categoryImgUrl,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          // Container(
-                          //   height: imageSize,
-                          //   width: imageSize,
-                          //   decoration: BoxDecoration(
-                          //     color: getShadow(
-                          //       categoryName: list[index].categoryName,
-                          //     ),
-                          //     shape: BoxShape.circle,
-                          //   ),
-                          // ),
-                        ],
-                      );
-                    }),
+                          ],
+                        );
+                      },
+                    ),
                     Center(
                       child: Padding(
                         padding: EdgeInsets.only(

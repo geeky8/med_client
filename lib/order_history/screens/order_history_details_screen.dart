@@ -85,134 +85,6 @@ class OrderHistoryDetailsScreen extends StatelessWidget {
             orderHistoryStore: store,
           ),
         ),
-        // child: ListView(
-        //   children: [
-        //     Row(
-        //       children: [
-        //         ConstantWidget.getCustomText(
-        //           'Order Id' + ": ",
-        //           ConstantData.textColor,
-        //           1,
-        //           TextAlign.start,
-        //           FontWeight.w400,
-        //           font18Px(context: context),
-        //         ),
-        //         ConstantWidget.getCustomText(
-        //           model.orderId,
-        //           ConstantData.mainTextColor,
-        //           1,
-        //           TextAlign.start,
-        //           FontWeight.w600,
-        //           font18Px(context: context),
-        //         ),
-        //         const Spacer(),
-        //         Padding(
-        //           padding: EdgeInsets.only(right: padding),
-        //           child: Icon(
-        //             Icons.timelapse_outlined,
-        //             size: font15Px(context: context),
-        //           ),
-        //         ),
-        //         ConstantWidget.getCustomText(
-        //           model.placedDateTime.split(" ")[0],
-        //           ConstantData.textColor,
-        //           1,
-        //           TextAlign.start,
-        //           FontWeight.w600,
-        //           font18Px(context: context),
-        //         ),
-        //       ],
-        //     ),
-        //     Padding(
-        //       padding: EdgeInsets.only(top: margin),
-        //       child: Row(
-        //         children: [
-        //           ConstantWidget.getCustomText(
-        //             'items' + ": ",
-        //             ConstantData.textColor,
-        //             1,
-        //             TextAlign.start,
-        //             FontWeight.w600,
-        //             font18Px(context: context),
-        //           ),
-        //           ConstantWidget.getCustomText(
-        //             model.ordersList.length.toString(),
-        //             ConstantData.accentColor,
-        //             1,
-        //             TextAlign.start,
-        //             FontWeight.w600,
-        //             font18Px(context: context),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //     OrderDetailsProductList(
-        //       list: model.ordersList,
-        //       store: store,
-        //       model: model,
-        //     ),
-        //     // Padding(
-        //     //   padding: EdgeInsets.only(top: margin, bottom: padding),
-        //     //   child: ConstantWidget.getCustomText(
-        //     //     'Description:',
-        //     //     ConstantData.mainTextColor,
-        //     //     1,
-        //     //     TextAlign.start,
-        //     //     FontWeight.w600,
-        //     //     font18Px(context: context),
-        //     //   ),
-        //     // ),
-        //     // ConstantWidget.getCustomText(
-        //     //   "Rice ,Alo Borta.Bagon Borta.Vegetables,Beef Curry.Dal.",
-        //     //   ConstantData.textColor,
-        //     //   1,
-        //     //   TextAlign.start,
-        //     //   FontWeight.w600,
-        //     //   font15Px(context: context),
-        //     // ),
-        //     // Padding(
-        //     //   padding: EdgeInsets.only(top: margin, bottom: padding),
-        //     //   child: ConstantWidget.getCustomText(
-        //     //     'Size',
-        //     //     ConstantData.mainTextColor,
-        //     //     1,
-        //     //     TextAlign.start,
-        //     //     FontWeight.w600,
-        //     //     font18Px(context: context),
-        //     //   ),
-        //     // ),
-        //     // ConstantWidget.getCustomText(
-        //     //   "12",
-        //     //   ConstantData.textColor,
-        //     //   1,
-        //     //   TextAlign.start,
-        //     //   FontWeight.w600,
-        //     //   font15Px(context: context),
-        //     // ),
-        //     Container(
-        //       height: 0.3,
-        //       color: ConstantData.textColor,
-        //       margin: const EdgeInsets.only(bottom: 15, top: 15),
-        //     ),
-        //     Row(
-        //       children: [
-        //         ConstantWidget.getCustomText('Total', ConstantData.accentColor,
-        //             1, TextAlign.start, FontWeight.w600, 16),
-        //         const Spacer(),
-        //         ConstantWidget.getCustomText(
-        //             '₹' + model.orderAmount,
-        //             ConstantData.accentColor,
-        //             1,
-        //             TextAlign.start,
-        //             FontWeight.w600,
-        //             16),
-        //       ],
-        //     ),
-        //     SizedBox(
-        //       height: ConstantWidget.getScreenPercentSize(context, 2),
-        //     ),
-        //   ],
-        // ),
       ),
     );
   }
@@ -257,7 +129,7 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
 
   String? getTextValidation({required String value}) {
     if (value.isEmpty) {
-      return 'This Field cannot be empty';
+      return 'Required';
     }
     return null;
   }
@@ -482,96 +354,99 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                             width: double.infinity,
                             height:
                                 ConstantWidget.getWidthPercentSize(context, 33),
-                            child: Column(
-                              children: [
-                                TextFormField(
-                                  controller: remarksContoller,
-                                  enabled: cancelOrder,
-                                  textInputAction: TextInputAction.done,
-                                  style: TextStyle(
-                                    fontFamily: ConstantData.fontFamily,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: font15Px(context: context) * 1.1,
-                                  ),
-                                  // onChanged: (value) async {
-                                  //   remarksContoller.notifyListeners();
-                                  //   // await store.getSearchedResults(term: value);
-                                  // },
-                                  // validator: (value) {
-                                  //   if (value == null) {
-                                  //     return 'Remarks are mandatory';
-                                  //   }
-                                  // },
-                                  maxLines: 5,
-                                  textAlignVertical: TextAlignVertical.center,
-                                  textAlign: TextAlign.left,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: blockSizeHorizontal(
-                                              context: context) *
-                                          4,
-                                      vertical:
-                                          blockSizeVertical(context: context) *
-                                              1.5,
-                                    ),
-                                    hintText: 'Add remarks....',
-                                    // prefixIcon: Icon(Icons.search),
+                            child: TextFormField(
+                              controller: remarksContoller,
+                              enabled: cancelOrder,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              textInputAction: TextInputAction.done,
+                              style: TextStyle(
+                                fontFamily: ConstantData.fontFamily,
+                                fontWeight: FontWeight.w600,
+                                fontSize: font18Px(context: context),
+                              ),
+                              // onChanged: (value) async {
+                              //   remarksContoller.notifyListeners();
+                              //   // await store.getSearchedResults(term: value);
+                              // },
+                              validator: (value) {
+                                if (value != null) {
+                                  if (value == '') {
+                                    return 'Remarks are mandatory';
+                                  } else {
+                                    return null;
+                                  }
+                                } else {
+                                  return null;
+                                }
+                              },
+                              maxLines: 5,
+                              textAlignVertical: TextAlignVertical.center,
+                              textAlign: TextAlign.left,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      blockSizeHorizontal(context: context) * 4,
+                                  vertical:
+                                      blockSizeVertical(context: context) * 1.5,
+                                ),
+                                hintText: 'Add remarks....',
+                                // prefixIcon: Icon(Icons.search),
 
-                                    // prefixIcon: Icon(
-                                    //   Icons.search,
-                                    //   color: Colors.grey,
-                                    //   size: font25Px(context: context) * 1.2,
-                                    // ),
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontFamily: ConstantData.fontFamily,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: font15Px(context: context),
-                                    ),
-                                    errorText: getTextValidation(
-                                        value: remarksContoller.text.trim()),
-                                    errorStyle: TextStyle(
-                                      color: Colors.red,
-                                      fontFamily: ConstantData.fontFamily,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize:
-                                          font12Px(context: context) * 1.1,
-                                    ),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    disabledBorder: OutlineInputBorder(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(15)),
-                                      borderSide: BorderSide(
-                                        color: ConstantData.cellColor,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    errorBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.red, width: 2),
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(15)),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(15)),
-                                      borderSide: BorderSide(
-                                        color: ConstantData.mainTextColor,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(15)),
-                                      borderSide: BorderSide(
-                                        color: ConstantData.cellColor,
-                                        width: 2,
-                                      ),
-                                    ),
+                                // prefixIcon: Icon(
+                                //   Icons.search,
+                                //   color: Colors.grey,
+                                //   size: font25Px(context: context) * 1.2,
+                                // ),
+                                hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontFamily: ConstantData.fontFamily,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: font15Px(context: context),
+                                ),
+
+                                errorStyle: TextStyle(
+                                  color: Colors.red,
+                                  fontFamily: ConstantData.fontFamily,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: font12Px(context: context) * 1.1,
+                                ),
+
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.red, width: 2),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(font18Px(context: context)),
                                   ),
                                 ),
-                              ],
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(font18Px(context: context)),
+                                  ),
+                                  borderSide: BorderSide(
+                                    color: ConstantData.clrBorder,
+                                    width: 2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(
+                                          font18Px(context: context))),
+                                  borderSide: BorderSide(
+                                    color: ConstantData.clrBorder,
+                                    width: 2,
+                                  ),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(font18Px(context: context)),
+                                  ),
+                                  borderSide: BorderSide(
+                                    color: ConstantData.clrBorder,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(

@@ -16,34 +16,34 @@ import 'package:medrpha_customer/utils/storage.dart';
 
 class ProfileRepository {
   /// Get Profile
-  // final _getProfileUrl = 'https://api.medrpha.com/api/profile/getprofile';
-  final _getProfileUrl = 'https://apitest.medrpha.com/api/profile/getprofile';
+  final _getProfileUrl = 'https://api.medrpha.com/api/profile/getprofile';
+  // final _getProfileUrl = 'https://apitest.medrpha.com/api/profile/getprofile';
 
   /// For Customer Profile
-  // final _uploadProfileUrl = 'https://api.medrpha.com/api/register/register';
-  final _uploadProfileUrl = 'https://apitest.medrpha.com/api/register/register';
+  final _uploadProfileUrl = 'https://api.medrpha.com/api/register/register';
+  // final _uploadProfileUrl = 'https://apitest.medrpha.com/api/register/register';
 
   /// For Customer Drug License Details.
-  // final _uploadDLUrl = 'https://api.medrpha.com/api/register/registerdlno';
-  final _uploadDLUrl = 'https://apitest.medrpha.com/api/register/registerdlno';
+  final _uploadDLUrl = 'https://api.medrpha.com/api/register/registerdlno';
+  // final _uploadDLUrl = 'https://apitest.medrpha.com/api/register/registerdlno';
 
   /// For Customer GST Details.
-  // final _uploadGSTUrl = 'https://api.medrpha.com/api/register/registergstno';
-  final _uploadGSTUrl =
-      'https://apitest.medrpha.com/api/register/registergstno';
+  final _uploadGSTUrl = 'https://api.medrpha.com/api/register/registergstno';
+  // final _uploadGSTUrl =
+  //     'https://apitest.medrpha.com/api/register/registergstno';
 
   /// Customer address details
-  // final _countryUrl = 'https://api.medrpha.com/api/register/getcountryall';
-  final _countryUrl = 'https://apitest.medrpha.com/api/register/getcountryall';
-  // final _stateUrl = 'https://api.medrpha.com/api/register/getstateall';
-  final _stateUrl = 'https://apitest.medrpha.com/api/register/getstateall';
-  // final _cityUrl = 'https://api.medrpha.com/api/register/getcityall';
-  final _cityUrl = 'https://apitest.medrpha.com/api/register/getcityall';
+  final _countryUrl = 'https://api.medrpha.com/api/register/getcountryall';
+  // final _countryUrl = 'https://apitest.medrpha.com/api/register/getcountryall';
+  final _stateUrl = 'https://api.medrpha.com/api/register/getstateall';
+  // final _stateUrl = 'https://apitest.medrpha.com/api/register/getstateall';
+  final _cityUrl = 'https://api.medrpha.com/api/register/getcityall';
+  // final _cityUrl = 'https://apitest.medrpha.com/api/register/getcityall';
 
   /// Register FSSAI
-  // final _uploadFssaiUrl = 'https://api.medrpha.com/api/register/registerfssai';
-  final _uploadFssaiUrl =
-      'https://apitest.medrpha.com/api/register/registerfssai';
+  final _uploadFssaiUrl = 'https://api.medrpha.com/api/register/registerfssai';
+  // final _uploadFssaiUrl =
+  //     'https://apitest.medrpha.com/api/register/registerfssai';
 
   final httpClient = http.Client();
 
@@ -136,15 +136,15 @@ class ProfileRepository {
 
   Future<List<AreaModel>> getArea({String? id}) async {
     final sessId = await DataBox().readSessId();
-    // String areaUrl = 'https://api.medrpha.com/api/register/getpincodeall';
-    String areaUrl = 'https://apitest.medrpha.com/api/register/getpincodeall';
+    String areaUrl = 'https://api.medrpha.com/api/register/getpincodeall';
+    // String areaUrl = 'https://apitest.medrpha.com/api/register/getpincodeall';
     Map<String, dynamic> body = {
       "sessid": sessId,
     };
 
     if (id != null) {
-      // areaUrl = 'https://api.medrpha.com/api/register/getpincode';
-      areaUrl = 'https://apitest.medrpha.com/api/register/getpincode';
+      areaUrl = 'https://api.medrpha.com/api/register/getpincode';
+      // areaUrl = 'https://apitest.medrpha.com/api/register/getpincode';
       body = {"sessid": sessId, 'cityid': id};
     }
 
