@@ -41,9 +41,23 @@ class ProductHomeScreen extends StatelessWidget {
     final orderHistoryStore = context.read<OrderHistoryStore>();
     final bottomNavigationStore = context.read<BottomNavigationStore>();
 
+    final scrollController = ScrollController();
+    scrollController.addListener(() async {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        store.paginationState = StoreState.LOADING;
+        store.ethicalPageIndex++;
+        debugPrint('---- page index------${store.ethicalPageIndex}');
+        await store.getEthicalProducts(
+          load: true,
+        );
+        store.paginationState = StoreState.SUCCESS;
+      }
+    });
+
     return Scaffold(
       bottomNavigationBar: Observer(builder: (_) {
-        if (((store.cartModel.totalSalePrice != '0') &&
+        if (((store.cartModel.productList.isNotEmpty) &&
                 loginStore.loginModel.adminStatus) ||
             store.message == 'Products not servicable in your selected area!') {
           return Container(
@@ -74,7 +88,7 @@ class ProductHomeScreen extends StatelessWidget {
                           width: blockSizeHorizontal(context: context) * 3,
                         ),
                         ConstantWidget.getCustomText(
-                          '₹${store.cartModel.totalSalePrice}',
+                          '₹${double.parse(store.cartModel.totalSalePrice).toStringAsFixed(4)}',
                           ConstantData.mainTextColor,
                           1,
                           TextAlign.center,
@@ -161,12 +175,17 @@ class ProductHomeScreen extends StatelessWidget {
                     top: ConstantWidget.getWidthPercentSize(context, 3)),
                 child: Row(
                   children: [
-                    SizedBox(
-                      height: ConstantWidget.getWidthPercentSize(context, 12),
-                      width: ConstantWidget.getWidthPercentSize(context, 45),
-                      child: Image.asset(
-                        '${ConstantData.assetsPath}med_logo_text.png',
-                        // fit: BoxFit.fill,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal:
+                              blockSizeHorizontal(context: context) * 4),
+                      child: SizedBox(
+                        height: ConstantWidget.getWidthPercentSize(context, 12),
+                        width: ConstantWidget.getWidthPercentSize(context, 45),
+                        child: Image.asset(
+                          '${ConstantData.assetsPath}med_logo_text.png',
+                          // fit: BoxFit.fill,
+                        ),
                       ),
                     ),
                     const Spacer(),
@@ -211,11 +230,12 @@ class ProductHomeScreen extends StatelessWidget {
                                       child: Observer(builder: (_) {
                                         final adminStatus =
                                             loginStore.loginModel.adminStatus;
-                                        final value =
-                                            (store.cartModel.noOfProducts > 10)
-                                                ? '9+'
-                                                : store.cartModel.noOfProducts
-                                                    .toString();
+                                        final value = (store.cartModel
+                                                    .productList.length >
+                                                10)
+                                            ? '9+'
+                                            : store.cartModel.productList.length
+                                                .toString();
                                         return ConstantWidget.getCustomText(
                                           (adminStatus) ? value : '0',
                                           Colors.white,
@@ -259,115 +279,6 @@ class ProductHomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // Container(
-              //   // height: height,
-              //   margin: EdgeInsets.symmetric(horizontal: margin),
-              //   padding: EdgeInsets.all((margin * 1.2)),
-
-              //   decoration: BoxDecoration(
-              //     color: ConstantData.cellColor,
-              //     borderRadius: BorderRadius.all(Radius.circular(radius)),
-              //   ),
-
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Row(
-              //         children: [
-              //           ConstantWidget.getCustomText(
-              //             "Hey,",
-              //             ConstantData.mainTextColor,
-              //             1,
-              //             TextAlign.start,
-              //             FontWeight.w600,
-              //             font18Px(context: context),
-              //           ),
-              //           const SizedBox(
-              //             width: 0.5,
-              //           ),
-              //           ConstantWidget.getCustomText(
-              //             "Welcome",
-              //             Colors.orange,
-              //             1,
-              //             TextAlign.start,
-              //             FontWeight.w600,
-              //             font18Px(context: context),
-              //           ),
-              //         ],
-              //       ),
-              //       SizedBox(
-              //         height: (margin / 2.5),
-              //       ),
-              //       ConstantWidget.getCustomText(
-              //         "Can I help you something?",
-              //         ConstantData.textColor,
-              //         1,
-              //         TextAlign.start,
-              //         FontWeight.w200,
-              //         font15Px(context: context) * 1.2,
-              //       ),
-              //       SizedBox(
-              //         height: ((margin / 1.2)),
-              //       ),
-              //       InkWell(
-              //         child: SizedBox(
-              //           width: double.infinity,
-              //           height: searchHeight,
-              //           child: TextField(
-              //             style: TextStyle(
-              //               fontFamily: ConstantData.fontFamily,
-              //               fontWeight: FontWeight.w400,
-              //             ),
-              //             onChanged: (string) {},
-              //             maxLines: 1,
-              //             enabled: true,
-              //             textAlignVertical: TextAlignVertical.center,
-              //             textAlign: TextAlign.left,
-              //             decoration: InputDecoration(
-              //               contentPadding: EdgeInsets.zero,
-              //               hintText: 'Search....',
-              //               // prefixIcon: Icon(Icons.search),
-
-              //               prefixIcon: Icon(
-              //                 Icons.search,
-              //                 color: Colors.grey,
-              //                 size: font18Px(context: context) * 1.2,
-              //               ),
-              //               hintStyle: TextStyle(
-              //                 color: Colors.grey,
-              //                 fontFamily: ConstantData.fontFamily,
-              //                 fontWeight: FontWeight.w400,
-              //                 fontSize: font15Px(context: context) * 1.2,
-              //               ),
-              //               filled: true,
-              //               fillColor: Colors.white,
-              //               disabledBorder: OutlineInputBorder(
-              //                 borderRadius:
-              //                     BorderRadius.all(Radius.circular(radius)),
-              //                 borderSide: const BorderSide(
-              //                     color: Colors.white, width: 2),
-              //               ),
-              //               enabledBorder: OutlineInputBorder(
-              //                 borderRadius:
-              //                     BorderRadius.all(Radius.circular(radius)),
-              //                 borderSide: const BorderSide(
-              //                     color: Colors.white, width: 2),
-              //               ),
-              //               focusedBorder: OutlineInputBorder(
-              //                 borderRadius:
-              //                     BorderRadius.all(Radius.circular(radius)),
-              //                 borderSide: const BorderSide(
-              //                     color: Colors.white, width: 2),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //         onTap: () {},
-              //       )
-              //     ],
-              //   ),
-              // ),
               SizedBox(
                 height: blockSizeVertical(context: context),
               ),
@@ -381,6 +292,7 @@ class ProductHomeScreen extends StatelessWidget {
                   },
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
+                    controller: scrollController,
                     children: [
                       ///----------------------------------- Search bar --------------------------------------------
                       InkWell(
@@ -401,15 +313,18 @@ class ProductHomeScreen extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => Provider.value(
-                                        value: store,
+                                      value: store,
+                                      child: Provider.value(
+                                        value: loginStore,
                                         child: Provider.value(
-                                            value: loginStore,
-                                            child: Provider.value(
-                                                value: profileStore,
-                                                child: Provider.value(
-                                                    value: orderHistoryStore,
-                                                    child:
-                                                        const SearchScreen())))),
+                                          value: profileStore,
+                                          child: Provider.value(
+                                            value: orderHistoryStore,
+                                            child: const SearchScreen(),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 );
                                 // FocusScope.of(context)
@@ -684,6 +599,18 @@ class ProductHomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
+              /// Pagination Loader
+              Observer(builder: (_) {
+                if (store.paginationState == StoreState.LOADING) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: blockSizeVertical(context: context)),
+                    child: const CircularProgressIndicator(),
+                  );
+                }
+                return const SizedBox();
+              })
             ],
           ),
         ),

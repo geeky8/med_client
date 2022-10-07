@@ -34,6 +34,8 @@ class CategoryProducts extends StatelessWidget {
     return Observer(builder: (_) {
       final state1 = store.prodState;
 
+      print('------ status of prod --------${state1.name}');
+
       switch (state1) {
         case StoreState.LOADING:
           // return Center(
@@ -294,18 +296,19 @@ class ProductsCard extends StatelessWidget {
                           height: firstHeight,
                           width: firstHeight,
                           decoration: BoxDecoration(
-                              color: ConstantData.cellColor,
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(radius),
-                              ),
-                              // ,
-                              image: DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                    ConstantData.productUrl +
-                                        list[index].productImg,
-                                  ),
-                                  fit: BoxFit.cover)),
+                            color: ConstantData.cellColor,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(radius),
+                            ),
+                            // ,
+                            image: DecorationImage(
+                                image: CachedNetworkImageProvider(
+                                  ConstantData.productUrl +
+                                      list[index].productImg,
+                                ),
+                                fit: BoxFit.cover),
+                          ),
                         ),
                         Observer(builder: (_) {
                           final adminStatus = loginStore.loginModel.adminStatus;

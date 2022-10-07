@@ -3,6 +3,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/enums/categories.dart';
+import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
@@ -19,11 +21,63 @@ class ProductViewList extends StatelessWidget {
     required this.loginStore,
     required this.list,
     required this.store,
+    this.termValue,
+    this.control,
   }) : super(key: key);
 
   final LoginStore loginStore;
   final List<ProductModel> list;
   final ProductsStore store;
+  final bool? control;
+  final String? termValue;
+
+  Future<void> getPaginatedResults() async {
+    switch (categoriesfromValue(list[0].category)) {
+      case CategoriesType.ETHICAL:
+        store.ethicalPageIndex++;
+        debugPrint('---- page index------${store.ethicalPageIndex}');
+        await store.getEthicalProducts(
+          load: true,
+        );
+        break;
+      case CategoriesType.GENERIC:
+        store.genericPageIndex++;
+        debugPrint('---- page index------${store.genericPageIndex}');
+        await store.getGenericProducts(
+          load: true,
+        );
+        break;
+      case CategoriesType.SURGICAL:
+        store.surgicalPageIndex++;
+        debugPrint('---- page index------${store.surgicalPageIndex}');
+        await store.getSurgicalProducts(
+          load: true,
+        );
+        break;
+      case CategoriesType.VETERINARY:
+        store.vetPageIndex++;
+        debugPrint('---- page index------${store.vetPageIndex}');
+        await store.getVeterinaryProducts(
+          load: true,
+        );
+        break;
+
+      case CategoriesType.AYURVEDIC:
+        store.ayurvedicPageIndex++;
+        debugPrint('---- page index------${store.ayurvedicPageIndex}');
+        await store.getAyurvedicProducts(
+          load: true,
+        );
+        break;
+      case CategoriesType.GENERAL:
+        store.generalPageIndex++;
+        debugPrint('---- page index------${store.generalPageIndex}');
+        await store.getGenerallProducts(
+          load: true,
+        );
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +89,23 @@ class ProductViewList extends StatelessWidget {
     double firstHeight = ConstantWidget.getPercentSize(height, 60);
     double remainHeight = height - firstHeight;
 
+    final scrollController = ScrollController();
+    scrollController.addListener(() async {
+      // print('scrollpositon------------${scrollController.positions.last}');
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        store.paginationState = StoreState.LOADING;
+        await getPaginatedResults();
+        store.paginationState = StoreState.SUCCESS;
+      }
+    });
+
     double radius = ConstantWidget.getPercentSize(height, 5);
     return (list.isNotEmpty)
         ? ListView.builder(
             padding: EdgeInsets.only(right: sideMargin),
             physics: const BouncingScrollPhysics(),
+            controller: scrollController,
             itemCount: list.length,
             itemBuilder: (context, index) {
               return Padding(
@@ -68,6 +134,7 @@ class ProductViewList extends StatelessWidget {
                         ),
                       ),
                     );
+                    // }
                   },
                   child: SizedBox(
                     width: width,
@@ -91,6 +158,8 @@ class ProductViewList extends StatelessWidget {
                         children: [
                           //-----> Discount percent
                           Observer(builder: (_) {
+                            print(
+                                '----prod image --------${list[index].productImg}');
                             final adminStatus =
                                 loginStore.loginModel.adminStatus;
                             return Offstage(

@@ -165,19 +165,6 @@ class CheckoutScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                // ClipRRect(
-                                //   borderRadius: BorderRadius.circular(12),
-                                //   child: CachedNetworkImage(
-                                //     imageUrl: ConstantData.productUrl +
-                                //         _productStore.cartModel
-                                //             .productList[index].productImg,
-                                //     height: ConstantWidget.getScreenPercentSize(
-                                //         context, 7),
-                                //     width: ConstantWidget.getWidthPercentSize(
-                                //         context, 14),
-                                //     fit: BoxFit.fill,
-                                //   ),
-                                // ),
                                 const Spacer(),
                                 Expanded(
                                   flex: 15,
@@ -207,7 +194,7 @@ class CheckoutScreen extends StatelessWidget {
                                 ),
                                 const Spacer(),
                                 ConstantWidget.getCustomText(
-                                  '₹${productStore.cartModel.productList[index].subTotal}',
+                                  '₹${double.parse(productStore.cartModel.productList[index].subTotal).toStringAsFixed(4)}',
                                   ConstantData.mainTextColor,
                                   1,
                                   TextAlign.center,
@@ -304,67 +291,6 @@ class CheckoutScreen extends StatelessWidget {
                       color: ConstantData.cellColor,
                       thickness: blockSizeVertical(context: context) * 2,
                     ),
-                    // Divider(
-                    //   color: ConstantData.cellColor,
-                    //   thickness:
-                    //       ConstantWidget.getScreenPercentSize(context, 2),
-                    // ),
-                    // Padding(
-                    //   padding: EdgeInsets.symmetric(
-                    //     horizontal: leftMargin,
-                    //     vertical: topMargin,
-                    //   ),
-                    //   child: Column(
-                    //     children: [
-                    //       Row(
-                    //         mainAxisAlignment: MainAxisAlignment.start,
-                    //         children: [
-                    //           ConstantWidget.getTextWidget(
-                    //             'Options',
-                    //             ConstantData.mainTextColor,
-                    //             TextAlign.start,
-                    //             FontWeight.w600,
-                    //             font18Px(context: context) * 1.2,
-                    //           ),
-                    //         ],
-                    //       ),
-                    //       SizedBox(
-                    //         height: blockSizeVertical(context: context) * 1.5,
-                    //       ),
-                    //       Column(
-                    //         children: [
-                    //           PaymentOptionsWidget(
-                    //             productStore: _productStore,
-                    //             logo: 'mastercard.png',
-                    //             logo1: 'visa.png',
-                    //             // logo2: 'razorpay.png',
-                    //             label: 'Online Payment',
-                    //             options: PaymentOptions.ONLINE,
-                    //           ),
-                    //           Offstage(
-                    //             offstage: !(_loginStore.loginModel.payLater),
-                    //             child: PaymentOptionsWidget(
-                    //               productStore: _productStore,
-                    //               logo: 'paylater.jpg',
-                    //               label: 'Pay-Later',
-                    //               options: PaymentOptions.PAYLATER,
-                    //             ),
-                    //           ),
-                    //           PaymentOptionsWidget(
-                    //             productStore: _productStore,
-                    //             logo: 'money.png',
-                    //             label: 'Pay On Delivery',
-                    //             options: PaymentOptions.PAYONDELIVERY,
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    // Divider(
-                    //   color: ConstantData.cellColor,
-                    //   thickness: blockSizeVertical(context: context) * 2,
-                    // ),
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: leftMargin, vertical: topMargin),
@@ -395,7 +321,7 @@ class CheckoutScreen extends StatelessWidget {
                               ),
                               const Spacer(),
                               ConstantWidget.getCustomText(
-                                '₹${productStore.cartModel.totalSalePrice}',
+                                '₹${double.parse(productStore.cartModel.totalSalePrice).toStringAsFixed(4)}',
                                 Colors.black45,
                                 1,
                                 TextAlign.center,
@@ -420,7 +346,7 @@ class CheckoutScreen extends StatelessWidget {
                               ),
                               const Spacer(),
                               ConstantWidget.getCustomText(
-                                '₹${productStore.cartModel.totalSalePrice}',
+                                '₹${double.parse(productStore.cartModel.totalSalePrice).toStringAsFixed(4)}',
                                 ConstantData.primaryColor,
                                 1,
                                 TextAlign.center,

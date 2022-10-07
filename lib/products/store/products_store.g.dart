@@ -219,6 +219,134 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$ethicalPageIndexAtom =
+      Atom(name: '_ProductsStore.ethicalPageIndex', context: context);
+
+  @override
+  int get ethicalPageIndex {
+    _$ethicalPageIndexAtom.reportRead();
+    return super.ethicalPageIndex;
+  }
+
+  @override
+  set ethicalPageIndex(int value) {
+    _$ethicalPageIndexAtom.reportWrite(value, super.ethicalPageIndex, () {
+      super.ethicalPageIndex = value;
+    });
+  }
+
+  late final _$genericPageIndexAtom =
+      Atom(name: '_ProductsStore.genericPageIndex', context: context);
+
+  @override
+  int get genericPageIndex {
+    _$genericPageIndexAtom.reportRead();
+    return super.genericPageIndex;
+  }
+
+  @override
+  set genericPageIndex(int value) {
+    _$genericPageIndexAtom.reportWrite(value, super.genericPageIndex, () {
+      super.genericPageIndex = value;
+    });
+  }
+
+  late final _$surgicalPageIndexAtom =
+      Atom(name: '_ProductsStore.surgicalPageIndex', context: context);
+
+  @override
+  int get surgicalPageIndex {
+    _$surgicalPageIndexAtom.reportRead();
+    return super.surgicalPageIndex;
+  }
+
+  @override
+  set surgicalPageIndex(int value) {
+    _$surgicalPageIndexAtom.reportWrite(value, super.surgicalPageIndex, () {
+      super.surgicalPageIndex = value;
+    });
+  }
+
+  late final _$vetPageIndexAtom =
+      Atom(name: '_ProductsStore.vetPageIndex', context: context);
+
+  @override
+  int get vetPageIndex {
+    _$vetPageIndexAtom.reportRead();
+    return super.vetPageIndex;
+  }
+
+  @override
+  set vetPageIndex(int value) {
+    _$vetPageIndexAtom.reportWrite(value, super.vetPageIndex, () {
+      super.vetPageIndex = value;
+    });
+  }
+
+  late final _$ayurvedicPageIndexAtom =
+      Atom(name: '_ProductsStore.ayurvedicPageIndex', context: context);
+
+  @override
+  int get ayurvedicPageIndex {
+    _$ayurvedicPageIndexAtom.reportRead();
+    return super.ayurvedicPageIndex;
+  }
+
+  @override
+  set ayurvedicPageIndex(int value) {
+    _$ayurvedicPageIndexAtom.reportWrite(value, super.ayurvedicPageIndex, () {
+      super.ayurvedicPageIndex = value;
+    });
+  }
+
+  late final _$generalPageIndexAtom =
+      Atom(name: '_ProductsStore.generalPageIndex', context: context);
+
+  @override
+  int get generalPageIndex {
+    _$generalPageIndexAtom.reportRead();
+    return super.generalPageIndex;
+  }
+
+  @override
+  set generalPageIndex(int value) {
+    _$generalPageIndexAtom.reportWrite(value, super.generalPageIndex, () {
+      super.generalPageIndex = value;
+    });
+  }
+
+  late final _$searchIndexAtom =
+      Atom(name: '_ProductsStore.searchIndex', context: context);
+
+  @override
+  int get searchIndex {
+    _$searchIndexAtom.reportRead();
+    return super.searchIndex;
+  }
+
+  @override
+  set searchIndex(int value) {
+    _$searchIndexAtom.reportWrite(value, super.searchIndex, () {
+      super.searchIndex = value;
+    });
+  }
+
+  late final _$paginationStateAtom =
+      Atom(name: '_ProductsStore.paginationState', context: context);
+
+  @override
+  StoreState get paginationState {
+    _$paginationStateAtom.reportRead();
+    return super.paginationState;
+  }
+
+  @override
+  set paginationState(StoreState value) {
+    _$paginationStateAtom.reportWrite(value, super.paginationState, () {
+      super.paginationState = value;
+    });
+  }
+
   late final _$searchStateAtom =
       Atom(name: '_ProductsStore.searchState', context: context);
 
@@ -407,9 +535,9 @@ mixin _$ProductsStore on _ProductsStore, Store {
       AsyncAction('_ProductsStore.getEthicalProducts', context: context);
 
   @override
-  Future<void> getEthicalProducts() {
+  Future<void> getEthicalProducts({bool? load}) {
     return _$getEthicalProductsAsyncAction
-        .run(() => super.getEthicalProducts());
+        .run(() => super.getEthicalProducts(load: load));
   }
 
   late final _$getProductDetailsAsyncAction =
@@ -425,63 +553,63 @@ mixin _$ProductsStore on _ProductsStore, Store {
       AsyncAction('_ProductsStore.getGenericProducts', context: context);
 
   @override
-  Future<void> getGenericProducts() {
+  Future<void> getGenericProducts({bool? load}) {
     return _$getGenericProductsAsyncAction
-        .run(() => super.getGenericProducts());
+        .run(() => super.getGenericProducts(load: load));
   }
 
   late final _$getSurgicalProductsAsyncAction =
       AsyncAction('_ProductsStore.getSurgicalProducts', context: context);
 
   @override
-  Future<void> getSurgicalProducts() {
+  Future<void> getSurgicalProducts({bool? load}) {
     return _$getSurgicalProductsAsyncAction
-        .run(() => super.getSurgicalProducts());
+        .run(() => super.getSurgicalProducts(load: load));
   }
 
   late final _$getVeterinaryProductsAsyncAction =
       AsyncAction('_ProductsStore.getVeterinaryProducts', context: context);
 
   @override
-  Future<void> getVeterinaryProducts() {
+  Future<void> getVeterinaryProducts({bool? load}) {
     return _$getVeterinaryProductsAsyncAction
-        .run(() => super.getVeterinaryProducts());
+        .run(() => super.getVeterinaryProducts(load: load));
   }
 
   late final _$getAyurvedicProductsAsyncAction =
       AsyncAction('_ProductsStore.getAyurvedicProducts', context: context);
 
   @override
-  Future<void> getAyurvedicProducts() {
+  Future<void> getAyurvedicProducts({bool? load}) {
     return _$getAyurvedicProductsAsyncAction
-        .run(() => super.getAyurvedicProducts());
+        .run(() => super.getAyurvedicProducts(load: load));
   }
 
   late final _$getGenerallProductsAsyncAction =
       AsyncAction('_ProductsStore.getGenerallProducts', context: context);
 
   @override
-  Future<void> getGenerallProducts() {
+  Future<void> getGenerallProducts({bool? load}) {
     return _$getGenerallProductsAsyncAction
-        .run(() => super.getGenerallProducts());
+        .run(() => super.getGenerallProducts(load: load));
   }
 
   late final _$getSearchedResultsAsyncAction =
       AsyncAction('_ProductsStore.getSearchedResults', context: context);
 
   @override
-  Future<void> getSearchedResults({required String term}) {
+  Future<void> getSearchedResults({required String term, bool? load}) {
     return _$getSearchedResultsAsyncAction
-        .run(() => super.getSearchedResults(term: term));
+        .run(() => super.getSearchedResults(term: term, load: load));
   }
 
   late final _$getCartItemsAsyncAction =
       AsyncAction('_ProductsStore.getCartItems', context: context);
 
   @override
-  Future<void> getCartItems({bool? isRemove}) {
+  Future<void> getCartItems({bool? isRemove, bool? cartOpt}) {
     return _$getCartItemsAsyncAction
-        .run(() => super.getCartItems(isRemove: isRemove));
+        .run(() => super.getCartItems(isRemove: isRemove, cartOpt: cartOpt));
   }
 
   late final _$_updateProductsAccordingToCartAsyncAction = AsyncAction(
@@ -615,6 +743,14 @@ ayurvedicProductList: ${ayurvedicProductList},
 generalProductList: ${generalProductList},
 homeState: ${homeState},
 cartState: ${cartState},
+ethicalPageIndex: ${ethicalPageIndex},
+genericPageIndex: ${genericPageIndex},
+surgicalPageIndex: ${surgicalPageIndex},
+vetPageIndex: ${vetPageIndex},
+ayurvedicPageIndex: ${ayurvedicPageIndex},
+generalPageIndex: ${generalPageIndex},
+searchIndex: ${searchIndex},
+paginationState: ${paginationState},
 searchState: ${searchState},
 searchController: ${searchController},
 searchList: ${searchList},

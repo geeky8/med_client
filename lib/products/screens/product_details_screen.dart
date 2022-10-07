@@ -14,7 +14,7 @@ import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:provider/provider.dart';
 
-class ProductsDetailScreen extends StatelessWidget {
+class ProductsDetailScreen extends StatefulWidget {
   const ProductsDetailScreen({
     Key? key,
     required this.model,
@@ -23,16 +23,17 @@ class ProductsDetailScreen extends StatelessWidget {
   }) : super(key: key);
 
   final ProductModel model;
-  // final int modelIndex;
-  // final List<ProductModel> list;
 
   @override
+  State<ProductsDetailScreen> createState() => _ProductsDetailScreenState();
+}
+
+class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
+  // final int modelIndex;
+  @override
   Widget build(BuildContext context) {
-    // double height = ConstantWidget.getScreenPercentSize(context, 45);
-    // double secHeight = ConstantWidget.getScreenPercentSize(context, 39);
     double subHeight = ConstantWidget.getScreenPercentSize(context, 24.5);
     double defMargin = (subHeight / 8);
-
     double radius = ConstantWidget.getScreenPercentSize(context, 6);
     double margin = ConstantWidget.getScreenPercentSize(context, 2);
 
@@ -41,38 +42,6 @@ class ProductsDetailScreen extends StatelessWidget {
 
     return Scaffold(
         backgroundColor: ConstantData.bgColor,
-        // bottomNavigationBar: Observer(builder: (_) {
-        //   final index = store.cartModel.productList.indexWhere(
-        //     (element) => element.pid == model.pid,
-        //   );
-        //   if (index != -1) {
-        //     return Padding(
-        //       padding: EdgeInsets.symmetric(
-        //         horizontal: blockSizeHorizontal(context: context) * 4,
-        //       ),
-        //       child: RemoveButton(
-        //         store: store,
-        //         model: model,
-        //         width: 0,
-        //         height: blockSizeVertical(context: context) * 4,
-        //         fontSize: 0,
-        //         isDetailPage: true,
-        //       ),
-        //     );
-        //   }
-        //   return Padding(
-        //     padding: EdgeInsets.symmetric(
-        //       horizontal: blockSizeHorizontal(context: context) * 4,
-        //     ),
-        //     child: AddProductButton(
-        //       store: store,
-        //       model: model,
-        //       width: blockSizeVertical(context: context) * 2,
-        //       height: blockSizeVertical(context: context) * 2.5,
-        //       fontSize: font15Px(context: context) * 1.1,
-        //     ),
-        //   );
-        // }),
         body: SafeArea(
           child: Observer(builder: (_) {
             return ListView(
@@ -106,7 +75,8 @@ class ProductsDetailScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: CachedNetworkImageProvider(
-                                  ConstantData.productUrl + model.productImg,
+                                  ConstantData.productUrl +
+                                      widget.model.productImg,
                                 ),
                                 fit: BoxFit.cover,
                               ),
@@ -187,7 +157,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               ConstantWidget.getCustomText(
-                                                model.productName,
+                                                widget.model.productName,
                                                 ConstantData.mainTextColor,
                                                 2,
                                                 TextAlign.start,
@@ -226,7 +196,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                                               context: context),
                                                         ),
                                                         ConstantWidget.getCustomText(
-                                                            '${model.quantity} units',
+                                                            '${widget.model.quantity} units',
                                                             ConstantData
                                                                 .mainTextColor,
                                                             2,
@@ -262,7 +232,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                             ),
                                             child: ConstantWidget
                                                 .getSpaceTextWidget(
-                                              model.description,
+                                              widget.model.description,
                                               ConstantData.textColor,
                                               TextAlign.start,
                                               FontWeight.w400,
@@ -293,7 +263,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                                     4,
                                               ),
                                               ConstantWidget.getCustomText(
-                                                  model.expiryDate,
+                                                  widget.model.expiryDate,
                                                   ConstantData.textColor,
                                                   2,
                                                   TextAlign.start,
@@ -317,7 +287,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                                     CrossAxisAlignment.center,
                                                 children: [
                                                   ConstantWidget.getCustomText(
-                                                      '₹${model.newMrp}',
+                                                      '₹${widget.model.newMrp}',
                                                       ConstantData
                                                           .mainTextColor,
                                                       2,
@@ -328,17 +298,16 @@ class ProductsDetailScreen extends StatelessWidget {
                                                   SizedBox(
                                                     width: ((margin) / 4),
                                                   ),
-                                                  ConstantWidget
-                                                      .getLineTextView(
-                                                          '₹${model.oldMrp}',
-                                                          Colors.grey,
-                                                          font18Px(
-                                                              context:
-                                                                  context)),
+                                                  ConstantWidget.getLineTextView(
+                                                      '₹${widget.model.oldMrp}',
+                                                      Colors.grey,
+                                                      font18Px(
+                                                          context: context)),
                                                   Expanded(
                                                     child: ConstantWidget
                                                         .getCustomText(
-                                                      model.percentDiscount,
+                                                      widget.model
+                                                          .percentDiscount,
                                                       ConstantData.accentColor,
                                                       2,
                                                       TextAlign.end,
@@ -387,13 +356,14 @@ class ProductsDetailScreen extends StatelessWidget {
                                         final index = store
                                             .cartModel.productList
                                             .indexWhere(
-                                          (element) => element.pid == model.pid,
+                                          (element) =>
+                                              element.pid == widget.model.pid,
                                         );
                                         if (index != -1) {
                                           return Row(
                                             children: [
                                               PlusMinusWidget(
-                                                model: model,
+                                                model: widget.model,
                                                 store: store,
                                                 iconSize: ConstantWidget
                                                     .getWidthPercentSize(
@@ -407,7 +377,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                               Expanded(
                                                 child: RemoveButton(
                                                   store: store,
-                                                  model: model,
+                                                  model: widget.model,
                                                   width: ConstantWidget
                                                       .getWidthPercentSize(
                                                           context, 10),
@@ -426,7 +396,7 @@ class ProductsDetailScreen extends StatelessWidget {
                                           children: [
                                             AddProductButton(
                                               store: store,
-                                              model: model,
+                                              model: widget.model,
                                               width: ConstantWidget
                                                   .getWidthPercentSize(
                                                       context, 10),
@@ -440,19 +410,6 @@ class ProductsDetailScreen extends StatelessWidget {
                                             ),
                                           ],
                                         );
-                                        // else {
-                                        //   return AddProductButton(
-                                        //     store: store,
-                                        //     model: model,
-                                        //     width: blockSizeVertical(
-                                        //             context: context) *
-                                        //         2,
-                                        //     height: ConstantWidget
-                                        //         .getWidthPercentSize(context, 15),
-                                        //     fontSize:
-                                        //         font15Px(context: context) * 1.1,
-                                        //   );
-                                        // }
                                       }),
                                     ),
                                   ),
@@ -495,7 +452,7 @@ class ProductsDetailScreen extends StatelessWidget {
                           Expanded(
                             child: Observer(builder: (_) {
                               final category =
-                                  categoriesfromValue(model.category);
+                                  categoriesfromValue(widget.model.category);
 
                               switch (category) {
                                 case CategoriesType.ETHICAL:

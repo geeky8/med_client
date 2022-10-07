@@ -16,26 +16,12 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = context.read<ProductsStore>();
     final loginStore = context.read<LoginStore>();
-    // final profileStore = context.read<ProfileStore>();
-    // final orderHistoryStore = context.read<OrderHistoryStore>();
 
     double height = ConstantWidget.getScreenPercentSize(context, 14);
-    double searchHeight = ConstantWidget.getPercentSize(height, 30);
     double radius = ConstantWidget.getPercentSize(height, 10);
     double margin = ConstantWidget.getScreenPercentSize(context, 2);
-    // double sideMargin = margin * 1.2;
 
-    // double margin = ConstantWidget.getScreenPercentSize(context, 2);
-    // double height = safeBlockHorizontal(context: context) * 45;
-
-    // double width = ConstantWidget.getWidthPercentSize(context, 60);
-    // double sideMargin = margin * 1.2;
-    // double firstHeight = ConstantWidget.getPercentSize(height, 60);
-    // double remainHeight = height - firstHeight;
-
-    // double radius = ConstantWidget.getPercentSize(height, 5);
-
-    /// Initalisation of required stores [ProductsStore,LoginStore,ProfileStore,OrderHistoryStore]
+    String? termValue;
 
     return Scaffold(
       backgroundColor: ConstantData.bgColor,
@@ -85,6 +71,7 @@ class SearchScreen extends StatelessWidget {
                     ),
                     onChanged: (value) async {
                       await store.getSearchedResults(term: value);
+                      termValue = value;
                     },
                     // onFieldSubmitted: (value) async {
                     //   await store.getSearchedResults(term: value);
@@ -199,6 +186,16 @@ class SearchScreen extends StatelessWidget {
                       ),
                     );
                 }
+              }),
+              Observer(builder: (_) {
+                if (store.paginationState == StoreState.LOADING) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: blockSizeVertical(context: context)),
+                    child: const CircularProgressIndicator(),
+                  );
+                }
+                return const SizedBox();
               }),
             ],
           ),

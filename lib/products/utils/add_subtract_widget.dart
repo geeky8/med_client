@@ -29,42 +29,41 @@ class PlusMinusWidget extends StatelessWidget {
     required String category,
     required ProductsStore store,
   }) {
-    if (category == '') {}
     switch (category) {
       case 'Ethical':
         final index = store.ethicalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.ethicalProductList[index];
+        return (index != -1) ? store.ethicalProductList[index] : model;
 
       case 'Generic':
         final index = store.genericProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.genericProductList[index];
+        return (index != -1) ? store.genericProductList[index] : model;
 
       case 'Surgical':
         final index = store.surgicalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.surgicalProductList[index];
+        return (index != -1) ? store.surgicalProductList[index] : model;
 
       case 'Veterinary':
         final index = store.veterinaryProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.veterinaryProductList[index];
+        return (index != -1) ? store.veterinaryProductList[index] : model;
 
       case 'Ayurvedic':
         final index = store.ayurvedicProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.ayurvedicProductList[index];
+        return (index != -1) ? store.ayurvedicProductList[index] : model;
 
       case 'General':
         final index = store.generalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.generalProductList[index];
+        return (index != -1) ? store.generalProductList[index] : model;
 
       default:
         final index = store.generalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.generalProductList[index];
+        return model;
     }
   }
 
@@ -75,51 +74,45 @@ class PlusMinusWidget extends StatelessWidget {
           (iconSize != null) ? MainAxisAlignment.center : MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        InkWell(
-          onTap: () async {
-            if (model.cartQuantity! > 0) {
-              store.minusRemoveState = StoreState.LOADING;
-              await store.minusToCart(
-                model: model,
-                context: context,
-              );
-              store.minusRemoveState = StoreState.SUCCESS;
-            }
-          },
-          child: Observer(builder: (_) {
-            if (kDebugMode) {
-              print(store.minusRemoveState);
-            }
-            // if (store.minusRemoveState == StoreState.LOADING) {
-            //   return ConstantWidget.loadingWidget(
-            //     size: blockSizeHorizontal(context: context) * 4,
-            //   );
-            // } else {
-            return PlusMinusButton(
+        Observer(builder: (_) {
+          ProductModel currModel = model;
+          if (model.subTotal != '0.00') {
+            currModel =
+                updateCurrProduct(category: model.category, store: store);
+          }
+          return InkWell(
+            onTap: () async {
+              if (model.cartQuantity! > 0) {
+                store.minusRemoveState = StoreState.LOADING;
+                await store.minusToCart(
+                  model: currModel,
+                  context: context,
+                );
+                store.minusRemoveState = StoreState.SUCCESS;
+              }
+            },
+            child: PlusMinusButton(
               icon: CupertinoIcons.minus,
               iconSize: iconSize,
-            );
-            // }
-          }),
-        ),
+            ),
+          );
+        }),
         InkWell(
           onTap: () {
             showDialog(
-                context: context,
-                builder: (_) => QuantityDialog(
-                      model: model,
-                      store: store,
-                    ));
+              context: context,
+              builder: (_) => QuantityDialog(
+                model: model,
+                store: store,
+              ),
+            );
           },
           child: Observer(builder: (_) {
-            final category = model.category;
-
-            ProductModel currModel = model;
-
-            if (model.category != '') {
-              currModel = updateCurrProduct(category: category, store: store);
+            ProductModel? currModel = model;
+            if (model.subTotal != '0.00') {
+              currModel =
+                  updateCurrProduct(category: model.category, store: store);
             }
-
             return Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: blockSizeHorizontal(context: context) * 3,
@@ -128,7 +121,7 @@ class PlusMinusWidget extends StatelessWidget {
                     : 0,
               ),
               child: ConstantWidget.getCustomText(
-                '${(currModel.cartQuantity!.toString().length > 4) ? '${currModel.cartQuantity!.toString().substring(0, 3)}...' : currModel.cartQuantity!}',
+                '${(currModel!.cartQuantity!.toString().length > 4) ? '${currModel.cartQuantity!.toString().substring(0, 3)}...' : currModel.cartQuantity!}',
                 ConstantData.mainTextColor,
                 2,
                 TextAlign.center,
@@ -138,31 +131,27 @@ class PlusMinusWidget extends StatelessWidget {
             );
           }),
         ),
-        InkWell(
-          onTap: () async {
-            store.plusState = StoreState.LOADING;
-            await store.plusToCart(
-              model: model,
-              context: context,
-            );
-            store.plusState = StoreState.SUCCESS;
-          },
-          child: Observer(builder: (_) {
-            if (kDebugMode) {
-              print(store.plusState);
-            }
-            // if (store.plusState == StoreState.LOADING) {
-            //   return ConstantWidget.loadingWidget(
-            //     size: blockSizeHorizontal(context: context) * 4,
-            //   );
-            // } else {
-            return PlusMinusButton(
+        Observer(builder: (_) {
+          ProductModel? currModel = model;
+          if (model.subTotal != '0.00') {
+            currModel =
+                updateCurrProduct(category: model.category, store: store);
+          }
+          return InkWell(
+            onTap: () async {
+              store.plusState = StoreState.LOADING;
+              await store.plusToCart(
+                model: currModel ?? model,
+                context: context,
+              );
+              store.plusState = StoreState.SUCCESS;
+            },
+            child: PlusMinusButton(
               icon: CupertinoIcons.plus,
               iconSize: iconSize,
-            );
-            // }
-          }),
-        ),
+            ),
+          );
+        }),
       ],
     );
   }
@@ -177,16 +166,10 @@ class PlusMinusButton extends StatelessWidget {
 
   final IconData icon;
   final double? iconSize;
-  // final Function function;
 
   @override
   Widget build(BuildContext context) {
-    // double height = iconSize;
-
     return Container(
-      // height: height,
-      // // margin: EdgeInsets.symmetric(horizontal: ConstantWidget.getPercentSize(height, 30)),
-      // width: height,
       padding: (iconSize != null)
           ? EdgeInsets.all(
               blockSizeHorizontal(context: context) * 2,
@@ -288,12 +271,6 @@ class RemoveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Observer(builder: (_) {
-    //   if (store.removeState == StoreState.LOADING) {
-    //     return ConstantWidget.loadingWidget(
-    //       size: blockSizeVertical(context: context),
-    //     );
-    //   } else {
     return InkWell(
       onTap: () async {
         store.removeState = StoreState.LOADING;
@@ -303,23 +280,6 @@ class RemoveButton extends StatelessWidget {
         );
         store.removeState = StoreState.SUCCESS;
       },
-      // child: Container(
-      //   padding: EdgeInsets.symmetric(
-      //     vertical: width,
-      //     horizontal: height,
-      //   ),
-      //   decoration: BoxDecoration(
-      //     color: ConstantData.primaryColor,
-      //     borderRadius: BorderRadius.circular(12),
-      //   ),
-      //   // child: ConstantWidget.getCustomText('Remove', ConstantData.bgColor, 1,
-      //   //     TextAlign.center, FontWeight.w600, fontSize),
-      //   child: Icon(
-      //     Icons.delete_rounded,
-      //     size: font22Px(context: context),
-      //     color: ConstantData.clrBlack20,
-      //   ),
-      // ),
       child: Container(
         decoration: BoxDecoration(
           color: ConstantData.primaryColor,
@@ -352,7 +312,5 @@ class RemoveButton extends StatelessWidget {
               ),
       ),
     );
-    //     }
-    //   });
   }
 }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/product_view_list.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
+import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:provider/provider.dart';
 
 class ProductsViewScreen extends StatelessWidget {
@@ -26,12 +28,6 @@ class ProductsViewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double margin = ConstantWidget.getScreenPercentSize(context, 2);
 
-    // double sideMargin = margin * 1.2;
-    // double firstHeight = ConstantWidget.getPercentSize(height, 60);
-    // double remainHeight = height - firstHeight;
-
-    // double radius = ConstantWidget.getPercentSize(height, 5);
-
     final loginStore = context.read<LoginStore>();
     final store = context.read<ProductsStore>();
 
@@ -39,22 +35,6 @@ class ProductsViewScreen extends StatelessWidget {
       backgroundColor: ConstantData.bgColor,
       appBar: ConstantWidget.customAppBar(
           context: context, title: appBarTitle.toUpperCase()),
-      // appBar: AppBar(
-      //   elevation: 0,
-      //   centerTitle: true,
-      //   backgroundColor: ConstantData.bgColor,
-      //   title: ConstantWidget.getAppBarText(appBarTitle, context),
-      //   leading: Builder(
-      //     builder: (BuildContext context) {
-      //       return IconButton(
-      //         icon: ConstantWidget.getAppBarIcon(),
-      //         onPressed: () {
-      //           Navigator.pop(context);
-      //         },
-      //       );
-      //     },
-      //   ),
-      // ),
       body: SafeArea(
         child: Column(
           children: [
@@ -68,23 +48,6 @@ class ProductsViewScreen extends StatelessWidget {
                 );
               }),
             ),
-            // AppBar(
-            //   elevation: 0,
-            //   centerTitle: true,
-            //   backgroundColor: ConstantData.bgColor,
-            //   title: ConstantWidget.getAppBarText(appBarTitle, context),
-            //   leading: Builder(
-            //     builder: (BuildContext context) {
-            //       return IconButton(
-            //         icon: ConstantWidget.getAppBarIcon(),
-            //         onPressed: () {
-            //           Navigator.pop(context);
-            //         },
-            //       );
-            //     },
-            //   ),
-            // ),
-
             Observer(builder: (_) {
               final show = list.length;
               if (show == 0) {
@@ -93,13 +56,11 @@ class ProductsViewScreen extends StatelessWidget {
                     context: context,
                     height: 20,
                     width: 15,
-                    // fontSize: font18Px(context: context),
                   ),
                 );
               } else {
                 return Expanded(
                   child: Container(
-                    // height: ConstantWidget.getScreenPercentSize(context, 78),
                     margin: EdgeInsets.only(bottom: margin),
                     child: ProductViewList(
                       loginStore: loginStore,
@@ -110,6 +71,16 @@ class ProductsViewScreen extends StatelessWidget {
                 );
               }
             }),
+            Observer(builder: (_) {
+              if (store.paginationState == StoreState.LOADING) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: blockSizeVertical(context: context)),
+                  child: const CircularProgressIndicator(),
+                );
+              }
+              return const SizedBox();
+            })
           ],
         ),
       ),

@@ -4,16 +4,18 @@ import 'package:http/http.dart' as http;
 import 'package:medrpha_customer/signup_login/models/otp_model.dart';
 
 class LoginRepository {
+  //TODO: Change APIS from Prod to Test.
+
   /// [getOTPUrl] URL for fetching OTP.
-  final getOTPUrl = 'https://api.medrpha.com/api/Default/sendotp';
-  // final getOTPUrl = 'https://apitest.medrpha.com/api/Default/sendotp';
+  // final getOTPUrl = 'https://api.medrpha.com/api/Default/sendotp';
+  final getOTPUrl = 'https://apitest.medrpha.com/api/Default/sendotp';
 
   /// [checkOTPUrl] URL for checking OTP.
-  final checkOTPUrl = 'https://api.medrpha.com/api/Default/otpverify';
-  // final checkOTPUrl = 'https://apitest.medrpha.com/api/Default/otpverify';
+  // final checkOTPUrl = 'https://api.medrpha.com/api/Default/otpverify';
+  final checkOTPUrl = 'https://apitest.medrpha.com/api/Default/otpverify';
 
-  final checkStatus = 'https://api.medrpha.com/api/Default/userstatus';
-  // final checkStatus = 'https://apitest.medrpha.com/api/Default/userstatus';
+  // final checkStatus = 'https://api.medrpha.com/api/Default/userstatus';
+  final checkStatus = 'https://apitest.medrpha.com/api/Default/userstatus';
 
   /// [httpClient] to use HTTP methods
   final httpClient = http.Client();

@@ -64,7 +64,6 @@ class CategoryList extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: safeBlockHorizontal(context: context) * 20,
-      // margin: EdgeInsets.only(bottom: margin),
       child: ListView.builder(
         padding: EdgeInsets.only(right: sideMargin),
         shrinkWrap: true,

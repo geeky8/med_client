@@ -40,14 +40,16 @@ class ProductResponseModel {
 
 class ProductsRepository {
   //---------------------------------------------- Products --------------------------------------------------//
-  final _categoryUrl = 'https://api.medrpha.com/api/product/getcategory';
-  // final _categoryUrl = 'https://apitest.medrpha.com/api/product/getcategory';
-  final _productsUrl = 'https://api.medrpha.com/api/product/productlist';
-  // final _productsUrl = 'https://apitest.medrpha.com/api/product/productlist';
-  final _productDetailsUrl =
-      'https://api.medrpha.com/api/product/productdetails';
+  //TODO: Change API to test or prod.
+
+  // final _categoryUrl = 'https://api.medrpha.com/api/product/getcategory';
+  final _categoryUrl = 'https://apitest.medrpha.com/api/product/getcategory';
+  // final _productsUrl = 'https://api.medrpha.com/api/product/productlist';
+  final _productsUrl = 'https://apitest.medrpha.com/api/product/productlist';
   // final _productDetailsUrl =
-  //     'https://apitest.medrpha.com/api/product/productdetails';
+  //     'https://api.medrpha.com/api/product/productdetails';
+  final _productDetailsUrl =
+      'https://apitest.medrpha.com/api/product/productdetails';
 
   Future<List<CategoryModel>> getCategories() async {
     final catlist = <CategoryModel>[];
@@ -75,8 +77,12 @@ class ProductsRepository {
     return catlist;
   }
 
-  Future<ProductResponseModel?> getProducts(
-      {String? categoryId, bool? refresh, String? term}) async {
+  Future<ProductResponseModel?> getProducts({
+    String? categoryId,
+    bool? refresh,
+    String? term,
+    int? pageIndex,
+  }) async {
     Stopwatch stopwatch = Stopwatch()..start();
 
     final productlist = <ProductModel>[];
@@ -86,15 +92,15 @@ class ProductsRepository {
       "sessid": sessId,
       "term": term ?? '',
       "catcheck": categoryId ?? '',
+      "PageIndex": (pageIndex ?? '1').toString(),
+      "PageSize": '2'
     };
 
     final resp = await _httpClient.post(Uri.parse(_productsUrl), body: body);
-    if (term != null) {
-      if (kDebugMode) {
-        print('body :${resp.body}');
-        print(term);
-      }
-    }
+
+    debugPrint('--- prod resp ---------${resp.body}');
+
+    if (term != null) {}
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       // print('Message ---------------------${respBody['message']}');
@@ -113,6 +119,7 @@ class ProductsRepository {
 
           productlist.add(model);
         }
+        debugPrint('------products lenght ${productlist.length}');
         productRespModel = productRespModel.copyWith(productList: productlist);
         // print('lenght ---${productRespModel.productList.length}');
       }
@@ -162,22 +169,23 @@ class ProductsRepository {
   final _httpClient = http.Client();
 
 //------------------------------------------------ Cart -----------------------------------------//
+  //TODO: Change API to test or prod.
 
-  final _updateProductQuantityUrl =
-      'https://api.medrpha.com/api/cart/updatequantity';
   // final _updateProductQuantityUrl =
-  //     'https://apitest.medrpha.com/api/cart/updatequantity';
-  final _addToCartUrl = 'https://api.medrpha.com/api/cart/addtocart';
-  // final _addToCartUrl = 'https://apitest.medrpha.com/api/cart/addtocart';
-  final _getCartUrl = 'https://api.medrpha.com/api/cart/viewcart';
-  // final _getCartUrl = 'https://apitest.medrpha.com/api/cart/viewcart';
-  final _removeCartUrl = 'https://api.medrpha.com/api/cart/deletecart';
-  // final _removeCartUrl = 'https://apitest.medrpha.com/api/cart/deletecart';
+  //     'https://api.medrpha.com/api/cart/updatequantity';
+  final _updateProductQuantityUrl =
+      'https://apitest.medrpha.com/api/cart/updatequantity';
+  // final _addToCartUrl = 'https://api.medrpha.com/api/cart/addtocart';
+  final _addToCartUrl = 'https://apitest.medrpha.com/api/cart/addtocart';
+  // final _getCartUrl = 'https://api.medrpha.com/api/cart/viewcart';
+  final _getCartUrl = 'https://apitest.medrpha.com/api/cart/viewcart';
+  // final _removeCartUrl = 'https://api.medrpha.com/api/cart/deletecart';
+  final _removeCartUrl = 'https://apitest.medrpha.com/api/cart/deletecart';
 
-  final _plusCart = 'https://api.medrpha.com/api/cart/cartplus';
-  // final _plusCart = 'https://apitest.medrpha.com/api/cart/cartplus';
-  final _minusCart = 'https://api.medrpha.com/api/cart/cartminus';
-  // final _minusCart = 'https://apitest.medrpha.com/api/cart/cartminus';
+  // final _plusCart = 'https://api.medrpha.com/api/cart/cartplus';
+  final _plusCart = 'https://apitest.medrpha.com/api/cart/cartplus';
+  // final _minusCart = 'https://api.medrpha.com/api/cart/cartminus';
+  final _minusCart = 'https://apitest.medrpha.com/api/cart/cartminus';
 
   Future<int?> plusTheCart({required ProductModel model}) async {
     final sessId = await DataBox().readSessId();
@@ -299,8 +307,8 @@ class ProductsRepository {
     final sessId = await DataBox().readSessId();
 
     final body = {
-      // "sessid": "34c4efad30e6e2d4",
-      "sessid": sessId,
+      "sessid": "34c4efad30e6e2d4",
+      // "sessid": sessId,
     };
 
     final prodList = ObservableList<ProductModel>.of([]);
@@ -315,7 +323,7 @@ class ProductsRepository {
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      // print(respBody);
+      debugPrint('------getCart--------${resp.body}');
       if (respBody['status'] == '1') {
         final list = respBody['data'] as List<dynamic>;
         count = int.parse(respBody['count'] as String);
@@ -338,17 +346,18 @@ class ProductsRepository {
   }
 
   //------------------- ----------------Checkout ------------------------------------------------------//
+  //TODO: Change API to test or prod.
 
-  final _checkoutUrl = 'https://medrpha.com/api/checkout/checkout';
-  // final _checkoutUrl = 'https://test.medrpha.com/api/checkout/checkout';
+  // final _checkoutUrl = 'https://medrpha.com/api/checkout/checkout';
+  final _checkoutUrl = 'https://test.medrpha.com/api/checkout/checkout';
   final _ordersPayment = 'https://api.razorpay.com/v1/orders';
-  final _paymentConfirmUrl = 'https://medrpha.com/api/order/payconfirmed';
-  // final _paymentConfirmUrl =
-  //     'https://apitest.medrpha.com/api/order/payconfirmed';
-  final _checkoutConfirmUrl =
-      'https://medrpha.com/api/checkout/checkoutconfirm';
+  // final _paymentConfirmUrl = 'https://medrpha.com/api/order/payconfirmed';
+  final _paymentConfirmUrl =
+      'https://apitest.medrpha.com/api/order/payconfirmed';
   // final _checkoutConfirmUrl =
-  //     'https://test.medrpha.com/api/checkout/checkoutconfirm';
+  //     'https://medrpha.com/api/checkout/checkoutconfirm';
+  final _checkoutConfirmUrl =
+      'https://test.medrpha.com/api/checkout/checkoutconfirm';
 
   Future<String?> checkout({
     required String amount,
