@@ -92,8 +92,10 @@ class ProductViewList extends StatelessWidget {
     final scrollController = ScrollController();
     scrollController.addListener(() async {
       // print('scrollpositon------------${scrollController.positions.last}');
+      // print('----------${termValue}');
       if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
+              scrollController.position.maxScrollExtent &&
+          termValue == null) {
         store.paginationState = StoreState.LOADING;
         await getPaginatedResults();
         store.paginationState = StoreState.SUCCESS;
@@ -186,12 +188,10 @@ class ProductViewList extends StatelessWidget {
                               ),
                             );
                           }),
-                          // ),),visible:   (subCategoryModelList[index].offer != null || subCategoryModelList[index].offer.isNotEmpty),),
 
                           SizedBox(
                             height: firstHeight,
                             child: Row(
-                              // crossAxisAlignment: CrossAxisAlignment.start,
                               //----> Image
                               children: [
                                 Container(

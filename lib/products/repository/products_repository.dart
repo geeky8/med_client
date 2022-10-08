@@ -3,6 +3,7 @@ import 'dart:convert';
 // import 'package:dio/dio.dart';
 // import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medrpha_customer/enums/payment_options.dart';
 import 'package:medrpha_customer/products/models/cart_model.dart';
 import 'package:medrpha_customer/products/models/category_model.dart';
@@ -292,6 +293,8 @@ class ProductsRepository {
 
     final resp = await _httpClient.post(Uri.parse(_removeCartUrl), body: body);
 
+    debugPrint('------ removal from cart -------${resp.body}');
+
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
 
@@ -387,6 +390,8 @@ class ProductsRepository {
       // print('---------- checkout ${respBody}');
       if (respBody['status'] == '1') {
         return respBody['order_id'] as String;
+      } else {
+        Fluttertoast.showToast(msg: respBody['message'] as String);
       }
     }
     return null;

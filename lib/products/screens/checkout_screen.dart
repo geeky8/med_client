@@ -194,7 +194,7 @@ class CheckoutScreen extends StatelessWidget {
                                 ),
                                 const Spacer(),
                                 ConstantWidget.getCustomText(
-                                  '₹${double.parse(productStore.cartModel.productList[index].subTotal).toStringAsFixed(4)}',
+                                  '₹${double.parse(productStore.cartModel.productList[index].subTotal).toStringAsFixed(2)}',
                                   ConstantData.mainTextColor,
                                   1,
                                   TextAlign.center,
@@ -321,7 +321,7 @@ class CheckoutScreen extends StatelessWidget {
                               ),
                               const Spacer(),
                               ConstantWidget.getCustomText(
-                                '₹${double.parse(productStore.cartModel.totalSalePrice).toStringAsFixed(4)}',
+                                '₹${double.parse(productStore.cartModel.totalSalePrice).toStringAsFixed(2)}',
                                 Colors.black45,
                                 1,
                                 TextAlign.center,
@@ -346,7 +346,7 @@ class CheckoutScreen extends StatelessWidget {
                               ),
                               const Spacer(),
                               ConstantWidget.getCustomText(
-                                '₹${double.parse(productStore.cartModel.totalSalePrice).toStringAsFixed(4)}',
+                                '₹${double.parse(productStore.cartModel.totalSalePrice).toStringAsFixed(2)}',
                                 ConstantData.primaryColor,
                                 1,
                                 TextAlign.center,

@@ -82,7 +82,8 @@ class PlusMinusWidget extends StatelessWidget {
           }
           return InkWell(
             onTap: () async {
-              if (model.cartQuantity! > 0) {
+              // print(-1);
+              if (currModel.cartQuantity! > 0) {
                 store.minusRemoveState = StoreState.LOADING;
                 await store.minusToCart(
                   model: currModel,
@@ -108,11 +109,12 @@ class PlusMinusWidget extends StatelessWidget {
             );
           },
           child: Observer(builder: (_) {
-            ProductModel? currModel = model;
+            ProductModel currModel = model;
             if (model.subTotal != '0.00') {
               currModel =
                   updateCurrProduct(category: model.category, store: store);
             }
+            print('------- checking --------${currModel.cartQuantity}');
             return Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: blockSizeHorizontal(context: context) * 3,
@@ -121,7 +123,7 @@ class PlusMinusWidget extends StatelessWidget {
                     : 0,
               ),
               child: ConstantWidget.getCustomText(
-                '${(currModel!.cartQuantity!.toString().length > 4) ? '${currModel.cartQuantity!.toString().substring(0, 3)}...' : currModel.cartQuantity!}',
+                '${(currModel.cartQuantity!.toString().length > 4) ? '${currModel.cartQuantity!.toString().substring(0, 3)}...' : currModel.cartQuantity!}',
                 ConstantData.mainTextColor,
                 2,
                 TextAlign.center,
@@ -132,7 +134,7 @@ class PlusMinusWidget extends StatelessWidget {
           }),
         ),
         Observer(builder: (_) {
-          ProductModel? currModel = model;
+          ProductModel currModel = model;
           if (model.subTotal != '0.00') {
             currModel =
                 updateCurrProduct(category: model.category, store: store);
@@ -141,7 +143,7 @@ class PlusMinusWidget extends StatelessWidget {
             onTap: () async {
               store.plusState = StoreState.LOADING;
               await store.plusToCart(
-                model: currModel ?? model,
+                model: currModel,
                 context: context,
               );
               store.plusState = StoreState.SUCCESS;

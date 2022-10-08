@@ -108,6 +108,13 @@ abstract class _ProductsStore with Store {
   StoreState paginationState = StoreState.SUCCESS;
 
   Future<void> init() async {
+    ethicalPageIndex = 1;
+    generalPageIndex = 1;
+    surgicalPageIndex = 1;
+    ayurvedicPageIndex = 1;
+    vetPageIndex = 1;
+    genericPageIndex = 1;
+
     cartState = StoreState.LOADING;
     await getCategories();
     await _getProducts();
@@ -122,11 +129,11 @@ abstract class _ProductsStore with Store {
     homeState = StoreState.LOADING;
     await getEthicalProducts();
     homeState = StoreState.SUCCESS;
-    // await getGenerallProducts();
-    // await getGenericProducts();
-    // await getSurgicalProducts();
-    // await getVeterinaryProducts();
-    // await getAyurvedicProducts();
+    await getGenerallProducts();
+    await getGenericProducts();
+    await getSurgicalProducts();
+    await getVeterinaryProducts();
+    await getAyurvedicProducts();
   }
 
   @action
@@ -309,11 +316,11 @@ abstract class _ProductsStore with Store {
               ..clear()
               ..addAll(productRespModel.productList);
           }
-          prodState = StoreState.SUCCESS;
         } else if (ayurvedicPageIndex > 1) {
           ayurvedicPageIndex--;
           Fluttertoast.showToast(msg: 'No more products to show');
         }
+        prodState = StoreState.SUCCESS;
       }
     } else {
       prodState = StoreState.EMPTY;
@@ -342,11 +349,11 @@ abstract class _ProductsStore with Store {
               ..clear()
               ..addAll(productRespModel.productList);
           }
-          prodState = StoreState.SUCCESS;
         } else if (generalPageIndex > 1) {
           generalPageIndex--;
           Fluttertoast.showToast(msg: 'No more products to show');
         }
+        prodState = StoreState.SUCCESS;
       }
     } else {
       prodState = StoreState.EMPTY;
@@ -441,6 +448,8 @@ abstract class _ProductsStore with Store {
         cartModel = model.copyWith(productList: list);
       }
     }
+
+    debugPrint('----- cart total----${cartModel.totalSalePrice}');
   }
 
   @action
@@ -530,12 +539,6 @@ abstract class _ProductsStore with Store {
           ..insert(index, cartModel);
         return cartModel;
     }
-
-    // final _totalPrice = (int.parse(model.salePrice) * model.cartQuantity!) +
-    //     cartModel.totalSalePrice;
-    // cartModel = cartModel.copyWith(
-    //     totalSalePrice:
-    //         _totalPrice); // print(ethicalProductList[index].cartQuantity);
   }
 
   @action
@@ -588,7 +591,7 @@ abstract class _ProductsStore with Store {
     required double newTotal,
   }) {
     final total = (totalPrice - oldTotal) + newTotal;
-    cartModel = cartModel.copyWith(totalSalePrice: total.toString());
+    cartModel = cartModel.copyWith(totalSalePrice: total.toStringAsFixed(2));
   }
 
   @observable
@@ -717,7 +720,7 @@ abstract class _ProductsStore with Store {
     if (int.parse(model.quantity) > 0) {
       final stopWatch = Stopwatch()..start();
 
-      int qty = model.cartQuantity! + 1;
+      int qty = 1;
 
       cartTotal(
         totalPrice: double.parse(cartModel.totalSalePrice),
@@ -751,19 +754,22 @@ abstract class _ProductsStore with Store {
     required ProductModel model,
     required BuildContext context,
   }) async {
-    final index =
-        cartModel.productList.indexWhere((element) => element.pid == model.pid);
-
-    await _updateProductsAccordingToCart(
-      model: model.copyWith(cartQuantity: 0),
-    );
-
-    cartModel.productList.removeAt(index);
     cartTotal(
       totalPrice: double.parse(cartModel.totalSalePrice),
-      oldTotal: double.parse(model.newMrp) * model.cartQuantity!,
-      newTotal: 0.0,
+      oldTotal: (double.parse(model.newMrp) * model.cartQuantity!),
+      newTotal: 0.00,
     );
+
+    final currModel = model.copyWith(
+      cartQuantity: 0,
+      subTotal: 0.00.toString(),
+    );
+    final index = cartModel.productList
+        .indexWhere((element) => element.pid == currModel.pid);
+    cartModel.productList.removeAt(index);
+
+    await _updateProductsAccordingToCart(model: currModel);
+
     // await getCartItems(isRemove: true);
     if (index != -1) {
       final value = _productsRepository.removeFromCart(model: model);
@@ -795,23 +801,13 @@ abstract class _ProductsStore with Store {
 
   @action
   Future<String> checkout({required BuildContext context}) async {
-// final payLater = (paymentOptions == PaymentOptions.PAYLATER) ? '2' : '1';
-    // await Future.delayed(
-    //   Duration.zero,
-    //   () async {
-    // final value = await _productsRepository.checkout(
-    //   amount: cartModel.totalSalePrice.toString(),
-    //   payLater: payLater,
-    // );
-    // Future.delayed(
-    //   Duration.zero,
-    //   () async {
     String ans = '';
     checkoutState = StoreState.LOADING;
     SnackBar snackBar = ConstantWidget.customSnackBar(
       text: 'Failure, order not successful',
       context: context,
     );
+    debugPrint('---- before checkout -----------${cartModel.totalSalePrice}');
     final payLater = (paymentOptions == PaymentOptions.PAYLATER) ? '2' : '1';
     final value = await _productsRepository.checkout(
         amount: cartModel.totalSalePrice, payLater: payLater);
@@ -976,9 +972,6 @@ abstract class _ProductsStore with Store {
       );
 
       if (status != '') {
-        await getCartItems();
-        await orderHistoryStore.getOrdersList();
-
         checkoutState = StoreState.SUCCESS;
 
         // if (fromOrders == null) {

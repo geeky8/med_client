@@ -76,13 +76,7 @@ abstract class _LoginStore with Store {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
       if (pin == value) {
-        // await Future.delayed(
-        //   const Duration(seconds: 3),
-        //   () async {
         await getUserStatus();
-        //   },
-        // );
-        // buttonState = ButtonState.SUCCESS;
 
         //---> Check profile completion status
         if (loginModel.completedStatus) {

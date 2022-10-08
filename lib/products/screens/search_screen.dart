@@ -187,16 +187,16 @@ class SearchScreen extends StatelessWidget {
                     );
                 }
               }),
-              Observer(builder: (_) {
-                if (store.paginationState == StoreState.LOADING) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: blockSizeVertical(context: context)),
-                    child: const CircularProgressIndicator(),
-                  );
-                }
-                return const SizedBox();
-              }),
+              // Observer(builder: (_) {
+              //   if (store.paginationState == StoreState.LOADING) {
+              //     return Padding(
+              //       padding: EdgeInsets.symmetric(
+              //           vertical: blockSizeVertical(context: context)),
+              //       child: const CircularProgressIndicator(),
+              //     );
+              //   }
+              //   return const SizedBox();
+              // }),
             ],
           ),
         );

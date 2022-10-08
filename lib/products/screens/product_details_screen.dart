@@ -504,17 +504,6 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                     loginStore: loginStore,
                                   );
                               }
-
-                              // return ListView.builder(
-                              //   itemCount: 7,
-                              //   scrollDirection: Axis.horizontal,
-                              //   padding: EdgeInsets.zero,
-                              //   shrinkWrap: true,
-                              //   physics: const BouncingScrollPhysics(),
-                              //   itemBuilder: (context, index) {
-                              //     return ProductsList(list: list, axis: axis, itemCount: itemCount, store: store);
-                              //   },
-                              // );
                             }),
                           ),
                         ],

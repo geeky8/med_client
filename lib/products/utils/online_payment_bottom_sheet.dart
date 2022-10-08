@@ -117,6 +117,8 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
     final loginStore = context.read<LoginStore>();
     final bottomNavigationStore = context.read<BottomNavigationStore>();
 
+    store.checkoutState = StoreState.LOADING;
+
     await store.successOrder(
       context: context,
       loginStore: loginStore,
@@ -126,6 +128,8 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
       productsStore: store,
       // orderId: widget.orderId,
     );
+
+    store.checkoutState = StoreState.SUCCESS;
   }
 
   _handlePaymentFailure(PaymentFailureResponse response) {
@@ -249,12 +253,6 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // const Spacer(),
-                      // Divider(
-                      //   color: ConstantData.cellColor,
-                      //   thickness:
-                      //       ConstantWidget.getScreenPercentSize(context, 2),
-                      // ),
                       Expanded(
                         flex: 2,
                         child: Padding(
@@ -322,55 +320,6 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                           ),
                         ),
                       ),
-                      // Divider(
-                      //   color: ConstantData.cellColor,
-                      //   thickness: blockSizeVertical(context: context) * 2,
-                      // ),
-                      // Expanded(
-                      //   flex: 2,
-                      //   child: Column(
-                      //     children: [
-                      //       ConstantWidget.getCustomText(
-                      //         '$mins : ${(seconds < 10) ? 0 : ''}$seconds',
-                      //         ConstantData.mainTextColor,
-                      //         1,
-                      //         TextAlign.center,
-                      //         FontWeight.w600,
-                      //         font25Px(context: context) * 2,
-                      //       ),
-                      //       SizedBox(
-                      //         height: blockSizeVertical(context: context) * 4,
-                      //       ),
-                      //       Row(
-                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-                      //           // ConstantWidget.getCustomText(
-                      //           //   'Note : ',
-                      //           //   ConstantData.textColor,
-                      //           //   1,
-                      //           //   TextAlign.center,
-                      //           //   FontWeight.w600,
-                      //           //   font22Px(context: context),
-                      //           // ),
-                      //           // const Spacer(),
-                      //           Expanded(
-                      //             flex: 4,
-                      //             child: ConstantWidget.getCustomText(
-                      //               'If unable to complete the payment, try again before the countdown ends to successfully place the order else your order will stand to be cancelled',
-                      //               ConstantData.textColor,
-                      //               5,
-                      //               TextAlign.center,
-                      //               FontWeight.w600,
-                      //               font18Px(context: context),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // const Spacer(),
-
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: blockSizeHorizontal(context: context) * 4,
@@ -384,9 +333,6 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                                   context: context,
                                   height: 7,
                                   func: () async {
-                                    // if (mins != 0 && seconds != 0) {
-                                    //----- Fetching user status
-                                    // await loginStore.getUserStatus();
                                     productStore.checkoutState =
                                         StoreState.LOADING;
                                     //--------- Online Payment
@@ -430,14 +376,6 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                                     }
                                     productStore.checkoutState =
                                         StoreState.SUCCESS;
-                                    // } else {
-                                    //   final snackBar =
-                                    //       ConstantWidget.customSnackBar(
-                                    //           text: 'Time has been elapsed',
-                                    //           context: context);
-                                    //   ScaffoldMessenger.of(context)
-                                    //       .showSnackBar(snackBar);
-                                    // }
                                   },
                                   label: (productStore.paymentOptions ==
                                           PaymentOptions.ONLINE)

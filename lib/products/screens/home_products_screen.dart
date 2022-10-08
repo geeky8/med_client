@@ -88,7 +88,7 @@ class ProductHomeScreen extends StatelessWidget {
                           width: blockSizeHorizontal(context: context) * 3,
                         ),
                         ConstantWidget.getCustomText(
-                          '₹${double.parse(store.cartModel.totalSalePrice).toStringAsFixed(4)}',
+                          '₹${double.parse(store.cartModel.totalSalePrice).toStringAsFixed(2)}',
                           ConstantData.mainTextColor,
                           1,
                           TextAlign.center,

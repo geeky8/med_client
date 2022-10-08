@@ -31,11 +31,6 @@ class QuantityDialog extends StatelessWidget {
       backgroundColor: Colors.transparent,
       child: Container(
         height: ConstantWidget.getScreenPercentSize(context, 23),
-        // width: screenWidth(context: context),
-        // padding: EdgeInsets.symmetric(
-        //   horizontal: blockSizeHorizontal(context: context) * 3,
-        //   vertical: blockSizeVertical(context: context) * 2,
-        // ),
         decoration: BoxDecoration(
           color: ConstantData.bgColor,
           borderRadius: BorderRadius.circular(10),
@@ -101,7 +96,7 @@ class QuantityDialog extends StatelessWidget {
                                 if (value != '') {
                                   await store.updateCartQunatity(
                                     model: model,
-                                    value: value,
+                                    value: value.split('.')[0],
                                     context: context,
                                   );
                                   // Navigator.pop(context);
@@ -129,22 +124,6 @@ class QuantityDialog extends StatelessWidget {
                       ],
                     );
                   }),
-                  // if (int.parse(_quantityController.text.trim()) <
-                  //     int.parse(model.quantity))
-                  //   Row(
-                  //     children: [
-                  //       Expanded(
-                  //         child: ConstantWidget.getCustomText(
-                  //           'Entered quantity is above the available quantity',
-                  //           ConstantData.mainTextColor,
-                  //           1,
-                  //           TextAlign.center,
-                  //           FontWeight.w600,
-                  //           font15Px(context: context),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
                 ],
               ),
             ),
@@ -193,7 +172,7 @@ class QuantityDialog extends StatelessWidget {
                       if (quantityController.text.trim() != '') {
                         await store.updateCartQunatity(
                           model: model,
-                          value: quantityController.text.trim(),
+                          value: quantityController.text.trim().split('.')[0],
                           context: context,
                         );
                         // Navigator.pop(context);
