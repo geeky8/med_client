@@ -21,22 +21,22 @@ class ConstantData {
   static String assetsPath = "assets/images/";
   //TODO: Change APIS from prod to test
 
-  // static String catImgUrl = 'https://superadmin.medrpha.com/allimage/';
-  static String catImgUrl = 'https://superadmintest.medrpha.com/allimage/';
-  // static String productUrl = 'https://partner.medrpha.com/product_image/';
-  static String productUrl = 'https://partnertest.medrpha.com/product_image/';
-  // static String licenseUrl = 'https://medrpha.com/user_reg/';
-  static String licenseUrl = 'https://test.medrpha.com/user_reg/';
-  // static String invoiceUrl = 'https://medrpha.com/InvoicePDF/';
-  static String invoiceUrl = 'https://test.medrpha.com/InvoicePDF/';
+  static String catImgUrl = 'https://superadmin.medrpha.com/allimage/';
+  // static String catImgUrl = 'https://superadmintest.medrpha.com/allimage/';
+  static String productUrl = 'https://partner.medrpha.com/product_image/';
+  // static String productUrl = 'https://partnertest.medrpha.com/product_image/';
+  static String licenseUrl = 'https://medrpha.com/user_reg/';
+  // static String licenseUrl = 'https://test.medrpha.com/user_reg/';
+  static String invoiceUrl = 'https://medrpha.com/InvoicePDF/';
+  // static String invoiceUrl = 'https://test.medrpha.com/InvoicePDF/';
   static String privacyPolicy = "https://google.com";
 
   //TODO: Change APIS from Prod to test
   //Api-key Details
-  static String apiKey = 'rzp_test_3mRxTObsNw167K';
-  // static String apiKey = 'rzp_live_kfbonxeuRfZYaL';
-  static String apiSecretKey = 'i67GTEvHsJpSIkAKcM3etMRh';
-  // static String apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
+  // static String apiKey = 'rzp_test_3mRxTObsNw167K';
+  static String apiKey = 'rzp_live_kfbonxeuRfZYaL';
+  // static String apiSecretKey = 'i67GTEvHsJpSIkAKcM3etMRh';
+  static String apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
 
   static String rupeeConversion({required String value}) {
     final numeric = double.parse(value);
@@ -139,33 +139,6 @@ class ConstantData {
     colorList.add(color5);
     return colorList;
   }
-
-  // static setThemePosition() async {
-  //   int themMode = await PrefData.getThemeMode();
-
-  //   print("themeMode-----$themMode");
-
-  //   if (themMode == 1) {
-  //     textColor = Colors.white70;
-  //     bgColor = "#14181E".toColor();
-  //     viewColor = "#292929".toColor();
-  //     cellColor = "#252525".toColor();
-  //     mainTextColor = Colors.white;
-  //     borderColor = Colors.white70;
-
-  //     cartColor = "#1E1D26".toColor();
-  //     viewColor = "#1E1D26".toColor();
-  //   } else {
-  //     textColor = "#0A2A2C".toColor();
-  //     bgColor = "#ffffff".toColor();
-  //     viewColor = Colors.grey.shade100;
-  //     cellColor = "#F1F1F1".toColor();
-  //     // mainTextColor = "#084043".toColor();
-  //     mainTextColor = "#030303".toColor();
-  //     borderColor = Colors.grey.shade400;
-  //     cartColor = "#F1F1F1".toColor();
-  //   }
-  // }
 }
 
 extension ColorExtension on String {

@@ -72,7 +72,7 @@ class CategoryProducts extends StatelessWidget {
                 //   height: ConstantWidget.getScreenPercentSize(context, 12),
                 // ),
                 Image.asset(
-                  '${ConstantData.assetsPath}med_logo.png',
+                  '${ConstantData.assetsPath}med_logo_text.png',
                   height: ConstantWidget.getScreenPercentSize(context, 15),
                   width: ConstantWidget.getWidthPercentSize(context, 30),
                 ),

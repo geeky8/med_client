@@ -132,7 +132,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                             return CustomAlertDialog(
                               header: 'Success',
                               description: 'Successfully Verified!',
-                              image: 'med_logo.png',
+                              image: 'med_logo_text.png',
                               buttonText: 'Continue',
                               func: () {
                                 Navigator.pushReplacement(
@@ -171,7 +171,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                           builder: (BuildContext context) {
                             return CustomAlertDialog(
                                 header: 'Failure',
-                                image: 'med_logo.png',
+                                image: 'med_logo_text.png',
                                 description:
                                     'Failed to verify please try again',
                                 func: () {
@@ -325,7 +325,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     //                                                 .avatarRadius)),
                     //                                 child: Image.asset(
                     //                                   ConstantData.assetsPath +
-                    //                                       "med_logo.png",
+                    //                                       "med_logo_text.png",
                     //                                   color: ConstantData
                     //                                       .mainTextColor,
                     //                                 )),
@@ -601,8 +601,9 @@ class MedLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Image.asset(
-        "${ConstantData.assetsPath}med_logo_text_img.png",
+        "${ConstantData.assetsPath}med_logo_text.png",
         height: height,
+        width: screenWidth(context: context) / 1.2,
       ),
     );
   }

@@ -133,7 +133,7 @@ class CustomDialogBox extends StatelessWidget {
                 borderRadius: const BorderRadius.all(
                     Radius.circular(ConstantData.avatarRadius)),
                 child: Image.asset(
-                  ConstantData.assetsPath + "med_logo.png",
+                  ConstantData.assetsPath + "med_logo_text.png",
                   color: ConstantData.mainTextColor,
                 )),
           ),

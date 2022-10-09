@@ -206,12 +206,6 @@ class LoginScreen extends StatelessWidget {
                     unfocus: true,
                     func: () async {},
                   ),
-
-                  // SizedBox(
-                  //   height: ConstantWidget.getScreenPercentSize(context, 4),
-                  // ),
-                  // const Spacer(),
-                  // Login Button
                 ],
               ),
             ),

@@ -145,7 +145,7 @@ class SearchScreen extends StatelessWidget {
                         // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Image.asset(
-                            '${ConstantData.assetsPath}med_logo.png',
+                            '${ConstantData.assetsPath}med_logo_text.png',
                             height: ConstantWidget.getScreenPercentSize(
                                 context, 15),
                             width:

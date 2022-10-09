@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
@@ -61,8 +60,6 @@ class PlusMinusWidget extends StatelessWidget {
         return (index != -1) ? store.generalProductList[index] : model;
 
       default:
-        final index = store.generalProductList
-            .indexWhere((element) => element.pid == model.pid);
         return model;
     }
   }
@@ -98,24 +95,24 @@ class PlusMinusWidget extends StatelessWidget {
             ),
           );
         }),
-        InkWell(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (_) => QuantityDialog(
-                model: model,
-                store: store,
-              ),
-            );
-          },
-          child: Observer(builder: (_) {
-            ProductModel currModel = model;
-            if (model.subTotal != '0.00') {
-              currModel =
-                  updateCurrProduct(category: model.category, store: store);
-            }
-            print('------- checking --------${currModel.cartQuantity}');
-            return Padding(
+        Observer(builder: (_) {
+          ProductModel currModel = model;
+          if (model.subTotal != '0.00') {
+            currModel =
+                updateCurrProduct(category: model.category, store: store);
+          }
+          print('------- checking --------${currModel.cartQuantity}');
+          return InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (_) => QuantityDialog(
+                  model: currModel,
+                  store: store,
+                ),
+              );
+            },
+            child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: blockSizeHorizontal(context: context) * 3,
                 vertical: (iconSize != null)
@@ -130,9 +127,9 @@ class PlusMinusWidget extends StatelessWidget {
                 FontWeight.w600,
                 fontSize ?? font15Px(context: context),
               ),
-            );
-          }),
-        ),
+            ),
+          );
+        }),
         Observer(builder: (_) {
           ProductModel currModel = model;
           if (model.subTotal != '0.00') {

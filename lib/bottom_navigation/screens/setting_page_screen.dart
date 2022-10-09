@@ -56,7 +56,7 @@ class SettingsPageScreen extends StatelessWidget {
                             color: Colors.transparent,
                             image: DecorationImage(
                               image: ExactAssetImage(
-                                  '${ConstantData.assetsPath}med_logo.png'),
+                                  '${ConstantData.assetsPath}med_logo_text.png'),
                               fit: BoxFit.cover,
                             ),
                           ),

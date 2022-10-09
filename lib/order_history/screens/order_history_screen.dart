@@ -775,7 +775,7 @@ class AllOrdersList extends StatelessWidget {
                                       // ),
 
                                       child: Image.asset(
-                                        "${ConstantData.assetsPath}med_logo.png",
+                                        "${ConstantData.assetsPath}med_logo_text.png",
                                         height: ConstantWidget.getPercentSize(
                                             imageSize, 50),
                                       ),
@@ -1371,7 +1371,7 @@ class InvoiceView extends StatelessWidget {
         //     context,
         //     _,
         //   ) {
-        //     return Image.asset(ConstantData.assetsPath + 'med_logo.png');
+        //     return Image.asset(ConstantData.assetsPath + 'med_logo_text.png');
         //   },
         // ),
         child: Column(

@@ -43,14 +43,14 @@ class ProductsRepository {
   //---------------------------------------------- Products --------------------------------------------------//
   //TODO: Change API to test or prod.
 
-  // final _categoryUrl = 'https://api.medrpha.com/api/product/getcategory';
-  final _categoryUrl = 'https://apitest.medrpha.com/api/product/getcategory';
-  // final _productsUrl = 'https://api.medrpha.com/api/product/productlist';
-  final _productsUrl = 'https://apitest.medrpha.com/api/product/productlist';
-  // final _productDetailsUrl =
-  //     'https://api.medrpha.com/api/product/productdetails';
+  final _categoryUrl = 'https://api.medrpha.com/api/product/getcategory';
+  // final _categoryUrl = 'https://apitest.medrpha.com/api/product/getcategory';
+  final _productsUrl = 'https://api.medrpha.com/api/product/productlist';
+  // final _productsUrl = 'https://apitest.medrpha.com/api/product/productlist';
   final _productDetailsUrl =
-      'https://apitest.medrpha.com/api/product/productdetails';
+      'https://api.medrpha.com/api/product/productdetails';
+  // final _productDetailsUrl =
+  //     'https://apitest.medrpha.com/api/product/productdetails';
 
   Future<List<CategoryModel>> getCategories() async {
     final catlist = <CategoryModel>[];
@@ -172,21 +172,21 @@ class ProductsRepository {
 //------------------------------------------------ Cart -----------------------------------------//
   //TODO: Change API to test or prod.
 
-  // final _updateProductQuantityUrl =
-  //     'https://api.medrpha.com/api/cart/updatequantity';
   final _updateProductQuantityUrl =
-      'https://apitest.medrpha.com/api/cart/updatequantity';
-  // final _addToCartUrl = 'https://api.medrpha.com/api/cart/addtocart';
-  final _addToCartUrl = 'https://apitest.medrpha.com/api/cart/addtocart';
-  // final _getCartUrl = 'https://api.medrpha.com/api/cart/viewcart';
-  final _getCartUrl = 'https://apitest.medrpha.com/api/cart/viewcart';
-  // final _removeCartUrl = 'https://api.medrpha.com/api/cart/deletecart';
-  final _removeCartUrl = 'https://apitest.medrpha.com/api/cart/deletecart';
+      'https://api.medrpha.com/api/cart/updatequantity';
+  // final _updateProductQuantityUrl =
+  //     'https://apitest.medrpha.com/api/cart/updatequantity';
+  final _addToCartUrl = 'https://api.medrpha.com/api/cart/addtocart';
+  // final _addToCartUrl = 'https://apitest.medrpha.com/api/cart/addtocart';
+  final _getCartUrl = 'https://api.medrpha.com/api/cart/viewcart';
+  // final _getCartUrl = 'https://apitest.medrpha.com/api/cart/viewcart';
+  final _removeCartUrl = 'https://api.medrpha.com/api/cart/deletecart';
+  // final _removeCartUrl = 'https://apitest.medrpha.com/api/cart/deletecart';
 
-  // final _plusCart = 'https://api.medrpha.com/api/cart/cartplus';
-  final _plusCart = 'https://apitest.medrpha.com/api/cart/cartplus';
-  // final _minusCart = 'https://api.medrpha.com/api/cart/cartminus';
-  final _minusCart = 'https://apitest.medrpha.com/api/cart/cartminus';
+  final _plusCart = 'https://api.medrpha.com/api/cart/cartplus';
+  // final _plusCart = 'https://apitest.medrpha.com/api/cart/cartplus';
+  final _minusCart = 'https://api.medrpha.com/api/cart/cartminus';
+  // final _minusCart = 'https://apitest.medrpha.com/api/cart/cartminus';
 
   Future<int?> plusTheCart({required ProductModel model}) async {
     final sessId = await DataBox().readSessId();
@@ -310,7 +310,7 @@ class ProductsRepository {
     final sessId = await DataBox().readSessId();
 
     final body = {
-      "sessid": "34c4efad30e6e2d4",
+      "sessid": sessId,
       // "sessid": sessId,
     };
 
@@ -351,16 +351,16 @@ class ProductsRepository {
   //------------------- ----------------Checkout ------------------------------------------------------//
   //TODO: Change API to test or prod.
 
-  // final _checkoutUrl = 'https://medrpha.com/api/checkout/checkout';
-  final _checkoutUrl = 'https://test.medrpha.com/api/checkout/checkout';
+  final _checkoutUrl = 'https://medrpha.com/api/checkout/checkout';
+  // final _checkoutUrl = 'https://test.medrpha.com/api/checkout/checkout';
   final _ordersPayment = 'https://api.razorpay.com/v1/orders';
-  // final _paymentConfirmUrl = 'https://medrpha.com/api/order/payconfirmed';
-  final _paymentConfirmUrl =
-      'https://apitest.medrpha.com/api/order/payconfirmed';
-  // final _checkoutConfirmUrl =
-  //     'https://medrpha.com/api/checkout/checkoutconfirm';
+  final _paymentConfirmUrl = 'https://medrpha.com/api/order/payconfirmed';
+  // final _paymentConfirmUrl =
+  //     'https://apitest.medrpha.com/api/order/payconfirmed';
   final _checkoutConfirmUrl =
-      'https://test.medrpha.com/api/checkout/checkoutconfirm';
+      'https://medrpha.com/api/checkout/checkoutconfirm';
+  // final _checkoutConfirmUrl =
+  //     'https://test.medrpha.com/api/checkout/checkoutconfirm';
 
   Future<String?> checkout({
     required String amount,
@@ -478,24 +478,4 @@ class ProductsRepository {
       return '';
     }
   }
-
-  //------------------------- Searching -------------------------------------------------//
-  // Future<> getSearchedResults()async{}
-
-// var options = {
-//       'key': 'rzp_test_DgTJRx7VR36Tvl',
-//       'amount':
-//           double.parse((orderDetailsController.order_amount as String)) * 100,
-//       'name': 'Mederpha',
-//       'description': 'Online Medical Hub',
-//       'retry': {'enabled': true, 'max_count': 1},
-//       'send_sms_hash': true,
-//       'prefill': {
-//         'contact': cs.customer.value.phoneno,
-//         'email': cs.customer.value.txtemail,
-//       },
-//       'external': {
-//         'wallets': ['paytm']
-//       }
-//     };
 }

@@ -2765,7 +2765,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Material(
                                 // color: ConstantData.primaryColor,
                                 child: Image.asset(
-                                  "${ConstantData.assetsPath}med_logo.png",
+                                  "${ConstantData.assetsPath}med_logo_text.png",
                                 ),
                               ),
                             ),

@@ -115,6 +115,8 @@ abstract class _ProductsStore with Store {
     vetPageIndex = 1;
     genericPageIndex = 1;
 
+    debugPrint('----ethical page index ---- $ethicalPageIndex');
+
     cartState = StoreState.LOADING;
     await getCategories();
     await _getProducts();
@@ -420,7 +422,7 @@ abstract class _ProductsStore with Store {
   //----------------------------------- Cart ---------------------------------------------------//
   @observable
   CartModel cartModel = CartModel(
-    totalSalePrice: '0.0',
+    totalSalePrice: '0.00',
     noOfProducts: 0,
     productList: ObservableList<ProductModel>.of([]),
   );

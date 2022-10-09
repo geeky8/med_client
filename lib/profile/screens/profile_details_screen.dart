@@ -118,7 +118,7 @@ class ProfileDetailsScreen extends StatelessWidget {
                                     child: Material(
                                       // color: ConstantData.primaryColor,
                                       child: Image.asset(
-                                        "${ConstantData.assetsPath}med_logo.png",
+                                        "${ConstantData.assetsPath}med_logo_text.png",
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -433,7 +433,7 @@ class CertificateDialog extends StatelessWidget {
             context,
             _,
           ) {
-            return Image.asset('${ConstantData.assetsPath}med_logo.png');
+            return Image.asset('${ConstantData.assetsPath}med_logo_text.png');
           },
         ),
       ),

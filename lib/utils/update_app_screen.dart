@@ -20,7 +20,7 @@ class UpdateAppScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset('${ConstantData.assetsPath}med_logo.png'),
+              Image.asset('${ConstantData.assetsPath}med_logo_text.png'),
               SizedBox(
                 height: blockSizeVertical(context: context) * 3,
               ),

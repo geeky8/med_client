@@ -43,10 +43,6 @@ class OnlinePaymentScreen extends StatefulWidget {
 }
 
 class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
-  // int seconds = 60;
-  // int mins = 4;
-  // late Timer timer;
-
   final _razorPay = Razorpay();
 
   _relocateToHome() async {
@@ -79,33 +75,6 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
       ),
     );
   }
-
-  // _startTimer() async {
-  //   const duration = Duration(seconds: 1);
-  //   timer = Timer.periodic(duration, (timer) async {
-  //     if (seconds - 1 == 0 && mins > 0) {
-  //       if (mounted) {
-  //         setState(() {
-  //           mins -= 1;
-  //           seconds = 60;
-  //         });
-  //       }
-  //     } else if (seconds == 0 && mins == 0) {
-  //       _relocateToHome();
-  //       if (mounted) {
-  //         setState(() {
-  //           timer.cancel();
-  //         });
-  //       }
-  //     } else {
-  //       if (mounted) {
-  //         setState(() {
-  //           seconds -= 1;
-  //         });
-  //       }
-  //     }
-  //   });
-  // }
 
   _handlePaymentSuccess(PaymentSuccessResponse response) async {
     if (kDebugMode) {
@@ -197,8 +166,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
     _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentFailure);
     _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handlePaymentExternalWallet);
-    // _startTimer();
-    // _openGateway(model: widget.model, profileModel: widget.profileModel);
+
     super.initState();
   }
 

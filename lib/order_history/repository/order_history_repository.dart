@@ -11,12 +11,12 @@ class OrderHistoryRepository {
   final _httpClient = http.Client();
   //TODO: Change APIS from test to Prod.
 
-  // final _orderUrl = 'https://api.medrpha.com/api/order/orderlist';
-  final _orderUrl = 'https://apitest.medrpha.com/api/order/orderlist';
-  // final _ordersListUrl = 'https://api.medrpha.com/api/order/orderdetail';
-  final _ordersListUrl = 'https://apitest.medrpha.com/api/order/orderdetail';
-  // final _cancelOrderUrl = 'https://api.medrpha.com/api/order/ordercancel';
-  final _cancelOrderUrl = 'https://apitest.medrpha.com/api/order/ordercancel';
+  final _orderUrl = 'https://api.medrpha.com/api/order/orderlist';
+  // final _orderUrl = 'https://apitest.medrpha.com/api/order/orderlist';
+  final _ordersListUrl = 'https://api.medrpha.com/api/order/orderdetail';
+  // final _ordersListUrl = 'https://apitest.medrpha.com/api/order/orderdetail';
+  final _cancelOrderUrl = 'https://api.medrpha.com/api/order/ordercancel';
+  // final _cancelOrderUrl = 'https://apitest.medrpha.com/api/order/ordercancel';
 
   Future<List<OrderHistoryModel>> getListOrdersHistory(
       {String? fromDate, String? toDate, String? orderNo}) async {

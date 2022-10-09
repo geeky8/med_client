@@ -109,7 +109,7 @@ class SignInPage extends StatelessWidget {
                             builder: (_) {
                               return CustomAlertDialog(
                                 header: 'Success',
-                                image: 'med_logo.png',
+                                image: 'med_logo_text.png',
                                 description: 'Pin successfully created',
                                 func: () {
                                   Navigator.of(context).pushReplacement(

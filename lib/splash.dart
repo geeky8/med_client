@@ -11,6 +11,7 @@ import 'package:medrpha_customer/signup_login/screens/login_screen.dart';
 import 'package:medrpha_customer/signup_login/screens/otp_screen.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
+import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:medrpha_customer/utils/update_app_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -97,6 +98,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<int> _checkVersion() async {
     final httpClient = http.Client();
+
+    // TODO: Change from Production to Testing
     const url = 'https://api.medrpha.com/api/Default/latestappversion';
     // const url = 'https://apitest.medrpha.com/api/Default/latestappversion';
     final packageInfo = await PackageInfo.fromPlatform();
@@ -143,9 +146,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Image.asset(
-          ConstantData.assetsPath + 'med_logo_text_img.png',
-          fit: BoxFit.fill,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: blockSizeHorizontal(context: context) * 5),
+          child: Image.asset(
+            ConstantData.assetsPath + 'med_logo_text.png',
+            fit: BoxFit.fill,
+          ),
         ),
       ),
     );
