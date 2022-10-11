@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/signup_login/screens/phone_verification_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:medrpha_customer/enums/delivery_status_type.dart';
@@ -457,25 +458,42 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                             children: [
                               InkWell(
                                 onTap: () async {
-                                  if (remarksContoller.text.trim().isNotEmpty) {
-                                    setState(() {
-                                      cancelOrder = !cancelOrder;
-                                    });
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => ConstantWidget.alertDialog(
+                                      context: _,
+                                      buttonText: 'Cancel',
+                                      title:
+                                          'Sure you want to cancel the order?',
+                                      func: () async {
+                                        Navigator.pop(context);
+                                        if (remarksContoller.text
+                                            .trim()
+                                            .isNotEmpty) {
+                                          setState(() {
+                                            cancelOrder = !cancelOrder;
+                                          });
 
-                                    await widget.orderHistoryStore.cancelOrder(
-                                      id: widget.model.orderId,
-                                      remarks: remarksContoller.text.trim(),
-                                      context: context,
-                                    );
-                                    remarksContoller.clear();
-                                  } else {
-                                    final snackBar =
-                                        ConstantWidget.customSnackBar(
-                                            text: 'Please add the remarks',
-                                            context: context);
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
-                                  }
+                                          await widget.orderHistoryStore
+                                              .cancelOrder(
+                                            id: widget.model.orderId,
+                                            remarks:
+                                                remarksContoller.text.trim(),
+                                            context: context,
+                                          );
+                                          remarksContoller.clear();
+                                        } else {
+                                          final snackBar =
+                                              ConstantWidget.customSnackBar(
+                                                  text:
+                                                      'Please add the remarks',
+                                                  context: context);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar);
+                                        }
+                                      },
+                                    ),
+                                  );
                                 },
                                 child: Container(
                                   width: ConstantWidget.getWidthPercentSize(

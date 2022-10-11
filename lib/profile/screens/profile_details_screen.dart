@@ -77,8 +77,6 @@ class ProfileDetailsScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     ConstantWidget.adminStatusbanner(context),
-                    // SizedBox(
-                    //     height: blockSizeHorizontal(context: context) * 20),
                   ],
                 ),
               ),
@@ -104,22 +102,27 @@ class ProfileDetailsScreen extends StatelessWidget {
                               Align(
                                 alignment: Alignment.topCenter,
                                 child: Container(
+                                  padding: EdgeInsets.all(
+                                      blockSizeHorizontal(context: context) *
+                                          4),
                                   height: profileHeight,
                                   width: profileHeight,
                                   decoration: BoxDecoration(
-                                      color: ConstantData.primaryColor,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: ConstantData.primaryColor,
-                                          width: ConstantWidget
-                                              .getScreenPercentSize(
-                                                  context, 0.2))),
+                                    color: ConstantData.bgColor,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: ConstantData.bgColor,
+                                      width:
+                                          ConstantWidget.getScreenPercentSize(
+                                              context, 0.2),
+                                    ),
+                                  ),
                                   child: ClipOval(
                                     child: Material(
                                       // color: ConstantData.primaryColor,
                                       child: Image.asset(
-                                        "${ConstantData.assetsPath}med_logo_text.png",
-                                        fit: BoxFit.cover,
+                                        "${ConstantData.assetsPath}med_logo.png",
+                                        fit: BoxFit.fill,
                                       ),
                                     ),
                                   ),
@@ -433,7 +436,7 @@ class CertificateDialog extends StatelessWidget {
             context,
             _,
           ) {
-            return Image.asset('${ConstantData.assetsPath}med_logo_text.png');
+            return Image.asset('${ConstantData.assetsPath}med_logo.png');
           },
         ),
       ),

@@ -375,8 +375,6 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                                       title:
                                           'Sure you want to cancel the order?',
                                       func: () async {
-                                        //
-                                        // if (mins != 0 && seconds != 0) {
                                         Navigator.pop(context);
                                         productStore.checkoutState =
                                             StoreState.LOADING;
@@ -390,9 +388,6 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                                             StoreState.SUCCESS;
 
                                         Navigator.pop(context);
-                                        // } else {}
-
-                                        // Navigator.pop(widget.checkoutContext);
                                       },
                                     ),
                                   );

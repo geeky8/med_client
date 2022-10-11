@@ -473,239 +473,248 @@ class _OrderTileState extends State<OrderTile> {
       padding: EdgeInsets.symmetric(
         vertical: blockSizeVertical(context: context),
       ),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: blockSizeVertical(context: context),
-        ),
-        decoration: BoxDecoration(
-          color: ConstantData.bgColor,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: blockSizeVertical(context: context),
-                horizontal: blockSizeHorizontal(context: context) * 4,
-              ),
-              child: ConstantWidget.getCustomText(
-                widget.model.placedDateTime.split(' ')[0],
-                ConstantData.mainTextColor,
-                1,
-                TextAlign.center,
-                FontWeight.w600,
-                font18Px(context: context),
-              ),
-            ),
-            Divider(
-              thickness: 1,
-              color: ConstantData.cellColor,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: blockSizeVertical(context: context),
-                horizontal: blockSizeHorizontal(context: context) * 4,
-              ),
-              child: ConstantWidget.getCustomText(
-                'Order ${widget.model.orderId}',
-                ConstantData.mainTextColor,
-                1,
-                TextAlign.center,
-                FontWeight.w600,
-                font18Px(context: context),
-              ),
-            ),
-            const Divider(
-              thickness: 1.5,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: blockSizeVertical(context: context) * 1.5,
-                horizontal: blockSizeHorizontal(context: context) * 5,
-              ),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: CachedNetworkImage(
-                      imageUrl: ConstantData.productUrl +
-                          widget.model.ordersList.first.productImg,
-                      fit: BoxFit.cover,
-                      height: imageSize * 1.5,
-                      width: imageSize * 1.5,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => Provider.value(
+                value: widget.store,
+                child: Provider.value(
+                  value: widget.productsStore,
+                  child: Provider.value(
+                    value: widget.loginStore,
+                    child: Provider.value(
+                      value: widget.profileStore,
+                      child: OrderHistoryDetailsScreen(
+                        model: widget.model,
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    width: blockSizeHorizontal(context: context) * 4,
-                  ),
-                  // const Spacer(),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(
-                            blockSizeHorizontal(context: context) * 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ConstantData.cartColor,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ConstantWidget.getCustomText(
-                            getText(
-                                paymentStatus: widget.model.paymentStatusType),
-                            ConstantData.mainTextColor,
-                            1,
-                            TextAlign.center,
-                            FontWeight.w600,
-                            font12Px(context: context),
-                          ),
-                        ),
-                        SizedBox(height: blockSizeVertical(context: context)),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: blockSizeVertical(context: context) * 2,
-                                child: ListView.builder(
-                                  itemCount: widget.model.ordersList.length,
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (_, index) {
-                                    return ConstantWidget.getCustomText(
-                                      widget.model.ordersList[index]
-                                              .productName +
-                                          ((index !=
-                                                  widget.model.ordersList
-                                                          .length -
-                                                      1)
-                                              ? ', '
-                                              : ''),
-                                      ConstantData.mainTextColor,
-                                      2,
-                                      TextAlign.left,
-                                      FontWeight.w600,
-                                      font15Px(context: context) * 1.1,
-                                    );
-                                  },
-                                ),
-                              ),
+                ),
+              ),
+            ),
+          );
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: blockSizeVertical(context: context),
+          ),
+          decoration: BoxDecoration(
+            color: ConstantData.bgColor,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: blockSizeVertical(context: context),
+                  horizontal: blockSizeHorizontal(context: context) * 4,
+                ),
+                child: ConstantWidget.getCustomText(
+                  widget.model.placedDateTime.split(' ')[0],
+                  ConstantData.mainTextColor,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font18Px(context: context),
+                ),
+              ),
+              Divider(
+                thickness: 1,
+                color: ConstantData.cellColor,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: blockSizeVertical(context: context),
+                  horizontal: blockSizeHorizontal(context: context) * 4,
+                ),
+                child: ConstantWidget.getCustomText(
+                  'Order ${widget.model.orderId}',
+                  ConstantData.mainTextColor,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font18Px(context: context),
+                ),
+              ),
+              const Divider(
+                thickness: 1.5,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: blockSizeVertical(context: context) * 1.5,
+                  horizontal: blockSizeHorizontal(context: context) * 5,
+                ),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl: ConstantData.productUrl +
+                            widget.model.ordersList.first.productImg,
+                        fit: BoxFit.cover,
+                        height: imageSize * 1.5,
+                        width: imageSize * 1.5,
+                      ),
+                    ),
+                    SizedBox(
+                      width: blockSizeHorizontal(context: context) * 4,
+                    ),
+                    // const Spacer(),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(
+                              blockSizeHorizontal(context: context) * 2,
                             ),
-                          ],
-                        ),
-                        SizedBox(
-                            height: blockSizeVertical(context: context) * 2.5),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.circle,
-                              size: blockSizeHorizontal(context: context) * 2,
-                              color: boxColor(
-                                  orderStatus: widget.model.orderStatusType),
+                            decoration: BoxDecoration(
+                              color: ConstantData.cartColor,
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            SizedBox(
-                              width: blockSizeHorizontal(context: context) * 2,
-                            ),
-                            ConstantWidget.getCustomText(
-                              widget.model.orderStatusType.orderStatusString(),
+                            child: ConstantWidget.getCustomText(
+                              getText(
+                                  paymentStatus:
+                                      widget.model.paymentStatusType),
                               ConstantData.mainTextColor,
                               1,
                               TextAlign.center,
                               FontWeight.w600,
-                              font15Px(context: context),
+                              font12Px(context: context),
                             ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  // const Spacer(),
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => Provider.value(
-                                value: widget.store,
-                                child: Provider.value(
-                                  value: widget.productsStore,
-                                  child: Provider.value(
-                                    value: widget.loginStore,
-                                    child: Provider.value(
-                                      value: widget.profileStore,
-                                      child: OrderHistoryDetailsScreen(
-                                        model: widget.model,
-                                      ),
-                                    ),
+                          ),
+                          SizedBox(height: blockSizeVertical(context: context)),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height:
+                                      blockSizeVertical(context: context) * 2,
+                                  child: ListView.builder(
+                                    itemCount: widget.model.ordersList.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (_, index) {
+                                      return ConstantWidget.getCustomText(
+                                        widget.model.ordersList[index]
+                                                .productName +
+                                            ((index !=
+                                                    widget.model.ordersList
+                                                            .length -
+                                                        1)
+                                                ? ', '
+                                                : ''),
+                                        ConstantData.mainTextColor,
+                                        2,
+                                        TextAlign.left,
+                                        FontWeight.w600,
+                                        font15Px(context: context) * 1.1,
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.arrow_right,
-                          size: font25Px(context: context),
-                          color: ConstantData.clrBlack30,
-                        ),
+                            ],
+                          ),
+                          SizedBox(
+                              height:
+                                  blockSizeVertical(context: context) * 2.5),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                size: blockSizeHorizontal(context: context) * 2,
+                                color: boxColor(
+                                    orderStatus: widget.model.orderStatusType),
+                              ),
+                              SizedBox(
+                                width:
+                                    blockSizeHorizontal(context: context) * 2,
+                              ),
+                              ConstantWidget.getCustomText(
+                                widget.model.orderStatusType
+                                    .orderStatusString(),
+                                ConstantData.mainTextColor,
+                                1,
+                                TextAlign.center,
+                                FontWeight.w600,
+                                font15Px(context: context),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
-                      if ((widget.model.paymentStatusType !=
-                              PaymentStatusType.PAID) &&
-                          (widget.model.orderStatusType ==
-                              OrderStatusType.CONFIRMED))
-                        InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) => ConstantWidget.alertDialog(
-                                context: context,
-                                func: () async {
-                                  Navigator.pop(context);
-                                  openGateway(
-                                    payment: widget.model.orderAmount,
-                                    noOfProducts:
-                                        widget.model.ordersList.length,
-                                    profileModel:
-                                        widget.profileStore.profileModel,
-                                  );
-                                },
-                                buttonText: 'Confirm',
-                                title: 'Please confirm to continue payment',
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    blockSizeHorizontal(context: context) * 3,
-                                vertical: blockSizeVertical(context: context)),
-                            decoration: BoxDecoration(
-                              color: ConstantData.primaryColor,
-                              borderRadius: BorderRadius.circular(
-                                font25Px(context: context),
-                              ),
-                            ),
-                            child: ConstantWidget.getCustomText(
-                              'Pay Now',
-                              ConstantData.bgColor,
-                              1,
-                              TextAlign.center,
-                              FontWeight.w600,
-                              font12Px(context: context) * 1.1,
-                            ),
+                    ),
+                    // const Spacer(),
+                    Column(
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.arrow_right,
+                            size: font25Px(context: context),
+                            color: ConstantData.clrBlack30,
                           ),
                         ),
-                    ],
-                  ),
-                  const Divider(
-                    thickness: 1.5,
-                  ),
-                ],
+                        if ((widget.model.paymentStatusType !=
+                                PaymentStatusType.PAID) &&
+                            (widget.model.orderStatusType ==
+                                OrderStatusType.CONFIRMED))
+                          InkWell(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => ConstantWidget.alertDialog(
+                                  context: context,
+                                  func: () async {
+                                    Navigator.pop(context);
+                                    openGateway(
+                                      payment: widget.model.orderAmount,
+                                      noOfProducts:
+                                          widget.model.ordersList.length,
+                                      profileModel:
+                                          widget.profileStore.profileModel,
+                                    );
+                                  },
+                                  buttonText: 'Confirm',
+                                  title: 'Please confirm to continue payment',
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      blockSizeHorizontal(context: context) * 3,
+                                  vertical:
+                                      blockSizeVertical(context: context)),
+                              decoration: BoxDecoration(
+                                color: ConstantData.primaryColor,
+                                borderRadius: BorderRadius.circular(
+                                  font25Px(context: context),
+                                ),
+                              ),
+                              child: ConstantWidget.getCustomText(
+                                'Pay Now',
+                                ConstantData.bgColor,
+                                1,
+                                TextAlign.center,
+                                FontWeight.w600,
+                                font12Px(context: context) * 1.1,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const Divider(
+                      thickness: 1.5,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -768,12 +777,6 @@ class AllOrdersList extends StatelessWidget {
                                           Radius.circular(radius),
                                         ),
                                       ),
-                                      // child: Icon(
-                                      //   CupertinoIcons.medi,
-                                      //   color: ConstantData.getIconColor(
-                                      //       list[index].type),
-                                      // ),
-
                                       child: Image.asset(
                                         "${ConstantData.assetsPath}med_logo_text.png",
                                         height: ConstantWidget.getPercentSize(
@@ -854,7 +857,8 @@ class AllOrdersList extends StatelessWidget {
                                 ),
                                 onTap: () async {
                                   await store.updateTheOrdersState(
-                                      model: list[index]);
+                                    model: list[index],
+                                  );
                                 },
                               ),
                             ),

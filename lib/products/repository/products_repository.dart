@@ -94,7 +94,7 @@ class ProductsRepository {
       "term": term ?? '',
       "catcheck": categoryId ?? '',
       "PageIndex": (pageIndex ?? '1').toString(),
-      "PageSize": '6'
+      "PageSize": '16'
     };
 
     final resp = await _httpClient.post(Uri.parse(_productsUrl), body: body);
