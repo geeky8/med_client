@@ -102,6 +102,9 @@ abstract class _ProfileStore with Store {
   @observable
   StoreState areaFetching = StoreState.SUCCESS;
 
+  @observable
+  StoreState cityFetching = StoreState.SUCCESS;
+
   @action
   Future<void> getAreaCitySpecific({String? id}) async {
     areaFetching = StoreState.LOADING;
@@ -113,6 +116,19 @@ abstract class _ProfileStore with Store {
         ..addAll(list);
     }
     areaFetching = StoreState.SUCCESS;
+  }
+
+  @action
+  Future<void> getStateCitySpecific({String? id}) async {
+    cityFetching = StoreState.LOADING;
+
+    final list = await _repository.getCity(stateId: id);
+    if (areaList.isNotEmpty) {
+      cityList
+        ..clear()
+        ..addAll(list);
+    }
+    cityFetching = StoreState.SUCCESS;
   }
 
   String getCountry({required int countryId}) {

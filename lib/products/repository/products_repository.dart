@@ -66,7 +66,7 @@ class ProductsRepository {
     }
 
     if (resp.statusCode == 200) {
-      final respBody = jsonDecode(resp.body);
+      final respBody = jsonDecode(resp.body) as Map<String, dynamic>;
       if (respBody['status'] == '1') {
         final list = respBody['data'] as List<dynamic>;
         for (final i in list) {
@@ -83,6 +83,7 @@ class ProductsRepository {
     bool? refresh,
     String? term,
     int? pageIndex,
+    String? pageSize,
   }) async {
     Stopwatch stopwatch = Stopwatch()..start();
 
@@ -94,7 +95,7 @@ class ProductsRepository {
       "term": term ?? '',
       "catcheck": categoryId ?? '',
       "PageIndex": (pageIndex ?? '1').toString(),
-      "PageSize": '16'
+      "PageSize": pageSize ?? '16'
     };
 
     final resp = await _httpClient.post(Uri.parse(_productsUrl), body: body);
@@ -112,12 +113,7 @@ class ProductsRepository {
       if (respBody['message'] == 'successful !!') {
         final list = respBody['data'] as List<dynamic>;
         for (final i in list) {
-          // print(i);
           final model = ProductModel.fromJson(json: i);
-          // print(model.pid);
-          // final updatedModel =
-          //     await _getProductDetails(model: model, sessId: sessId);
-
           productlist.add(model);
         }
         debugPrint('------products lenght ${productlist.length}');

@@ -381,38 +381,45 @@ abstract class _ProductsStore with Store {
         print(term);
       }
       if (load == null) searchState = StoreState.LOADING;
-      Future.delayed(Duration.zero, () async {
-        final productRespModel = await _productsRepository.getProducts(
-          term: term,
-          pageIndex: searchIndex,
-        );
-        if (productRespModel != null) {
-          if (productRespModel.message == 'successful !!') {
-            if (productRespModel.productList.isNotEmpty) {
-              if (load != null) {
-                searchList
-                  ..clear()
-                  ..addAll(productRespModel.productList);
-              } else {
-                searchList.addAll(productRespModel.productList);
-              }
-            } else if (searchIndex > 1) {
-              searchIndex--;
-              Fluttertoast.showToast(msg: 'No more products to show');
+      // Future.delayed(Duration.zero, () async {
+      final productRespModel = await _productsRepository.getProducts(
+        term: term,
+        // pageSize: '50',
+        // pageIndex: searchIndex,
+      );
+      if (productRespModel != null) {
+        if (productRespModel.message == 'successful !!') {
+          if (productRespModel.productList.isNotEmpty) {
+            if (load != null) {
+              searchList
+                ..clear()
+                ..addAll(productRespModel.productList);
+            } else {
+              // searchList.insertAll(0, productRespModel.productList);
+              searchList
+                ..clear()
+                ..addAll(productRespModel.productList);
             }
-            searchState = StoreState.SUCCESS;
-          } else if (productRespModel.message ==
-              'product not serviceable in your area !!!') {
-            message = 'Products not servicable in your selected area!';
-            searchState = StoreState.ERROR;
+          } else if (searchIndex > 1) {
+            searchIndex--;
+            Fluttertoast.showToast(msg: 'No more products to show');
           } else {
-            message = 'Admin Status Pending';
-            searchState = StoreState.ERROR;
+            searchList.clear();
           }
+          searchState = StoreState.SUCCESS;
+        } else if (productRespModel.message ==
+            'product not serviceable in your area !!!') {
+          message = 'Products not servicable in your selected area!';
+          searchState = StoreState.ERROR;
         } else {
-          searchState = StoreState.EMPTY;
+          message = 'Admin Status Pending';
+          searchState = StoreState.ERROR;
         }
-      });
+      } else {
+        searchList.clear();
+        searchState = StoreState.EMPTY;
+      }
+      // });
     } else {
       searchList.clear();
       searchState = StoreState.EMPTY;
@@ -461,8 +468,8 @@ abstract class _ProductsStore with Store {
       final currModel = model.copyWith(
         subTotal: '0.00',
         totalQtyPrice: '0.00',
-        productName: 'Remove the product',
-        description: 'Prices have been changes or ',
+        productName: 'Remove the product\nas the prices have been changed',
+        description: '',
       );
 
       return currModel;

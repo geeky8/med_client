@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
     required OrderHistoryStore orderHistoryStore,
   }) async {
     final value = await _checkVersion();
-    if (value == 0) {
+    if (!value) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -96,7 +96,7 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  Future<int> _checkVersion() async {
+  Future<bool> _checkVersion() async {
     final httpClient = http.Client();
 
     // TODO: Change from Production to Testing
@@ -106,7 +106,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (kDebugMode) {
       print(packageInfo.buildNumber);
     }
-    int versionTrue = 1;
+    bool versionTrue = true;
     final resp = await httpClient.get(Uri.parse(url));
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body) as Map<String, dynamic>;
@@ -115,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen> {
           if (kDebugMode) {
             print('update is req');
           }
-          versionTrue = 0;
+          versionTrue = false;
           // if (mounted) {
 
           // }

@@ -39,8 +39,6 @@ class ProfileRepository {
   // final _countryUrl = 'https://apitest.medrpha.com/api/register/getcountryall';
   final _stateUrl = 'https://api.medrpha.com/api/register/getstateall';
   // final _stateUrl = 'https://apitest.medrpha.com/api/register/getstateall';
-  final _cityUrl = 'https://api.medrpha.com/api/register/getcityall';
-  // final _cityUrl = 'https://apitest.medrpha.com/api/register/getcityall';
 
   /// Register FSSAI
   final _uploadFssaiUrl = 'https://api.medrpha.com/api/register/registerfssai';
@@ -112,19 +110,30 @@ class ProfileRepository {
     return stateList;
   }
 
-  Future<List<CityModel>> getCity() async {
+  Future<List<CityModel>> getCity({String? stateId}) async {
     final sessId = await DataBox().readSessId();
+    String cityUrl = 'https://api.medrpha.com/api/register/getcityall';
+    // final _cityUrl = 'https://apitest.medrpha.com/api/register/getcityall';
 
-    final body = {
+    Map<String, dynamic> body = {
       "sessid": sessId,
     };
 
+    if (stateId != null) {
+      cityUrl = 'https://api.medrpha.com/api/register/getcity';
+      // cityUrl = 'https://api.medrpha.com/api/register/getcity';
+      body = {"sessid": sessId, "stateid": stateId};
+    }
+
     final cityList = <CityModel>[];
 
-    final resp = await httpClient.post(Uri.parse(_cityUrl), body: body);
+    final resp = await httpClient.post(Uri.parse(cityUrl), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
+      if (kDebugMode) {
+        print('---- Cities fetched -----${resp.body}');
+      }
       if (respBody['status'] == '1') {
         final list = respBody['data'] as List<dynamic>;
         for (final i in list) {

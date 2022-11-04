@@ -334,7 +334,9 @@ class ListItem extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   image: CachedNetworkImageProvider(
-                    ConstantData.productUrl + model.productImg,
+                    (model.productImg != '')
+                        ? ConstantData.productUrl + model.productImg
+                        : 'https://www.labikineria.shop/assets/images/no_image.png',
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -357,7 +359,7 @@ class ListItem extends StatelessWidget {
                             child: ConstantWidget.getCustomText(
                               model.productName,
                               ConstantData.mainTextColor,
-                              1,
+                              3,
                               TextAlign.start,
                               FontWeight.w600,
                               font18Px(context: context),

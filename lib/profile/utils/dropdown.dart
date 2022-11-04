@@ -5,6 +5,7 @@ import 'package:medrpha_customer/utils/size_config.dart';
 
 typedef SelectedWidget = List<Widget> Function(BuildContext);
 typedef OnChanged = void Function(String?);
+typedef DropDownValidte = String? Function(String?)?;
 
 class CustomDropDown extends StatelessWidget {
   const CustomDropDown({
@@ -14,6 +15,7 @@ class CustomDropDown extends StatelessWidget {
     required this.itemList,
     required this.onChanged,
     required this.selectFunc,
+    required this.dropDownValidte,
   }) : super(key: key);
 
   final String? value;
@@ -21,6 +23,7 @@ class CustomDropDown extends StatelessWidget {
   final OnChanged onChanged;
   final String hint;
   final List<DropdownMenuItem<String>> itemList;
+  final DropDownValidte dropDownValidte;
 
   @override
   Widget build(BuildContext context) {
@@ -28,62 +31,69 @@ class CustomDropDown extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         vertical: blockSizeVertical(context: context) * 2,
       ),
-      child: Container(
-        width: ConstantWidget.getWidthPercentSize(context, 30),
-        padding: EdgeInsets.symmetric(
-          horizontal: blockSizeHorizontal(context: context) * 4,
-          // vertical: blockSizeVertical(context: context),
-        ),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          border: Border.all(color: ConstantData.clrBorder),
-          borderRadius: BorderRadius.circular(
-            font15Px(context: context),
+      child: DropdownButtonFormField<String>(
+        value: value,
+        isExpanded: true,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: InputDecoration(
+          errorStyle: TextStyle(
+            fontFamily: ConstantData.fontFamily,
+            fontSize: font12Px(context: context) * 1.1,
+            fontWeight: FontWeight.w500,
           ),
-        ),
-        child: DropdownButton<String>(
-          value: value,
-          isExpanded: true,
-          alignment: AlignmentDirectional.bottomStart,
-          // selectedItemBuilder: (BuildContext context) => store.cityList
-          //     .map<Widget>(
-          //       (element) => Center(
-          //         child: ConstantWidget.getCustomText(
-          //           element.cityName,
-          //           ConstantData.mainTextColor,
-          //           1,
-          //           TextAlign.center,
-          //           FontWeight.w600,
-          //           font18Px(context: context),
-          //         ),
-          //       ),
-          //     )
-          //     .toList(),
-          selectedItemBuilder: selectFunc,
-          hint: Center(
-            child: ConstantWidget.getCustomText(
-              hint,
-              ConstantData.mainTextColor,
-              1,
-              TextAlign.center,
-              FontWeight.w500,
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.grey),
+            borderRadius: BorderRadius.circular(
               font18Px(context: context),
             ),
           ),
-          disabledHint: Center(
-            child: ConstantWidget.getCustomText(
-              hint,
-              ConstantData.mainTextColor,
-              1,
-              TextAlign.center,
-              FontWeight.w500,
+          errorBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.red),
+            borderRadius: BorderRadius.circular(
               font18Px(context: context),
             ),
           ),
-          items: itemList,
-          underline: Container(),
-          onChanged: onChanged,
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.grey),
+            borderRadius: BorderRadius.circular(
+              font18Px(context: context),
+            ),
+          ),
+          border: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.grey),
+            borderRadius: BorderRadius.circular(
+              font18Px(context: context),
+            ),
+          ),
         ),
+        alignment: AlignmentDirectional.bottomStart,
+        focusColor: Colors.transparent,
+        selectedItemBuilder: selectFunc,
+        hint: Center(
+          child: ConstantWidget.getCustomText(
+            hint,
+            ConstantData.mainTextColor,
+            1,
+            TextAlign.center,
+            FontWeight.w500,
+            font18Px(context: context),
+          ),
+        ),
+        disabledHint: Center(
+          child: ConstantWidget.getCustomText(
+            hint,
+            ConstantData.mainTextColor,
+            1,
+            TextAlign.center,
+            FontWeight.w500,
+            font18Px(context: context),
+          ),
+        ),
+        items: itemList,
+        validator: dropDownValidte,
+
+        // underline: Container(),
+        onChanged: onChanged,
       ),
     );
   }
