@@ -16,6 +16,7 @@ class CustomDropDown extends StatelessWidget {
     required this.onChanged,
     required this.selectFunc,
     required this.dropDownValidte,
+    this.onTap,
   }) : super(key: key);
 
   final String? value;
@@ -24,6 +25,7 @@ class CustomDropDown extends StatelessWidget {
   final String hint;
   final List<DropdownMenuItem<String>> itemList;
   final DropDownValidte dropDownValidte;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,7 @@ class CustomDropDown extends StatelessWidget {
         value: value,
         isExpanded: true,
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        onTap: onTap,
         decoration: InputDecoration(
           errorStyle: TextStyle(
             fontFamily: ConstantData.fontFamily,

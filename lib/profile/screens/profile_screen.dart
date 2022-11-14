@@ -3,6 +3,8 @@
 // import 'package:awesome_dropdown/awesome_dropdown.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 // import 'package:dropdown_search/dropdown_search.dart';
@@ -35,6 +37,9 @@ class ProfilePage extends StatefulWidget {
 
   final ProfileModel model;
   final String phone;
+
+  /// To specify whether user is filling the details for first time or updating the details
+  /// [True] for filling the details and [False] for updating the details.
   final String? beginToFill;
 
   @override
@@ -102,32 +107,10 @@ class _ProfilePageState extends State<ProfilePage> {
     return null;
   }
 
-  // String? getNumberValidation({required String value}) {
-  //   if (value.isEmpty) {
-  //     return 'This Field cannot be empty';
-  //   } else if (value.length != 10) {
-  //     return 'Invalid number';
-  //   }
-  //   return null;
-  // }
-
-  // String? getEmailValidation({required String value}) {
-  //   if (value.isEmpty) {
-  //     return 'This Field cannot be empty';
-  //   } else if (!_emailRegex.hasMatch(value)) {
-  //     return 'Invalid email';
-  //   }
-  //   return null;
-  // }
-
-  // String? getTextValidation({required String value}) {
-  //   if (value.isEmpty) {
-  //     return 'This Field cannot be empty';
-  //   }
-  //   return null;
-  // }
-
   final profileGlobalKey = GlobalKey<FormState>();
+  final gstGlobalKey = GlobalKey<FormState>();
+  final dlGlobalKey = GlobalKey<FormState>();
+  final fssaiGlobalKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -232,21 +215,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 func: () async {
                   switch (store.page) {
                     case 0:
-                      // if (firmtNameController.text.isNotEmpty &&
-                      //     addressController.text.isNotEmpty &&
-                      //     mailController.text.isNotEmpty &&
-                      //     (phoneController.text.isNotEmpty &&
-                      //         phoneController.text.trim().length == 10) &&
-                      //     // pinController.text.isNotEmpty &&
-                      //     (country != null) &&
-                      //     (city != null) &&
-                      //     (state != null) &&
-                      //     (area != null) &&
-                      //     contactNameController.text.isNotEmpty &&
-                      //     (contactController.text.isNotEmpty &&
-                      //         contactController.text.trim().length == 10) &&
-                      //     (altContactController.text.isNotEmpty &&
-                      //         altContactController.text.trim().length == 10)) {
                       if (profileGlobalKey.currentState!.validate()) {
                         final countryIndex = store.countryList.indexWhere(
                             (element) => element.countryName == country);
@@ -284,26 +252,24 @@ class _ProfilePageState extends State<ProfilePage> {
                           store.page += 1;
                         }
                       } else {
-                        final snackBar =
-                            ConstantData().snackBarValidation(context);
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        Fluttertoast.showToast(
+                            msg: 'Please check all the details');
                       }
                       break;
                     case 1:
                       if (store.profileModel.gstModel.toFill) {
-                        if (gstNoController.text.isNotEmpty) {
-                          final gstModel = store.profileModel.gstModel
-                              .copyWith(gstNo: gstNoController.text.trim());
-                          store.profileModel =
-                              store.profileModel.copyWith(gstModel: gstModel);
-                          store.page += 1;
-                        } else {
-                          final snackBar =
-                              ConstantData().snackBarValidation(context);
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        if (gstGlobalKey.currentState!.validate()) {
+                          if (gstNoController.text.isNotEmpty) {
+                            final gstModel = store.profileModel.gstModel
+                                .copyWith(gstNo: gstNoController.text.trim());
+                            store.profileModel =
+                                store.profileModel.copyWith(gstModel: gstModel);
+                            store.page += 1;
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: 'Please check all the details');
+                          }
                         }
-                        // } else {
-                        //   store.page += 1;
                       } else {
                         store.profileModel = store.profileModel.copyWith(
                           gstModel: ConstantData().initGstModel,
@@ -312,30 +278,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       }
                       break;
                     case 2:
-                      // if (store
-                      //         .profileModel.drugLicenseModel.toFill) {
                       final license1 =
                           store.profileModel.drugLicenseModel.dlImg1;
                       final license2 =
                           store.profileModel.drugLicenseModel.dlImg2;
-                      // print(license1);
-                      // print(license2);
-                      if ((drugLiscenseNo.text.isNotEmpty ||
-                                  drugLiscenseNo.text != '') &&
-                              (drugLicenseName.text.isNotEmpty ||
-                                  drugLicenseName.text != '') &&
-                              (drugLicenseValidity.text.isNotEmpty ||
-                                  drugLicenseValidity.text != '') &&
-                              license1.isNotEmpty &&
-                              license2.isNotEmpty
-                          // &&
-                          // getLicenseValidation(value: drugLiscenseNo.text) ==
-                          //     null &&
-                          // getTextValidation(value: drugLicenseName.text) ==
-                          //     null &&
-                          // getTextValidation(value: drugLicenseValidity.text) ==
-                          //     null
-                          ) {
+
+                      if (dlGlobalKey.currentState!.validate() &&
+                          license1.isNotEmpty &&
+                          license2.isNotEmpty) {
                         final drugLicenseModel =
                             store.profileModel.drugLicenseModel.copyWith(
                           name: drugLicenseName.text.trim(),
@@ -347,9 +297,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             .copyWith(drugLicenseModel: drugLicenseModel);
                         store.page += 1;
                       } else {
-                        final snackBar =
-                            ConstantData().snackBarValidation(context);
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        Fluttertoast.showToast(
+                            msg: 'Please check all the details');
                       }
                       break;
                     case 3:
@@ -357,7 +306,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       /// Checking if fssai needs to be filled.
                       store.saveState = ButtonState.LOADING;
                       if (store.profileModel.fssaiModel.toFill) {
-                        if (fssaiNoController.text.isNotEmpty) {
+                        if (fssaiGlobalKey.currentState!.validate()) {
                           final fssaiModel =
                               store.profileModel.fssaiModel.copyWith(
                             number: fssaiNoController.text.trim(),
@@ -367,9 +316,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           store.profileModel = store.profileModel
                               .copyWith(fssaiModel: fssaiModel);
                         } else {
-                          final snackBar =
-                              ConstantData().snackBarValidation(context);
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          Fluttertoast.showToast(
+                              msg: 'Please check all the details');
                         }
                       } else {
                         final fssaiModel = ConstantData().initFssaiModel;
@@ -611,6 +559,9 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         // }),
         onWillPop: () {
+          (widget.beginToFill != null)
+              ? SystemNavigator.pop()
+              : Navigator.pop(context);
           // Navigator.pop(context);
           return Future.value(true);
         });
@@ -768,175 +719,182 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             Offstage(
               offstage: !toFill,
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: defaultMargin),
-                    color: ConstantData.cellColor,
-                    padding: EdgeInsets.all(defaultMargin),
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: ConstantWidget.getCustomTextWithoutAlign(
-                              'FSSAI Details',
-                              ConstantData.mainTextColor,
-                              FontWeight.w600,
-                              font22Px(context: context)),
-                        ),
-                        SizedBox(
-                          height: (defaultMargin / 2),
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: InputField(
-                                controller: fssaiNoController,
-                                action: TextInputAction.next,
-                                hint: 'FSSAI Number',
-                                keyboardType: TextInputType.number,
-                                label: "FSSAI Number",
-                                obscure: false,
-                                func: (value) {
-                                  if (value != null) {
-                                    if (value.isEmpty) {
-                                      return 'Enter FSSAI number';
-                                    } else {
-                                      if (value.length != 14) {
-                                        return 'Enter a valid license number';
+              child: Form(
+                key: fssaiGlobalKey,
+                child: Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: defaultMargin),
+                      color: ConstantData.cellColor,
+                      padding: EdgeInsets.all(defaultMargin),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: ConstantWidget.getCustomTextWithoutAlign(
+                                'FSSAI Details',
+                                ConstantData.mainTextColor,
+                                FontWeight.w600,
+                                font22Px(context: context)),
+                          ),
+                          SizedBox(
+                            height: (defaultMargin / 2),
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: InputField(
+                                  controller: fssaiNoController,
+                                  action: TextInputAction.next,
+                                  hint: 'FSSAI Number',
+                                  keyboardType: TextInputType.number,
+                                  label: "FSSAI Number",
+                                  obscure: false,
+                                  func: (value) {
+                                    if (value != null) {
+                                      if (value.isEmpty) {
+                                        return 'Enter FSSAI number';
                                       } else {
-                                        return null;
+                                        if (value.length != 14) {
+                                          return 'Enter a valid license number';
+                                        } else {
+                                          return null;
+                                        }
                                       }
                                     }
-                                  }
-                                  return null;
-                                },
+                                    return null;
+                                  },
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: SizedBox(
-                                width:
-                                    blockSizeHorizontal(context: context) * 7,
-                                child: InkWell(
-                                    onTap: () {
-                                      fssaiNoController.clear();
-                                    },
-                                    child: Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                      size: blockSizeHorizontal(
-                                              context: context) *
-                                          7,
-                                    )),
+                              Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  width:
+                                      blockSizeHorizontal(context: context) * 7,
+                                  child: InkWell(
+                                      onTap: () {
+                                        fssaiNoController.clear();
+                                      },
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                        size: blockSizeHorizontal(
+                                                context: context) *
+                                            7,
+                                      )),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: defaultMargin),
-                    color: ConstantData.cellColor,
-                    padding: EdgeInsets.all(defaultMargin),
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: ConstantWidget.getCustomTextWithoutAlign(
-                              'Upload FSSAI Certificate',
-                              ConstantData.mainTextColor,
-                              FontWeight.w600,
-                              font22Px(context: context)),
-                        ),
-                        SizedBox(
-                          height: blockSizeVertical(context: context) * 4,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Observer(builder: (_) {
-                              return UploadIconButton(
-                                context: context,
-                                icon: Icons.camera,
-                                color: Colors.orange,
-                                source: ImageSource.camera,
-                                text: 'Camera',
-                                store: store,
-                                certificateType: 2,
-                              );
-                            }),
-                            Observer(builder: (_) {
-                              return UploadIconButton(
-                                context: context,
-                                icon: Icons.photo_album_outlined,
-                                color: Colors.blue,
-                                source: ImageSource.gallery,
-                                store: store,
-                                text: 'Gallery',
-                                certificateType: 3,
-                              );
-                            }),
-                          ],
-                        ),
-                      ],
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: defaultMargin),
+                      color: ConstantData.cellColor,
+                      padding: EdgeInsets.all(defaultMargin),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: ConstantWidget.getCustomTextWithoutAlign(
+                                'Upload FSSAI Certificate',
+                                ConstantData.mainTextColor,
+                                FontWeight.w600,
+                                font22Px(context: context)),
+                          ),
+                          SizedBox(
+                            height: blockSizeVertical(context: context) * 4,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Observer(builder: (_) {
+                                return UploadIconButton(
+                                  context: context,
+                                  icon: Icons.camera,
+                                  color: Colors.orange,
+                                  source: ImageSource.camera,
+                                  text: 'Camera',
+                                  store: store,
+                                  certificateType: 2,
+                                );
+                              }),
+                              Observer(builder: (_) {
+                                return UploadIconButton(
+                                  context: context,
+                                  icon: Icons.photo_album_outlined,
+                                  color: Colors.blue,
+                                  source: ImageSource.gallery,
+                                  store: store,
+                                  text: 'Gallery',
+                                  certificateType: 3,
+                                );
+                              }),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: defaultMargin),
-                    color: ConstantData.cellColor,
-                    padding: EdgeInsets.all(defaultMargin),
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: ConstantWidget.getCustomTextWithoutAlign(
-                              'Certificate',
-                              ConstantData.mainTextColor,
-                              FontWeight.w600,
-                              font22Px(context: context)),
-                        ),
-                        SizedBox(
-                          height: defaultMargin,
-                        ),
-                        Observer(builder: (_) {
-                          final model = store.profileModel;
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: defaultMargin),
+                      color: ConstantData.cellColor,
+                      padding: EdgeInsets.all(defaultMargin),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: ConstantWidget.getCustomTextWithoutAlign(
+                                'Certificate',
+                                ConstantData.mainTextColor,
+                                FontWeight.w600,
+                                font22Px(context: context)),
+                          ),
+                          SizedBox(
+                            height: defaultMargin,
+                          ),
+                          Observer(builder: (_) {
+                            final model = store.profileModel;
 
-                          return SizedBox(
-                            height: ConstantWidget.getScreenPercentSize(
-                                context, 40),
-                            width:
-                                ConstantWidget.getWidthPercentSize(context, 40),
-                            child: CachedNetworkImage(
-                              imageUrl:
-                                  '${ConstantData.licenseUrl}${widget.phone}/${model.fssaiModel.fssaiImg}',
-                              fit: BoxFit.cover,
-                              errorWidget: (context, e, _) =>
-                                  CachedNetworkImage(
+                            return SizedBox(
+                              height: ConstantWidget.getScreenPercentSize(
+                                  context, 40),
+                              width: ConstantWidget.getWidthPercentSize(
+                                  context, 40),
+                              child: CachedNetworkImage(
                                 imageUrl:
-                                    '${ConstantData.licenseUrl}${widget.phone}/${widget.model.fssaiModel.fssaiImg}',
-                                errorWidget: (context, s, _) {
-                                  return ConstantWidget.errorWidget(
-                                      context: context, height: 20, width: 25);
-                                },
-                                placeholder: (context, _) {
-                                  return ConstantWidget.errorWidget(
-                                      context: context, height: 20, width: 25);
-                                },
+                                    '${ConstantData.licenseUrl}${widget.phone}/${model.fssaiModel.fssaiImg}',
+                                fit: BoxFit.cover,
+                                errorWidget: (context, e, _) =>
+                                    CachedNetworkImage(
+                                  imageUrl:
+                                      '${ConstantData.licenseUrl}${widget.phone}/${widget.model.fssaiModel.fssaiImg}',
+                                  errorWidget: (context, s, _) {
+                                    return ConstantWidget.errorWidget(
+                                        context: context,
+                                        height: 20,
+                                        width: 25);
+                                  },
+                                  placeholder: (context, _) {
+                                    return ConstantWidget.errorWidget(
+                                        context: context,
+                                        height: 20,
+                                        width: 25);
+                                  },
+                                ),
                               ),
-                            ),
-                          );
-                          // }
-                        }),
-                        SizedBox(
-                          height: blockSizeVertical(context: context) * 4,
-                        ),
-                      ],
+                            );
+                            // }
+                          }),
+                          SizedBox(
+                            height: blockSizeVertical(context: context) * 4,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -987,322 +945,326 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 )),
-            Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: defaultMargin),
-                  color: ConstantData.cellColor,
-                  padding: EdgeInsets.all(defaultMargin),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: ConstantWidget.getCustomTextWithoutAlign(
-                            'Drug License Details',
-                            ConstantData.mainTextColor,
-                            FontWeight.w600,
-                            font22Px(context: context)),
-                      ),
-                      SizedBox(
-                        height: (defaultMargin / 2),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: InputField(
-                              controller: drugLiscenseNo,
-                              action: TextInputAction.next,
-                              hint: 'Drug License Number',
-                              keyboardType: TextInputType.text,
-                              label: "Drug License Number",
-                              obscure: false,
-                              func: (value) {
-                                if (value != null) {
-                                  if (value.isEmpty) {
-                                    return 'Enter DL number';
-                                  } else {
-                                    return null;
+            Form(
+              key: dlGlobalKey,
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: defaultMargin),
+                    color: ConstantData.cellColor,
+                    padding: EdgeInsets.all(defaultMargin),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: ConstantWidget.getCustomTextWithoutAlign(
+                              'Drug License Details',
+                              ConstantData.mainTextColor,
+                              FontWeight.w600,
+                              font22Px(context: context)),
+                        ),
+                        SizedBox(
+                          height: (defaultMargin / 2),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: InputField(
+                                controller: drugLiscenseNo,
+                                action: TextInputAction.next,
+                                hint: 'Drug License Number',
+                                keyboardType: TextInputType.text,
+                                label: "Drug License Number",
+                                obscure: false,
+                                func: (value) {
+                                  if (value != null) {
+                                    if (value.isEmpty) {
+                                      return 'Enter DL number';
+                                    } else {
+                                      return null;
+                                    }
                                   }
-                                }
-                                return null;
-                              },
+                                  return null;
+                                },
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: InputField(
-                              controller: drugLicenseName,
-                              action: TextInputAction.next,
-                              hint: 'Drug License Name',
-                              keyboardType: TextInputType.text,
-                              label: "Drug License Name",
-                              obscure: false,
-                              func: (value) {
-                                if (value != null) {
-                                  if (value.isEmpty) {
-                                    return 'Enter DL name';
-                                  } else {
-                                    return null;
+                            Expanded(
+                              flex: 1,
+                              child: InputField(
+                                controller: drugLicenseName,
+                                action: TextInputAction.next,
+                                hint: 'Drug License Name',
+                                keyboardType: TextInputType.text,
+                                label: "Drug License Name",
+                                obscure: false,
+                                func: (value) {
+                                  if (value != null) {
+                                    if (value.isEmpty) {
+                                      return 'Enter DL name';
+                                    } else {
+                                      return null;
+                                    }
                                   }
-                                }
-                                return null;
-                              },
+                                  return null;
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                              vertical: (defaultMargin / 2)),
+                          height: editTextHeight,
+                          child: TextFormField(
+                            maxLines: 1,
+                            controller: drugLicenseValidity,
+                            onTap: () async {
+                              final pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2101),
+                              );
+                              if (pickedDate != null) {
+                                final formattedDate =
+                                    DateFormat('dd/MM/yyyy').format(pickedDate);
+                                drugLicenseValidity.text =
+                                    formattedDate.toString();
+                              }
+                            },
+                            style: TextStyle(
+                              fontFamily: ConstantData.fontFamily,
+                              color: ConstantData.mainTextColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: font18Px(context: context),
                             ),
-                          )
-                        ],
-                      ),
-                      Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: (defaultMargin / 2)),
-                        height: editTextHeight,
-                        child: TextFormField(
-                          maxLines: 1,
-                          controller: drugLicenseValidity,
-                          onTap: () async {
-                            final pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime(2101),
-                            );
-                            if (pickedDate != null) {
-                              final formattedDate =
-                                  DateFormat('dd/MM/yyyy').format(pickedDate);
-                              drugLicenseValidity.text =
-                                  formattedDate.toString();
-                            }
-                          },
-                          style: TextStyle(
-                            fontFamily: ConstantData.fontFamily,
-                            color: ConstantData.mainTextColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: font18Px(context: context),
-                          ),
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              // width: 0.0 produces a thin "hairline" border
-                              borderSide: BorderSide(
-                                  color: ConstantData.textColor, width: 0.0),
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                // width: 0.0 produces a thin "hairline" border
+                                borderSide: BorderSide(
+                                    color: ConstantData.textColor, width: 0.0),
+                              ),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: ConstantData.textColor, width: 0.0),
+                              ),
+                              labelStyle: TextStyle(
+                                  fontFamily: ConstantData.fontFamily,
+                                  color: ConstantData.textColor),
+                              labelText: 'Drug License Validity',
+                              // hintText: hintText,
                             ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: ConstantData.textColor, width: 0.0),
-                            ),
-                            labelStyle: TextStyle(
-                                fontFamily: ConstantData.fontFamily,
-                                color: ConstantData.textColor),
-                            labelText: 'Drug License Validity',
-                            // hintText: hintText,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: defaultMargin),
-                  color: ConstantData.cellColor,
-                  padding: EdgeInsets.all(defaultMargin),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: ConstantWidget.getCustomTextWithoutAlign(
-                            'Upload License Certificate',
-                            ConstantData.mainTextColor,
-                            FontWeight.w600,
-                            font22Px(context: context)),
-                      ),
-                      SizedBox(
-                        height: blockSizeVertical(context: context) * 4,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Observer(builder: (_) {
-                            final state = store.certi1;
-                            switch (state) {
-                              case StoreState.LOADING:
-                                return const CircularProgressIndicator();
-                              case StoreState.SUCCESS:
-                                return UploadIconButton(
-                                  context: context,
-                                  icon: Icons.note_add_outlined,
-                                  color: Colors.orange,
-                                  source: ImageSource.camera,
-                                  text: 'DL1',
-                                  store: store,
-                                  certificateType: 0,
-                                );
-                              case StoreState.ERROR:
-                                return UploadIconButton(
-                                  context: context,
-                                  icon: Icons.note_add_outlined,
-                                  color: Colors.orange,
-                                  source: ImageSource.camera,
-                                  text: 'DL1',
-                                  store: store,
-                                  certificateType: 0,
-                                );
-                              case StoreState.EMPTY:
-                                return UploadIconButton(
-                                  context: context,
-                                  icon: Icons.note_add_outlined,
-                                  color: Colors.orange,
-                                  source: ImageSource.camera,
-                                  text: 'DL1',
-                                  store: store,
-                                  certificateType: 0,
-                                );
-                            }
-                          }),
-                          Observer(builder: (_) {
-                            final state = store.certi2;
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: defaultMargin),
+                    color: ConstantData.cellColor,
+                    padding: EdgeInsets.all(defaultMargin),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: ConstantWidget.getCustomTextWithoutAlign(
+                              'Upload License Certificate',
+                              ConstantData.mainTextColor,
+                              FontWeight.w600,
+                              font22Px(context: context)),
+                        ),
+                        SizedBox(
+                          height: blockSizeVertical(context: context) * 4,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Observer(builder: (_) {
+                              final state = store.certi1;
+                              switch (state) {
+                                case StoreState.LOADING:
+                                  return const CircularProgressIndicator();
+                                case StoreState.SUCCESS:
+                                  return UploadIconButton(
+                                    context: context,
+                                    icon: Icons.note_add_outlined,
+                                    color: Colors.orange,
+                                    source: ImageSource.camera,
+                                    text: 'DL1',
+                                    store: store,
+                                    certificateType: 0,
+                                  );
+                                case StoreState.ERROR:
+                                  return UploadIconButton(
+                                    context: context,
+                                    icon: Icons.note_add_outlined,
+                                    color: Colors.orange,
+                                    source: ImageSource.camera,
+                                    text: 'DL1',
+                                    store: store,
+                                    certificateType: 0,
+                                  );
+                                case StoreState.EMPTY:
+                                  return UploadIconButton(
+                                    context: context,
+                                    icon: Icons.note_add_outlined,
+                                    color: Colors.orange,
+                                    source: ImageSource.camera,
+                                    text: 'DL1',
+                                    store: store,
+                                    certificateType: 0,
+                                  );
+                              }
+                            }),
+                            Observer(builder: (_) {
+                              final state = store.certi2;
 
-                            switch (state) {
-                              case StoreState.LOADING:
-                                return const CircularProgressIndicator();
-                              case StoreState.SUCCESS:
-                                return UploadIconButton(
-                                  context: context,
-                                  icon: Icons.note_add_outlined,
-                                  color: Colors.blue,
-                                  source: ImageSource.gallery,
-                                  store: store,
-                                  text: 'DL2',
-                                  certificateType: 1,
-                                );
-                              case StoreState.ERROR:
-                                return UploadIconButton(
-                                  context: context,
-                                  icon: Icons.note_add_outlined,
-                                  color: Colors.blue,
-                                  source: ImageSource.gallery,
-                                  store: store,
-                                  text: 'DL2',
-                                  certificateType: 1,
-                                );
-                              case StoreState.EMPTY:
-                                return UploadIconButton(
-                                  context: context,
-                                  icon: Icons.note_add_outlined,
-                                  color: Colors.blue,
-                                  source: ImageSource.gallery,
-                                  store: store,
-                                  text: 'DL2',
-                                  certificateType: 1,
-                                );
-                            }
-                          }),
-                        ],
-                      ),
-                    ],
+                              switch (state) {
+                                case StoreState.LOADING:
+                                  return const CircularProgressIndicator();
+                                case StoreState.SUCCESS:
+                                  return UploadIconButton(
+                                    context: context,
+                                    icon: Icons.note_add_outlined,
+                                    color: Colors.blue,
+                                    source: ImageSource.gallery,
+                                    store: store,
+                                    text: 'DL2',
+                                    certificateType: 1,
+                                  );
+                                case StoreState.ERROR:
+                                  return UploadIconButton(
+                                    context: context,
+                                    icon: Icons.note_add_outlined,
+                                    color: Colors.blue,
+                                    source: ImageSource.gallery,
+                                    store: store,
+                                    text: 'DL2',
+                                    certificateType: 1,
+                                  );
+                                case StoreState.EMPTY:
+                                  return UploadIconButton(
+                                    context: context,
+                                    icon: Icons.note_add_outlined,
+                                    color: Colors.blue,
+                                    source: ImageSource.gallery,
+                                    store: store,
+                                    text: 'DL2',
+                                    certificateType: 1,
+                                  );
+                              }
+                            }),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: defaultMargin),
-                  color: ConstantData.cellColor,
-                  padding: EdgeInsets.all(defaultMargin),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: ConstantWidget.getCustomTextWithoutAlign(
-                            'Certificate',
-                            ConstantData.mainTextColor,
-                            FontWeight.w600,
-                            font22Px(context: context)),
-                      ),
-                      SizedBox(
-                        height: defaultMargin,
-                      ),
-                      Observer(builder: (_) {
-                        final model = store.profileModel;
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: defaultMargin),
+                    color: ConstantData.cellColor,
+                    padding: EdgeInsets.all(defaultMargin),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: ConstantWidget.getCustomTextWithoutAlign(
+                              'Certificate',
+                              ConstantData.mainTextColor,
+                              FontWeight.w600,
+                              font22Px(context: context)),
+                        ),
+                        SizedBox(
+                          height: defaultMargin,
+                        ),
+                        Observer(builder: (_) {
+                          final model = store.profileModel;
 
-                        if ((model.drugLicenseModel.dlImg1 == '' &&
-                            model.drugLicenseModel.dlImg2 == '')) {
-                          return Column(
-                            children: [
-                              Icon(
-                                Icons.note_add,
-                                color: ConstantData.bgColor,
-                                size:
-                                    blockSizeHorizontal(context: context) * 13,
-                              ),
-                              SizedBox(
-                                height: blockSizeVertical(context: context) * 2,
-                              ),
-                              ConstantWidget.getTextWidget(
-                                'No Document',
-                                ConstantData.mainTextColor,
-                                TextAlign.center,
-                                FontWeight.w400,
-                                font18Px(context: context),
-                              )
-                            ],
-                          );
-                        } else {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              SizedBox(
-                                height: ConstantWidget.getScreenPercentSize(
-                                    context, 40),
-                                width: ConstantWidget.getWidthPercentSize(
-                                    context, 40),
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      '${ConstantData.licenseUrl}${widget.phone}/${store.profileModel.drugLicenseModel.dlImg1}',
-                                  fit: BoxFit.cover,
-                                  errorWidget: (context, s, _) {
-                                    return ConstantWidget.errorWidget(
-                                        context: context,
-                                        height: 20,
-                                        width: 25);
-                                  },
-                                  placeholder: (context, _) {
-                                    return ConstantWidget.errorWidget(
-                                        context: context,
-                                        height: 20,
-                                        width: 25);
-                                  },
+                          if ((model.drugLicenseModel.dlImg1 == '' &&
+                              model.drugLicenseModel.dlImg2 == '')) {
+                            return Column(
+                              children: [
+                                Icon(
+                                  Icons.note_add,
+                                  color: ConstantData.bgColor,
+                                  size: blockSizeHorizontal(context: context) *
+                                      13,
                                 ),
-                              ),
-                              SizedBox(
-                                height: ConstantWidget.getScreenPercentSize(
-                                    context, 40),
-                                width: ConstantWidget.getWidthPercentSize(
-                                    context, 40),
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      '${ConstantData.licenseUrl}${widget.phone}/${store.profileModel.drugLicenseModel.dlImg2}',
-                                  fit: BoxFit.cover,
-                                  errorWidget: (context, s, _) {
-                                    return ConstantWidget.errorWidget(
-                                        context: context,
-                                        height: 20,
-                                        width: 25);
-                                  },
-                                  placeholder: (context, _) {
-                                    return ConstantWidget.errorWidget(
-                                        context: context,
-                                        height: 20,
-                                        width: 25);
-                                  },
+                                SizedBox(
+                                  height:
+                                      blockSizeVertical(context: context) * 2,
                                 ),
-                              ),
-                            ],
-                          );
-                        }
-                      }),
-                      // SizedBox(
-                      //   height: blockSizeVertical(context: context) * 4,
-                      // ),
-                    ],
+                                ConstantWidget.getTextWidget(
+                                  'No Document',
+                                  ConstantData.mainTextColor,
+                                  TextAlign.center,
+                                  FontWeight.w400,
+                                  font18Px(context: context),
+                                )
+                              ],
+                            );
+                          } else {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SizedBox(
+                                  height: ConstantWidget.getScreenPercentSize(
+                                      context, 40),
+                                  width: ConstantWidget.getWidthPercentSize(
+                                      context, 40),
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        '${ConstantData.licenseUrl}${widget.phone}/${store.profileModel.drugLicenseModel.dlImg1}',
+                                    fit: BoxFit.cover,
+                                    errorWidget: (context, s, _) {
+                                      return ConstantWidget.errorWidget(
+                                          context: context,
+                                          height: 20,
+                                          width: 25);
+                                    },
+                                    placeholder: (context, _) {
+                                      return ConstantWidget.errorWidget(
+                                          context: context,
+                                          height: 20,
+                                          width: 25);
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: ConstantWidget.getScreenPercentSize(
+                                      context, 40),
+                                  width: ConstantWidget.getWidthPercentSize(
+                                      context, 40),
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        '${ConstantData.licenseUrl}${widget.phone}/${store.profileModel.drugLicenseModel.dlImg2}',
+                                    fit: BoxFit.cover,
+                                    errorWidget: (context, s, _) {
+                                      return ConstantWidget.errorWidget(
+                                          context: context,
+                                          height: 20,
+                                          width: 25);
+                                    },
+                                    placeholder: (context, _) {
+                                      return ConstantWidget.errorWidget(
+                                          context: context,
+                                          height: 20,
+                                          width: 25);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        }),
+                        // SizedBox(
+                        //   height: blockSizeVertical(context: context) * 4,
+                        // ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             SizedBox(
               height: blockSizeVertical(context: context) * 4,
@@ -1360,6 +1322,8 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               height: blockSizeVertical(context: context) * 10,
             ),
+
+            /// GST is optional so we provide a different UI to user to take their persmission.
             Offstage(
               offstage: toFill,
               child: Padding(
@@ -1469,72 +1433,78 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
+
+            /// When user agrees to provide details
             Offstage(
               offstage: !toFill,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: defaultMargin),
                 color: ConstantData.cellColor,
                 padding: EdgeInsets.all(defaultMargin),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: ConstantWidget.getCustomTextWithoutAlign(
-                          'GST Details',
-                          ConstantData.mainTextColor,
-                          FontWeight.w600,
-                          font22Px(context: context)),
-                    ),
-                    SizedBox(
-                      height: (defaultMargin / 2),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: InputField(
-                            controller: gstNoController,
-                            action: TextInputAction.next,
-                            hint: 'GST Number',
-                            keyboardType: TextInputType.text,
-                            label: "GST Number",
-                            obscure: false,
-                            func: (value) {
-                              if (value != null) {
-                                if (value.isEmpty) {
-                                  return 'Enter GST number';
-                                } else {
-                                  if (!ConstantData.gstValidate
-                                      .hasMatch(value)) {
-                                    return 'Enter a valid gst licesne';
+                child: Form(
+                  key: gstGlobalKey,
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: ConstantWidget.getCustomTextWithoutAlign(
+                            'GST Details',
+                            ConstantData.mainTextColor,
+                            FontWeight.w600,
+                            font22Px(context: context)),
+                      ),
+                      SizedBox(
+                        height: (defaultMargin / 2),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: InputField(
+                              controller: gstNoController,
+                              action: TextInputAction.next,
+                              hint: 'GST Number',
+                              keyboardType: TextInputType.text,
+                              label: "GST Number",
+                              obscure: false,
+                              func: (value) {
+                                if (value != null) {
+                                  if (value.isEmpty) {
+                                    return 'Enter GST number';
                                   } else {
-                                    return null;
+                                    if (!ConstantData.gstValidate
+                                        .hasMatch(value)) {
+                                      return 'Enter a valid gst licesne';
+                                    } else {
+                                      return null;
+                                    }
                                   }
                                 }
-                              }
-                              return null;
-                            },
+                                return null;
+                              },
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: SizedBox(
-                            width: blockSizeHorizontal(context: context) * 7,
-                            child: InkWell(
-                                onTap: () {
-                                  gstNoController.clear();
-                                },
-                                child: Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                  size:
-                                      blockSizeHorizontal(context: context) * 7,
-                                )),
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox(
+                              width: blockSizeHorizontal(context: context) * 7,
+                              child: InkWell(
+                                  onTap: () {
+                                    gstNoController.clear();
+                                  },
+                                  child: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                    size:
+                                        blockSizeHorizontal(context: context) *
+                                            7,
+                                  )),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -1652,7 +1622,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 action: TextInputAction.next,
                                 hint: 'abc@gmail.com',
                                 keyboardType: TextInputType.emailAddress,
-                                font: font15Px(context: context),
+                                font: font15Px(context: context) * 1.05,
                                 // maxLine: 3,
                                 label: "Email",
                                 obscure: false,
@@ -1755,22 +1725,30 @@ class _ProfilePageState extends State<ProfilePage> {
                                   value: (country != null) ? state : null,
                                   hint: 'Select State',
                                   dropDownValidte: (value) {
+                                    if (country == null) {
+                                      return 'Enter Country First';
+                                    }
                                     if (value == null) return 'Enter State';
                                   },
-                                  itemList: store.stateList
-                                      .map<DropdownMenuItem<String>>((element) {
-                                    return DropdownMenuItem<String>(
-                                      value: element.stateName,
-                                      child: ConstantWidget.getCustomText(
-                                        element.stateName,
-                                        ConstantData.mainTextColor,
-                                        1,
-                                        TextAlign.center,
-                                        FontWeight.w500,
-                                        font15Px(context: context),
-                                      ),
-                                    );
-                                  }).toList(),
+
+                                  /// if country is not selected user won't be able to select city.
+                                  itemList: (country != null)
+                                      ? store.stateList
+                                          .map<DropdownMenuItem<String>>(
+                                              (element) {
+                                          return DropdownMenuItem<String>(
+                                            value: element.stateName,
+                                            child: ConstantWidget.getCustomText(
+                                              element.stateName,
+                                              ConstantData.mainTextColor,
+                                              1,
+                                              TextAlign.center,
+                                              FontWeight.w500,
+                                              font15Px(context: context),
+                                            ),
+                                          );
+                                        }).toList()
+                                      : [],
                                   onChanged: (value) async {
                                     setState(() {
                                       state = value;
@@ -1815,22 +1793,30 @@ class _ProfilePageState extends State<ProfilePage> {
                                   value: city,
                                   hint: 'Select City',
                                   dropDownValidte: (value) {
+                                    if (state == null) {
+                                      return 'Enter State First';
+                                    }
                                     if (value == null) return 'Enter City';
                                   },
-                                  itemList: store.cityList
-                                      .map<DropdownMenuItem<String>>((element) {
-                                    return DropdownMenuItem<String>(
-                                      value: element.cityName,
-                                      child: ConstantWidget.getCustomText(
-                                        element.cityName,
-                                        ConstantData.mainTextColor,
-                                        1,
-                                        TextAlign.center,
-                                        FontWeight.w500,
-                                        font15Px(context: context),
-                                      ),
-                                    );
-                                  }).toList(),
+
+                                  /// if state is not selected user won't be able to select city.
+                                  itemList: (state != null)
+                                      ? store.cityList
+                                          .map<DropdownMenuItem<String>>(
+                                              (element) {
+                                          return DropdownMenuItem<String>(
+                                            value: element.cityName,
+                                            child: ConstantWidget.getCustomText(
+                                              element.cityName,
+                                              ConstantData.mainTextColor,
+                                              1,
+                                              TextAlign.center,
+                                              FontWeight.w500,
+                                              font15Px(context: context),
+                                            ),
+                                          );
+                                        }).toList()
+                                      : [],
                                   onChanged: (value) async {
                                     setState(() {
                                       city = value;
@@ -1868,26 +1854,39 @@ class _ProfilePageState extends State<ProfilePage> {
                                     store.cityFetching == StoreState.LOADING) {
                                   area = null;
                                 }
+
                                 return CustomDropDown(
                                   value: area,
+                                  onTap: () {
+                                    if (city == null) {
+                                      Fluttertoast.showToast(
+                                          msg: 'Enter City First');
+                                    }
+                                  },
                                   hint: 'Select Area',
                                   dropDownValidte: (value) {
+                                    if (city == null) return 'Enter City First';
                                     if (value == null) return 'Enter Area';
                                   },
-                                  itemList: store.areaList
-                                      .map<DropdownMenuItem<String>>((element) {
-                                    return DropdownMenuItem<String>(
-                                      value: element.areaName,
-                                      child: ConstantWidget.getCustomText(
-                                        element.areaName,
-                                        ConstantData.mainTextColor,
-                                        1,
-                                        TextAlign.center,
-                                        FontWeight.w500,
-                                        font15Px(context: context),
-                                      ),
-                                    );
-                                  }).toList(),
+
+                                  /// if city is not selected user won't be able to select area pincode.
+                                  itemList: (city != null)
+                                      ? store.areaList
+                                          .map<DropdownMenuItem<String>>(
+                                              (element) {
+                                          return DropdownMenuItem<String>(
+                                            value: element.areaName,
+                                            child: ConstantWidget.getCustomText(
+                                              element.areaName,
+                                              ConstantData.mainTextColor,
+                                              1,
+                                              TextAlign.center,
+                                              FontWeight.w500,
+                                              font15Px(context: context),
+                                            ),
+                                          );
+                                        }).toList()
+                                      : [],
                                   onChanged: (value) {
                                     setState(() {
                                       area = value;
@@ -1990,14 +1989,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                 obscure: false,
                                 func: (value) {
                                   if (value != null) {
-                                    if (value.isEmpty) {
-                                      return 'Enter contact';
+                                    // if (value.isEmpty) {
+                                    //   return 'Enter contact';
+                                    // }
+
+                                    if (value.isNotEmpty &&
+                                        value.length != 10) {
+                                      return 'Enter a valid number';
                                     } else {
-                                      if (value.length != 10) {
-                                        return 'Enter a valid number';
-                                      } else {
-                                        return null;
-                                      }
+                                      return null;
                                     }
                                   }
                                   return null;
@@ -2212,59 +2212,6 @@ class UploadIconButton extends StatelessWidget {
     );
   }
 }
-
-// class InputDropDown extends StatelessWidget {
-//   const InputDropDown({
-//     Key? key,
-//     required this.itemsList,
-//     required this.label,
-//     required this.func,
-//     required this.value,
-//     // this.modelType,
-//   }) : super(key: key);
-
-//   final List<String> itemsList;
-//   final String value;
-//   final Function(String) func;
-//   final String label;
-//   // final dynamic modelType;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: EdgeInsets.symmetric(
-//           vertical: blockSizeVertical(context: context) * 1),
-//       child: SizedBox(
-//         height: blockSizeVertical(context: context) * 6,
-//         child: DropdownSearch<String>(
-//           // focusNode: country,
-//           autoValidateMode: AutovalidateMode.onUserInteraction,
-
-//           // mode: Mode.BOTTOM_SHEET,
-//           items: itemsList,
-//           popupProps: const PopupProps.modalBottomSheet(),
-//           dropdownDecoratorProps:
-//               const DropDownDecoratorProps(textAlign: TextAlign.center),
-
-//           dropdownBuilder: (_, value) {
-//             return ConstantWidget.getTextWidget(
-//               value ?? label,
-//               ConstantData.mainTextColor,
-//               TextAlign.center,
-//               FontWeight.w600,
-//               font18Px(context: context),
-//             );
-//           },
-//           // hint: "Select Country",
-//           onChanged: (value) {
-//             func(value!);
-//           },
-//           selectedItem: value,
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 typedef Validator = String? Function(String?);
 

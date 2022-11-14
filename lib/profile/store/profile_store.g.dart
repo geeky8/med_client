@@ -168,6 +168,22 @@ mixin _$ProfileStore on _ProfileStore, Store {
     });
   }
 
+  late final _$cityFetchingAtom =
+      Atom(name: '_ProfileStore.cityFetching', context: context);
+
+  @override
+  StoreState get cityFetching {
+    _$cityFetchingAtom.reportRead();
+    return super.cityFetching;
+  }
+
+  @override
+  set cityFetching(StoreState value) {
+    _$cityFetchingAtom.reportWrite(value, super.cityFetching, () {
+      super.cityFetching = value;
+    });
+  }
+
   late final _$initAsyncAction =
       AsyncAction('_ProfileStore.init', context: context);
 
@@ -191,6 +207,15 @@ mixin _$ProfileStore on _ProfileStore, Store {
   Future<void> getAreaCitySpecific({String? id}) {
     return _$getAreaCitySpecificAsyncAction
         .run(() => super.getAreaCitySpecific(id: id));
+  }
+
+  late final _$getStateCitySpecificAsyncAction =
+      AsyncAction('_ProfileStore.getStateCitySpecific', context: context);
+
+  @override
+  Future<void> getStateCitySpecific({String? id}) {
+    return _$getStateCitySpecificAsyncAction
+        .run(() => super.getStateCitySpecific(id: id));
   }
 
   late final _$saveCertificateAsyncAction =
@@ -244,7 +269,8 @@ stateList: ${stateList},
 cityList: ${cityList},
 areaList: ${areaList},
 profileModel: ${profileModel},
-areaFetching: ${areaFetching}
+areaFetching: ${areaFetching},
+cityFetching: ${cityFetching}
     ''';
   }
 }

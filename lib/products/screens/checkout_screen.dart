@@ -165,16 +165,21 @@ class CheckoutScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                const Spacer(),
+                                // const Spacer(),
+                                SizedBox(
+                                  width:
+                                      blockSizeHorizontal(context: context) * 3,
+                                ),
                                 Expanded(
-                                  flex: 15,
+                                  // flex: 15,
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       ConstantWidget.getCustomText(
                                         productStore.cartModel
-                                            .productList[index].productName,
+                                            .productList[index].productName
+                                          ..trim(),
                                         ConstantData.mainTextColor,
                                         1,
                                         TextAlign.center,
