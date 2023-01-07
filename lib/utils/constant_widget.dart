@@ -33,7 +33,7 @@ class ConstantWidget {
       s,
       ConstantData.mainTextColor,
       FontWeight.w600,
-      font18Px(context: context) * 1.1,
+      font18Px(context: context) * 1.2,
     );
   }
 

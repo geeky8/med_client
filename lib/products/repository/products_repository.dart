@@ -383,7 +383,7 @@ class ProductsRepository {
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      // print('---------- checkout ${respBody}');
+      print('---------- checkout ${respBody}');
       if (respBody['status'] == '1') {
         return respBody['order_id'] as String;
       } else {

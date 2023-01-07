@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medrpha_customer/profile/screens/logout_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
           Provider<OrderHistoryStore>(create: (_) => OrderHistoryStore()),
         ],
         child: const SplashScreen(),
+        // child: const LogoutScreen(),
         // child: OrderHistory(),
         // child: const HomeScreen(),
         // child: const UpdateAppScreen(),

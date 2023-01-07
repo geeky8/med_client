@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class ProductModel {
   ProductModel({
     required this.pid,
@@ -20,10 +22,20 @@ class ProductModel {
     required this.expiryDate,
     required this.description,
     required this.totalQtyPrice,
+    required this.minQty,
+    this.warehouseId,
   });
 
   factory ProductModel.fromJson(
       {required Map<String, dynamic> json, bool? isCart}) {
+    int getMinimumQuantity(var value) {
+      if (value != null && value != "") {
+        return int.parse(value);
+      } else {
+        return 1;
+      }
+    }
+
     return ProductModel(
       pid: (json['pid'] ?? '') as String,
       wpid: (json['wpid'] ?? '') as String,
@@ -53,6 +65,8 @@ class ProductModel {
       expiryDate: '',
       description: '',
       totalQtyPrice: (json['totalqtymrp'] ?? '') as String,
+      minQty: getMinimumQuantity(json['minqty']),
+      warehouseId: (json['warehouse_id'] ?? '') as String,
     );
   }
 
@@ -67,6 +81,7 @@ class ProductModel {
     String? category,
     String? description,
     String? subTotal,
+    int? minQty,
     String? totalQtyPrice,
   }) {
     return ProductModel(
@@ -91,6 +106,7 @@ class ProductModel {
       expiryDate: expiryDate ?? this.expiryDate,
       description: description ?? this.description,
       totalQtyPrice: totalQtyPrice ?? this.totalQtyPrice,
+      minQty: minQty ?? this.minQty,
     );
   }
 
@@ -114,4 +130,6 @@ class ProductModel {
   final String expiryDate;
   final String description;
   final String totalQtyPrice;
+  final int minQty;
+  final String? warehouseId;
 }

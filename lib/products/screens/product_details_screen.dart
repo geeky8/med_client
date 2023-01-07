@@ -172,21 +172,40 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                                 // if (adminStatus) {
                                                 return Offstage(
                                                   offstage: !adminStatus,
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: blockSizeVertical(
-                                                            context: context)),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: ConstantData
+                                                            .mainTextColor,
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                        font18Px(
+                                                            context: context),
+                                                      ),
+                                                    ),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      vertical:
+                                                          blockSizeVertical(
+                                                              context: context),
+                                                      horizontal:
+                                                          blockSizeHorizontal(
+                                                                  context:
+                                                                      context) *
+                                                              2,
+                                                    ),
+                                                    child: Row(
+                                                      // crossAxisAlignment:
+                                                      //     CrossAxisAlignment
+                                                      //         .start,
+                                                      // mainAxisAlignment:
+                                                      //     MainAxisAlignment
+                                                      //         .center,
                                                       children: [
                                                         ConstantWidget
                                                             .getCustomText(
-                                                          'Avl.Qty:',
+                                                          'Avl Qty : ',
                                                           ConstantData
                                                               .mainTextColor,
                                                           2,
@@ -196,7 +215,7 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                                               context: context),
                                                         ),
                                                         ConstantWidget.getCustomText(
-                                                            '${widget.model.quantity} units',
+                                                            ' ${widget.model.quantity} units',
                                                             ConstantData
                                                                 .mainTextColor,
                                                             2,
@@ -214,29 +233,57 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                                 //   return const SizedBox();
                                                 // }
                                               }),
-                                              SizedBox(
-                                                width: ConstantWidget
-                                                    .getScreenPercentSize(
-                                                  context,
-                                                  2,
-                                                ),
-                                              ),
+                                              // SizedBox(
+                                              //   width: ConstantWidget
+                                              //       .getScreenPercentSize(
+                                              //     context,
+                                              //     2,
+                                              //   ),
+                                              // ),
                                             ],
                                           ),
 
+                                          SizedBox(
+                                            height: blockSizeVertical(
+                                                    context: context) *
+                                                4,
+                                          ),
+
                                           Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: blockSizeVertical(
+                                            padding: EdgeInsets.only(
+                                              top: blockSizeVertical(
                                                       context: context) *
                                                   2,
                                             ),
-                                            child: ConstantWidget
-                                                .getSpaceTextWidget(
-                                              widget.model.description,
-                                              ConstantData.textColor,
-                                              TextAlign.start,
-                                              FontWeight.w400,
-                                              font18Px(context: context),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                ConstantWidget.getCustomText(
+                                                  "Description :",
+                                                  ConstantData.textColor,
+                                                  2,
+                                                  TextAlign.start,
+                                                  FontWeight.w500,
+                                                  font18Px(context: context) *
+                                                      1.1,
+                                                ),
+                                                SizedBox(
+                                                  width: blockSizeHorizontal(
+                                                          context: context) *
+                                                      6,
+                                                ),
+                                                Expanded(
+                                                  child: ConstantWidget
+                                                      .getSpaceTextWidget(
+                                                    widget.model.description,
+                                                    ConstantData.mainTextColor,
+                                                    TextAlign.start,
+                                                    FontWeight.w500,
+                                                    font18Px(context: context),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
 
@@ -255,7 +302,8 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                                 2,
                                                 TextAlign.start,
                                                 FontWeight.w500,
-                                                font18Px(context: context),
+                                                font18Px(context: context) *
+                                                    1.1,
                                               ),
                                               SizedBox(
                                                 width: blockSizeHorizontal(
@@ -287,6 +335,20 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                                     CrossAxisAlignment.center,
                                                 children: [
                                                   ConstantWidget.getCustomText(
+                                                    "Price :",
+                                                    ConstantData.textColor,
+                                                    2,
+                                                    TextAlign.start,
+                                                    FontWeight.w500,
+                                                    font18Px(context: context) *
+                                                        1.1,
+                                                  ),
+                                                  SizedBox(
+                                                    width: blockSizeHorizontal(
+                                                            context: context) *
+                                                        4,
+                                                  ),
+                                                  ConstantWidget.getCustomText(
                                                       '₹${widget.model.newMrp}',
                                                       ConstantData
                                                           .mainTextColor,
@@ -298,24 +360,31 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                                   SizedBox(
                                                     width: ((margin) / 4),
                                                   ),
-                                                  ConstantWidget.getLineTextView(
-                                                      '₹${widget.model.oldMrp}',
-                                                      Colors.grey,
-                                                      font18Px(
-                                                          context: context)),
-                                                  Expanded(
-                                                    child: ConstantWidget
-                                                        .getCustomText(
-                                                      widget.model
-                                                          .percentDiscount,
-                                                      ConstantData.accentColor,
-                                                      2,
-                                                      TextAlign.end,
-                                                      FontWeight.w600,
-                                                      ConstantWidget
-                                                          .getScreenPercentSize(
-                                                              context, 2),
-                                                    ),
+                                                  ConstantWidget
+                                                      .getLineTextView(
+                                                    '₹${widget.model.oldMrp}',
+                                                    Colors.grey,
+                                                    font18Px(context: context),
+                                                  ),
+                                                  ConstantWidget.getCustomText(
+                                                    ' @\t\t',
+                                                    ConstantData.mainTextColor,
+                                                    1,
+                                                    TextAlign.center,
+                                                    FontWeight.bold,
+                                                    font22Px(context: context) *
+                                                        1.2,
+                                                  ),
+                                                  ConstantWidget.getCustomText(
+                                                    widget
+                                                        .model.percentDiscount,
+                                                    ConstantData.accentColor,
+                                                    2,
+                                                    TextAlign.end,
+                                                    FontWeight.w600,
+                                                    ConstantWidget
+                                                        .getScreenPercentSize(
+                                                            context, 2),
                                                   ),
                                                 ],
                                               );

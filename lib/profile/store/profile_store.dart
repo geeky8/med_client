@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:medrpha_customer/enums/button_state.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
@@ -209,42 +210,58 @@ abstract class _ProfileStore with Store {
     }
   }
 
+  @observable
+  StoreState certificateUploadingState = StoreState.SUCCESS;
+
   @action
   Future<void> saveCertificate({
     required String path,
     required List<int> bytes,
     required String url,
-    required BuildContext context,
+    // required BuildContext context,
   }) async {
+    // certificateUploadingState = StoreState.LOADING;
+
     final sessId = await DataBox().readSessId();
-    final snackBar =
-        ConstantWidget.customSnackBar(text: 'Uploading...', context: context);
 
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    /// Updating the licenses
     final s = await _repository.uploadPhoto(
-        sessId: sessId, bytes: bytes, path: path, url: url);
-    // print(s);
+      sessId: sessId,
+      bytes: bytes,
+      path: path,
+      url: url,
+    );
 
+    /// Fetching updated data
     final model = await _repository.getProfile();
+
+    /// Updating DL and FSAAI
     profileModel = profileModel.copyWith(
       drugLicenseModel: profileModel.drugLicenseModel.copyWith(
         dlImg1: model.drugLicenseModel.dlImg1,
         dlImg2: model.drugLicenseModel.dlImg2,
       ),
-    );
-    profileModel = profileModel.copyWith(
       fssaiModel:
           profileModel.fssaiModel.copyWith(fssaiImg: model.fssaiModel.fssaiImg),
     );
+
+    /// Responses
     if (s == '1') {
-      final snackBar = ConstantWidget.customSnackBar(
-          text: 'Successfully Uploaded', context: context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(msg: 'License Uploaded Successfully');
     } else {
-      final snackBar = ConstantWidget.customSnackBar(
-          text: 'Error in uploading please try again', context: context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(msg: 'Failed to upload License');
     }
+
+    // certificateUploadingState = StoreState.SUCCESS;
+    // if (s == '1') {
+    //   final snackBar = ConstantWidget.customSnackBar(
+    //       text: 'Successfully Uploaded', context: context);
+    //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    // } else {
+    //   final snackBar = ConstantWidget.customSnackBar(
+    //       text: 'Error in uploading please try again', context: context);
+    //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    // }
     // print(profileModel.fssaiModel.fssaiImg + ' Yes');
   }
 
@@ -254,53 +271,42 @@ abstract class _ProfileStore with Store {
     bool? beginToFill,
     required LoginStore loginStore,
   }) async {
+    /// Fetch the required session id from local storage
     final sessId = await DataBox().readSessId();
+
+    /// To check whether GST details are filled or not
     final gstToFIll = profileModel.gstModel.toFill;
-    // final dlToFill = profileModel.drugLicenseModel.toFill;
+
+    /// To check whether FSSAI details are filled or not
     final fssaiToFill = profileModel.fssaiModel.toFill;
 
     saveState = ButtonState.LOADING;
 
-    /// Uploading [FirmInfoModel] data
+    /// Uploading Firm data
     final firmInfoModel = profileModel.firmInfoModel;
     final respFirmInfo = await _repository.uploadProfile(
       sessId: sessId,
       model: firmInfoModel,
     );
 
-    /// Uploading [DrugLicenseModel] data.
-    // if (dlToFill) {
+    /// Uploading Drug License data.
     final drugLicenseModel = profileModel.drugLicenseModel;
     final respDrugLicense = await _repository.uploadDrugLicenseDetails(
       sessId: sessId,
       model: drugLicenseModel,
     );
-    if (respDrugLicense == '0') {
-      saveState = ButtonState.ERROR;
-      final snackBar = ConstantWidget.customSnackBar(
-          text: 'Error in uploading DL details, Please try again',
-          context: context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-    // saveState = ButtonState.ERROR;
-    // }
 
-    /// Uploading [GSTModel] data
+    /// Uploading GST data
+    String respGST = '';
     if (gstToFIll) {
       final gstModel = profileModel.gstModel;
-      final respGST = await _repository.uploadGSTDetails(
+      respGST = await _repository.uploadGSTDetails(
         sessId: sessId,
         model: gstModel,
       );
-      if (respGST == '0') {
-        saveState = ButtonState.ERROR;
-        final snackBar = ConstantWidget.customSnackBar(
-            text: 'Error in updating GST details, Please try again',
-            context: context);
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
       // saveState = ButtonState.ERROR;
-    } else if (beginToFill == null) {
+    } else {
+      //TODO: Update the URL's
       const url = 'https://api.medrpha.com/api/register/registergstnodelete';
       // const url =
       // 'https://apitest.medrpha.com/api/register/registergstnodelete';
@@ -308,30 +314,21 @@ abstract class _ProfileStore with Store {
       final resp = await _repository.deleteLicenses(
         url: url,
       );
-      if (resp == null) {
-        final snackBar = ConstantWidget.customSnackBar(
-            text: 'Error in updating GST details, Please try again',
-            context: context);
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
+      // if (!resp == null) {
+      //   Fluttertoast.showToast(msg: 'Failed to delete GST');
+      // }
     }
 
-    /// Uploading [FSSAIModel] data.
+    /// Uploading FSSAI data.
+    String respFSSAI = '';
     if (fssaiToFill) {
       final fssaiModel = profileModel.fssaiModel;
-      final respFSSAI = await _repository.uploadFSSAIDetails(
+      respFSSAI = await _repository.uploadFSSAIDetails(
         sessId: sessId,
         model: fssaiModel,
       );
-      if (respFSSAI == '0') {
-        saveState = ButtonState.ERROR;
-        final snackBar = ConstantWidget.customSnackBar(
-            text: 'Error in uploading FSSAI details, Please try again',
-            context: context);
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-      // saveState = ButtonState.ERROR;
-    } else if (beginToFill == null) {
+    } else {
+      //TODO: Update the URL's
       const url = 'https://api.medrpha.com/api/register/registerfssaidelete';
       // const url =
       //     'https://apitest.medrpha.com/api/register/registerfssaidelete';
@@ -339,31 +336,33 @@ abstract class _ProfileStore with Store {
       final resp = await _repository.deleteLicenses(
         url: url,
       );
-      if (resp == null) {
-        final snackBar = ConstantWidget.customSnackBar(
-            text: 'Error in updating FSSAI details, Please try again',
-            context: context);
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
+      // if (resp == null) {
+      //   Fluttertoast.showToast(msg: 'Failed to delete FSSAI');
+      // }
     }
 
     if (respFirmInfo == '0') {
-      saveState = ButtonState.ERROR;
-      final snackBar = ConstantWidget.customSnackBar(
-          text: 'Error in uploading profile details, Please try again',
-          context: context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(msg: 'Failed to upload FIRM DETAILS');
     }
-
-    if (saveState != ButtonState.ERROR) {
-      saveState = ButtonState.SUCCESS;
+    if (respDrugLicense == '0') {
+      Fluttertoast.showToast(msg: 'Failed to upload DRUG LICENSE DETAILS');
+    }
+    if (respGST != '0') {
+      Fluttertoast.showToast(msg: 'Failed to upload GST DETAILS');
+    }
+    if (respFSSAI != '0') {
+      Fluttertoast.showToast(msg: 'Failed to upload FSSAI DETAILS');
+    }
+    if (respFirmInfo != '0' &&
+        respDrugLicense != '0' &&
+        respGST != '0' &&
+        respFSSAI != '0') {
       page = 0;
       await loginStore.getUserStatus();
-      final snackBar = ConstantWidget.customSnackBar(
-          text: 'Success, profile updated', context: context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(msg: 'Profile Detials Updated Successfully');
       // Navigator.pop(context);
     }
+    saveState = ButtonState.SUCCESS;
   }
 
   // @action

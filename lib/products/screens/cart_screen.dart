@@ -38,150 +38,163 @@ class CartScreen extends StatelessWidget {
     return WillPopScope(
       child: Scaffold(
         backgroundColor: ConstantData.bgColor,
-        bottomNavigationBar: Stack(
-          alignment: Alignment.bottomCenter,
-          // overflow: Overflow.visible,
-          children: [
-            Container(
-              height: ConstantWidget.getScreenPercentSize(context, 10),
-              padding: EdgeInsets.symmetric(
-                horizontal: blockSizeHorizontal(context: context) * 4,
-                vertical: blockSizeVertical(context: context) * 1.5,
-              ),
-              decoration: BoxDecoration(
-                color: ConstantData.bgColor,
-                borderRadius: BorderRadius.circular(12),
+        bottomNavigationBar: Container(
+          height: ConstantWidget.getScreenPercentSize(context, 16),
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            // overflow: Overflow.visible,
+            children: [
+              Container(
+                height: ConstantWidget.getScreenPercentSize(context, 10),
+                padding: EdgeInsets.symmetric(
+                  horizontal: blockSizeHorizontal(context: context) * 4,
+                  vertical: blockSizeVertical(context: context) * 1.5,
+                ),
+                decoration: BoxDecoration(
+                  color: ConstantData.bgColor,
+                  borderRadius: BorderRadius.circular(12),
 
-                boxShadow: [
-                  BoxShadow(
-                    color: ConstantData.textColor,
-                    blurRadius: 4,
-                    // spreadRadius: 4,
-                    offset: const Offset(1, 1),
-                    blurStyle: BlurStyle.outer,
-                  ),
-                ],
-                // borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left: blockSizeHorizontal(context: context) * 4),
-                      child: Column(
-                        // mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ConstantWidget.getCustomText(
-                            'Amount:',
-                            ConstantData.primaryColor,
-                            1,
-                            TextAlign.start,
-                            FontWeight.w600,
-                            font18Px(context: context),
-                            // 1.2,
-                          ),
-                          SizedBox(
-                            height: blockSizeVertical(context: context),
-                          ),
-                          Observer(builder: (_) {
-                            final adminStatus =
-                                loginStore.loginModel.adminStatus;
-
-                            print(
-                                'check cart price-------- ${store.cartModel.totalSalePrice}');
-
-                            return ConstantWidget.getCustomText(
-                              '₹${(adminStatus) ? double.parse(store.cartModel.totalSalePrice).toStringAsFixed(2) : '0'}',
-                              ConstantData.mainTextColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: ConstantData.textColor,
+                      blurRadius: 4,
+                      // spreadRadius: 4,
+                      offset: const Offset(1, 1),
+                      blurStyle: BlurStyle.outer,
+                    ),
+                  ],
+                  // borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: blockSizeHorizontal(context: context) * 4),
+                        child: Column(
+                          // mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ConstantWidget.getCustomText(
+                              'Amount:',
+                              ConstantData.primaryColor,
                               1,
-                              TextAlign.end,
+                              TextAlign.start,
                               FontWeight.w600,
-                              font18Px(context: context) * 1.1,
-                            );
-                          })
-                        ],
+                              font18Px(context: context),
+                              // 1.2,
+                            ),
+                            SizedBox(
+                              height: blockSizeVertical(context: context),
+                            ),
+                            Observer(builder: (_) {
+                              final adminStatus =
+                                  loginStore.loginModel.adminStatus;
+
+                              // print(
+                              //     'check cart price-------- ${store.cartModel.totalSalePrice}');
+
+                              return ConstantWidget.getCustomText(
+                                '₹${(adminStatus) ? double.parse(store.cartModel.totalSalePrice).toStringAsFixed(2) : '0'}',
+                                ConstantData.mainTextColor,
+                                1,
+                                TextAlign.end,
+                                FontWeight.w600,
+                                font18Px(context: context) * 1.1,
+                              );
+                            })
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  // SizedBox(
-                  //   height: blockSizeVertical(context: context) * 2,
-                  // ),
-                  const Spacer(),
+                    // SizedBox(
+                    //   height: blockSizeVertical(context: context) * 2,
+                    // ),
+                    const Spacer(),
 
-                  Expanded(
-                    flex: 5,
-                    child: Observer(builder: (_) {
-                      final adminStatus = loginStore.loginModel.adminStatus;
-                      return InkWell(
-                        onTap: () {
-                          final check = store.cartModel.productList.indexWhere(
-                              (element) => element.subTotal == '0.00');
-                          if (check != -1) {
-                            Fluttertoast.showToast(
-                                msg: 'Please remove the unnecessary products');
-                          } else {
-                            if (store.cartModel.productList.isNotEmpty &&
-                                adminStatus) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => Provider.value(
-                                    value: profileStore,
-                                    child: Provider.value(
-                                      value: store,
-                                      child: Provider.value(
-                                        value: loginStore,
+                    Expanded(
+                      flex: 5,
+                      child: Observer(builder: (_) {
+                        final adminStatus = loginStore.loginModel.adminStatus;
+                        return InkWell(
+                          onTap: () {
+                            // if admin approval is pending
+                            if (!adminStatus) {
+                              Fluttertoast.showToast(
+                                  msg: 'Admin Approval is Pending');
+                            } else {
+                              final check = store.cartModel.productList
+                                  .indexWhere(
+                                      (element) => element.subTotal == '0.00');
+                              if (check != -1) {
+                                Fluttertoast.showToast(
+                                    msg:
+                                        'Please remove the unnecessary products');
+                              } else if (double.parse(
+                                      store.cartModel.totalSalePrice) <
+                                  500.00) {
+                                Fluttertoast.showToast(
+                                    msg: 'Mimimum Order of ₹500');
+                              } else {
+                                if (store.cartModel.productList.isNotEmpty) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => Provider.value(
+                                        value: profileStore,
                                         child: Provider.value(
-                                          value: orderHistoryStore,
+                                          value: store,
                                           child: Provider.value(
-                                            value: bottomNavigationStore,
-                                            child: const CheckoutScreen(),
+                                            value: loginStore,
+                                            child: Provider.value(
+                                              value: orderHistoryStore,
+                                              child: Provider.value(
+                                                value: bottomNavigationStore,
+                                                child: const CheckoutScreen(),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              final snackBar = ConstantWidget.customSnackBar(
-                                  text: 'No items in cart', context: context);
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
+                                  );
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: 'No products in cart');
+                                }
+                              }
                             }
-                          }
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            vertical: blockSizeVertical(context: context) * 2,
-                            // horizontal:
-                            //     blockSizeHorizontal(context: context) * 8,
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: blockSizeVertical(context: context) * 2,
+                              // horizontal:
+                              //     blockSizeHorizontal(context: context) * 8,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                  font25Px(context: context)),
+                              color: ConstantData.primaryColor,
+                            ),
+                            child: ConstantWidget.getCustomText(
+                              'Continue',
+                              ConstantData.bgColor,
+                              1,
+                              TextAlign.center,
+                              FontWeight.w600,
+                              font18Px(context: context),
+                            ),
                           ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                font25Px(context: context)),
-                            color: ConstantData.primaryColor,
-                          ),
-                          child: ConstantWidget.getCustomText(
-                            'Continue',
-                            ConstantData.bgColor,
-                            1,
-                            TextAlign.center,
-                            FontWeight.w600,
-                            font18Px(context: context),
-                          ),
-                        ),
-                      );
-                    }),
-                  )
-                ],
+                        );
+                      }),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         body: SafeArea(
           child: Observer(builder: (_) {

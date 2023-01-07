@@ -303,6 +303,7 @@ class ProfileRepository {
     final respStream = await request.send();
     // print(object)
     final resp = await http.Response.fromStream(respStream);
+    debugPrint('-------- license ${resp.body}');
     if (resp.statusCode == 200) {
       // print(resp.body);
       return '1';

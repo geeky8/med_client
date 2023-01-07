@@ -184,6 +184,23 @@ mixin _$ProfileStore on _ProfileStore, Store {
     });
   }
 
+  late final _$certificateUploadingStateAtom =
+      Atom(name: '_ProfileStore.certificateUploadingState', context: context);
+
+  @override
+  StoreState get certificateUploadingState {
+    _$certificateUploadingStateAtom.reportRead();
+    return super.certificateUploadingState;
+  }
+
+  @override
+  set certificateUploadingState(StoreState value) {
+    _$certificateUploadingStateAtom
+        .reportWrite(value, super.certificateUploadingState, () {
+      super.certificateUploadingState = value;
+    });
+  }
+
   late final _$initAsyncAction =
       AsyncAction('_ProfileStore.init', context: context);
 
@@ -223,12 +240,9 @@ mixin _$ProfileStore on _ProfileStore, Store {
 
   @override
   Future<void> saveCertificate(
-      {required String path,
-      required List<int> bytes,
-      required String url,
-      required BuildContext context}) {
-    return _$saveCertificateAsyncAction.run(() => super
-        .saveCertificate(path: path, bytes: bytes, url: url, context: context));
+      {required String path, required List<int> bytes, required String url}) {
+    return _$saveCertificateAsyncAction
+        .run(() => super.saveCertificate(path: path, bytes: bytes, url: url));
   }
 
   late final _$updateProfileAsyncAction =
@@ -270,7 +284,8 @@ cityList: ${cityList},
 areaList: ${areaList},
 profileModel: ${profileModel},
 areaFetching: ${areaFetching},
-cityFetching: ${cityFetching}
+cityFetching: ${cityFetching},
+certificateUploadingState: ${certificateUploadingState}
     ''';
   }
 }

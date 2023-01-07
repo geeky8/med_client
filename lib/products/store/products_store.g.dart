@@ -523,6 +523,23 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$savedListForDeletionAtom =
+      Atom(name: '_ProductsStore.savedListForDeletion', context: context);
+
+  @override
+  List<ProductModel> get savedListForDeletion {
+    _$savedListForDeletionAtom.reportRead();
+    return super.savedListForDeletion;
+  }
+
+  @override
+  set savedListForDeletion(List<ProductModel> value) {
+    _$savedListForDeletionAtom.reportWrite(value, super.savedListForDeletion,
+        () {
+      super.savedListForDeletion = value;
+    });
+  }
+
   late final _$getCategoriesAsyncAction =
       AsyncAction('_ProductsStore.getCategories', context: context);
 
@@ -612,17 +629,6 @@ mixin _$ProductsStore on _ProductsStore, Store {
         .run(() => super.getCartItems(isRemove: isRemove, cartOpt: cartOpt));
   }
 
-  late final _$_updateProductsAccordingToCartAsyncAction = AsyncAction(
-      '_ProductsStore._updateProductsAccordingToCart',
-      context: context);
-
-  @override
-  Future<ProductModel> _updateProductsAccordingToCart(
-      {required ProductModel model}) {
-    return _$_updateProductsAccordingToCartAsyncAction
-        .run(() => super._updateProductsAccordingToCart(model: model));
-  }
-
   late final _$updateCartQunatityAsyncAction =
       AsyncAction('_ProductsStore.updateCartQunatity', context: context);
 
@@ -670,9 +676,13 @@ mixin _$ProductsStore on _ProductsStore, Store {
 
   @override
   Future<void> removeFromCart(
-      {required ProductModel model, required BuildContext context}) {
-    return _$removeFromCartAsyncAction
-        .run(() => super.removeFromCart(model: model, context: context));
+      {required ProductModel model,
+      required BuildContext context,
+      int? removalByPlusMinus}) {
+    return _$removeFromCartAsyncAction.run(() => super.removeFromCart(
+        model: model,
+        context: context,
+        removalByPlusMinus: removalByPlusMinus));
   }
 
   late final _$checkoutAsyncAction =
@@ -761,7 +771,8 @@ removeState: ${removeState},
 paymentOptions: ${paymentOptions},
 orderId: ${orderId},
 payableAmount: ${payableAmount},
-checkoutState: ${checkoutState}
+checkoutState: ${checkoutState},
+savedListForDeletion: ${savedListForDeletion}
     ''';
   }
 }

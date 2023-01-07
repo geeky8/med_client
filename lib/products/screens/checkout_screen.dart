@@ -66,21 +66,16 @@ class CheckoutScreen extends StatelessWidget {
             context: context,
             height: 10,
             func: () async {
-              // _startTimer();
-              // await _loginStore.getUserStatus();
-              // if (_loginStore.loginModel.adminStatus) {
-              //   if (_productStore.paymentOptions == PaymentOptions.ONLINE) {
               productStore.checkoutState = StoreState.LOADING;
+
               final value = await productStore.checkout(context: context);
               productStore.checkoutState = StoreState.SUCCESS;
-
-              // print('orderid------------------${productStore.orderId}');
               if (value != '') {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => Provider.value(
-                      value: productStore..init(),
+                      value: productStore,
                       child: Provider.value(
                         value: profileStore,
                         child: Provider.value(
@@ -224,7 +219,7 @@ class CheckoutScreen extends StatelessWidget {
                           Row(
                             children: [
                               ConstantWidget.getTextWidget(
-                                'Address',
+                                'Shipping Address',
                                 ConstantData.mainTextColor,
                                 TextAlign.start,
                                 FontWeight.w600,
@@ -303,7 +298,7 @@ class CheckoutScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ConstantWidget.getCustomText(
-                            'Details',
+                            'Order Details',
                             ConstantData.mainTextColor,
                             1,
                             TextAlign.center,
@@ -327,6 +322,30 @@ class CheckoutScreen extends StatelessWidget {
                               const Spacer(),
                               ConstantWidget.getCustomText(
                                 '₹${double.parse(productStore.cartModel.totalSalePrice).toStringAsFixed(2)}',
+                                Colors.black45,
+                                1,
+                                TextAlign.center,
+                                FontWeight.w600,
+                                font15Px(context: context) * 1.1,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: blockSizeVertical(context: context) * 2,
+                          ),
+                          Row(
+                            children: [
+                              ConstantWidget.getCustomText(
+                                'Shipping Charges',
+                                Colors.black45,
+                                1,
+                                TextAlign.center,
+                                FontWeight.w600,
+                                font15Px(context: context) * 1.1,
+                              ),
+                              const Spacer(),
+                              ConstantWidget.getCustomText(
+                                'as per address',
                                 Colors.black45,
                                 1,
                                 TextAlign.center,

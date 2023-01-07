@@ -513,7 +513,7 @@ class _OrderTileState extends State<OrderTile> {
                   horizontal: blockSizeHorizontal(context: context) * 4,
                 ),
                 child: ConstantWidget.getCustomText(
-                  widget.model.placedDateTime.split(' ')[0],
+                  'Date : ${widget.model.placedDateTime.split(' ')[0]}',
                   ConstantData.mainTextColor,
                   1,
                   TextAlign.center,
@@ -531,7 +531,7 @@ class _OrderTileState extends State<OrderTile> {
                   horizontal: blockSizeHorizontal(context: context) * 4,
                 ),
                 child: ConstantWidget.getCustomText(
-                  'Order ${widget.model.orderId}',
+                  'Order ID : ${widget.model.orderId}',
                   ConstantData.mainTextColor,
                   1,
                   TextAlign.center,

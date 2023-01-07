@@ -9,6 +9,7 @@ import 'package:medrpha_customer/profile/screens/profile_details_screen.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/screens/login_screen.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
+import 'package:medrpha_customer/splash.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
@@ -241,24 +242,49 @@ class SettingsPageScreen extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => Provider.value(
-                        value: loginStore..init(),
-                        child: Provider.value(
-                          value: productStore,
-                          child: Provider.value(
-                            value: profileStore..init(),
-                            child: Provider.value(
-                              value: bottomNavigationStore,
-                              child: Provider.value(
-                                value: orderHistoryStore,
-                                child: LoginScreen(),
-                              ),
-                            ),
+                      builder: (_) => MultiProvider(
+                        providers: [
+                          Provider.value(
+                            value: loginStore..init(),
                           ),
-                        ),
+                          Provider.value(
+                            value: productStore,
+                          ),
+                          Provider.value(
+                            value: profileStore..init(),
+                          ),
+                          Provider.value(
+                            value: bottomNavigationStore,
+                          ),
+                          Provider.value(
+                            value: orderHistoryStore,
+                          ),
+                        ],
+                        child: const SplashScreen(),
                       ),
                     ),
                   );
+                  // Navigator.pushReplacement(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (_) => Provider.value(
+                  //       value: loginStore..init(),
+                  //       child: Provider.value(
+                  //         value: productStore,
+                  //         child: Provider.value(
+                  //           value: profileStore..init(),
+                  //           child: Provider.value(
+                  //             value: bottomNavigationStore,
+                  //             child: Provider.value(
+                  //               value: orderHistoryStore,
+                  //               child: LoginScreen(),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // );
                 },
               ),
             ],

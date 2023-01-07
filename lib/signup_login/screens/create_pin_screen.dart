@@ -68,7 +68,7 @@ class SignInPage extends StatelessWidget {
                   PinInput(
                     pinEditingController: _pinController,
                     // enable: true,
-                    isObscure: true,
+                    isObscure: false,
                     action: TextInputAction.next,
                     label: 'Enter Pin',
                     func: () {
@@ -84,7 +84,7 @@ class SignInPage extends StatelessWidget {
                     pinEditingController: _confirmPinController,
                     // enable: false,
                     action: TextInputAction.done,
-                    isObscure: false,
+                    isObscure: true,
                     label: 'Confrim Pin',
                     onSubmit: (value) {
                       confirmPin = value;

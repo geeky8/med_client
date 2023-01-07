@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
-
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -461,7 +461,7 @@ abstract class _ProductsStore with Store {
     debugPrint('----- cart total----${cartModel.totalSalePrice}');
   }
 
-  @action
+  /// [Function] to update the product in mentioned product list.
   Future<ProductModel> _updateProductsAccordingToCart(
       {required ProductModel model}) async {
     if (model.subTotal == '0.00') {
@@ -556,51 +556,51 @@ abstract class _ProductsStore with Store {
     required String value,
     required BuildContext context,
   }) async {
-    SnackBar snackBar;
-    print('$value ------- ${model.quantity}');
-    if (int.parse(value) > int.parse(model.quantity)) {
-      snackBar = ConstantWidget.customSnackBar(
-          text: 'Quantity not available', context: context);
-    } else if (int.parse(value) <= 0) {
-      snackBar = ConstantWidget.customSnackBar(
-          text: 'Quantity not available', context: context);
+    if (int.parse(value) > int.parse(model.quantity) ||
+        int.parse(value) < model.minQty) {
+      Fluttertoast.showToast(msg: 'Quantity Not Available');
     } else {
-      cartTotal(
+      final rem = (int.parse(value) % model.minQty);
+      int val = int.parse(value);
+      if (rem < (model.minQty) / 2) {
+        val -= rem;
+      } else {
+        val += (model.minQty - rem);
+      }
+      cartUpdate(
         totalPrice: double.parse(cartModel.totalSalePrice),
         oldTotal: (double.parse(model.newMrp) * model.cartQuantity!),
-        newTotal: (double.parse(model.newMrp) * int.parse(value)),
+        newTotal: (double.parse(model.newMrp) * val),
       );
 
-      final currModel = model.copyWith(
-        cartQuantity: int.parse(value),
-        subTotal: (double.parse(model.newMrp) * int.parse(value)).toString(),
+      model = model.copyWith(
+        cartQuantity: val,
+        subTotal: (double.parse(model.newMrp) * val).toString(),
       );
 
       final index = cartModel.productList
-          .indexWhere((element) => element.pid == currModel.pid);
+          .indexWhere((element) => element.pid == model.pid);
       cartModel.productList
         ..removeAt(index)
-        ..insert(index, currModel);
+        ..insert(index, model);
 
-      await _updateProductsAccordingToCart(model: currModel);
+      await _updateProductsAccordingToCart(model: model);
 
-      _productsRepository.updateQuantity(model: currModel);
+      _productsRepository.updateQuantity(model: model);
 
-      snackBar = ConstantWidget.customSnackBar(
-          text: 'Qunatity updated', context: context);
-      // plusMinusToCart(model: currModel);
       Navigator.pop(context);
     }
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void cartTotal({
+  /// [Function] to update the cart on regular intervals
+  void cartUpdate({
     required double totalPrice,
     required double oldTotal,
     required double newTotal,
   }) {
     final total = (totalPrice - oldTotal) + newTotal;
-    cartModel = cartModel.copyWith(totalSalePrice: total.toStringAsFixed(2));
+    cartModel =
+        cartModel.copyWith(totalSalePrice: total.toStringAsFixed(2)..trim());
   }
 
   @observable
@@ -617,52 +617,45 @@ abstract class _ProductsStore with Store {
     required ProductModel model,
     required BuildContext context,
   }) async {
-    // plusMinusRemoveState = StoreState.LOADING;
-    Stopwatch stopwatch = Stopwatch()..start();
-    int qty = model.cartQuantity! + 1;
-    if (int.parse(model.quantity) > 0) {
-      if (qty > int.parse(model.quantity)) {
-        final snackBar = ConstantWidget.customSnackBar(
-            text: 'Quantity not available', context: context);
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else {
-        cartTotal(
-          totalPrice: double.parse(cartModel.totalSalePrice),
-          oldTotal: (double.parse(model.newMrp) * (qty - 1)),
-          newTotal: (double.parse(model.newMrp) * qty),
-        );
+    int qty = model.cartQuantity! + model.minQty;
+    if (qty > int.parse(model.quantity)) {
+      Fluttertoast.showToast(msg: 'Quantity Not Available');
+    } else {
+      cartUpdate(
+        totalPrice: double.parse(cartModel.totalSalePrice),
+        oldTotal: (double.parse(model.newMrp) * (qty - model.minQty)),
+        newTotal: (double.parse(model.newMrp) * qty),
+      );
 
-        final currModel = model.copyWith(
-          cartQuantity: qty,
-          subTotal: (double.parse(model.newMrp) * qty).toString(),
-        );
+      model = model.copyWith(
+        cartQuantity: qty,
+        subTotal: (double.parse(model.newMrp) * qty).toString(),
+      );
 
-        debugPrint('-----added qty ${currModel.cartQuantity}');
+      final index = cartModel.productList
+          .indexWhere((element) => element.pid == model.pid);
+      cartModel.productList
+        ..removeAt(index)
+        ..insert(index, model);
 
-        final index = cartModel.productList
-            .indexWhere((element) => element.pid == currModel.pid);
-        cartModel.productList
-          ..removeAt(index)
-          ..insert(index, currModel);
+      await _updateProductsAccordingToCart(model: model);
 
-        await _updateProductsAccordingToCart(model: currModel);
-
-        final value = _productsRepository.plusTheCart(model: currModel);
-        SnackBar snackBar;
-        if (value == null) {
-          snackBar = ConstantWidget.customSnackBar(
-            text: 'Failed to update the cart',
-            context: context,
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        }
-        stopwatch.stop();
-        if (kDebugMode) {
-          print('plus cart seconds ${stopwatch.elapsedMilliseconds}');
-        }
-        // plusMinusToCart(model: currModel);
-      }
+      _productsRepository.plusTheCart(model: model);
+      // SnackBar snackBar;
+      // if (value == null) {
+      //   snackBar = ConstantWidget.customSnackBar(
+      //     text: 'Failed to update the cart',
+      //     context: context,
+      //   );
+      //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // }
+      // stopwatch.stop();
+      // if (kDebugMode) {
+      //   print('plus cart seconds ${stopwatch.elapsedMilliseconds}');
+      // }
+      // plusMinusToCart(model: currModel);
     }
+    // }
 
     // plusMinusRemoveState = StoreState.SUCCESS;
   }
@@ -672,52 +665,42 @@ abstract class _ProductsStore with Store {
     required ProductModel model,
     required BuildContext context,
   }) async {
-    final stopWatch = Stopwatch()..start();
-    SnackBar snackBar;
-    if (model.cartQuantity! > 1) {
-      int qty = model.cartQuantity! - 1;
-      cartTotal(
+    if (model.cartQuantity! > model.minQty) {
+      int qty = model.cartQuantity! - model.minQty;
+      cartUpdate(
         totalPrice: double.parse(cartModel.totalSalePrice),
         oldTotal: (double.parse(model.newMrp) * (qty + 1)),
         newTotal: (double.parse(model.newMrp) * qty),
       );
 
-      final currModel = model.copyWith(
+      model = model.copyWith(
         cartQuantity: qty,
         subTotal: (double.parse(model.newMrp) * qty).toString(),
       );
       final index = cartModel.productList
-          .indexWhere((element) => element.pid == currModel.pid);
+          .indexWhere((element) => element.pid == model.pid);
       cartModel.productList
         ..removeAt(index)
-        ..insert(index, currModel);
+        ..insert(index, model);
 
-      await _updateProductsAccordingToCart(model: currModel);
+      await _updateProductsAccordingToCart(model: model);
 
-      final value = _productsRepository.minusTheCart(model: currModel);
-      if (value == null) {
-        snackBar = ConstantWidget.customSnackBar(
-          text: 'Failed to update the cart',
-          context: context,
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-      stopWatch.stop();
-      print('subtract seconds ------ ${stopWatch.elapsedMilliseconds}');
-    } else if (model.cartQuantity == 1) {
+      _productsRepository.minusTheCart(model: model);
+      // if (value == null) {
+      //   snackBar = ConstantWidget.customSnackBar(
+      //     text: 'Failed to update the cart',
+      //     context: context,
+      //   );
+      //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // }
+    } else if (model.cartQuantity == model.minQty) {
       await removeFromCart(
         model: model,
         context: context,
       );
-      snackBar = ConstantWidget.customSnackBar(
-        text: 'Removed from cart',
-        context: context,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(msg: 'Item Removed');
     } else {
-      snackBar = ConstantWidget.customSnackBar(
-          text: 'Quantity not available', context: context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(msg: 'Minimum Quantity Selected');
     }
   }
 
@@ -726,35 +709,26 @@ abstract class _ProductsStore with Store {
     required ProductModel model,
     required BuildContext context,
   }) async {
-    if (int.parse(model.quantity) > 0) {
-      final stopWatch = Stopwatch()..start();
+    if (int.parse(model.quantity) > model.minQty) {
+      int qty = model.minQty;
 
-      int qty = 1;
-
-      cartTotal(
+      cartUpdate(
         totalPrice: double.parse(cartModel.totalSalePrice),
         oldTotal: 0.0,
         newTotal: double.parse(model.newMrp) * qty,
       );
-      final currModel = model.copyWith(
+      model = model.copyWith(
         cartQuantity: qty,
         subTotal: (double.parse(model.newMrp) * qty).toString(),
       );
 
-      cartModel.productList.add(currModel);
-      await _updateProductsAccordingToCart(model: currModel);
+      cartModel.productList.add(model);
+      await _updateProductsAccordingToCart(model: model);
 
-      _productsRepository.addToCart(model: currModel);
-      // await getCartItems();
-      print(cartModel.totalSalePrice);
-      stopWatch.stop();
-      print('adding to cart --- ${stopWatch.elapsedMilliseconds}');
+      _productsRepository.addToCart(model: model);
+      _productsRepository.getCart();
     } else {
-      final snackBar = ConstantWidget.customSnackBar(
-        text: 'Product quantity not available',
-        context: context,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(msg: 'Quantity Not Available');
     }
   }
 
@@ -762,8 +736,9 @@ abstract class _ProductsStore with Store {
   Future<void> removeFromCart({
     required ProductModel model,
     required BuildContext context,
+    int? removalByPlusMinus,
   }) async {
-    cartTotal(
+    cartUpdate(
       totalPrice: double.parse(cartModel.totalSalePrice),
       oldTotal: (double.parse(model.newMrp) * model.cartQuantity!),
       newTotal: 0.00,
@@ -781,20 +756,9 @@ abstract class _ProductsStore with Store {
 
     // await getCartItems(isRemove: true);
     if (index != -1) {
-      final value = _productsRepository.removeFromCart(model: model);
-      SnackBar snackBar;
-      if (value != null) {
-        snackBar = ConstantWidget.customSnackBar(
-          text: 'Removed from cart',
-          context: context,
-        );
-      } else {
-        snackBar = ConstantWidget.customSnackBar(
-          text: 'Failed to remove from cart',
-          context: context,
-        );
-      }
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      _productsRepository.removeFromCart(model: model);
+
+      Fluttertoast.showToast(msg: 'Product Removed');
     }
   }
 
@@ -808,15 +772,25 @@ abstract class _ProductsStore with Store {
   @observable
   String payableAmount = '';
 
+  Future<bool> checkIfCartUpdated() async {
+    await getCartItems();
+    for (final model in cartModel.productList) {
+      if (model.cartQuantity! > int.parse(model.quantity) ||
+          model.cartQuantity! % model.minQty != 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @action
   Future<String> checkout({required BuildContext context}) async {
     String ans = '';
     checkoutState = StoreState.LOADING;
-    SnackBar snackBar = ConstantWidget.customSnackBar(
-      text: 'Failure, order not successful',
-      context: context,
-    );
-    debugPrint('---- before checkout -----------${cartModel.totalSalePrice}');
+    final check = await checkIfCartUpdated();
+    if (!check) {
+      return '';
+    }
     final payLater = (paymentOptions == PaymentOptions.PAYLATER) ? '2' : '1';
     final value = await _productsRepository.checkout(
         amount: cartModel.totalSalePrice, payLater: payLater);
@@ -825,24 +799,19 @@ abstract class _ProductsStore with Store {
 
     if (value != null) {
       orderId = value;
-      snackBar = ConstantWidget.customSnackBar(
-        text: 'Successful, checkout',
-        context: context,
-      );
       ans = value;
+
+      savedListForDeletion.addAll(cartModel.productList);
+
+      /// Updating [CartModel] after checkout
+      cartModel = cartModel.copyWith(
+        productList: ObservableList.of([]),
+        totalSalePrice: '0.00',
+        noOfProducts: 0,
+      );
     }
-    await getCartItems();
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    checkoutState = StoreState.SUCCESS;
-
+    // await getCartItems();
     return ans;
-    // return value;
-    //   },
-    // );
-
-    // return '';
-    //   },
-    // );
   }
 
   @action
@@ -850,12 +819,7 @@ abstract class _ProductsStore with Store {
     required BuildContext context,
     String? orderId,
   }) async {
-    // String status;
     checkoutState = StoreState.LOADING;
-
-    if (kDebugMode) {
-      print('------ order check -------$orderId');
-    }
 
     String confirm = '';
 
@@ -865,24 +829,11 @@ abstract class _ProductsStore with Store {
       if (paymentOptions == PaymentOptions.ONLINE) {
         payStatus =
             await _productsRepository.paymentConfirmation(orderId: orderId);
-        if (kDebugMode) {
-          print('------ payment check -------$payStatus');
-        }
-
         if (payStatus == 1) {
-          // print('options ---------${paymentOptions.toPaymentOption()}');
-          final snackBar = ConstantWidget.customSnackBar(
-            text: 'Your payment has been confirmed',
-            context: context,
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Fluttertoast.showToast(msg: 'Payment Confirmed');
         } else {
-          final snackBar = ConstantWidget.customSnackBar(
-            text:
-                'Failed to process the payment, we will confirm the order soon',
-            context: context,
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Fluttertoast.showToast(
+              msg: 'Failed to process the payment, don\'t try again');
         }
       }
 
@@ -892,14 +843,11 @@ abstract class _ProductsStore with Store {
           orderId: orderId,
           paymentOptionsType: paymentOptions,
         );
-        if (kDebugMode) {
-          print('------ confirm checkout check -------$confirmValue');
-        }
 
         if (confirmValue != '') {
           confirm = confirmValue;
         }
-        return confirmValue;
+        // return confirmValue;
       }
     }
     checkoutState = StoreState.SUCCESS;
@@ -933,9 +881,7 @@ abstract class _ProductsStore with Store {
           label: 'Cancel',
         ),
       );
-      final snackBar = ConstantWidget.customSnackBar(
-          text: 'Payment successfully confirmed', context: context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(msg: 'Payment successfully confirmed');
     } else {
       showDialog(
         context: context,
@@ -949,11 +895,23 @@ abstract class _ProductsStore with Store {
           label: 'Cancel',
         ),
       );
-      final snackBar = ConstantWidget.customSnackBar(
-          text: 'Failed to place the order', context: context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(msg: 'Failed to confirm the payment');
     }
     checkoutState = StoreState.SUCCESS;
+  }
+
+  @observable
+  List<ProductModel> savedListForDeletion = ObservableList.of([]);
+
+  Future<void> updateTheProducts() async {
+    // final sessId = await DataBox().readSessId();
+    // for (ProductModel model in savedListForDeletion) {
+    //   debugPrint('----- before updated ------- ${model.quantity}');
+    //   model = await _productsRepository.getProductDetails(
+    //       model: model, sessId: sessId);
+    //   debugPrint('----- after updated ------- ${model.quantity}');
+    //   await _updateProductsAccordingToCart(model: model);
+    // }
   }
 
   @action
@@ -970,10 +928,7 @@ abstract class _ProductsStore with Store {
     await loginStore.getUserStatus();
 
     if (!loginStore.loginModel.adminStatus) {
-      final snackBar = ConstantWidget.customSnackBar(
-          text: 'Your account has been deactivated', context: context);
-
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(msg: 'Account is deactivated');
     } else {
       final status = await confirmCheckout(
         context: context,
@@ -982,13 +937,11 @@ abstract class _ProductsStore with Store {
 
       if (status != '') {
         checkoutState = StoreState.SUCCESS;
-
-        // if (fromOrders == null) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (_) => Provider.value(
-              value: productsStore,
+              value: productsStore.._getProducts(),
               child: Provider.value(
                 value: loginStore,
                 child: Provider.value(
@@ -1011,10 +964,13 @@ abstract class _ProductsStore with Store {
           builder: (context) => OrderDialog(
             func: () async {
               final repo = OrderHistoryRepository();
+              checkoutState = StoreState.LOADING;
               final orderHistoryResponseModel =
                   await repo.getOrdersResponseModel(orderId: status);
               final orderHistoryModel = await repo.getListOrdersHistory(
-                  orderNo: orderHistoryResponseModel.orderNo);
+                orderNo: orderHistoryResponseModel.orderNo,
+              );
+              checkoutState = StoreState.SUCCESS;
               Navigator.pop(context);
 
               // if (fromOrders == null) {
@@ -1080,9 +1036,7 @@ abstract class _ProductsStore with Store {
             label: 'Cancel',
           ),
         );
-        final snackBar = ConstantWidget.customSnackBar(
-            text: 'Failed to place the order', context: context);
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
         checkoutState = StoreState.SUCCESS;
       }
     }

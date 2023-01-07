@@ -89,7 +89,7 @@ abstract class _LoginStore with Store {
                 child: Provider.value(
                   value: productsStore,
                   child: Provider.value(
-                    value: bottomNavigationStore,
+                    value: bottomNavigationStore..currentPage = 0,
                     child: Provider.value(
                       value: profileStore,
                       child: Provider.value(
