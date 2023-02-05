@@ -1,9 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
+import 'package:medrpha_customer/enums/categories.dart';
+import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 
 import 'package:medrpha_customer/products/screens/products_view_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
+import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
@@ -33,6 +37,9 @@ class CategoriesListScreen extends StatelessWidget {
 
     final store = context.read<ProductsStore>();
     final loginStore = context.read<LoginStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
+    final profileStore = context.read<ProfileStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
 
     final list = store.categories;
 
@@ -43,22 +50,6 @@ class CategoriesListScreen extends StatelessWidget {
           title: 'CATEGORY',
           isHome: isHome,
         ),
-        // appBar: AppBar(
-        //   elevation: 0,
-        //   centerTitle: true,
-        //   backgroundColor: ConstantData.bgColor,
-        //   title: ConstantWidget.getAppBarText('Category', context),
-        //   leading: Builder(
-        //     builder: (BuildContext context) {
-        //       return IconButton(
-        //         icon: ConstantWidget.getAppBarIcon(),
-        //         onPressed: () {
-        //           Navigator.pop(context);
-        //         },
-        //       );
-        //     },
-        //   ),
-        // ),
         body: SafeArea(
           child: Column(
             children: [
@@ -72,23 +63,6 @@ class CategoriesListScreen extends StatelessWidget {
                   );
                 }),
               ),
-              // AppBar(
-              //   elevation: 0,
-              //   centerTitle: true,
-              //   backgroundColor: ConstantData.bgColor,
-              //   title: ConstantWidget.getAppBarText('Category', context),
-              //   leading: Builder(
-              //     builder: (BuildContext context) {
-              //       return IconButton(
-              //         icon: ConstantWidget.getAppBarIcon(),
-              //         onPressed: () {
-              //           Navigator.pop(context);
-              //         },
-              //       );
-              //     },
-              //   ),
-              // ),
-
               Padding(
                 padding: EdgeInsets.symmetric(
                   vertical: blockSizeVertical(context: context) * 2,
@@ -107,10 +81,11 @@ class CategoriesListScreen extends StatelessWidget {
                     // childAspectRatio: 0.64,
                     primary: false,
                     children: List.generate(list.length, (index) {
-                      // z
-
                       return BackGroundTile(
                         categoryName: list[index].categoryName,
+                        orderHistoryStore: orderHistoryStore,
+                        bottomNavigationStore: bottomNavigationStore,
+                        profileStore: profileStore,
                         cellHeight: cellHeight,
                         colorIndex: 1,
                         catImgUrl: list[index].categoryImgUrl,
@@ -134,6 +109,9 @@ class BackGroundTile extends StatelessWidget {
   final String catImgUrl;
   final ProductsStore store;
   final LoginStore loginStore;
+  final ProfileStore profileStore;
+  final OrderHistoryStore orderHistoryStore;
+  final BottomNavigationStore bottomNavigationStore;
 
   const BackGroundTile({
     Key? key,
@@ -143,6 +121,9 @@ class BackGroundTile extends StatelessWidget {
     required this.catImgUrl,
     required this.store,
     required this.loginStore,
+    required this.profileStore,
+    required this.orderHistoryStore,
+    required this.bottomNavigationStore,
   }) : super(key: key);
 
   @override
@@ -159,7 +140,6 @@ class BackGroundTile extends StatelessWidget {
           color: ConstantData.cellColor,
           borderRadius: BorderRadius.circular(radius),
         ),
-
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -192,169 +172,191 @@ class BackGroundTile extends StatelessWidget {
                     ConstantWidget.getPercentSize(cellHeight, 15)))
           ],
         ),
-        // child: Column(
-        //   crossAxisAlignment: CrossAxisAlignment.center,
-        //   children: [
-        //     Container(
-        //       height: imageSize,
-        //       width: double.infinity,
-        //       margin: EdgeInsets.only(
-        //           left: ConstantWidget.getPercentSize(imageSize, 9),
-        //           right: ConstantWidget.getPercentSize(imageSize, 9),
-        //           top: ConstantWidget.getPercentSize(imageSize, 9)),
-        //       padding: EdgeInsets.all(
-        //           ConstantWidget.getPercentSize(imageSize, 25)),
-        //       decoration: BoxDecoration(
-        //         shape: BoxShape.rectangle,
-        //         borderRadius: BorderRadius.all(
-        //           Radius.circular(radius),
-        //         ),
-        //
-        //           image: DecorationImage(
-        //               image: AssetImage(ConstantData.assetsPath + subCategoryModel.image),
-        //               fit: BoxFit.cover)
-        //
-        //       ),
-        //
-        //     ),
-        //
-        //     Expanded(child: Container(
-        //      height: bottomRemainSize,
-        //       child: Center(
-        //       child: ConstantWidget.getCustomText(
-        //           subCategoryModel.name,
-        //           ConstantData.mainTextColor,
-        //           1,
-        //           TextAlign.center,
-        //           FontWeight.w800,
-        //           ConstantWidget.getPercentSize(bottomRemainSize, 20)),
-        //     ),))
-        //
-        //   ],
-        // ),
       ),
       onTap: () {
-        switch (categoryName) {
-          case 'Ethical':
+        switch (categoriesfromValue(categoryName)) {
+          case CategoriesType.ETHICAL:
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => Provider.value(
-                          value: store,
-                          child: Provider.value(
-                            value: loginStore,
-                            child: ProductsViewScreen(
-                                list: store.ethicalProductList,
-                                axis: Axis.vertical,
-                                itemCount: store.ethicalProductList.length,
-                                appBarTitle: 'Ethical'),
-                          ),
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (_) => MultiProvider(
+                  providers: [
+                    Provider.value(value: store),
+                    Provider.value(value: loginStore),
+                    Provider.value(value: profileStore),
+                    Provider.value(value: orderHistoryStore),
+                    Provider.value(value: bottomNavigationStore),
+                  ],
+                  child: ProductsViewScreen(
+                    list: store.ethicalProductList,
+                    axis: Axis.vertical,
+                    itemCount: store.ethicalProductList.length,
+                    appBarTitle: 'Ethical',
+                  ),
+                ),
+              ),
+            );
             break;
-          case 'Generic':
+          case CategoriesType.GENERIC:
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => Provider.value(
-                          value: store,
-                          child: Provider.value(
-                            value: loginStore,
-                            child: ProductsViewScreen(
-                                list: store.genericProductList,
-                                axis: Axis.vertical,
-                                itemCount: store.genericProductList.length,
-                                appBarTitle: 'Generic'),
-                          ),
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (_) => MultiProvider(
+                  providers: [
+                    Provider.value(value: store),
+                    Provider.value(value: loginStore),
+                    Provider.value(value: profileStore),
+                    Provider.value(value: orderHistoryStore),
+                    Provider.value(value: bottomNavigationStore),
+                  ],
+                  child: ProductsViewScreen(
+                    list: store.genericProductList,
+                    axis: Axis.vertical,
+                    itemCount: store.genericProductList.length,
+                    appBarTitle: 'Generic',
+                  ),
+                ),
+              ),
+            );
             break;
-          case 'Surgical':
+          case CategoriesType.SURGICAL:
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => Provider.value(
-                          value: store,
-                          child: Provider.value(
-                            value: loginStore,
-                            child: ProductsViewScreen(
-                                list: store.surgicalProductList,
-                                axis: Axis.vertical,
-                                itemCount: store.surgicalProductList.length,
-                                appBarTitle: 'Surgical'),
-                          ),
-                        )));
-            break;
-
-          case 'Veterinary':
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => Provider.value(
-                          value: store,
-                          child: Provider.value(
-                            value: loginStore,
-                            child: ProductsViewScreen(
-                                list: store.veterinaryProductList,
-                                axis: Axis.vertical,
-                                itemCount: store.veterinaryProductList.length,
-                                appBarTitle: 'Veterinary'),
-                          ),
-                        )));
-            break;
-
-          case 'Ayurvedic':
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => Provider.value(
-                          value: store,
-                          child: Provider.value(
-                            value: loginStore,
-                            child: ProductsViewScreen(
-                                list: store.ayurvedicProductList,
-                                axis: Axis.vertical,
-                                itemCount: store.ayurvedicProductList.length,
-                                appBarTitle: 'Ayurvedic'),
-                          ),
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (_) => MultiProvider(
+                  providers: [
+                    Provider.value(value: store),
+                    Provider.value(value: loginStore),
+                    Provider.value(value: profileStore),
+                    Provider.value(value: orderHistoryStore),
+                    Provider.value(value: bottomNavigationStore),
+                  ],
+                  child: ProductsViewScreen(
+                    list: store.surgicalProductList,
+                    axis: Axis.vertical,
+                    itemCount: store.surgicalProductList.length,
+                    appBarTitle: 'Surgical',
+                  ),
+                ),
+              ),
+            );
             break;
 
-          case 'General':
+          case CategoriesType.VETERINARY:
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => Provider.value(
-                          value: store,
-                          child: Provider.value(
-                            value: loginStore,
-                            child: ProductsViewScreen(
-                                list: store.generalProductList,
-                                axis: Axis.vertical,
-                                itemCount: store.generalProductList.length,
-                                appBarTitle: 'General'),
-                          ),
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (_) => MultiProvider(
+                  providers: [
+                    Provider.value(value: store),
+                    Provider.value(value: loginStore),
+                    Provider.value(value: profileStore),
+                    Provider.value(value: orderHistoryStore),
+                    Provider.value(value: bottomNavigationStore),
+                  ],
+                  child: ProductsViewScreen(
+                    list: store.veterinaryProductList,
+                    axis: Axis.vertical,
+                    itemCount: store.veterinaryProductList.length,
+                    appBarTitle: 'Veterinary',
+                  ),
+                ),
+              ),
+            );
+            break;
+
+          case CategoriesType.AYURVEDIC:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MultiProvider(
+                  providers: [
+                    Provider.value(value: store),
+                    Provider.value(value: loginStore),
+                    Provider.value(value: profileStore),
+                    Provider.value(value: orderHistoryStore),
+                    Provider.value(value: bottomNavigationStore),
+                  ],
+                  child: ProductsViewScreen(
+                    list: store.ayurvedicProductList,
+                    axis: Axis.vertical,
+                    itemCount: store.ayurvedicProductList.length,
+                    appBarTitle: 'Ayurvedic',
+                  ),
+                ),
+              ),
+            );
+            break;
+
+          case CategoriesType.GENERAL:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MultiProvider(
+                  providers: [
+                    Provider.value(value: store),
+                    Provider.value(value: loginStore),
+                    Provider.value(value: profileStore),
+                    Provider.value(value: orderHistoryStore),
+                    Provider.value(value: bottomNavigationStore),
+                  ],
+                  child: ProductsViewScreen(
+                    list: store.generalProductList,
+                    axis: Axis.vertical,
+                    itemCount: store.generalProductList.length,
+                    appBarTitle: 'General',
+                  ),
+                ),
+              ),
+            );
+            break;
+
+          case CategoriesType.VACCINE:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MultiProvider(
+                  providers: [
+                    Provider.value(value: store),
+                    Provider.value(value: loginStore),
+                    Provider.value(value: profileStore),
+                    Provider.value(value: orderHistoryStore),
+                    Provider.value(value: bottomNavigationStore),
+                  ],
+                  child: ProductsViewScreen(
+                    list: store.vaccineProductList,
+                    axis: Axis.vertical,
+                    itemCount: store.vaccineProductList.length,
+                    appBarTitle: 'Vaccine',
+                  ),
+                ),
+              ),
+            );
             break;
 
           default:
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => Provider.value(
-                          value: store,
-                          child: Provider.value(
-                            value: loginStore,
-                            child: ProductsViewScreen(
-                                list: store.generalProductList,
-                                axis: Axis.vertical,
-                                itemCount: store.generalProductList.length,
-                                appBarTitle: 'All Prodcuts'),
-                          ),
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (_) => MultiProvider(
+                  providers: [
+                    Provider.value(value: store),
+                    Provider.value(value: loginStore),
+                    Provider.value(value: profileStore),
+                    Provider.value(value: orderHistoryStore),
+                    Provider.value(value: bottomNavigationStore),
+                  ],
+                  child: ProductsViewScreen(
+                    list: store.generalProductList,
+                    axis: Axis.vertical,
+                    itemCount: store.generalProductList.length,
+                    appBarTitle: 'All Prodcuts',
+                  ),
+                ),
+              ),
+            );
             break;
         }
-
-        // Navigator.push(context,
-        //     MaterialPageRoute(builder: (context) => SubCategoriesPage()));
       },
     );
   }

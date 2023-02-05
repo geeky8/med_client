@@ -113,6 +113,18 @@ class CheckoutScreen extends StatelessWidget {
                       vertical: blockSizeVertical(context: context) * 2),
                   physics: const BouncingScrollPhysics(),
                   children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: blockSizeHorizontal(context: context) * 4,
+                      ),
+                      child: ConstantWidget.getTextWidget(
+                        'My Order',
+                        ConstantData.mainTextColor,
+                        TextAlign.start,
+                        FontWeight.w600,
+                        font22Px(context: context),
+                      ),
+                    ),
                     Container(
                       padding: EdgeInsets.symmetric(
                         vertical: blockSizeVertical(context: context) * 2,
@@ -125,82 +137,93 @@ class CheckoutScreen extends StatelessWidget {
                           ),
                           itemCount: productStore.cartModel.productList.length,
                           itemBuilder: (_, index) {
-                            return Row(
+                            return Column(
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical:
-                                        blockSizeHorizontal(context: context) *
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: blockSizeHorizontal(
+                                                context: context) *
                                             3,
-                                  ),
-                                  child: Container(
-                                    height: ConstantWidget.getScreenPercentSize(
-                                        context, 8),
-                                    width: ConstantWidget.getWidthPercentSize(
-                                        context, 16),
-                                    padding: EdgeInsets.all(
-                                        blockSizeHorizontal(context: context) *
-                                            2),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          font18Px(context: context)),
-                                      border: Border.all(
-                                        color: ConstantData.borderColor,
-                                        width: 1.2,
                                       ),
-                                      image: DecorationImage(
-                                          image: CachedNetworkImageProvider(
-                                            ConstantData.productUrl +
-                                                productStore
-                                                    .cartModel
-                                                    .productList[index]
-                                                    .productImg,
+                                      child: Container(
+                                        height:
+                                            ConstantWidget.getScreenPercentSize(
+                                                context, 8),
+                                        width:
+                                            ConstantWidget.getWidthPercentSize(
+                                                context, 16),
+                                        padding: EdgeInsets.all(
+                                            blockSizeHorizontal(
+                                                    context: context) *
+                                                2),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              font18Px(context: context)),
+                                          border: Border.all(
+                                            color: ConstantData.borderColor,
+                                            width: 1.2,
                                           ),
-                                          fit: BoxFit.cover),
+                                          image: DecorationImage(
+                                              image: CachedNetworkImageProvider(
+                                                ConstantData.productUrl +
+                                                    productStore
+                                                        .cartModel
+                                                        .productList[index]
+                                                        .productImg,
+                                              ),
+                                              fit: BoxFit.cover),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                // const Spacer(),
-                                SizedBox(
-                                  width:
-                                      blockSizeHorizontal(context: context) * 3,
-                                ),
-                                Expanded(
-                                  // flex: 15,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ConstantWidget.getCustomText(
-                                        productStore.cartModel
-                                            .productList[index].productName
-                                          ..trim(),
-                                        ConstantData.mainTextColor,
-                                        1,
-                                        TextAlign.center,
-                                        FontWeight.w600,
-                                        font15Px(context: context) * 1.2,
+                                    // const Spacer(),
+                                    SizedBox(
+                                      width: blockSizeHorizontal(
+                                              context: context) *
+                                          3,
+                                    ),
+                                    Expanded(
+                                      // flex: 15,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ConstantWidget.getCustomText(
+                                            productStore.cartModel
+                                                .productList[index].productName
+                                              ..trim(),
+                                            ConstantData.mainTextColor,
+                                            1,
+                                            TextAlign.center,
+                                            FontWeight.w600,
+                                            font15Px(context: context) * 1.2,
+                                          ),
+                                          ConstantWidget.getCustomText(
+                                            ' X ${productStore.cartModel.productList[index].cartQuantity}',
+                                            Colors.black45,
+                                            1,
+                                            TextAlign.center,
+                                            FontWeight.w600,
+                                            font15Px(context: context) * 1.1,
+                                          ),
+                                        ],
                                       ),
-                                      ConstantWidget.getCustomText(
-                                        ' X ${productStore.cartModel.productList[index].cartQuantity}',
-                                        Colors.black45,
-                                        1,
-                                        TextAlign.center,
-                                        FontWeight.w600,
-                                        font15Px(context: context) * 1.1,
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                    const Spacer(),
+                                    ConstantWidget.getCustomText(
+                                      '₹${double.parse(productStore.cartModel.productList[index].subTotal).toStringAsFixed(2)}',
+                                      ConstantData.mainTextColor,
+                                      1,
+                                      TextAlign.center,
+                                      FontWeight.w600,
+                                      font15Px(context: context) * 1.2,
+                                    )
+                                  ],
                                 ),
-                                const Spacer(),
-                                ConstantWidget.getCustomText(
-                                  '₹${double.parse(productStore.cartModel.productList[index].subTotal).toStringAsFixed(2)}',
-                                  ConstantData.mainTextColor,
-                                  1,
-                                  TextAlign.center,
-                                  FontWeight.w600,
-                                  font15Px(context: context) * 1.2,
-                                )
+                                Divider(
+                                  color: ConstantData.clrBorder,
+                                ),
                               ],
                             );
                           }),
@@ -212,7 +235,7 @@ class CheckoutScreen extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: leftMargin,
-                        vertical: topMargin,
+                        vertical: blockSizeVertical(context: context),
                       ),
                       child: Column(
                         children: [
@@ -274,16 +297,9 @@ class CheckoutScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              onTap: () {
-                                // _selectedAddress = index;
-                                // setState(() {});
-                              },
+                              onTap: () {},
                             );
                           }),
-
-                          // SizedBox(
-                          //   height: ConstantWidget.getScreenPercentSize(context, 3),
-                          // ),
                         ],
                       ),
                     ),

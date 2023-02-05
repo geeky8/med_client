@@ -35,6 +35,8 @@ class CustomDropDown extends StatelessWidget {
       ),
       child: DropdownButtonFormField<String>(
         value: value,
+        // elevation: 0,
+
         isExpanded: true,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onTap: onTap,
@@ -69,7 +71,7 @@ class CustomDropDown extends StatelessWidget {
             ),
           ),
         ),
-        alignment: AlignmentDirectional.bottomStart,
+        alignment: AlignmentDirectional.bottomEnd,
         focusColor: Colors.transparent,
         selectedItemBuilder: selectFunc,
         hint: Center(

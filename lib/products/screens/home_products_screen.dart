@@ -63,7 +63,11 @@ class ProductHomeScreen extends StatelessWidget {
           return Container(
             height: ConstantWidget.getWidthPercentSize(context, 15),
             decoration: BoxDecoration(
-              color: ConstantData.accentColor.withOpacity(0.5),
+              color: ConstantData.color1,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(font18Px(context: context)),
+                topRight: Radius.circular(font18Px(context: context)),
+              ),
             ),
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -77,23 +81,23 @@ class ProductHomeScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         ConstantWidget.getCustomText(
-                          'Total Payable:',
-                          ConstantData.mainTextColor,
+                          'Payable:',
+                          ConstantData.bgColor,
                           1,
                           TextAlign.center,
                           FontWeight.w600,
-                          font15Px(context: context) * 1.1,
+                          font15Px(context: context) * 1.2,
                         ),
                         SizedBox(
                           width: blockSizeHorizontal(context: context) * 3,
                         ),
                         ConstantWidget.getCustomText(
                           '₹${double.parse(store.cartModel.totalSalePrice).toStringAsFixed(2)}',
-                          ConstantData.mainTextColor,
+                          ConstantData.bgColor,
                           1,
                           TextAlign.center,
                           FontWeight.w600,
-                          font18Px(context: context),
+                          font18Px(context: context) * 1.1,
                         ),
                       ],
                     ),
@@ -127,12 +131,12 @@ class ProductHomeScreen extends StatelessWidget {
                                 ));
                           },
                           child: ConstantWidget.getCustomText(
-                            'View in Cart',
-                            ConstantData.mainTextColor,
+                            'Go to Cart',
+                            ConstantData.bgColor,
                             1,
                             TextAlign.center,
                             FontWeight.w600,
-                            font15Px(context: context),
+                            font15Px(context: context) * 1.2,
                           ),
                         ),
                       ],
@@ -330,7 +334,10 @@ class ProductHomeScreen extends StatelessWidget {
                                               value: profileStore,
                                               child: Provider.value(
                                                 value: orderHistoryStore,
-                                                child: const SearchScreen(),
+                                                child: Provider.value(
+                                                  value: bottomNavigationStore,
+                                                  child: const SearchScreen(),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -349,12 +356,7 @@ class ProductHomeScreen extends StatelessWidget {
                                       await store.getSearchedResults(
                                           term: value);
                                     },
-                                    // onFieldSubmitted: (value) async {
-                                    //   await store.getSearchedResults(term: value);
-                                    // },
                                     maxLines: 1,
-                                    // controller: store.searchController,
-                                    // enabled: false,
                                     textAlignVertical: TextAlignVertical.center,
                                     textAlign: TextAlign.left,
                                     decoration: InputDecoration(
@@ -428,13 +430,16 @@ class ProductHomeScreen extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => Provider.value(
-                                          value: loginStore,
-                                          child: Provider.value(
-                                            value: store,
-                                            child: const CategoriesListScreen(),
-                                          ),
-                                        ),
+                                        builder: (_) =>
+                                            MultiProvider(providers: [
+                                          Provider.value(value: store),
+                                          Provider.value(value: loginStore),
+                                          Provider.value(
+                                              value: bottomNavigationStore),
+                                          Provider.value(
+                                              value: orderHistoryStore),
+                                          Provider.value(value: profileStore),
+                                        ], child: const CategoriesListScreen()),
                                       ),
                                     );
                                   },
@@ -448,13 +453,7 @@ class ProductHomeScreen extends StatelessWidget {
 
                             switch (state) {
                               case StoreState.LOADING:
-                                return SizedBox(
-                                  height: ConstantWidget.getWidthPercentSize(
-                                      context, 10),
-                                  width: ConstantWidget.getWidthPercentSize(
-                                      context, 10),
-                                  child: const CircularProgressIndicator(),
-                                );
+                                return const LinearProgressIndicator();
 
                               case StoreState.SUCCESS:
                                 return CategoryList(
@@ -507,6 +506,10 @@ class ProductHomeScreen extends StatelessWidget {
                                       case CategoriesType.ETHICAL:
                                         return ViewAllToggle(
                                           loginStore: loginStore,
+                                          orderHistoryStore: orderHistoryStore,
+                                          profileStore: profileStore,
+                                          bottomNavigationStore:
+                                              bottomNavigationStore,
                                           store: store,
                                           label: 'Ethical',
                                           list: store.ethicalProductList,
@@ -514,6 +517,10 @@ class ProductHomeScreen extends StatelessWidget {
                                       case CategoriesType.GENERIC:
                                         return ViewAllToggle(
                                           loginStore: loginStore,
+                                          orderHistoryStore: orderHistoryStore,
+                                          profileStore: profileStore,
+                                          bottomNavigationStore:
+                                              bottomNavigationStore,
                                           store: store,
                                           label: 'Generic',
                                           list: store.genericProductList,
@@ -521,6 +528,10 @@ class ProductHomeScreen extends StatelessWidget {
                                       case CategoriesType.SURGICAL:
                                         return ViewAllToggle(
                                           loginStore: loginStore,
+                                          orderHistoryStore: orderHistoryStore,
+                                          profileStore: profileStore,
+                                          bottomNavigationStore:
+                                              bottomNavigationStore,
                                           store: store,
                                           label: 'Surgical',
                                           list: store.surgicalProductList,
@@ -528,6 +539,10 @@ class ProductHomeScreen extends StatelessWidget {
                                       case CategoriesType.VETERINARY:
                                         return ViewAllToggle(
                                           loginStore: loginStore,
+                                          orderHistoryStore: orderHistoryStore,
+                                          profileStore: profileStore,
+                                          bottomNavigationStore:
+                                              bottomNavigationStore,
                                           store: store,
                                           label: 'Veterinary',
                                           list: store.veterinaryProductList,
@@ -537,15 +552,34 @@ class ProductHomeScreen extends StatelessWidget {
                                         return ViewAllToggle(
                                           loginStore: loginStore,
                                           store: store,
+                                          orderHistoryStore: orderHistoryStore,
+                                          profileStore: profileStore,
+                                          bottomNavigationStore:
+                                              bottomNavigationStore,
                                           label: 'Ayurvedic',
                                           list: store.ayurvedicProductList,
                                         );
                                       case CategoriesType.GENERAL:
                                         return ViewAllToggle(
                                           loginStore: loginStore,
+                                          orderHistoryStore: orderHistoryStore,
+                                          profileStore: profileStore,
+                                          bottomNavigationStore:
+                                              bottomNavigationStore,
                                           store: store,
                                           label: 'General',
                                           list: store.generalProductList,
+                                        );
+                                      case CategoriesType.VACCINE:
+                                        return ViewAllToggle(
+                                          loginStore: loginStore,
+                                          orderHistoryStore: orderHistoryStore,
+                                          profileStore: profileStore,
+                                          bottomNavigationStore:
+                                              bottomNavigationStore,
+                                          store: store,
+                                          label: 'Vaccine',
+                                          list: store.vaccineProductList,
                                         );
                                     }
                                   })
@@ -562,6 +596,10 @@ class ProductHomeScreen extends StatelessWidget {
                                       loginStore: loginStore,
                                       list: store.ethicalProductList,
                                       state: store.homeState,
+                                      profileStore: profileStore,
+                                      orderHistoryStore: orderHistoryStore,
+                                      bottomNavigationStore:
+                                          bottomNavigationStore,
                                     );
                                   case CategoriesType.GENERIC:
                                     return CategoryProducts(
@@ -569,6 +607,10 @@ class ProductHomeScreen extends StatelessWidget {
                                       loginStore: loginStore,
                                       list: store.genericProductList,
                                       state: store.homeState,
+                                      profileStore: profileStore,
+                                      orderHistoryStore: orderHistoryStore,
+                                      bottomNavigationStore:
+                                          bottomNavigationStore,
                                     );
                                   case CategoriesType.SURGICAL:
                                     return CategoryProducts(
@@ -576,6 +618,10 @@ class ProductHomeScreen extends StatelessWidget {
                                       loginStore: loginStore,
                                       list: store.surgicalProductList,
                                       state: store.homeState,
+                                      profileStore: profileStore,
+                                      orderHistoryStore: orderHistoryStore,
+                                      bottomNavigationStore:
+                                          bottomNavigationStore,
                                     );
 
                                   case CategoriesType.VETERINARY:
@@ -584,6 +630,10 @@ class ProductHomeScreen extends StatelessWidget {
                                       loginStore: loginStore,
                                       list: store.veterinaryProductList,
                                       state: store.homeState,
+                                      profileStore: profileStore,
+                                      orderHistoryStore: orderHistoryStore,
+                                      bottomNavigationStore:
+                                          bottomNavigationStore,
                                     );
 
                                   case CategoriesType.AYURVEDIC:
@@ -592,6 +642,10 @@ class ProductHomeScreen extends StatelessWidget {
                                       loginStore: loginStore,
                                       list: store.ayurvedicProductList,
                                       state: store.homeState,
+                                      profileStore: profileStore,
+                                      orderHistoryStore: orderHistoryStore,
+                                      bottomNavigationStore:
+                                          bottomNavigationStore,
                                     );
 
                                   case CategoriesType.GENERAL:
@@ -600,6 +654,21 @@ class ProductHomeScreen extends StatelessWidget {
                                       loginStore: loginStore,
                                       list: store.generalProductList,
                                       state: store.homeState,
+                                      profileStore: profileStore,
+                                      orderHistoryStore: orderHistoryStore,
+                                      bottomNavigationStore:
+                                          bottomNavigationStore,
+                                    );
+                                  case CategoriesType.VACCINE:
+                                    return CategoryProducts(
+                                      store: store,
+                                      loginStore: loginStore,
+                                      list: store.vaccineProductList,
+                                      state: store.homeState,
+                                      profileStore: profileStore,
+                                      orderHistoryStore: orderHistoryStore,
+                                      bottomNavigationStore:
+                                          bottomNavigationStore,
                                     );
                                 }
                               }),
@@ -651,12 +720,18 @@ class ViewAllToggle extends StatelessWidget {
     Key? key,
     required this.loginStore,
     required this.store,
+    required this.bottomNavigationStore,
+    required this.orderHistoryStore,
+    required this.profileStore,
     required this.label,
     required this.list,
   }) : super(key: key);
 
   final LoginStore loginStore;
   final ProductsStore store;
+  final ProfileStore profileStore;
+  final BottomNavigationStore bottomNavigationStore;
+  final OrderHistoryStore orderHistoryStore;
   final List<ProductModel> list;
   final String label;
 
@@ -671,20 +746,25 @@ class ViewAllToggle extends StatelessWidget {
       ),
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (_) => Provider.value(
-                      value: loginStore,
-                      child: Provider.value(
-                        value: store,
-                        child: ProductsViewScreen(
-                          list: list,
-                          axis: Axis.vertical,
-                          itemCount: list.length,
-                          appBarTitle: label,
-                        ),
-                      ),
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (_) => MultiProvider(
+              providers: [
+                Provider.value(value: loginStore),
+                Provider.value(value: store),
+                Provider.value(value: profileStore),
+                Provider.value(value: bottomNavigationStore),
+                Provider.value(value: orderHistoryStore),
+              ],
+              child: ProductsViewScreen(
+                list: list,
+                axis: Axis.vertical,
+                itemCount: list.length,
+                appBarTitle: label,
+              ),
+            ),
+          ),
+        );
       },
     );
   }

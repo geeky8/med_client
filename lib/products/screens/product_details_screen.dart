@@ -3,11 +3,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/categories.dart';
+import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
+import 'package:medrpha_customer/products/repository/products_repository.dart';
+import 'package:medrpha_customer/products/screens/cart_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/add_subtract_widget.dart';
 import 'package:medrpha_customer/products/utils/products_list.dart';
+import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
@@ -29,6 +34,17 @@ class ProductsDetailScreen extends StatefulWidget {
 }
 
 class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
+  @override
+  void initState() {
+    // _func();
+    super.initState();
+  }
+
+  _func() async {
+    await ProductsRepository()
+        .getRecommedations(name: widget.model.productName);
+  }
+
   // final int modelIndex;
   @override
   Widget build(BuildContext context) {
@@ -39,9 +55,102 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
 
     final store = context.read<ProductsStore>();
     final loginStore = context.read<LoginStore>();
+    final profileStore = context.read<ProfileStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
 
     return Scaffold(
         backgroundColor: ConstantData.bgColor,
+        appBar: AppBar(
+          backgroundColor: ConstantData.bgColor,
+          elevation: 0,
+          leading: InkWell(
+            child: Icon(
+              Icons.keyboard_backspace,
+              color: ConstantData.mainTextColor,
+            ),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(
+                right: blockSizeHorizontal(context: context) * 4,
+              ),
+              child: InkWell(
+                child: Stack(
+                  children: [
+                    /// Cart-Icon
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: blockSizeVertical(context: context) * 3,
+                      ),
+                      child: Icon(
+                        Icons.shopping_cart,
+                        color: ConstantData.mainTextColor,
+                        size: ConstantWidget.getWidthPercentSize(context, 5.5),
+                      ),
+                    ),
+
+                    /// No of items in cart
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: blockSizeHorizontal(context: context) * 2.5,
+                        bottom: blockSizeVertical(context: context) * 3,
+                      ),
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding:
+                            EdgeInsets.all(blockSizeVertical(context: context)),
+                        decoration: BoxDecoration(
+                            color: ConstantData.primaryColor,
+                            shape: BoxShape.circle),
+                        child: Observer(builder: (_) {
+                          final adminStatus = loginStore.loginModel.adminStatus;
+                          final value = (store.cartModel.productList.length >
+                                  10)
+                              ? '9+'
+                              : store.cartModel.productList.length.toString();
+                          return ConstantWidget.getCustomText(
+                            (adminStatus) ? value : '0',
+                            Colors.white,
+                            1,
+                            TextAlign.center,
+                            FontWeight.w600,
+                            font12Px(context: context) / 1.2,
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Provider.value(
+                          value: store,
+                          child: Provider.value(
+                            value: loginStore,
+                            child: Provider.value(
+                              value: profileStore,
+                              child: Provider.value(
+                                value: orderHistoryStore,
+                                child: Provider.value(
+                                  value: bottomNavigationStore,
+                                  child: const CartScreen(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ));
+                },
+              ),
+            ),
+          ],
+        ),
         body: SafeArea(
           child: Observer(builder: (_) {
             return ListView(
@@ -67,55 +176,37 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                     children: [
                       Stack(
                         children: [
-                          Container(
-                            height: ConstantWidget.getScreenPercentSize(
-                              context,
-                              35,
-                            ),
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: CachedNetworkImageProvider(
-                                  ConstantData.productUrl +
-                                      widget.model.productImg,
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Container(
+                          Padding(
                             padding: EdgeInsets.symmetric(
-                              horizontal: (defMargin / 2),
-                              vertical: (margin),
+                              horizontal:
+                                  blockSizeHorizontal(context: context) * 4,
+                              vertical: blockSizeVertical(context: context) * 2,
                             ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: ConstantWidget.getWidthPercentSize(
-                                    context,
-                                    2,
+                            child: Container(
+                              height: ConstantWidget.getScreenPercentSize(
+                                context,
+                                35,
+                              ),
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                    ConstantData.productUrl +
+                                        widget.model.productImg,
                                   ),
+                                  fit: BoxFit.cover,
                                 ),
-                                Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    child: Icon(
-                                      Icons.keyboard_backspace,
-                                      color: ConstantData.bgColor,
-                                    ),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
+                                borderRadius: BorderRadius.circular(
+                                    font22Px(context: context)),
+                                border: Border.all(
+                                  color: ConstantData.clrBorder,
                                 ),
-                                SizedBox(
-                                  width: ConstantWidget.getWidthPercentSize(
-                                    context,
-                                    2,
-                                  ),
-                                ),
-                              ],
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: ConstantData.clrBorder,
+                                      spreadRadius: 4,
+                                      blurRadius: 2),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -156,168 +247,159 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              ConstantWidget.getCustomText(
-                                                widget.model.productName,
-                                                ConstantData.mainTextColor,
-                                                2,
-                                                TextAlign.start,
-                                                FontWeight.w600,
-                                                font22Px(context: context) *
-                                                    1.2,
+                                              Expanded(
+                                                flex: 3,
+                                                child: ConstantWidget
+                                                    .getCustomText(
+                                                  widget.model.productName,
+                                                  ConstantData.mainTextColor,
+                                                  2,
+                                                  TextAlign.start,
+                                                  FontWeight.w600,
+                                                  font25Px(context: context),
+                                                ),
                                               ),
                                               const Spacer(),
-                                              Observer(builder: (_) {
-                                                final adminStatus = loginStore
-                                                    .loginModel.adminStatus;
-                                                // if (adminStatus) {
-                                                return Offstage(
-                                                  offstage: !adminStatus,
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                        color: ConstantData
-                                                            .mainTextColor,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        font18Px(
-                                                            context: context),
-                                                      ),
-                                                    ),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                      vertical:
-                                                          blockSizeVertical(
-                                                              context: context),
-                                                      horizontal:
-                                                          blockSizeHorizontal(
-                                                                  context:
-                                                                      context) *
-                                                              2,
-                                                    ),
-                                                    child: Row(
-                                                      // crossAxisAlignment:
-                                                      //     CrossAxisAlignment
-                                                      //         .start,
-                                                      // mainAxisAlignment:
-                                                      //     MainAxisAlignment
-                                                      //         .center,
-                                                      children: [
-                                                        ConstantWidget
-                                                            .getCustomText(
-                                                          'Avl Qty : ',
-                                                          ConstantData
+                                              Expanded(
+                                                flex: 2,
+                                                child: Observer(builder: (_) {
+                                                  final adminStatus = loginStore
+                                                      .loginModel.adminStatus;
+                                                  // if (adminStatus) {
+                                                  return Offstage(
+                                                    offstage: !adminStatus,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color: ConstantData
                                                               .mainTextColor,
-                                                          2,
-                                                          TextAlign.center,
-                                                          FontWeight.w600,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
                                                           font18Px(
                                                               context: context),
                                                         ),
-                                                        ConstantWidget.getCustomText(
-                                                            ' ${widget.model.quantity} units',
+                                                      ),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                        vertical:
+                                                            blockSizeVertical(
+                                                                context:
+                                                                    context),
+                                                        horizontal:
+                                                            blockSizeHorizontal(
+                                                                    context:
+                                                                        context) *
+                                                                2,
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          ConstantWidget
+                                                              .getCustomText(
+                                                            'Avl Qty : ',
                                                             ConstantData
                                                                 .mainTextColor,
                                                             2,
-                                                            TextAlign.start,
+                                                            TextAlign.center,
                                                             FontWeight.w600,
-                                                            ConstantWidget
-                                                                .getScreenPercentSize(
-                                                                    context,
-                                                                    1.8)),
-                                                      ],
+                                                            font18Px(
+                                                                context:
+                                                                    context),
+                                                          ),
+                                                          Expanded(
+                                                            child: ConstantWidget.getCustomText(
+                                                                ' ${widget.model.quantity} units',
+                                                                ConstantData
+                                                                    .mainTextColor,
+                                                                1,
+                                                                TextAlign.start,
+                                                                FontWeight.w600,
+                                                                ConstantWidget
+                                                                    .getScreenPercentSize(
+                                                                        context,
+                                                                        1.8)),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                );
-                                                // } else {
-                                                //   return const SizedBox();
-                                                // }
-                                              }),
-                                              // SizedBox(
-                                              //   width: ConstantWidget
-                                              //       .getScreenPercentSize(
-                                              //     context,
-                                              //     2,
-                                              //   ),
-                                              // ),
+                                                  );
+                                                }),
+                                              ),
                                             ],
                                           ),
 
-                                          SizedBox(
-                                            height: blockSizeVertical(
-                                                    context: context) *
-                                                4,
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: blockSizeVertical(
+                                                  context: context),
+                                            ),
+                                            child: ConstantWidget.getCustomText(
+                                              'by ${widget.model.company}',
+                                              ConstantData.mainTextColor,
+                                              2,
+                                              TextAlign.start,
+                                              FontWeight.w500,
+                                              font22Px(context: context),
+                                            ),
                                           ),
 
                                           Padding(
-                                            padding: EdgeInsets.only(
-                                              top: blockSizeVertical(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: blockSizeVertical(
                                                       context: context) *
                                                   2,
                                             ),
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                ConstantWidget.getCustomText(
-                                                  "Description :",
-                                                  ConstantData.textColor,
-                                                  2,
-                                                  TextAlign.start,
-                                                  FontWeight.w500,
-                                                  font18Px(context: context) *
-                                                      1.1,
-                                                ),
-                                                SizedBox(
-                                                  width: blockSizeHorizontal(
-                                                          context: context) *
-                                                      6,
-                                                ),
-                                                Expanded(
-                                                  child: ConstantWidget
-                                                      .getSpaceTextWidget(
-                                                    widget.model.description,
-                                                    ConstantData.mainTextColor,
-                                                    TextAlign.start,
-                                                    FontWeight.w500,
-                                                    font18Px(context: context),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                            child: (widget.model.description !=
+                                                    '')
+                                                ? Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Expanded(
+                                                        child: ConstantWidget
+                                                            .getSpaceTextWidget(
+                                                          widget.model
+                                                              .description,
+                                                          Colors.black38,
+                                                          TextAlign.start,
+                                                          FontWeight.w500,
+                                                          font18Px(
+                                                              context: context),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                : const SizedBox(),
                                           ),
 
                                           // SizedBox(
                                           //   height: (margin),
                                           // ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              ConstantWidget.getCustomText(
-                                                "Expiry Date :",
-                                                ConstantData.textColor,
-                                                2,
-                                                TextAlign.start,
-                                                FontWeight.w500,
-                                                font18Px(context: context) *
-                                                    1.1,
-                                              ),
-                                              SizedBox(
-                                                width: blockSizeHorizontal(
-                                                        context: context) *
-                                                    4,
-                                              ),
-                                              ConstantWidget.getCustomText(
-                                                  widget.model.expiryDate,
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: blockSizeHorizontal(
+                                                      context: context) *
+                                                  2,
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                ConstantWidget.getCustomText(
+                                                  "Expires by ${widget.model.expiryDate}",
                                                   ConstantData.textColor,
                                                   2,
                                                   TextAlign.start,
-                                                  FontWeight.w600,
-                                                  font18Px(context: context)),
-                                            ],
+                                                  FontWeight.w500,
+                                                  font18Px(context: context) *
+                                                      1.18,
+                                                ),
+                                              ],
+                                            ),
                                           ),
 
                                           // ),
@@ -330,63 +412,83 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                             final adminStatus = loginStore
                                                 .loginModel.adminStatus;
                                             if (adminStatus) {
-                                              return Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  ConstantWidget.getCustomText(
-                                                    "Price :",
-                                                    ConstantData.textColor,
-                                                    2,
-                                                    TextAlign.start,
-                                                    FontWeight.w500,
-                                                    font18Px(context: context) *
-                                                        1.1,
-                                                  ),
-                                                  SizedBox(
-                                                    width: blockSizeHorizontal(
-                                                            context: context) *
-                                                        4,
-                                                  ),
-                                                  ConstantWidget.getCustomText(
-                                                      '₹${widget.model.newMrp}',
-                                                      ConstantData
-                                                          .mainTextColor,
+                                              return Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      blockSizeHorizontal(
+                                                              context:
+                                                                  context) *
+                                                          4,
+                                                  vertical: blockSizeVertical(
+                                                          context: context) *
                                                       2,
-                                                      TextAlign.start,
-                                                      FontWeight.w600,
-                                                      font22Px(
-                                                          context: context)),
-                                                  SizedBox(
-                                                    width: ((margin) / 4),
-                                                  ),
-                                                  ConstantWidget
-                                                      .getLineTextView(
-                                                    '₹${widget.model.oldMrp}',
-                                                    Colors.grey,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: ConstantData
+                                                          .mainTextColor),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
                                                     font18Px(context: context),
                                                   ),
-                                                  ConstantWidget.getCustomText(
-                                                    ' @\t\t',
-                                                    ConstantData.mainTextColor,
-                                                    1,
-                                                    TextAlign.center,
-                                                    FontWeight.bold,
-                                                    font22Px(context: context) *
-                                                        1.2,
-                                                  ),
-                                                  ConstantWidget.getCustomText(
-                                                    widget
-                                                        .model.percentDiscount,
-                                                    ConstantData.accentColor,
-                                                    2,
-                                                    TextAlign.end,
-                                                    FontWeight.w600,
+                                                ),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons
+                                                          .radio_button_checked,
+                                                      color: ConstantData
+                                                          .primaryColor,
+                                                    ),
+                                                    SizedBox(
+                                                      width:
+                                                          blockSizeHorizontal(
+                                                                  context:
+                                                                      context) *
+                                                              3,
+                                                    ),
+                                                    ConstantWidget.getCustomText(
+                                                        '₹${widget.model.newMrp}',
+                                                        ConstantData
+                                                            .mainTextColor,
+                                                        2,
+                                                        TextAlign.start,
+                                                        FontWeight.w600,
+                                                        font22Px(
+                                                            context: context)),
+                                                    SizedBox(
+                                                      width: ((margin) / 4),
+                                                    ),
                                                     ConstantWidget
-                                                        .getScreenPercentSize(
-                                                            context, 2),
-                                                  ),
-                                                ],
+                                                        .getLineTextView(
+                                                      '₹${widget.model.oldMrp}',
+                                                      Colors.grey,
+                                                      font22Px(
+                                                          context: context),
+                                                    ),
+                                                    SizedBox(
+                                                      width:
+                                                          blockSizeHorizontal(
+                                                                  context:
+                                                                      context) *
+                                                              6,
+                                                    ),
+                                                    ConstantWidget
+                                                        .getCustomText(
+                                                      widget.model
+                                                          .percentDiscount,
+                                                      ConstantData.accentColor,
+                                                      2,
+                                                      TextAlign.end,
+                                                      FontWeight.w600,
+                                                      ConstantWidget
+                                                          .getScreenPercentSize(
+                                                              context, 2),
+                                                    ),
+                                                  ],
+                                                ),
                                               );
                                             } else {
                                               return const SizedBox();
@@ -399,91 +501,139 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                 ],
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    blockSizeHorizontal(context: context) * 4,
-                                vertical:
-                                    blockSizeVertical(context: context) * 2,
-                              ),
-                              child: Observer(builder: (_) {
-                                final adminStatus =
-                                    loginStore.loginModel.adminStatus;
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      blockSizeHorizontal(context: context) * 4,
+                                  vertical:
+                                      blockSizeVertical(context: context) * 2,
+                                ),
+                                child: Observer(builder: (_) {
+                                  return Offstage(
+                                    offstage:
+                                        !loginStore.loginModel.adminStatus,
+                                    child: Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          right: blockSizeHorizontal(
+                                              context: context),
+                                          bottom: blockSizeVertical(
+                                              context: context),
+                                        ),
+                                        child: Observer(builder: (_) {
+                                          final index = store
+                                              .cartModel.productList
+                                              .indexWhere(
+                                            (element) =>
+                                                element.pid == widget.model.pid,
+                                          );
 
-                                return Offstage(
-                                  offstage: !adminStatus,
-                                  child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                        right: blockSizeHorizontal(
-                                            context: context),
-                                        bottom:
-                                            blockSizeVertical(context: context),
-                                      ),
-                                      child: Observer(builder: (_) {
-                                        final index = store
-                                            .cartModel.productList
-                                            .indexWhere(
-                                          (element) =>
-                                              element.pid == widget.model.pid,
-                                        );
-                                        if (index != -1) {
+                                          ProductModel model = widget.model;
+
+                                          switch (categoriesfromValue(
+                                              model.category)) {
+                                            case CategoriesType.ETHICAL:
+                                              model = store.ethicalProductList
+                                                  .firstWhere((element) =>
+                                                      element.pid == model.pid);
+                                              break;
+                                            case CategoriesType.GENERIC:
+                                              model = store.genericProductList
+                                                  .firstWhere((element) =>
+                                                      element.pid == model.pid);
+                                              break;
+                                            case CategoriesType.SURGICAL:
+                                              model = store.surgicalProductList
+                                                  .firstWhere((element) =>
+                                                      element.pid == model.pid);
+                                              break;
+                                            case CategoriesType.VETERINARY:
+                                              model = store
+                                                  .veterinaryProductList
+                                                  .firstWhere((element) =>
+                                                      element.pid == model.pid);
+                                              break;
+                                            case CategoriesType.AYURVEDIC:
+                                              model = store.ayurvedicProductList
+                                                  .firstWhere((element) =>
+                                                      element.pid == model.pid);
+                                              break;
+                                            case CategoriesType.GENERAL:
+                                              model = store.generalProductList
+                                                  .firstWhere((element) =>
+                                                      element.pid == model.pid);
+                                              break;
+                                            case CategoriesType.VACCINE:
+                                              model = store.vaccineProductList
+                                                  .firstWhere((element) =>
+                                                      element.pid == model.pid);
+                                              break;
+                                          }
+
+                                          if (index != -1) {
+                                            return Row(
+                                              children: [
+                                                PlusMinusWidget(
+                                                  model: model,
+                                                  store: store,
+                                                  iconSize: ConstantWidget
+                                                      .getWidthPercentSize(
+                                                    context,
+                                                    3,
+                                                  ),
+                                                  fontSize: font22Px(
+                                                      context: context),
+                                                ),
+                                                const Spacer(),
+                                                Expanded(
+                                                  child: RemoveButton(
+                                                    store: store,
+                                                    model: model,
+                                                    width: ConstantWidget
+                                                        .getWidthPercentSize(
+                                                            context, 10),
+                                                    height: blockSizeVertical(
+                                                        context: context),
+                                                    fontSize: font18Px(
+                                                            context: context) *
+                                                        1.1,
+                                                    isDetailPage: true,
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          }
                                           return Row(
                                             children: [
-                                              PlusMinusWidget(
-                                                model: widget.model,
-                                                store: store,
-                                                iconSize: ConstantWidget
-                                                    .getWidthPercentSize(
-                                                  context,
-                                                  3,
-                                                ),
-                                                fontSize:
-                                                    font22Px(context: context),
-                                              ),
-                                              const Spacer(),
                                               Expanded(
-                                                child: RemoveButton(
+                                                child: AddProductButton(
                                                   store: store,
-                                                  model: widget.model,
+                                                  model: model,
+                                                  isDetailScreen: true,
                                                   width: ConstantWidget
                                                       .getWidthPercentSize(
                                                           context, 10),
                                                   height: blockSizeVertical(
-                                                      context: context),
+                                                          context: context) *
+                                                      2,
                                                   fontSize: font18Px(
                                                           context: context) *
                                                       1.1,
-                                                  isDetailPage: true,
+                                                  contextReq: context,
+                                                  // detailScreenFunc: (),
                                                 ),
                                               ),
                                             ],
                                           );
-                                        }
-                                        return Row(
-                                          children: [
-                                            AddProductButton(
-                                              store: store,
-                                              model: widget.model,
-                                              width: ConstantWidget
-                                                  .getWidthPercentSize(
-                                                      context, 10),
-                                              height: blockSizeVertical(
-                                                      context: context) *
-                                                  2,
-                                              fontSize:
-                                                  font18Px(context: context) *
-                                                      1.1,
-                                              contextReq: context,
-                                            ),
-                                          ],
-                                        );
-                                      }),
+                                        }),
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }),
+                                  );
+                                }),
+                              ),
                             ),
                           ],
                         ),
@@ -491,95 +641,95 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: blockSizeVertical(context: context) * 2,
-                ),
-                Container(
-                  width: screenWidth(context: context),
-                  // height: ConstantWidget.getScreenPercentSize(
-                  //   context,
-                  //   50,
-                  // ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: margin),
-                        child: ConstantWidget.getTextWidget(
-                          'More Prodcuts',
-                          ConstantData.mainTextColor,
-                          TextAlign.start,
-                          FontWeight.w600,
-                          font22Px(context: context),
-                        ),
-                      ),
-                      SizedBox(
-                        height: blockSizeVertical(context: context) * 2,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Observer(builder: (_) {
-                              final category =
-                                  categoriesfromValue(widget.model.category);
+                // SizedBox(
+                //   height: blockSizeVertical(context: context) * 2,
+                // ),
+                // Container(
+                //   width: screenWidth(context: context),
+                //   // height: ConstantWidget.getScreenPercentSize(
+                //   //   context,
+                //   //   50,
+                //   // ),
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: [
+                //       Padding(
+                //         padding: EdgeInsets.only(left: margin),
+                //         child: ConstantWidget.getTextWidget(
+                //           'More Prodcuts',
+                //           ConstantData.mainTextColor,
+                //           TextAlign.start,
+                //           FontWeight.w600,
+                //           font22Px(context: context),
+                //         ),
+                //       ),
+                //       SizedBox(
+                //         height: blockSizeVertical(context: context) * 2,
+                //       ),
+                //       Row(
+                //         children: [
+                //           Expanded(
+                //             child: Observer(builder: (_) {
+                //               final category =
+                //                   categoriesfromValue(widget.model.category);
 
-                              switch (category) {
-                                case CategoriesType.ETHICAL:
-                                  final list = store.ethicalProductList;
+                //               switch (category) {
+                //                 case CategoriesType.ETHICAL:
+                //                   final list = store.ethicalProductList;
 
-                                  return MoreProductsList(
-                                    list: list,
-                                    store: store,
-                                    loginStore: loginStore,
-                                  );
-                                case CategoriesType.GENERIC:
-                                  final list = store.genericProductList;
+                //                   return MoreProductsList(
+                //                     list: list,
+                //                     store: store,
+                //                     loginStore: loginStore,
+                //                   );
+                //                 case CategoriesType.GENERIC:
+                //                   final list = store.genericProductList;
 
-                                  return MoreProductsList(
-                                    list: list,
-                                    store: store,
-                                    loginStore: loginStore,
-                                  );
-                                case CategoriesType.SURGICAL:
-                                  final list = store.surgicalProductList;
+                //                   return MoreProductsList(
+                //                     list: list,
+                //                     store: store,
+                //                     loginStore: loginStore,
+                //                   );
+                //                 case CategoriesType.SURGICAL:
+                //                   final list = store.surgicalProductList;
 
-                                  return MoreProductsList(
-                                    list: list,
-                                    store: store,
-                                    loginStore: loginStore,
-                                  );
-                                case CategoriesType.VETERINARY:
-                                  final list = store.veterinaryProductList;
+                //                   return MoreProductsList(
+                //                     list: list,
+                //                     store: store,
+                //                     loginStore: loginStore,
+                //                   );
+                //                 case CategoriesType.VETERINARY:
+                //                   final list = store.veterinaryProductList;
 
-                                  return MoreProductsList(
-                                    list: list,
-                                    store: store,
-                                    loginStore: loginStore,
-                                  );
-                                case CategoriesType.AYURVEDIC:
-                                  final list = store.ayurvedicProductList;
+                //                   return MoreProductsList(
+                //                     list: list,
+                //                     store: store,
+                //                     loginStore: loginStore,
+                //                   );
+                //                 case CategoriesType.AYURVEDIC:
+                //                   final list = store.ayurvedicProductList;
 
-                                  return MoreProductsList(
-                                    list: list,
-                                    store: store,
-                                    loginStore: loginStore,
-                                  );
-                                case CategoriesType.GENERAL:
-                                  final list = store.generalProductList;
+                //                   return MoreProductsList(
+                //                     list: list,
+                //                     store: store,
+                //                     loginStore: loginStore,
+                //                   );
+                //                 case CategoriesType.GENERAL:
+                //                   final list = store.generalProductList;
 
-                                  return MoreProductsList(
-                                    list: list,
-                                    store: store,
-                                    loginStore: loginStore,
-                                  );
-                              }
-                            }),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                //                   return MoreProductsList(
+                //                     list: list,
+                //                     store: store,
+                //                     loginStore: loginStore,
+                //                   );
+                //               }
+                //             }),
+                //           ),
+                //         ],
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             );
           }),
@@ -587,64 +737,64 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
   }
 }
 
-class MoreProductsList extends StatelessWidget {
-  const MoreProductsList({
-    Key? key,
-    required this.list,
-    required this.store,
-    required this.loginStore,
-  }) : super(key: key);
+// class MoreProductsList extends StatelessWidget {
+//   const MoreProductsList({
+//     Key? key,
+//     required this.list,
+//     required this.store,
+//     required this.loginStore,
+//   }) : super(key: key);
 
-  final List<ProductModel> list;
-  final ProductsStore store;
-  final LoginStore loginStore;
+//   final List<ProductModel> list;
+//   final ProductsStore store;
+//   final LoginStore loginStore;
 
-  @override
-  Widget build(BuildContext context) {
-    double margin = ConstantWidget.getScreenPercentSize(context, 2);
-    double height = safeBlockHorizontal(context: context) * 45;
+//   @override
+//   Widget build(BuildContext context) {
+//     double margin = ConstantWidget.getScreenPercentSize(context, 2);
+//     double height = safeBlockHorizontal(context: context) * 45;
 
-    double width = ConstantWidget.getWidthPercentSize(context, 50);
-    double sideMargin = margin * 1.2;
-    double firstHeight = ConstantWidget.getPercentSize(height, 48);
-    double remainHeight = height - firstHeight;
+//     double width = ConstantWidget.getWidthPercentSize(context, 50);
+//     double sideMargin = margin * 1.2;
+//     double firstHeight = ConstantWidget.getPercentSize(height, 48);
+//     double remainHeight = height - firstHeight;
 
-    double radius = ConstantWidget.getPercentSize(height, 5);
-    return Container(
-      width: screenWidth(context: context),
-      height: ConstantWidget.getScreenPercentSize(context, 24),
-      child: ListView.builder(
-        // gridDelegate:
-        //     const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        padding: EdgeInsets.only(
-          left: blockSizeHorizontal(context: context) * 5,
-          right: blockSizeHorizontal(context: context) * 3,
-        ),
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        itemCount: 7,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: EdgeInsets.only(
-                right: blockSizeHorizontal(context: context) * 3),
-            child: ProductsCard(
-              store: store,
-              loginStore: loginStore,
-              list: list,
-              width: width,
-              firstHeight: firstHeight,
-              radius: radius,
-              sideMargin: sideMargin,
-              remainHeight: remainHeight,
-              index: index,
-              // isMoreProducts: true,
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
+//     double radius = ConstantWidget.getPercentSize(height, 5);
+//     return Container(
+//       width: screenWidth(context: context),
+//       height: ConstantWidget.getScreenPercentSize(context, 24),
+//       child: ListView.builder(
+//         // gridDelegate:
+//         //     const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+//         padding: EdgeInsets.only(
+//           left: blockSizeHorizontal(context: context) * 5,
+//           right: blockSizeHorizontal(context: context) * 3,
+//         ),
+//         scrollDirection: Axis.horizontal,
+//         physics: const BouncingScrollPhysics(),
+//         itemCount: 7,
+//         itemBuilder: (context, index) {
+//           return Padding(
+//             padding: EdgeInsets.only(
+//                 right: blockSizeHorizontal(context: context) * 3),
+//             child: ProductsCard(
+//               store: store,
+//               loginStore: loginStore,
+//               list: list,
+//               width: width,
+//               firstHeight: firstHeight,
+//               radius: radius,
+//               sideMargin: sideMargin,
+//               remainHeight: remainHeight,
+//               index: index,
+//               // isMoreProducts: true,
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
 
 class CustomQuantity extends StatelessWidget {
   const CustomQuantity({

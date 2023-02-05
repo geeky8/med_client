@@ -385,18 +385,6 @@ class BottomNavWidgets extends StatelessWidget {
                 ? ConstantWidget.getScreenPercentSize(context, 4)
                 : ConstantWidget.getScreenPercentSize(context, 4),
           ),
-          // ConstantWidget.getCustomText(
-          //   label,
-          //   (store.currentPage == index)
-          //       ? ConstantData.primaryColor
-          //       : ConstantData.clrBlack30,
-          //   1,
-          //   TextAlign.center,
-          //   FontWeight.w600,
-          //   (store.currentPage == index)
-          //       ? font15Px(context: context) * 1.2
-          //       : font15Px(context: context) * 1.1,
-          // ),
         ],
       ),
     );

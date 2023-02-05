@@ -843,12 +843,13 @@ class ConstantWidget {
     // S
     double height = ConstantWidget.getScreenPercentSize(context, 7.5);
     double radius = ConstantWidget.getPercentSize(height, 20);
-    double fontSize = font18Px(context: context);
+    double fontSize = font18Px(context: context) * 1.12;
 
     return Container(
       height: height,
       margin: EdgeInsets.symmetric(
-          vertical: ConstantWidget.getScreenPercentSize(context, 1.2)),
+        vertical: ConstantWidget.getScreenPercentSize(context, 1.2),
+      ),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.all(
@@ -1050,7 +1051,7 @@ class ConstantWidget {
             // alignment: Alignment.bottomCenter,
             alignment: Alignment.bottomCenter,
             decoration: BoxDecoration(
-                color: ConstantData.accentColor,
+                color: ConstantData.primaryColor,
                 borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(15),
                     bottomRight: Radius.circular(15))),

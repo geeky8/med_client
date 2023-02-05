@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/button_state.dart';
@@ -9,6 +12,7 @@ import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/screens/create_pin_screen.dart';
+import 'package:medrpha_customer/signup_login/screens/otp_verification_screen.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
@@ -106,6 +110,36 @@ class _PhoneVerificationState extends State<PhoneVerification> {
               SizedBox(
                 height: ConstantWidget.getScreenPercentSize(context, 2),
               ),
+              ConstantWidget.getCustomText(
+                'Enter Code',
+                ConstantData.mainTextColor,
+                1,
+                TextAlign.center,
+                FontWeight.w600,
+                font25Px(context: context),
+              ),
+              SizedBox(
+                height: ConstantWidget.getScreenPercentSize(context, 3),
+              ),
+              ConstantWidget.getCustomText(
+                'We have sent a verification code to the phone',
+                ConstantData.clrBorder,
+                2,
+                TextAlign.center,
+                FontWeight.w600,
+                font18Px(context: context) * 1.12,
+              ),
+              SizedBox(
+                height: blockSizeHorizontal(context: context) * 2,
+              ),
+              ConstantWidget.getCustomText(
+                '+91 ${widget.phone}',
+                ConstantData.mainTextColor,
+                2,
+                TextAlign.center,
+                FontWeight.w600,
+                font22Px(context: context),
+              ),
               SizedBox(
                 height: ConstantWidget.getScreenPercentSize(context, 5),
               ),
@@ -115,6 +149,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                 child: PinInput(
                   pinEditingController: _pinEditingController,
                   isObscure: false,
+                  pinShape: PinCodeFieldShape.circle,
                   action: TextInputAction.go,
                   // enable: _enable,
                   onSubmit: (value) async {
@@ -122,66 +157,67 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                       mobile: widget.phone,
                       otp: value,
                     );
-                    // int i = 1;
-                    // print(i);
-                    // _pinEditingController.clear();
                     if (i == 1) {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CustomAlertDialog(
-                              header: 'Success',
-                              description: 'Successfully Verified!',
-                              image: 'med_logo_text.png',
-                              buttonText: 'Continue',
-                              func: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => Provider.value(
-                                      value: store,
-                                      child: Provider.value(
-                                        value: productStore,
-                                        child: Provider.value(
-                                          value: profileStore,
-                                          child: Provider.value(
-                                            value: orderHistoryStore,
-                                            child: Provider.value(
-                                              value: bottomNavigationStore,
-                                              child: SignInPage(),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => Provider.value(
+                            value: store,
+                            child: Provider.value(
+                              value: productStore,
+                              child: Provider.value(
+                                value: profileStore,
+                                child: Provider.value(
+                                  value: orderHistoryStore,
+                                  child: Provider.value(
+                                    value: bottomNavigationStore,
+                                    child: const OTPSuccessFailure(),
                                   ),
-                                );
-                              },
-                            );
-                          });
-                      // Navigator.pushReplacement(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => Provider.value(
-                      //           value: store, child: SignInPage()),
-                      //     ));
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
                     } else {
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return CustomAlertDialog(
-                                header: 'Failure',
-                                image: 'med_logo_text.png',
-                                description:
-                                    'Failed to verify please try again',
-                                func: () {
-                                  Navigator.pop(context);
-                                },
-                                buttonText: 'Cancel');
+                              header: 'Incorrect OTP',
+                              description:
+                                  'It looks like you entered incorrect verification code, please try again',
+                              func: () async {
+                                await store.getOTP(mobile: widget.phone);
+
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Provider.value(
+                                              value: store,
+                                              child: Provider.value(
+                                                value: productStore,
+                                                child: Provider.value(
+                                                  value: profileStore,
+                                                  child: Provider.value(
+                                                    value:
+                                                        bottomNavigationStore,
+                                                    child: Provider.value(
+                                                      value: orderHistoryStore,
+                                                      child: PhoneVerification(
+                                                        phone: widget.phone,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            )));
+                              },
+                              buttonText: 'Try Again',
+                            );
                           });
                     }
                   },
-                  label: 'OTP',
                 ),
               ),
               SizedBox(
@@ -194,177 +230,6 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     horizontal: safeBlockVertical(context: context) * 9),
                 child: Column(
                   children: [
-                    // Observer(builder: (_) {
-                    //   final state = store.buttonState;
-
-                    //   switch (state) {
-                    //     case ButtonState.LOADING:
-                    //       return CircularProgressIndicator(
-                    //         color: ConstantData.mainTextColor,
-                    //       );
-                    //     case ButtonState.SUCCESS:
-                    //       return InkWell(
-                    //         onTap: () async {
-                    //           final i = await store.verifyOTP(
-                    //             mobile: widget.phone,
-                    //             otp: _pinEditingController.text.trim(),
-                    //           );
-                    //           // print(i);
-                    //           _pinEditingController.clear();
-                    //           if (i == 1) {
-                    //             showDialog(
-                    //                 context: context,
-                    //                 builder: (BuildContext context) {
-                    //                   return Dialog(
-                    //                     shape: RoundedRectangleBorder(
-                    //                       borderRadius:
-                    //                           BorderRadius.circular(20),
-                    //                     ),
-                    //                     elevation: 0,
-                    //                     backgroundColor: ConstantData.bgColor,
-                    //                     child: Stack(
-                    //                       children: <Widget>[
-                    //                         Container(
-                    //                           padding: const EdgeInsets.only(
-                    //                               left: ConstantData.padding,
-                    //                               top: ConstantData
-                    //                                       .avatarRadius +
-                    //                                   ConstantData.padding,
-                    //                               right: ConstantData.padding,
-                    //                               bottom: ConstantData.padding),
-                    //                           margin: const EdgeInsets.only(
-                    //                               top: ConstantData
-                    //                                   .avatarRadius),
-                    //                           child: Column(
-                    //                             mainAxisSize: MainAxisSize.min,
-                    //                             children: <Widget>[
-                    //                               ConstantWidget.getCustomText(
-                    //                                   'Success',
-                    //                                   ConstantData
-                    //                                       .mainTextColor,
-                    //                                   1,
-                    //                                   TextAlign.center,
-                    //                                   FontWeight.w600,
-                    //                                   20),
-                    //                               const SizedBox(
-                    //                                 height: 10,
-                    //                               ),
-                    //                               ConstantWidget.getCustomText(
-                    //                                   'Successfully verified!',
-                    //                                   ConstantData
-                    //                                       .mainTextColor,
-                    //                                   2,
-                    //                                   TextAlign.center,
-                    //                                   FontWeight.normal,
-                    //                                   14),
-                    //                               const SizedBox(
-                    //                                 height: 22,
-                    //                               ),
-                    //                               Container(
-                    //                                 margin:
-                    //                                     const EdgeInsets.only(
-                    //                                         left: 15,
-                    //                                         right: 15),
-                    //                                 width: double.infinity,
-                    //                                 child: InkWell(
-                    //                                   onTap: () {
-                    //                                     Navigator
-                    //                                         .pushReplacement(
-                    //                                       context,
-                    //                                       MaterialPageRoute(
-                    //                                         builder: (_) =>
-                    //                                             Provider.value(
-                    //                                           value: store
-                    //                                             ..init(),
-                    //                                           child: Provider
-                    //                                               .value(
-                    //                                             value:
-                    //                                                 productStore,
-                    //                                             child: Provider
-                    //                                                 .value(
-                    //                                               value:
-                    //                                                   profileStore,
-                    //                                               child: Provider
-                    //                                                   .value(
-                    //                                                 value:
-                    //                                                     bottomNavigationStore,
-                    //                                                 child:
-                    //                                                     SignInPage(),
-                    //                                               ),
-                    //                                             ),
-                    //                                           ),
-                    //                                         ),
-                    //                                       ),
-                    //                                     );
-                    //                                   },
-                    //                                   child: ConstantWidget
-                    //                                       .getButtonWidget(
-                    //                                           context,
-                    //                                           'Continue',
-                    //                                           ConstantData
-                    //                                               .primaryColor),
-                    //                                 ),
-                    //                               )
-                    //                             ],
-                    //                           ),
-                    //                         ),
-                    //                         Positioned(
-                    //                           top: 10,
-                    //                           left: ConstantData.padding,
-                    //                           right: ConstantData.padding,
-                    //                           child: CircleAvatar(
-                    //                             backgroundColor:
-                    //                                 Colors.transparent,
-                    //                             radius:
-                    //                                 ConstantData.avatarRadius,
-                    //                             child: ClipRRect(
-                    //                                 borderRadius:
-                    //                                     const BorderRadius.all(
-                    //                                         Radius.circular(
-                    //                                             ConstantData
-                    //                                                 .avatarRadius)),
-                    //                                 child: Image.asset(
-                    //                                   ConstantData.assetsPath +
-                    //                                       "med_logo_text.png",
-                    //                                   color: ConstantData
-                    //                                       .mainTextColor,
-                    //                                 )),
-                    //                           ),
-                    //                         ),
-                    //                       ],
-                    //                     ),
-                    //                   );
-                    //                 });
-                    //             // Navigator.pushReplacement(
-                    //             //     context,
-                    //             //     MaterialPageRoute(
-                    //             //       builder: (context) => Provider.value(
-                    //             //           value: store, child: SignInPage()),
-                    //             //     ));
-                    //           } else {
-                    //             showDialog(
-                    //                 context: context,
-                    //                 builder: (BuildContext context) {
-                    //                   return CustomDialogBox(
-                    //                     title: "Error!",
-                    //                     descriptions: "Please try again!",
-                    //                     text: "Continue",
-                    //                     func: () async {
-                    //                       Navigator.of(context).pop();
-                    //                     },
-                    //                   );
-                    //                 });
-                    //           }
-                    //         },
-                    //         child: ConstantWidget.getButtonWidget(
-                    //             context, 'Verify', ConstantData.primaryColor),
-                    //       );
-                    //     case ButtonState.ERROR:
-                    //       return ConstantWidget.getButtonWidget(
-                    //           context, 'Verify', ConstantData.primaryColor);
-                    //   }
-                    // }),
-
                     //---> Resend button
                     SizedBox(
                       height: safeBlockVertical(context: context) * 3,
@@ -372,53 +237,70 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     Column(
                       children: [
                         if (_start > 0)
-                          ConstantWidget.getCustomText(
-                            'Resend OTP in 0:${_start}s',
-                            ConstantData.mainTextColor,
-                            1,
-                            TextAlign.center,
-                            FontWeight.w600,
-                            font18Px(context: context),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ConstantWidget.getCustomText(
+                                'Resend new code in  ',
+                                ConstantData.clrBorder,
+                                1,
+                                TextAlign.center,
+                                FontWeight.w600,
+                                font18Px(context: context) * 1.1,
+                              ),
+                              ConstantWidget.getCustomText(
+                                '0:${_start}s',
+                                ConstantData.mainTextColor,
+                                1,
+                                TextAlign.center,
+                                FontWeight.w600,
+                                font18Px(context: context) * 1.15,
+                              ),
+                            ],
                           ),
                         if (_start == 0)
-                          // InkWell(
-                          //   onTap: () async {
-                          //     _pinEditingController.clear();
-                          //     await store.getOTP(
-                          //         mobile: widget.phone, context: context);
-                          //     _start = 60;
-                          //     _startTimer();
-                          //   },
-                          //   child: ConstantWidget.getButtonWidget(
-                          //     context,
-                          //     'Resend',
-                          //     ConstantData.primaryColor,
-                          //   ),
-                          // ),
-                          Container(
-                            height: ConstantWidget.getScreenPercentSize(
-                                context, 7.5),
-                            width:
-                                ConstantWidget.getWidthPercentSize(context, 40),
-                            margin: EdgeInsets.symmetric(
-                                vertical: ConstantWidget.getScreenPercentSize(
-                                    context, 1.2)),
-                            decoration: BoxDecoration(
-                              color: ConstantData.primaryColor,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(
-                                  ConstantWidget.getPercentSize(height, 20),
+                          InkWell(
+                            onTap: () async {
+                              await store.getOTP(mobile: widget.phone);
+
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Provider.value(
+                                            value: store,
+                                            child: Provider.value(
+                                              value: productStore,
+                                              child: Provider.value(
+                                                value: profileStore,
+                                                child: Provider.value(
+                                                  value: bottomNavigationStore,
+                                                  child: Provider.value(
+                                                    value: orderHistoryStore,
+                                                    child: PhoneVerification(
+                                                      phone: widget.phone,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )));
+                            },
+                            child: Container(
+                              height: ConstantWidget.getScreenPercentSize(
+                                  context, 7.5),
+                              width: ConstantWidget.getWidthPercentSize(
+                                  context, 40),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: ConstantWidget.getScreenPercentSize(
+                                      context, 1.2)),
+                              decoration: BoxDecoration(
+                                color: ConstantData.primaryColor,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(
+                                    ConstantWidget.getPercentSize(height, 20),
+                                  ),
                                 ),
                               ),
-                            ),
-                            child: InkWell(
-                              onTap: () async {
-                                _pinEditingController.clear();
-                                await store.getOTP(
-                                    mobile: widget.phone, context: context);
-                                _start = 60;
-                                _startTimer();
-                              },
                               child: Center(
                                 child: ConstantWidget.getDefaultTextWidget(
                                   'Resend',
@@ -432,61 +314,6 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                           ),
                       ],
                     )
-
-                    // Observer(builder: (_) {
-                    //   final state = store.buttonState;
-
-                    //   switch (state) {
-                    //     case ButtonState.LOADING:
-                    //       return CircularProgressIndicator(
-                    //         color: ConstantData.primaryColor,
-                    //       );
-                    //     case ButtonState.SUCCESS:
-                    //       return Column(
-                    //         children: [
-                    //           if (_start > 0)
-                    //             ConstantWidget.getCustomText(
-                    //               'Resend OTP in 0:${_start}s',
-                    //               ConstantData.mainTextColor,
-                    //               1,
-                    //               TextAlign.center,
-                    //               FontWeight.w600,
-                    //               font18Px(context: context),
-                    //             ),
-                    //           if (_start == 0)
-                    //             InkWell(
-                    //               onTap: () async {
-                    //                 _pinEditingController.clear();
-                    //                 await store.getOTP(
-                    //                     mobile: widget.phone, context: context);
-                    //                 _start = 60;
-                    //                 _startTimer();
-                    //               },
-                    //               child: ConstantWidget.getButtonWidget(
-                    //                 context,
-                    //                 'Resend',
-                    //                 ConstantData.primaryColor,
-                    //               ),
-                    //             ),
-                    //         ],
-                    //       );
-                    //     case ButtonState.ERROR:
-                    //       return InkWell(
-                    //         onTap: () async {
-                    //           await store.getOTP(
-                    //               mobile: widget.phone, context: context);
-                    //           _start = 60;
-                    //           _startTimer();
-                    //           _pinEditingController.clear();
-                    //         },
-                    //         child: ConstantWidget.getButtonWidget(
-                    //           context,
-                    //           'Resend',
-                    //           ConstantData.primaryColor,
-                    //         ),
-                    //       );
-                    //   }
-                    // }),
                   ],
                 ),
               )
@@ -502,7 +329,7 @@ class CustomAlertDialog extends StatelessWidget {
   const CustomAlertDialog({
     Key? key,
     required this.header,
-    required this.image,
+    // required this.image,
     required this.description,
     required this.func,
     required this.buttonText,
@@ -516,7 +343,7 @@ class CustomAlertDialog extends StatelessWidget {
   final String header;
   final String description;
   final String buttonText;
-  final String image;
+  // final String image;
   final VoidCallback func;
 
   @override
@@ -531,26 +358,28 @@ class CustomAlertDialog extends StatelessWidget {
         children: <Widget>[
           Container(
             padding: const EdgeInsets.only(
-                left: ConstantData.padding,
-                top: ConstantData.avatarRadius + ConstantData.padding,
-                right: ConstantData.padding,
-                bottom: ConstantData.padding),
+              left: ConstantData.padding,
+              // top: ConstantData.avatarRadius + ConstantData.padding,
+              right: ConstantData.padding,
+              bottom: ConstantData.padding,
+            ),
             margin: const EdgeInsets.only(top: ConstantData.avatarRadius),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ConstantWidget.getCustomText(header, ConstantData.mainTextColor,
-                    1, TextAlign.center, FontWeight.w600, 20),
-                const SizedBox(
-                  height: 10,
+                    2, TextAlign.center, FontWeight.w600, 20),
+                SizedBox(
+                  height: blockSizeVertical(context: context) * 2,
                 ),
                 ConstantWidget.getCustomText(
-                    description,
-                    ConstantData.mainTextColor,
-                    2,
-                    TextAlign.center,
-                    FontWeight.normal,
-                    14),
+                  description,
+                  ConstantData.mainTextColor,
+                  2,
+                  TextAlign.center,
+                  FontWeight.w500,
+                  font18Px(context: context),
+                ),
                 const SizedBox(
                   height: 22,
                 ),
@@ -560,26 +389,13 @@ class CustomAlertDialog extends StatelessWidget {
                   child: InkWell(
                     onTap: func,
                     child: ConstantWidget.getButtonWidget(
-                        context, buttonText, ConstantData.primaryColor),
+                      context,
+                      buttonText,
+                      ConstantData.primaryColor,
+                    ),
                   ),
                 )
               ],
-            ),
-          ),
-          Positioned(
-            top: 10,
-            left: ConstantData.padding,
-            right: ConstantData.padding,
-            child: CircleAvatar(
-              backgroundColor: Colors.transparent,
-              radius: ConstantData.avatarRadius,
-              child: ClipRRect(
-                  borderRadius: const BorderRadius.all(
-                      Radius.circular(ConstantData.avatarRadius)),
-                  child: Image.asset(
-                    "${ConstantData.assetsPath}$image",
-                    // color: ConstantData.mainTextColor,
-                  )),
             ),
           ),
         ],
@@ -613,12 +429,13 @@ class PinInput extends StatelessWidget {
   /// 4-pin input [PinInputTextField]
   const PinInput({
     Key? key,
-    required this.label,
     required this.pinEditingController,
     required this.isObscure,
     required this.action,
     this.onSubmit,
     this.unfocus,
+    required this.pinShape,
+    this.focusNode,
     this.func,
   }) :
         //  _pinEditingController = pinEditingController,
@@ -627,11 +444,12 @@ class PinInput extends StatelessWidget {
 
   final TextEditingController pinEditingController;
   final bool isObscure;
-  final String label;
   final Function? func;
   final TextInputAction action;
   final bool? unfocus;
   final ValueSetter<String>? onSubmit;
+  final PinCodeFieldShape pinShape;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -644,16 +462,6 @@ class PinInput extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ConstantWidget.getTextWidget(
-              '$label :',
-              ConstantData.mainTextColor,
-              TextAlign.center,
-              FontWeight.w600,
-              font18Px(context: context) * 1.2,
-            ),
-            SizedBox(
-              height: safeBlockVertical(context: context) * 2,
-            ),
             PinCodeTextField(
               cursorColor: ConstantData.mainTextColor,
               // cursorHeight: ConstantWidget.getWidthPercentSize(context, 20),
@@ -666,9 +474,11 @@ class PinInput extends StatelessWidget {
               ),
               obscureText: isObscure,
               showCursor: false,
+              controller: pinEditingController,
+              focusNode: focusNode,
               obscuringCharacter: '*',
               pinTheme: PinTheme(
-                shape: PinCodeFieldShape.circle,
+                shape: PinCodeFieldShape.box,
                 borderRadius: BorderRadius.circular(8),
                 borderWidth: 1,
                 activeColor: ConstantData.primaryColor,
@@ -688,7 +498,9 @@ class PinInput extends StatelessWidget {
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
               ],
-              onChanged: (v) {},
+              onChanged: (v) {
+                func;
+              },
               onCompleted: onSubmit,
             ),
           ],

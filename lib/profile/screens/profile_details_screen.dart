@@ -7,6 +7,7 @@ import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/profile/models/profile_model.dart';
+import 'package:medrpha_customer/profile/screens/new_profile_screen.dart';
 import 'package:medrpha_customer/profile/screens/profile_screen.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
@@ -52,11 +53,13 @@ class ProfileDetailsScreen extends StatelessWidget {
                               value: bottomNavigationStore,
                               child: Provider.value(
                                 value: orderHistoryStore,
-                                child: ProfilePage(
-                                  model: model,
-                                  phone: phone,
-                                  // beginToFill: '',
-                                ),
+                                // child: ProfilePage(
+                                //   model: model,
+                                //   phone: phone,
+                                //   // beginToFill: '',
+                                // ),
+                                child: NewProfileScreen(
+                                    model: model, phone: phone),
                               ),
                             ),
                           ),
@@ -101,31 +104,27 @@ class ProfileDetailsScreen extends StatelessWidget {
                             children: <Widget>[
                               Align(
                                 alignment: Alignment.topCenter,
-                                child: Container(
-                                  padding: EdgeInsets.all(
-                                      blockSizeHorizontal(context: context) *
-                                          4),
-                                  height: profileHeight,
-                                  width: profileHeight,
-                                  decoration: BoxDecoration(
-                                    color: ConstantData.bgColor,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: ConstantData.bgColor,
-                                      width:
-                                          ConstantWidget.getScreenPercentSize(
-                                              context, 0.2),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height:
+                                          blockSizeVertical(context: context) *
+                                              4,
                                     ),
-                                  ),
-                                  child: ClipOval(
-                                    child: Material(
-                                      // color: ConstantData.primaryColor,
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            ConstantWidget.getWidthPercentSize(
+                                                context, 25),
+                                        // vertical:
+                                        //     blockSizeVertical(context: context),
+                                      ),
                                       child: Image.asset(
-                                        "${ConstantData.assetsPath}med_logo.png",
-                                        fit: BoxFit.fill,
+                                        "${ConstantData.assetsPath}med_logo_text.png",
+                                        // fit: BoxFit.cover,
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
                             ],

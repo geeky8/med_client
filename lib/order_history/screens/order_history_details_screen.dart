@@ -57,22 +57,6 @@ class OrderHistoryDetailsScreen extends StatelessWidget {
             return const SizedBox();
         }
       }),
-      // appBar: AppBar(
-      //   elevation: 0,
-      //   centerTitle: true,
-      //   backgroundColor: ConstantData.bgColor,
-      //   title: ConstantWidget.getAppBarText('Order Details', context),
-      //   leading: Builder(
-      //     builder: (BuildContext context) {
-      //       return IconButton(
-      //         icon: ConstantWidget.getAppBarIcon(),
-      //         onPressed: () {
-      //           Navigator.pop(context);
-      //         },
-      //       );
-      //     },
-      //   ),
-      // ),
       body: Container(
         // margin: EdgeInsets.only(left: leftMargin, right: leftMargin),
         // padding: EdgeInsets.only(top: margin),
@@ -198,6 +182,7 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
           ),
           child: Container(
             decoration: BoxDecoration(color: ConstantData.bgColor),
+            // height: ConstantWidget.getScreenPercentSize(context, 60),
             padding: EdgeInsets.symmetric(
               horizontal: blockSizeHorizontal(context: context) * 4,
               vertical: blockSizeVertical(context: context) * 2,
@@ -213,18 +198,20 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                   FontWeight.w600,
                   font22Px(context: context),
                 ),
-                // SizedBox(height: blockSizeVertical(context: context) * 2),
-                ListView.builder(
-                  itemCount: widget.model.ordersList.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (_, index) {
-                    return ProductDetailsTile(
-                      model: widget.model.ordersList[index],
-                      productsStore: widget.productsStore,
-                      loginStore: widget.loginStore,
-                    );
-                  },
+                SizedBox(height: blockSizeVertical(context: context) * 2),
+                SizedBox(
+                  height: ConstantWidget.getScreenPercentSize(context, 30),
+                  child: ListView.builder(
+                    itemCount: widget.model.ordersList.length,
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (_, index) {
+                      return ProductDetailsTile(
+                        model: widget.model.ordersList[index],
+                        productsStore: widget.productsStore,
+                        loginStore: widget.loginStore,
+                      );
+                    },
+                  ),
                 ),
                 const Divider(thickness: 1),
                 SizedBox(height: blockSizeVertical(context: context) * 3),
@@ -392,27 +379,18 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                                       blockSizeVertical(context: context) * 1.5,
                                 ),
                                 hintText: 'Add remarks....',
-                                // prefixIcon: Icon(Icons.search),
-
-                                // prefixIcon: Icon(
-                                //   Icons.search,
-                                //   color: Colors.grey,
-                                //   size: font25Px(context: context) * 1.2,
-                                // ),
                                 hintStyle: TextStyle(
                                   color: Colors.grey,
                                   fontFamily: ConstantData.fontFamily,
                                   fontWeight: FontWeight.w600,
                                   fontSize: font15Px(context: context),
                                 ),
-
                                 errorStyle: TextStyle(
                                   color: Colors.red,
                                   fontFamily: ConstantData.fontFamily,
                                   fontWeight: FontWeight.w600,
                                   fontSize: font12Px(context: context) * 1.1,
                                 ),
-
                                 errorBorder: OutlineInputBorder(
                                   borderSide: const BorderSide(
                                       color: Colors.red, width: 2),
@@ -559,7 +537,7 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                           1,
                           TextAlign.center,
                           FontWeight.w600,
-                          font18Px(context: context),
+                          font22Px(context: context),
                         ),
                         const Spacer(),
                         Icon(
@@ -675,14 +653,6 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                 SizedBox(
                   height: ConstantWidget.getScreenPercentSize(context, 3),
                 ),
-                // ConstantWidget.getCustomText(
-                //   'Price breakup',
-                //   ConstantData.mainTextColor,
-                //   1,
-                //   TextAlign.center,
-                //   FontWeight.w600,
-                //   font18Px(context: context) * 1.2,
-                // ),
                 Row(
                   children: [
                     ConstantWidget.getCustomText(
@@ -853,7 +823,7 @@ class ProductDetailsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double imageSize = safeBlockVertical(context: context) * 6;
+    double imageSize = ConstantWidget.getWidthPercentSize(context, 20);
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: blockSizeVertical(context: context),
@@ -865,8 +835,8 @@ class ProductDetailsTile extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: ConstantData.productUrl + model.productImg,
               fit: BoxFit.cover,
-              height: imageSize * 1.2,
-              width: imageSize * 1.2,
+              height: imageSize,
+              width: imageSize * 1.5,
             ),
           ),
           SizedBox(
@@ -881,12 +851,13 @@ class ProductDetailsTile extends StatelessWidget {
                 1,
                 TextAlign.center,
                 FontWeight.w600,
-                font15Px(context: context) * 1.1,
+                font18Px(context: context) * 1.1,
               ),
               SizedBox(
                 height: blockSizeVertical(context: context),
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ConstantWidget.getCustomText(
                     '₹${model.mrp}',
@@ -894,10 +865,7 @@ class ProductDetailsTile extends StatelessWidget {
                     1,
                     TextAlign.center,
                     FontWeight.w600,
-                    font15Px(context: context),
-                  ),
-                  SizedBox(
-                    width: blockSizeHorizontal(context: context) * 2,
+                    font18Px(context: context),
                   ),
                   ConstantWidget.getCustomText(
                     'Qty: ${model.quantity}',
@@ -905,34 +873,12 @@ class ProductDetailsTile extends StatelessWidget {
                     1,
                     TextAlign.center,
                     FontWeight.w600,
-                    font12Px(context: context),
+                    font15Px(context: context),
                   ),
                 ],
               ),
             ],
           ),
-          const Spacer(),
-          IconButton(
-              onPressed: () {
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (_) => Provider.value(
-                //             value: productsStore,
-                //             child: Provider.value(
-                //               value: loginStore,
-                //               child: ProductsDetailScreen(
-                //                 model: model,
-                //                 // modelIndex: index,
-                //                 // list: list,
-                //               ),
-                //             ))));
-              },
-              icon: Icon(
-                Icons.arrow_right,
-                size: 22,
-                color: ConstantData.clrBlack30,
-              )),
         ],
       ),
     );

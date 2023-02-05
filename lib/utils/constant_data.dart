@@ -8,8 +8,8 @@ import 'size_config.dart';
 
 class ConstantData {
   /// Colors [Color]
-  static Color primaryColor = '#0188A6'.toColor();
-  static Color accentColor = "#55D6BE".toColor();
+  static Color accentColor = '#0188A6'.toColor();
+  static Color primaryColor = "#37B9C5".toColor();
   static Color secondaryColor = '#ACFCD9'.toColor();
   static Color bgColor = "#ffffff".toColor();
   static Color bgColor1 = '#F7F7F7'.toColor();

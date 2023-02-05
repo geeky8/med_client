@@ -187,6 +187,22 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$vaccineProductListAtom =
+      Atom(name: '_ProductsStore.vaccineProductList', context: context);
+
+  @override
+  ObservableList<ProductModel> get vaccineProductList {
+    _$vaccineProductListAtom.reportRead();
+    return super.vaccineProductList;
+  }
+
+  @override
+  set vaccineProductList(ObservableList<ProductModel> value) {
+    _$vaccineProductListAtom.reportWrite(value, super.vaccineProductList, () {
+      super.vaccineProductList = value;
+    });
+  }
+
   late final _$homeStateAtom =
       Atom(name: '_ProductsStore.homeState', context: context);
 
@@ -315,6 +331,22 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$vaccinePageIndexAtom =
+      Atom(name: '_ProductsStore.vaccinePageIndex', context: context);
+
+  @override
+  int get vaccinePageIndex {
+    _$vaccinePageIndexAtom.reportRead();
+    return super.vaccinePageIndex;
+  }
+
+  @override
+  set vaccinePageIndex(int value) {
+    _$vaccinePageIndexAtom.reportWrite(value, super.vaccinePageIndex, () {
+      super.vaccinePageIndex = value;
+    });
+  }
+
   late final _$searchIndexAtom =
       Atom(name: '_ProductsStore.searchIndex', context: context);
 
@@ -344,6 +376,38 @@ mixin _$ProductsStore on _ProductsStore, Store {
   set paginationState(StoreState value) {
     _$paginationStateAtom.reportWrite(value, super.paginationState, () {
       super.paginationState = value;
+    });
+  }
+
+  late final _$recommendAtom =
+      Atom(name: '_ProductsStore.recommend', context: context);
+
+  @override
+  List<ProductModel> get recommend {
+    _$recommendAtom.reportRead();
+    return super.recommend;
+  }
+
+  @override
+  set recommend(List<ProductModel> value) {
+    _$recommendAtom.reportWrite(value, super.recommend, () {
+      super.recommend = value;
+    });
+  }
+
+  late final _$recommedLoadingAtom =
+      Atom(name: '_ProductsStore.recommedLoading', context: context);
+
+  @override
+  StoreState get recommedLoading {
+    _$recommedLoadingAtom.reportRead();
+    return super.recommedLoading;
+  }
+
+  @override
+  set recommedLoading(StoreState value) {
+    _$recommedLoadingAtom.reportWrite(value, super.recommedLoading, () {
+      super.recommedLoading = value;
     });
   }
 
@@ -575,6 +639,15 @@ mixin _$ProductsStore on _ProductsStore, Store {
         .run(() => super.getGenericProducts(load: load));
   }
 
+  late final _$getRecommendationsAsyncAction =
+      AsyncAction('_ProductsStore.getRecommendations', context: context);
+
+  @override
+  Future<void> getRecommendations({required ProductModel model}) {
+    return _$getRecommendationsAsyncAction
+        .run(() => super.getRecommendations(model: model));
+  }
+
   late final _$getSurgicalProductsAsyncAction =
       AsyncAction('_ProductsStore.getSurgicalProducts', context: context);
 
@@ -609,6 +682,15 @@ mixin _$ProductsStore on _ProductsStore, Store {
   Future<void> getGenerallProducts({bool? load}) {
     return _$getGenerallProductsAsyncAction
         .run(() => super.getGenerallProducts(load: load));
+  }
+
+  late final _$getVaccineProductsAsyncAction =
+      AsyncAction('_ProductsStore.getVaccineProducts', context: context);
+
+  @override
+  Future<void> getVaccineProducts({bool? load}) {
+    return _$getVaccineProductsAsyncAction
+        .run(() => super.getVaccineProducts(load: load));
   }
 
   late final _$getSearchedResultsAsyncAction =
@@ -751,6 +833,7 @@ surgicalProductList: ${surgicalProductList},
 veterinaryProductList: ${veterinaryProductList},
 ayurvedicProductList: ${ayurvedicProductList},
 generalProductList: ${generalProductList},
+vaccineProductList: ${vaccineProductList},
 homeState: ${homeState},
 cartState: ${cartState},
 ethicalPageIndex: ${ethicalPageIndex},
@@ -759,8 +842,11 @@ surgicalPageIndex: ${surgicalPageIndex},
 vetPageIndex: ${vetPageIndex},
 ayurvedicPageIndex: ${ayurvedicPageIndex},
 generalPageIndex: ${generalPageIndex},
+vaccinePageIndex: ${vaccinePageIndex},
 searchIndex: ${searchIndex},
 paginationState: ${paginationState},
+recommend: ${recommend},
+recommedLoading: ${recommedLoading},
 searchState: ${searchState},
 searchController: ${searchController},
 searchList: ${searchList},

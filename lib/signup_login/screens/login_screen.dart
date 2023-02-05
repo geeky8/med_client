@@ -16,6 +16,8 @@ import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
+import 'package:medrpha_customer/utils/storage.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -121,7 +123,7 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  height: blockSizeVertical(context: context) * 2,
+                  height: blockSizeVertical(context: context),
                 ),
 
                 //---> Again login with OTP
@@ -149,12 +151,24 @@ class LoginScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  child: ConstantWidget.getTextWidget(
-                    'Login with OTP',
-                    ConstantData.clrBlack30,
-                    TextAlign.center,
-                    FontWeight.w600,
-                    font18Px(context: context),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ConstantWidget.getTextWidget(
+                        'Forgot your pin?',
+                        ConstantData.mainTextColor,
+                        TextAlign.center,
+                        FontWeight.w600,
+                        font18Px(context: context) * 1.07,
+                      ),
+                      ConstantWidget.getTextWidget(
+                        '  Login with mobile',
+                        ConstantData.accentColor,
+                        TextAlign.center,
+                        FontWeight.bold,
+                        font22Px(context: context),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -175,6 +189,28 @@ class LoginScreen extends StatelessWidget {
                   //---> Logo
                   MedLogo(height: height),
 
+                  ConstantWidget.getCustomText(
+                    'Welcome back !',
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w600,
+                    font22Px(context: context),
+                  ),
+
+                  SizedBox(
+                    height: blockSizeHorizontal(context: context) * 3,
+                  ),
+
+                  ConstantWidget.getCustomText(
+                    'Enter your unique 4-digit pin',
+                    ConstantData.clrBorder,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w500,
+                    font22Px(context: context),
+                  ),
+
                   SizedBox(
                     height: ConstantWidget.getScreenPercentSize(context, 4.5),
                   ),
@@ -186,7 +222,8 @@ class LoginScreen extends StatelessWidget {
                     // enable: true,
                     isObscure: true,
                     action: TextInputAction.next,
-                    label: 'Enter Pin',
+
+                    pinShape: PinCodeFieldShape.box,
                     onSubmit: (value) async {
                       //---> Login func
                       store.buttonState = ButtonState.LOADING;

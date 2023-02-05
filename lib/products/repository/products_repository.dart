@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 
 // import 'package:dio/dio.dart';
@@ -198,7 +199,7 @@ class ProductsRepository {
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      // print(respBody);
+      // print('------- add $respBody');
       if (respBody['status'] == '1') {
         return 1;
       }
@@ -473,5 +474,27 @@ class ProductsRepository {
     } else {
       return '';
     }
+  }
+
+  Future<List<String>> getRecommedations({required String name}) async {
+    final result = HashSet<String>();
+
+    final resp = await http.post(
+        Uri.parse('http://8422-34-75-21-150.ngrok.io/medicine'),
+        body: {'med': name.toUpperCase()});
+
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body) as Map<String, dynamic>;
+      final data = (body['data'] as Map<String, dynamic>);
+      data.forEach(
+        (key, value) {
+          final name = (value as String).split(",")[0];
+          // print("Name hai ${name[0] + name.substring(1).toLowerCase()}");
+          result.add(name[0] + name.substring(1).toLowerCase());
+        },
+      );
+      // debugPrint(resp.body);
+    }
+    return result.toList();
   }
 }

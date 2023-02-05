@@ -20,7 +20,7 @@ import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+// import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class OrderHistoryScreen extends StatelessWidget {
   const OrderHistoryScreen({Key? key, this.fromSettingsPage}) : super(key: key);
@@ -1366,50 +1366,12 @@ class InvoiceView extends StatelessWidget {
           color: ConstantData.bgColor,
           borderRadius: BorderRadius.circular(radius),
         ),
-        // child: CachedNetworkImage(
-        //   imageUrl: ConstantData.invoiceUrl +  '/' + url,
-        //   fit: BoxFit.cover,
-        //   errorWidget: (context, e, _) => Image.network(
-        //       ConstantData.licenseUrl + phone + '/' + 'no_image.png'),
-        //   placeholder: (
-        //     context,
-        //     _,
-        //   ) {
-        //     return Image.asset(ConstantData.assetsPath + 'med_logo_text.png');
-        //   },
-        // ),
         child: Column(
           children: [
-            Expanded(
-              flex: 1,
-              child: SfPdfViewer.network(
-                ConstantData.invoiceUrl + url,
-              ),
-            ),
-            // const Spacer(),
-            // InkWell(
-            //   onTap: () async {
-            //     Navigator.pop(context);
-            //     await store.downloadInvoice(
-            //         invoice: invoice, context: detailsContext);
-            //   },
-            //   child: Container(
-            //     padding: EdgeInsets.symmetric(
-            //       vertical: blockSizeVertical(context: context) * 2,
-            //       horizontal: blockSizeHorizontal(context: context) * 3,
-            //     ),
-            //     decoration: BoxDecoration(
-            //       color: ConstantData.primaryColor,
-            //       borderRadius: BorderRadius.circular(12),
-            //     ),
-            //     child: ConstantWidget.getCustomText(
-            //       'Download',
-            //       ConstantData.bgColor,
-            //       1,
-            //       TextAlign.center,
-            //       FontWeight.w600,
-            //       font18Px(context: context),
-            //     ),
+            // Expanded(
+            //   flex: 1,
+            //   child: SfPdfViewer.network(
+            //     ConstantData.invoiceUrl + url,
             //   ),
             // ),
           ],

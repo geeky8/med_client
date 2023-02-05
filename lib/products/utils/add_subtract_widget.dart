@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
@@ -9,7 +10,7 @@ import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 
-class PlusMinusWidget extends StatelessWidget {
+class PlusMinusWidget extends StatefulWidget {
   /// Button to increment or decrement the quantity of [ProductModel] as per cart
   const PlusMinusWidget({
     Key? key,
@@ -17,13 +18,20 @@ class PlusMinusWidget extends StatelessWidget {
     required this.store,
     this.iconSize,
     this.fontSize,
+    this.detailScreen,
   }) : super(key: key);
 
   final ProductModel model;
   final ProductsStore store;
   final double? iconSize;
   final double? fontSize;
+  final bool? detailScreen;
 
+  @override
+  State<PlusMinusWidget> createState() => _PlusMinusWidgetState();
+}
+
+class _PlusMinusWidgetState extends State<PlusMinusWidget> {
   ProductModel updateCurrProduct({
     required String category,
     required ProductsStore store,
@@ -31,123 +39,138 @@ class PlusMinusWidget extends StatelessWidget {
     switch (category) {
       case 'Ethical':
         final index = store.ethicalProductList
-            .indexWhere((element) => element.pid == model.pid);
-        return (index != -1) ? store.ethicalProductList[index] : model;
+            .indexWhere((element) => element.pid == widget.model.pid);
+        return (index != -1) ? store.ethicalProductList[index] : widget.model;
 
       case 'Generic':
         final index = store.genericProductList
-            .indexWhere((element) => element.pid == model.pid);
-        return (index != -1) ? store.genericProductList[index] : model;
+            .indexWhere((element) => element.pid == widget.model.pid);
+        return (index != -1) ? store.genericProductList[index] : widget.model;
 
       case 'Surgical':
         final index = store.surgicalProductList
-            .indexWhere((element) => element.pid == model.pid);
-        return (index != -1) ? store.surgicalProductList[index] : model;
+            .indexWhere((element) => element.pid == widget.model.pid);
+        return (index != -1) ? store.surgicalProductList[index] : widget.model;
 
       case 'Veterinary':
         final index = store.veterinaryProductList
-            .indexWhere((element) => element.pid == model.pid);
-        return (index != -1) ? store.veterinaryProductList[index] : model;
+            .indexWhere((element) => element.pid == widget.model.pid);
+        return (index != -1)
+            ? store.veterinaryProductList[index]
+            : widget.model;
 
       case 'Ayurvedic':
         final index = store.ayurvedicProductList
-            .indexWhere((element) => element.pid == model.pid);
-        return (index != -1) ? store.ayurvedicProductList[index] : model;
+            .indexWhere((element) => element.pid == widget.model.pid);
+        return (index != -1) ? store.ayurvedicProductList[index] : widget.model;
 
       case 'General':
         final index = store.generalProductList
-            .indexWhere((element) => element.pid == model.pid);
-        return (index != -1) ? store.generalProductList[index] : model;
+            .indexWhere((element) => element.pid == widget.model.pid);
+        return (index != -1) ? store.generalProductList[index] : widget.model;
 
       default:
-        return model;
+        return widget.model;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment:
-          (iconSize != null) ? MainAxisAlignment.center : MainAxisAlignment.end,
+      mainAxisAlignment: (widget.iconSize != null)
+          ? MainAxisAlignment.center
+          : MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Observer(builder: (_) {
-          ProductModel currModel = model;
-          if (model.subTotal != '0.00') {
-            currModel =
-                updateCurrProduct(category: model.category, store: store);
+          ProductModel currModel = widget.model;
+          if (widget.model.subTotal != '0.00') {
+            currModel = updateCurrProduct(
+                category: widget.model.category, store: widget.store);
           }
           return InkWell(
             onTap: () async {
               // print(-1);
-              if (currModel.cartQuantity! > 0) {
-                store.minusRemoveState = StoreState.LOADING;
-                await store.minusToCart(
-                  model: currModel,
-                  context: context,
-                );
-                store.minusRemoveState = StoreState.SUCCESS;
-              }
+              // if (widget.model.cartQuantity > widget.model.minQty) {
+              // widget.store.minusRemoveState = StoreState.LOADING;
+              setState(() {
+                widget.model.cartQuantity -= widget.model.minQty;
+              });
+              await widget.store.minusToCart(
+                model: widget.model,
+                context: context,
+              );
+              // widget.store.minusRemoveState = StoreState.SUCCESS;
+              // }
             },
             child: PlusMinusButton(
               icon: CupertinoIcons.minus,
-              iconSize: iconSize,
+              iconSize: widget.iconSize,
             ),
           );
         }),
         Observer(builder: (_) {
-          ProductModel currModel = model;
-          if (model.subTotal != '0.00') {
-            currModel =
-                updateCurrProduct(category: model.category, store: store);
+          ProductModel currModel = widget.model;
+          if (widget.model.subTotal != '0.00') {
+            currModel = updateCurrProduct(
+                category: widget.model.category, store: widget.store);
           }
-          print('------- checking --------${currModel.cartQuantity}');
+          // print('------- checking --------${currModel.cartQuantity}');
           return InkWell(
             onTap: () {
               showDialog(
                 context: context,
                 builder: (_) => QuantityDialog(
-                  model: currModel,
-                  store: store,
+                  model: widget.model,
+                  store: widget.store,
                 ),
               );
             },
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: blockSizeHorizontal(context: context) * 3,
-                vertical: (iconSize != null)
+                vertical: (widget.iconSize != null)
                     ? blockSizeVertical(context: context)
                     : 0,
               ),
               child: ConstantWidget.getCustomText(
-                '${(currModel.cartQuantity!.toString().length > 4) ? '${currModel.cartQuantity!.toString().substring(0, 3)}...' : currModel.cartQuantity!}',
+                '${(widget.model.cartQuantity.toString().length > 4) ? '${widget.model.cartQuantity.toString().substring(0, 3)}...' : widget.model.cartQuantity}',
                 ConstantData.mainTextColor,
                 2,
                 TextAlign.center,
                 FontWeight.w600,
-                fontSize ?? font15Px(context: context),
+                widget.fontSize ?? font15Px(context: context),
               ),
             ),
           );
         }),
         Observer(builder: (_) {
-          ProductModel currModel = model;
-          if (model.subTotal != '0.00') {
-            currModel =
-                updateCurrProduct(category: model.category, store: store);
+          ProductModel currModel = widget.model;
+          if (widget.model.subTotal != '0.00') {
+            currModel = updateCurrProduct(
+                category: widget.model.category, store: widget.store);
           }
           return InkWell(
             onTap: () async {
-              store.plusState = StoreState.LOADING;
-              await store.plusToCart(
-                model: currModel,
-                context: context,
-              );
-              store.plusState = StoreState.SUCCESS;
+              setState(() {
+                widget.model.cartQuantity += widget.model.minQty;
+              });
+              if (widget.model.cartQuantity >
+                  int.parse(widget.model.quantity)) {
+                Fluttertoast.showToast(msg: 'Quantity Not Available');
+                setState(() {
+                  widget.model.cartQuantity -= widget.model.minQty;
+                });
+              } else {
+                await widget.store.plusToCart(
+                  model: widget.model,
+                  context: context,
+                );
+              }
             },
             child: PlusMinusButton(
               icon: CupertinoIcons.plus,
-              iconSize: iconSize,
+              iconSize: widget.iconSize,
             ),
           );
         }),
@@ -181,7 +204,7 @@ class PlusMinusButton extends StatelessWidget {
       ),
       child: Icon(
         icon,
-        size: iconSize ?? blockSizeVertical(context: context) * 1.5,
+        size: iconSize ?? blockSizeVertical(context: context) * 2,
         color: Colors.grey,
       ),
     );
@@ -198,6 +221,8 @@ class AddProductButton extends StatelessWidget {
     required this.height,
     required this.fontSize,
     required this.contextReq,
+    this.isDetailScreen,
+    this.detailScreenFunc,
   }) : super(key: key);
 
   final ProductModel model;
@@ -206,25 +231,20 @@ class AddProductButton extends StatelessWidget {
   final double height;
   final double fontSize;
   final BuildContext contextReq;
+  final bool? isDetailScreen;
+  final Function? detailScreenFunc;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        final index = store.cartModel.productList
-            .indexWhere((element) => element.pid == model.pid);
-        SnackBar snackBar;
-        if (index == -1) {
-          await store.addToCart(model: model, context: contextReq);
-          snackBar = ConstantWidget.customSnackBar(
-              text: 'Added To Cart', context: context);
-        } else {
-          snackBar = ConstantWidget.customSnackBar(
-              text: 'Item Already in Cart', context: context);
+        await store.addToCart(
+          model: model,
+          context: context,
+        );
+        if (detailScreenFunc != null) {
+          detailScreenFunc;
         }
-
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       },
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -238,7 +258,7 @@ class AddProductButton extends StatelessWidget {
           ),
         ),
         child: ConstantWidget.getCustomText(
-          'Add',
+          (isDetailScreen != null) ? 'Add to cart' : 'Add',
           ConstantData.bgColor,
           1,
           TextAlign.center,
@@ -272,44 +292,44 @@ class RemoveButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        store.removeState = StoreState.LOADING;
+        // store.removeState = StoreState.LOADING;
         await store.removeFromCart(
           model: model,
           context: context,
         );
-        store.removeState = StoreState.SUCCESS;
+        // store.removeState = StoreState.SUCCESS;
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: ConstantData.primaryColor,
-          shape: (isDetailPage ?? false) ? BoxShape.rectangle : BoxShape.circle,
-          borderRadius: (isDetailPage ?? false)
-              ? BorderRadius.circular(font25Px(context: context) * 1.1)
-              : null,
-        ),
-        padding: (isDetailPage ?? false)
-            ? EdgeInsets.symmetric(
-                // horizontal: blockSizeHorizontal(context: context) * 8,
-                vertical: blockSizeVertical(context: context) * 2.5,
-              )
-            : EdgeInsets.all(
+      child: (isDetailPage == null)
+          ? Container(
+              decoration: BoxDecoration(
+                color: ConstantData.color1,
+                shape: BoxShape.circle,
+              ),
+              padding: EdgeInsets.all(
                 blockSizeHorizontal(context: context) * 1.8,
               ),
-        child: (isDetailPage ?? false)
-            ? ConstantWidget.getCustomText(
-                'Remove',
-                ConstantData.bgColor,
-                1,
-                TextAlign.center,
-                FontWeight.w600,
-                font18Px(context: context),
-              )
-            : Icon(
-                Icons.delete_rounded,
-                size: font22Px(context: context),
+              child: Icon(
+                CupertinoIcons.delete,
+                size: font22Px(context: context) * 1.12,
                 color: ConstantData.bgColor,
               ),
-      ),
+            )
+          : Container(
+              padding: EdgeInsets.all(
+                blockSizeHorizontal(context: context) * 3,
+              ),
+              decoration: BoxDecoration(
+                color: ConstantData.color1,
+                borderRadius: BorderRadius.circular(
+                  font22Px(context: context),
+                ),
+              ),
+              child: Icon(
+                CupertinoIcons.delete,
+                color: ConstantData.bgColor,
+                size: font25Px(context: context) * 1.18,
+              ),
+            ),
     );
   }
 }

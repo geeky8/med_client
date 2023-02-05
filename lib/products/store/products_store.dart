@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -20,8 +19,6 @@ import 'package:medrpha_customer/products/repository/products_repository.dart';
 import 'package:medrpha_customer/products/utils/order_dialog.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
-import 'package:medrpha_customer/utils/constant_widget.dart';
-import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
@@ -38,8 +35,6 @@ abstract class _ProductsStore with Store {
   @observable
   String message = 'Coming Soon!';
 
-  // @observable
-  // StoreState state = StoreState.SUCCESS;
   @observable
   CategoriesType categoriesType = CategoriesType.ETHICAL;
 
@@ -73,9 +68,9 @@ abstract class _ProductsStore with Store {
   ObservableList<ProductModel> generalProductList =
       ObservableList<ProductModel>.of([]);
 
-  // @observable
-  // ObservableList<ProductModel> allProducts =
-  //     ObservableList<ProductModel>.of([]);
+  @observable
+  ObservableList<ProductModel> vaccineProductList =
+      ObservableList<ProductModel>.of([]);
 
   @observable
   StoreState homeState = StoreState.SUCCESS;
@@ -100,6 +95,9 @@ abstract class _ProductsStore with Store {
 
   @observable
   int generalPageIndex = 1;
+
+  @observable
+  int vaccinePageIndex = 1;
 
   @observable
   int searchIndex = 1;
@@ -136,6 +134,7 @@ abstract class _ProductsStore with Store {
     await getSurgicalProducts();
     await getVeterinaryProducts();
     await getAyurvedicProducts();
+    await getVaccineProducts();
   }
 
   @action
@@ -230,6 +229,76 @@ abstract class _ProductsStore with Store {
     }
   }
 
+  @observable
+  List<ProductModel> recommend = ObservableList.of([]);
+
+  @observable
+  StoreState recommedLoading = StoreState.SUCCESS;
+
+  @action
+  Future<void> getRecommendations({required ProductModel model}) async {
+    recommedLoading = StoreState.LOADING;
+    recommend.clear();
+    final list =
+        await _productsRepository.getRecommedations(name: model.productName);
+    for (final name in list) {
+      int ind = -1;
+
+      debugPrint("names $name");
+
+      ind = ethicalProductList
+          .indexWhere((element) => element.productName == name);
+      if (ind != -1) {
+        recommend.add(ethicalProductList[ind]);
+        continue;
+      }
+
+      ind = genericProductList
+          .indexWhere((element) => element.productName == name);
+      if (ind != -1) {
+        recommend.add(genericProductList[ind]);
+        continue;
+      }
+
+      ind = surgicalProductList
+          .indexWhere((element) => element.productName == name);
+      if (ind != -1) {
+        recommend.add(surgicalProductList[ind]);
+        continue;
+      }
+
+      ind = ayurvedicProductList
+          .indexWhere((element) => element.productName == name);
+      if (ind != -1) {
+        recommend.add(ayurvedicProductList[ind]);
+        continue;
+      }
+
+      ind = generalProductList
+          .indexWhere((element) => element.productName == name);
+      if (ind != -1) {
+        recommend.add(generalProductList[ind]);
+        continue;
+      }
+
+      ind = vaccineProductList
+          .indexWhere((element) => element.productName == name);
+      if (ind != -1) {
+        recommend.add(vaccineProductList[ind]);
+        continue;
+      }
+
+      ind = veterinaryProductList
+          .indexWhere((element) => element.productName == name);
+      if (ind != -1) {
+        recommend.add(veterinaryProductList[ind]);
+        continue;
+      }
+    }
+    debugPrint("Size of recommend ${recommend.toString()}");
+    recommedLoading = StoreState.SUCCESS;
+  }
+
   @action
   Future<void> getSurgicalProducts({bool? load}) async {
     if (load == null) prodState = StoreState.LOADING;
@@ -303,7 +372,7 @@ abstract class _ProductsStore with Store {
       categoryId: '5',
       pageIndex: ayurvedicPageIndex,
     );
-    // print(productRespModel!.message);
+
     if (productRespModel != null) {
       if (productRespModel.message ==
           'product not serviceable in your area !!!') {
@@ -362,6 +431,39 @@ abstract class _ProductsStore with Store {
     }
   }
 
+  @action
+  Future<void> getVaccineProducts({bool? load}) async {
+    if (load == null) prodState = StoreState.LOADING;
+    final productRespModel = await _productsRepository.getProducts(
+      categoryId: '7',
+      pageIndex: vaccinePageIndex,
+    );
+    // print(productRespModel!.message);
+    if (productRespModel != null) {
+      if (productRespModel.message ==
+          'product not serviceable in your area !!!') {
+        message = 'Products not servicable in your selected area!';
+        prodState = StoreState.ERROR;
+      } else {
+        if (productRespModel.productList.isNotEmpty) {
+          if (load != null) {
+            vaccineProductList.addAll(productRespModel.productList);
+          } else {
+            vaccineProductList
+              ..clear()
+              ..addAll(productRespModel.productList);
+          }
+        } else if (vaccinePageIndex > 1) {
+          vaccinePageIndex--;
+          Fluttertoast.showToast(msg: 'No more products to show');
+        }
+        prodState = StoreState.SUCCESS;
+      }
+    } else {
+      prodState = StoreState.EMPTY;
+    }
+  }
+
   //-------------------------- Searching --------------------------------------//
 
   @observable
@@ -381,11 +483,9 @@ abstract class _ProductsStore with Store {
         print(term);
       }
       if (load == null) searchState = StoreState.LOADING;
-      // Future.delayed(Duration.zero, () async {
+
       final productRespModel = await _productsRepository.getProducts(
         term: term,
-        // pageSize: '50',
-        // pageIndex: searchIndex,
       );
       if (productRespModel != null) {
         if (productRespModel.message == 'successful !!') {
@@ -475,13 +575,12 @@ abstract class _ProductsStore with Store {
       return currModel;
     }
     final category = categoriesfromValue(model.category);
-    // print(model.cartQuantity);
 
     switch (category) {
       case CategoriesType.ETHICAL:
         final index = ethicalProductList
             .indexWhere((element) => element.pid == model.pid);
-        // final fModel = ethicalProductList.f
+
         if (index != -1) {
           final cartModel = ethicalProductList[index].copyWith(
               cartQuantity: model.cartQuantity, subTotal: model.subTotal);
@@ -547,6 +646,15 @@ abstract class _ProductsStore with Store {
           ..removeAt(index)
           ..insert(index, cartModel);
         return cartModel;
+      case CategoriesType.VACCINE:
+        final index = vaccineProductList
+            .indexWhere((element) => element.pid == model.pid);
+        final cartModel = vaccineProductList[index].copyWith(
+            cartQuantity: model.cartQuantity, subTotal: model.subTotal);
+        vaccineProductList
+          ..removeAt(index)
+          ..insert(index, cartModel);
+        return cartModel;
     }
   }
 
@@ -567,40 +675,42 @@ abstract class _ProductsStore with Store {
       } else {
         val += (model.minQty - rem);
       }
-      cartUpdate(
-        totalPrice: double.parse(cartModel.totalSalePrice),
-        oldTotal: (double.parse(model.newMrp) * model.cartQuantity!),
-        newTotal: (double.parse(model.newMrp) * val),
-      );
 
-      model = model.copyWith(
+      final updatedModel = model.copyWith(
         cartQuantity: val,
         subTotal: (double.parse(model.newMrp) * val).toString(),
+      );
+
+      await cartUpdate(
+        totalPrice: double.parse(cartModel.totalSalePrice),
+        oldTotal: (double.parse(updatedModel.newMrp) * (model.cartQuantity)),
+        newTotal: (double.parse(updatedModel.newMrp) * val),
       );
 
       final index = cartModel.productList
           .indexWhere((element) => element.pid == model.pid);
       cartModel.productList
         ..removeAt(index)
-        ..insert(index, model);
+        ..insert(index, updatedModel);
 
-      await _updateProductsAccordingToCart(model: model);
+      await _updateProductsAccordingToCart(model: updatedModel);
 
-      _productsRepository.updateQuantity(model: model);
+      await _productsRepository.updateQuantity(model: updatedModel);
 
       Navigator.pop(context);
     }
   }
 
   /// [Function] to update the cart on regular intervals
-  void cartUpdate({
+  Future<void> cartUpdate({
     required double totalPrice,
     required double oldTotal,
     required double newTotal,
-  }) {
-    final total = (totalPrice - oldTotal) + newTotal;
-    cartModel =
+  }) async {
+    double total = (totalPrice - oldTotal) + newTotal;
+    final updatedCartModel =
         cartModel.copyWith(totalSalePrice: total.toStringAsFixed(2)..trim());
+    cartModel = updatedCartModel;
   }
 
   @observable
@@ -617,63 +727,42 @@ abstract class _ProductsStore with Store {
     required ProductModel model,
     required BuildContext context,
   }) async {
-    int qty = model.cartQuantity! + model.minQty;
+    int qty = model.cartQuantity;
+    // debugPrint('---- added -- $qty');
     if (qty > int.parse(model.quantity)) {
       Fluttertoast.showToast(msg: 'Quantity Not Available');
     } else {
-      cartUpdate(
-        totalPrice: double.parse(cartModel.totalSalePrice),
-        oldTotal: (double.parse(model.newMrp) * (qty - model.minQty)),
-        newTotal: (double.parse(model.newMrp) * qty),
-      );
-
-      model = model.copyWith(
+      final updatedModel = model.copyWith(
         cartQuantity: qty,
         subTotal: (double.parse(model.newMrp) * qty).toString(),
+      );
+      await _updateProductsAccordingToCart(model: updatedModel);
+
+      await cartUpdate(
+        totalPrice: double.parse(cartModel.totalSalePrice),
+        oldTotal: (double.parse(model.newMrp) *
+            (updatedModel.cartQuantity - updatedModel.minQty)),
+        newTotal: (double.parse(model.newMrp) * updatedModel.cartQuantity),
       );
 
       final index = cartModel.productList
           .indexWhere((element) => element.pid == model.pid);
       cartModel.productList
         ..removeAt(index)
-        ..insert(index, model);
+        ..insert(index, updatedModel);
 
-      await _updateProductsAccordingToCart(model: model);
-
-      _productsRepository.plusTheCart(model: model);
-      // SnackBar snackBar;
-      // if (value == null) {
-      //   snackBar = ConstantWidget.customSnackBar(
-      //     text: 'Failed to update the cart',
-      //     context: context,
-      //   );
-      //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      // }
-      // stopwatch.stop();
-      // if (kDebugMode) {
-      //   print('plus cart seconds ${stopwatch.elapsedMilliseconds}');
-      // }
-      // plusMinusToCart(model: currModel);
+      await _productsRepository.plusTheCart(
+        model: model,
+      );
     }
-    // }
-
-    // plusMinusRemoveState = StoreState.SUCCESS;
   }
 
   @action
-  Future<void> minusToCart({
-    required ProductModel model,
-    required BuildContext context,
-  }) async {
-    if (model.cartQuantity! > model.minQty) {
-      int qty = model.cartQuantity! - model.minQty;
-      cartUpdate(
-        totalPrice: double.parse(cartModel.totalSalePrice),
-        oldTotal: (double.parse(model.newMrp) * (qty + 1)),
-        newTotal: (double.parse(model.newMrp) * qty),
-      );
-
-      model = model.copyWith(
+  Future<void> minusToCart(
+      {required ProductModel model, required BuildContext context}) async {
+    if (model.cartQuantity >= model.minQty) {
+      int qty = model.cartQuantity;
+      final updatedModel = model.copyWith(
         cartQuantity: qty,
         subTotal: (double.parse(model.newMrp) * qty).toString(),
       );
@@ -681,24 +770,25 @@ abstract class _ProductsStore with Store {
           .indexWhere((element) => element.pid == model.pid);
       cartModel.productList
         ..removeAt(index)
-        ..insert(index, model);
+        ..insert(index, updatedModel);
 
-      await _updateProductsAccordingToCart(model: model);
+      await _updateProductsAccordingToCart(model: updatedModel);
 
-      _productsRepository.minusTheCart(model: model);
-      // if (value == null) {
-      //   snackBar = ConstantWidget.customSnackBar(
-      //     text: 'Failed to update the cart',
-      //     context: context,
-      //   );
-      //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      // }
-    } else if (model.cartQuantity == model.minQty) {
+      await cartUpdate(
+        totalPrice: double.parse(cartModel.totalSalePrice),
+        oldTotal: (double.parse(model.newMrp) *
+            (updatedModel.cartQuantity + updatedModel.minQty)),
+        newTotal: (double.parse(model.newMrp) * updatedModel.cartQuantity),
+      );
+
+      await _productsRepository.minusTheCart(model: updatedModel);
+    } else if (model.cartQuantity < model.minQty) {
+      final currModel = model.copyWith(cartQuantity: model.minQty);
       await removeFromCart(
-        model: model,
+        model: currModel,
         context: context,
       );
-      Fluttertoast.showToast(msg: 'Item Removed');
+      // Fluttertoast.showToast(msg: 'Item Removed');
     } else {
       Fluttertoast.showToast(msg: 'Minimum Quantity Selected');
     }
@@ -709,24 +799,27 @@ abstract class _ProductsStore with Store {
     required ProductModel model,
     required BuildContext context,
   }) async {
-    if (int.parse(model.quantity) > model.minQty) {
-      int qty = model.minQty;
-
-      cartUpdate(
+    final index =
+        cartModel.productList.indexWhere((element) => element.pid == model.pid);
+    if (index != -1) {
+      Fluttertoast.showToast(msg: 'Item already in cart');
+      return;
+    }
+    if (int.parse(model.quantity) >= model.minQty) {
+      final updatedModel = model.copyWith(
+        cartQuantity: model.minQty,
+        subTotal: (double.parse(model.newMrp) * model.minQty).toString(),
+      );
+      cartModel.productList.add(updatedModel);
+      await _updateProductsAccordingToCart(model: updatedModel);
+      await cartUpdate(
         totalPrice: double.parse(cartModel.totalSalePrice),
         oldTotal: 0.0,
-        newTotal: double.parse(model.newMrp) * qty,
+        newTotal: double.parse(updatedModel.newMrp) * model.minQty,
       );
-      model = model.copyWith(
-        cartQuantity: qty,
-        subTotal: (double.parse(model.newMrp) * qty).toString(),
-      );
-
-      cartModel.productList.add(model);
-      await _updateProductsAccordingToCart(model: model);
 
       _productsRepository.addToCart(model: model);
-      _productsRepository.getCart();
+      // _productsRepository.getCart();
     } else {
       Fluttertoast.showToast(msg: 'Quantity Not Available');
     }
@@ -738,25 +831,25 @@ abstract class _ProductsStore with Store {
     required BuildContext context,
     int? removalByPlusMinus,
   }) async {
-    cartUpdate(
-      totalPrice: double.parse(cartModel.totalSalePrice),
-      oldTotal: (double.parse(model.newMrp) * model.cartQuantity!),
-      newTotal: 0.00,
-    );
-
     final currModel = model.copyWith(
       cartQuantity: 0,
       subTotal: 0.00.toString(),
     );
+
     final index = cartModel.productList
         .indexWhere((element) => element.pid == currModel.pid);
     cartModel.productList.removeAt(index);
 
+    await cartUpdate(
+      totalPrice: double.parse(cartModel.totalSalePrice),
+      oldTotal: (double.parse(model.newMrp) * (model.cartQuantity)),
+      newTotal: 0.00,
+    );
+
     await _updateProductsAccordingToCart(model: currModel);
 
-    // await getCartItems(isRemove: true);
     if (index != -1) {
-      _productsRepository.removeFromCart(model: model);
+      _productsRepository.removeFromCart(model: currModel);
 
       Fluttertoast.showToast(msg: 'Product Removed');
     }
@@ -775,8 +868,8 @@ abstract class _ProductsStore with Store {
   Future<bool> checkIfCartUpdated() async {
     await getCartItems();
     for (final model in cartModel.productList) {
-      if (model.cartQuantity! > int.parse(model.quantity) ||
-          model.cartQuantity! % model.minQty != 0) {
+      if (model.cartQuantity > int.parse(model.quantity) ||
+          model.cartQuantity % model.minQty != 0) {
         return false;
       }
     }

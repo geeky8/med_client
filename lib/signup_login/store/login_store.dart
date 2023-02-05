@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/button_state.dart';
@@ -69,11 +70,8 @@ abstract class _LoginStore with Store {
     final pin = await DataBox().readPin();
     SnackBar snackBar;
     if (pin == '') {
-      snackBar = ConstantWidget.customSnackBar(
-        text: 'Session expired, Please login again using OTP',
-        context: context,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Fluttertoast.showToast(
+          msg: 'Session expired, try again using phone number');
     } else {
       if (pin == value) {
         await getUserStatus();
@@ -133,11 +131,7 @@ abstract class _LoginStore with Store {
       }
       //---> For incorrect pin
       else {
-        snackBar = ConstantWidget.customSnackBar(
-          text: 'Incorrect Pin',
-          context: context,
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Fluttertoast.showToast(msg: 'Invalid pin');
       }
     }
   }
@@ -159,24 +153,19 @@ abstract class _LoginStore with Store {
   ///
   Future<void> getOTP({
     required String mobile,
-    required BuildContext context,
   }) async {
     buttonState = ButtonState.LOADING;
     final resp = await _repository.getOTP(
       mobile: mobile,
     );
     // print('parth');
-    SnackBar snackBar;
     if (resp != 'error') {
-      snackBar =
-          ConstantWidget.customSnackBar(text: 'OTP sent', context: context);
+      Fluttertoast.showToast(msg: 'OTP sent successfully');
       buttonState = ButtonState.SUCCESS;
     } else {
-      snackBar = ConstantWidget.customSnackBar(
-          text: 'Failed to send OTP', context: context);
+      Fluttertoast.showToast(msg: 'Failed to send OTP');
       buttonState = ButtonState.ERROR;
     }
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Future<int> verifyOTP({required String mobile, required String otp}) async {

@@ -124,7 +124,7 @@ class ProductModel {
   final String saleQtyType;
   final String prodSaleTypeDetails;
   final String quantity;
-  final int? cartQuantity;
+  int cartQuantity;
   final String mrp;
   final String subTotal;
   final String expiryDate;

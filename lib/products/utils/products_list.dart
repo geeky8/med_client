@@ -3,11 +3,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
+import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
+import 'package:medrpha_customer/products/repository/products_repository.dart';
 import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/add_subtract_widget.dart';
+import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
@@ -20,6 +24,9 @@ class CategoryProducts extends StatelessWidget {
     Key? key,
     required this.store,
     required this.loginStore,
+    required this.profileStore,
+    required this.bottomNavigationStore,
+    required this.orderHistoryStore,
     required this.list,
     required this.state,
   }) : super(key: key);
@@ -28,6 +35,9 @@ class CategoryProducts extends StatelessWidget {
   final List<ProductModel> list;
   final StoreState state;
   final LoginStore loginStore;
+  final ProfileStore profileStore;
+  final OrderHistoryStore orderHistoryStore;
+  final BottomNavigationStore bottomNavigationStore;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +69,9 @@ class CategoryProducts extends StatelessWidget {
             axis: Axis.vertical,
             itemCount: list.length,
             loginStore: loginStore,
+            profileStore: profileStore,
+            orderHistoryStore: orderHistoryStore,
+            bottomNavigationStore: bottomNavigationStore,
           );
         case StoreState.ERROR:
           return Container(
@@ -123,6 +136,9 @@ class ProductsList extends StatelessWidget {
     required this.itemCount,
     required this.store,
     required this.loginStore,
+    required this.profileStore,
+    required this.bottomNavigationStore,
+    required this.orderHistoryStore,
     Key? key,
   }) : super(key: key);
 
@@ -131,6 +147,9 @@ class ProductsList extends StatelessWidget {
   final int itemCount;
   final ProductsStore store;
   final LoginStore loginStore;
+  final ProfileStore profileStore;
+  final OrderHistoryStore orderHistoryStore;
+  final BottomNavigationStore bottomNavigationStore;
 
   @override
   Widget build(BuildContext context) {
@@ -168,11 +187,14 @@ class ProductsList extends StatelessWidget {
                 loginStore: loginStore,
                 list: list,
                 width: width,
-                firstHeight: firstHeight,
+                firstHeight: ConstantWidget.getWidthPercentSize(context, 17),
                 radius: radius,
                 sideMargin: sideMargin,
                 remainHeight: remainHeight,
                 index: index,
+                profileStore: profileStore,
+                orderHistoryStore: orderHistoryStore,
+                bottomNavigationStore: bottomNavigationStore,
               );
             })
         : Center(
@@ -192,6 +214,9 @@ class ProductsCard extends StatelessWidget {
     Key? key,
     required this.store,
     required this.loginStore,
+    required this.profileStore,
+    required this.bottomNavigationStore,
+    required this.orderHistoryStore,
     required this.list,
     required this.width,
     required this.firstHeight,
@@ -203,6 +228,9 @@ class ProductsCard extends StatelessWidget {
 
   final ProductsStore store;
   final LoginStore loginStore;
+  final ProfileStore profileStore;
+  final OrderHistoryStore orderHistoryStore;
+  final BottomNavigationStore bottomNavigationStore;
   final List<ProductModel> list;
   final double width;
   final double firstHeight;
@@ -229,10 +257,19 @@ class ProductsCard extends StatelessWidget {
               value: store,
               child: Provider.value(
                 value: loginStore,
-                child: ProductsDetailScreen(
-                  model: model,
-                  // modelIndex: index,
-                  // list: list,
+                child: Provider.value(
+                  value: profileStore,
+                  child: Provider.value(
+                    value: orderHistoryStore,
+                    child: Provider.value(
+                      value: bottomNavigationStore,
+                      child: ProductsDetailScreen(
+                        model: model,
+                        // modelIndex: index,
+                        // list: list,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -292,23 +329,18 @@ class ProductsCard extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          height: firstHeight,
-                          width: firstHeight,
-                          decoration: BoxDecoration(
-                            color: ConstantData.cellColor,
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(radius),
-                            ),
-                            // ,
-                            image: DecorationImage(
-                                image: CachedNetworkImageProvider(
-                                  ConstantData.productUrl +
-                                      list[index].productImg,
-                                ),
-                                fit: BoxFit.cover),
-                          ),
+                        ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(font18Px(context: context)),
+                          child: CachedNetworkImage(
+                              imageUrl: ConstantData.productUrl +
+                                  list[index].productImg,
+                              height: firstHeight,
+                              width: ConstantWidget.getWidthPercentSize(
+                                  context, 22),
+                              fit: BoxFit.cover,
+                              placeholder: (_, s) => Image.asset(
+                                  '${ConstantData.assetsPath}no_image.png')),
                         ),
                         Observer(builder: (_) {
                           final adminStatus = loginStore.loginModel.adminStatus;
@@ -402,7 +434,7 @@ class ProductsCard extends StatelessWidget {
                       final _index = store.cartModel.productList.indexWhere(
                           (element) => element.pid == list[index].pid);
 
-                      if (list[index].cartQuantity! >= 1 && _index != -1) {
+                      if (list[index].cartQuantity >= 1 && _index != -1) {
                         return Row(
                           children: [
                             Padding(

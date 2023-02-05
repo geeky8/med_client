@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
+import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/product_view_list.dart';
+import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
@@ -16,6 +19,9 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = context.read<ProductsStore>();
     final loginStore = context.read<LoginStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
+    final profileStore = context.read<ProfileStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
 
     double height = ConstantWidget.getScreenPercentSize(context, 14);
     double radius = ConstantWidget.getPercentSize(height, 10);
@@ -29,79 +35,6 @@ class SearchScreen extends StatelessWidget {
         context: context,
         title: 'Products',
         //TODO: Add Cart icons everywhere possible for wasy navigatiom.
-        // widgetList: [
-        //   Container(
-        //     padding: EdgeInsets.only(bottom: margin),
-        //     // margin: EdgeInsets.symmetric(horizontal: sideMargin),
-        //     child: InkWell(
-        //       child: Stack(
-        //         children: [
-        //           /// Cart-Icon
-        //           Padding(
-        //             padding: EdgeInsets.only(
-        //                 top: blockSizeVertical(context: context) * 2),
-        //             child: Icon(
-        //               Icons.shopping_cart,
-        //               color: ConstantData.mainTextColor,
-        //               size: ConstantWidget.getWidthPercentSize(context, 5.5),
-        //             ),
-        //           ),
-
-        //           /// No of items in cart
-        //           Padding(
-        //             padding: EdgeInsets.only(
-        //               left: blockSizeHorizontal(context: context) * 2.5,
-        //             ),
-        //             child: Container(
-        //               alignment: Alignment.center,
-        //               padding:
-        //                   EdgeInsets.all(blockSizeVertical(context: context)),
-        //               decoration: BoxDecoration(
-        //                   color: ConstantData.primaryColor,
-        //                   shape: BoxShape.circle),
-        //               child: Observer(builder: (_) {
-        //                 final adminStatus = loginStore.loginModel.adminStatus;
-        //                 final value = (store.cartModel.productList.length > 10)
-        //                     ? '9+'
-        //                     : store.cartModel.productList.length.toString();
-        //                 return ConstantWidget.getCustomText(
-        //                   (adminStatus) ? value : '0',
-        //                   Colors.white,
-        //                   1,
-        //                   TextAlign.center,
-        //                   FontWeight.w600,
-        //                   font12Px(context: context) / 1.2,
-        //                 );
-        //               }),
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //       onTap: () {
-        //         // Navigator.push(
-        //         //     context,
-        //         //     MaterialPageRoute(
-        //         //       builder: (context) => Provider.value(
-        //         //         value: store,
-        //         //         child: Provider.value(
-        //         //           value: loginStore,
-        //         //           child: Provider.value(
-        //         //             value: profileStore,
-        //         //             child: Provider.value(
-        //         //               value: orderHistoryStore,
-        //         //               child: Provider.value(
-        //         //                 value: bottomNavigationStore,
-        //         //                 child: const CartScreen(),
-        //         //               ),
-        //         //             ),
-        //         //           ),
-        //         //         ),
-        //         //       ),
-        //         //     ));
-        //       },
-        //     ),
-        //   ),
-        // ],
       ),
       body: Observer(builder: (_) {
         return SafeArea(
@@ -123,19 +56,10 @@ class SearchScreen extends StatelessWidget {
               }),
               Padding(
                 padding: EdgeInsets.symmetric(
-                  // horizontal: blockSizeHorizontal(context: context) * 2,
                   vertical: blockSizeVertical(context: context) * 2,
                 ),
                 child: Container(
-                  // height: height,
-                  // margin: EdgeInsets.symmetric(horizontal: margin),
                   padding: EdgeInsets.all((margin * 1.2)),
-
-                  // decoration: BoxDecoration(
-                  //   color: ConstantData.cellColor,
-                  //   borderRadius: BorderRadius.all(Radius.circular(radius)),
-                  // ),
-
                   child: TextFormField(
                     enabled: true,
                     autofocus: true,
@@ -147,12 +71,7 @@ class SearchScreen extends StatelessWidget {
                       await store.getSearchedResults(term: value);
                       termValue = value;
                     },
-                    // onFieldSubmitted: (value) async {
-                    //   await store.getSearchedResults(term: value);
-                    // },
                     maxLines: 1,
-                    // controller: store.searchController,
-                    // enabled: false,
                     textAlignVertical: TextAlignVertical.center,
                     textAlign: TextAlign.left,
                     decoration: InputDecoration(
@@ -208,6 +127,9 @@ class SearchScreen extends StatelessWidget {
                     return Expanded(
                       child: ProductViewList(
                         loginStore: loginStore,
+                        orderHistoryStore: orderHistoryStore,
+                        bottomNavigationStore: bottomNavigationStore,
+                        profileStore: profileStore,
                         list: list,
                         store: store,
                       ),

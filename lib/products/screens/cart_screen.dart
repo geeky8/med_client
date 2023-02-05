@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -83,7 +84,7 @@ class CartScreen extends StatelessWidget {
                               1,
                               TextAlign.start,
                               FontWeight.w600,
-                              font18Px(context: context),
+                              font18Px(context: context) * 1.18,
                               // 1.2,
                             ),
                             SizedBox(
@@ -102,7 +103,7 @@ class CartScreen extends StatelessWidget {
                                 1,
                                 TextAlign.end,
                                 FontWeight.w600,
-                                font18Px(context: context) * 1.1,
+                                font18Px(context: context) * 1.2,
                               );
                             })
                           ],
@@ -162,7 +163,8 @@ class CartScreen extends StatelessWidget {
                                   );
                                 } else {
                                   Fluttertoast.showToast(
-                                      msg: 'No products in cart');
+                                    msg: 'No products in cart',
+                                  );
                                 }
                               }
                             }
@@ -184,7 +186,7 @@ class CartScreen extends StatelessWidget {
                               1,
                               TextAlign.center,
                               FontWeight.w600,
-                              font18Px(context: context),
+                              font18Px(context: context) * 1.12,
                             ),
                           ),
                         );
@@ -219,12 +221,20 @@ class CartScreen extends StatelessWidget {
                     Observer(builder: (_) {
                       final show = store.cartModel.productList.length;
                       if (show == 0 || !loginStore.loginModel.adminStatus) {
+                        // return Expanded(
+                        //   child: ConstantWidget.errorWidget(
+                        //     context: context,
+                        //     height: 20,
+                        //     width: 15,
+                        //     // fontSize: font18Px(context: context),
+                        //   ),
+                        // );
                         return Expanded(
-                          child: ConstantWidget.errorWidget(
-                            context: context,
-                            height: 20,
-                            width: 15,
-                            // fontSize: font18Px(context: context),
+                          child: Icon(
+                            CupertinoIcons.cart,
+                            color: Colors.black38,
+                            size:
+                                ConstantWidget.getWidthPercentSize(context, 30),
                           ),
                         );
                       } else {
@@ -375,7 +385,7 @@ class ListItem extends StatelessWidget {
                               3,
                               TextAlign.start,
                               FontWeight.w600,
-                              font18Px(context: context),
+                              font18Px(context: context) * 1.12,
                             ),
                           ),
                         ],
@@ -384,19 +394,23 @@ class ListItem extends StatelessWidget {
                         height:
                             ConstantWidget.getWidthPercentSize(context, 1.2),
                       ),
-                      ConstantWidget.getLineTextView('₹${model.oldMrp}',
-                          Colors.grey, font15Px(context: context)),
+                      ConstantWidget.getLineTextView(
+                        '₹${model.oldMrp}',
+                        Colors.grey,
+                        font18Px(context: context),
+                      ),
                       SizedBox(
                         height:
                             ConstantWidget.getWidthPercentSize(context, 1.2),
                       ),
                       ConstantWidget.getCustomText(
-                          '₹${model.newMrp}',
-                          ConstantData.accentColor,
-                          1,
-                          TextAlign.start,
-                          FontWeight.w800,
-                          font18Px(context: context)),
+                        '₹${model.newMrp}',
+                        ConstantData.accentColor,
+                        1,
+                        TextAlign.start,
+                        FontWeight.w600,
+                        font18Px(context: context) * 1.12,
+                      ),
                       SizedBox(
                         height: blockSizeVertical(context: context) * 1.5,
                       ),
@@ -410,19 +424,19 @@ class ListItem extends StatelessWidget {
                             1,
                             TextAlign.center,
                             FontWeight.w600,
-                            font18Px(context: context),
+                            font18Px(context: context) * 1.12,
                           ),
                           Padding(
                             padding: EdgeInsets.only(
                                 right:
                                     blockSizeHorizontal(context: context) * 2),
                             child: ConstantWidget.getCustomText(
-                              '₹${(double.parse(model.newMrp) * (model.cartQuantity!)).toStringAsFixed(2)}',
+                              '₹${(double.parse(model.newMrp) * (model.cartQuantity)).toStringAsFixed(2)}',
                               ConstantData.mainTextColor,
                               1,
                               TextAlign.center,
                               FontWeight.w600,
-                              font18Px(context: context),
+                              font18Px(context: context) * 1.12,
                             ),
                           ),
                         ],
@@ -448,19 +462,10 @@ class ListItem extends StatelessWidget {
                               );
                               store.removeState = StoreState.SUCCESS;
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: ConstantData.clrBlack20,
-                                shape: BoxShape.circle,
-                              ),
-                              padding: EdgeInsets.all(
-                                  blockSizeHorizontal(context: context) * 1.5),
-                              child: Icon(
-                                Icons.close,
-                                color: ConstantData.textColor,
-                                size: ConstantWidget.getWidthPercentSize(
-                                    context, 4),
-                              ),
+                            child: Icon(
+                              CupertinoIcons.delete,
+                              color: ConstantData.color1,
+                              size: font25Px(context: context),
                             ),
                           );
                           // }

@@ -3,6 +3,7 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
@@ -67,11 +68,6 @@ class SignUpPage extends StatelessWidget {
               SizedBox(
                 height: ConstantWidget.getScreenPercentSize(context, 1.5),
               ),
-
-              SizedBox(
-                height: ConstantWidget.getScreenPercentSize(context, 2.5),
-              ),
-
               //---> Enter phone no
               PhoneInput(
                 subHeight: subHeight,
@@ -82,61 +78,52 @@ class SignUpPage extends StatelessWidget {
               ),
 
               //---> Get OTP Button
-              Container(
-                height: ConstantWidget.getScreenPercentSize(context, 7.5),
-                width: ConstantWidget.getWidthPercentSize(context, 40),
-                margin: EdgeInsets.symmetric(
-                    vertical:
-                        ConstantWidget.getScreenPercentSize(context, 1.2)),
-                decoration: BoxDecoration(
-                  color: ConstantData.primaryColor,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(
-                      ConstantWidget.getPercentSize(height, 20),
-                    ),
-                  ),
-                ),
-                child: InkWell(
-                  onTap: () async {
-                    if (textPhoneController.text.trim().isNotEmpty) {
-                      await store.getOTP(
-                        mobile: textPhoneController.text.trim(),
-                        context: context,
-                      );
-                      final phone = textPhoneController.text.trim();
-                      // ignore: use_build_context_synchronously
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Provider.value(
-                                    value: store,
+              InkWell(
+                onTap: () async {
+                  if (textPhoneController.text.trim().isNotEmpty) {
+                    await store.getOTP(mobile: textPhoneController.text.trim());
+                    final phone = textPhoneController.text.trim();
+                    // ignore: use_build_context_synchronously
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Provider.value(
+                                  value: store,
+                                  child: Provider.value(
+                                    value: productStore,
                                     child: Provider.value(
-                                      value: productStore,
+                                      value: profileStore,
                                       child: Provider.value(
-                                        value: profileStore,
+                                        value: bottomNavigationStore,
                                         child: Provider.value(
-                                          value: bottomNavigationStore,
-                                          child: Provider.value(
-                                            value: orderHistoryStore,
-                                            child: PhoneVerification(
-                                              phone: phone,
-                                            ),
+                                          value: orderHistoryStore,
+                                          child: PhoneVerification(
+                                            phone: phone,
                                           ),
                                         ),
                                       ),
                                     ),
-                                  )));
-                      textPhoneController.clear();
-                    } else {
-                      final snackBar = ConstantWidget.customSnackBar(
-                          text: 'Please enter a valid phone number',
-                          context: context);
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    }
-                  },
+                                  ),
+                                )));
+                    textPhoneController.clear();
+                  } else {
+                    Fluttertoast.showToast(msg: 'Enter a valid number');
+                  }
+                },
+                child: Container(
+                  height: ConstantWidget.getScreenPercentSize(context, 7.5),
+                  // width: ConstantWidget.getWidthPercentSize(context, 40),
+                  decoration: BoxDecoration(
+                    color: ConstantData.primaryColor,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(
+                        ConstantWidget.getPercentSize(height, 20),
+                      ),
+                    ),
+                  ),
                   child: Center(
                     child: ConstantWidget.getDefaultTextWidget(
-                      'OTP',
+                      'Get OTP',
                       TextAlign.center,
                       FontWeight.w600,
                       font22Px(context: context),
@@ -145,37 +132,48 @@ class SignUpPage extends StatelessWidget {
                   ),
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => Provider.value(
-                        value: store,
-                        child: Provider.value(
-                          value: productStore,
-                          child: Provider.value(
-                            value: profileStore..init(),
+              Column(
+                children: [
+                  ConstantWidget.getTextWidget(
+                    'Already have an account?\n',
+                    ConstantData.mainTextColor,
+                    TextAlign.center,
+                    FontWeight.w600,
+                    font18Px(context: context),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => Provider.value(
+                            value: store,
                             child: Provider.value(
-                              value: bottomNavigationStore,
+                              value: productStore,
                               child: Provider.value(
-                                value: orderHistoryStore,
-                                child: LoginScreen(),
+                                value: profileStore..init(),
+                                child: Provider.value(
+                                  value: bottomNavigationStore,
+                                  child: Provider.value(
+                                    value: orderHistoryStore,
+                                    child: LoginScreen(),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                      );
+                    },
+                    child: ConstantWidget.getTextWidget(
+                      'Login with pin',
+                      ConstantData.accentColor,
+                      TextAlign.center,
+                      FontWeight.w600,
+                      font22Px(context: context),
                     ),
-                  );
-                },
-                child: ConstantWidget.getTextWidget(
-                  'Already have an account?\nLogin with pin',
-                  ConstantData.accentColor,
-                  TextAlign.center,
-                  FontWeight.w600,
-                  font18Px(context: context),
-                ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -249,6 +247,7 @@ class PhoneInput extends StatelessWidget {
                 color: ConstantData.mainTextColor,
                 fontFamily: ConstantData.fontFamily,
                 fontWeight: FontWeight.w600,
+                fontSize: font18Px(context: context),
               ),
               dialogTextStyle: TextStyle(
                 color: ConstantData.mainTextColor,
@@ -294,7 +293,7 @@ class PhoneInput extends StatelessWidget {
                   enabledBorder: InputBorder.none,
                   errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
-                  hintText: 'Enter Number',
+                  hintText: 'Number',
                   hintStyle: TextStyle(
                     fontFamily: ConstantData.fontFamily,
                     color: ConstantData.textColor,

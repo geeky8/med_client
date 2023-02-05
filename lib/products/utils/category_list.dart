@@ -57,6 +57,11 @@ class CategoryList extends StatelessWidget {
           return ConstantData.cartColor.withOpacity(0.6);
         }
         return Colors.transparent;
+      case CategoriesType.VACCINE:
+        if (store.vaccineProductList.isEmpty) {
+          return ConstantData.cartColor.withOpacity(0.6);
+        }
+        return Colors.transparent;
     }
   }
 
@@ -99,11 +104,12 @@ class CategoryList extends StatelessWidget {
                               width: imageSize,
                               decoration: BoxDecoration(
                                 // color: ConstantData.color1,
+
                                 border: (store.categoriesType ==
                                         categoriesfromValue(
                                             list[index].categoryName))
                                     ? Border.all(
-                                        color: ConstantData.accentColor,
+                                        color: ConstantData.primaryColor,
                                         width: 4,
                                       )
                                     : Border.all(
@@ -116,6 +122,17 @@ class CategoryList extends StatelessWidget {
                                     list[index].categoryImgUrl,
                                 fit: BoxFit.fill,
                               ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(
+                                  ConstantWidget.getPercentSize(imageSize, 25)),
+                              height: imageSize,
+                              width: imageSize,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: getShadow(
+                                    categoryName: list[index].categoryName,
+                                  )),
                             ),
                           ],
                         );

@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -61,30 +60,20 @@ abstract class _OrderHistoryStore with Store {
       orders
         ..clear()
         ..addAll(list);
-      // dispatchedOrders.clear();
-      // deliveredOrders.clear();
-      // for (final model in orders) {
-      //   if (model.dispatchedDate != '' && model.deliveredDate == '') {
-      //     final _currModel =
-      //         model.copyWith(deliveryStatusType: DeliveryStatusType.DISPATCHED);
-      //     dispatchedOrders.add(_currModel);
-      //     // final _index =
-      //     //     orders.indexWhere((element) => element.orderId == model.orderId);
-      //     // orders.removeAt(_index);
-      //   } else if (model.dispatchedDate != '' && model.deliveredDate != '') {
-      //     final _currModel =
-      //         model.copyWith(deliveryStatusType: DeliveryStatusType.DELIVERED);
-      //     deliveredOrders.add(_currModel);
-      //     // final _index =
-      //     //     orders.indexWhere((element) => element.orderId == model.orderId);
-      //     // orders.removeAt(_index);
-      //   }
-      // }
     }
   }
 
   @observable
   StoreState invoiceDwdState = StoreState.SUCCESS;
+
+  Future<void> askPermission(PermissionStatus status) async {
+    if (status.isDenied || status.isLimited) {
+      debugPrint('---- open');
+      final stat = await Permission.storage.request();
+      askPermission(stat);
+    }
+    return;
+  }
 
   @action
   Future<void> downloadInvoice({
@@ -93,9 +82,12 @@ abstract class _OrderHistoryStore with Store {
   }) async {
     final url = '${ConstantData.invoiceUrl}$invoice.pdf';
 
-    final status = await Permission.storage.status;
-    // final persmissionStatus = await [Permission.storage].request();
-    if (status.isGranted || status.isLimited) {
+    PermissionStatus status = await Permission.storage.status;
+
+    await askPermission(status);
+
+    status = await Permission.storage.status;
+    if (status.isGranted) {
       invoiceDwdState = StoreState.LOADING;
       var dir = await DownloadsPathProvider.downloadsDirectory;
       if (dir != null) {
@@ -143,10 +135,7 @@ abstract class _OrderHistoryStore with Store {
             Future.delayed(const Duration(seconds: 1), () async {
               await Dio().download(url, savePath,
                   onReceiveProgress: (received, total) {
-                if (total != -1) {
-                  // print((received / total * 100).toStringAsFixed(0) + "%");
-                  //you can build progressbar feature too
-                }
+                if (total != -1) {}
               });
 
               invoiceDwdState = StoreState.SUCCESS;

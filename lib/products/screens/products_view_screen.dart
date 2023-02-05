@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
+import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/product_view_list.dart';
+import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
@@ -30,6 +33,9 @@ class ProductsViewScreen extends StatelessWidget {
 
     final loginStore = context.read<LoginStore>();
     final store = context.read<ProductsStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
+    final profileStore = context.read<ProfileStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
 
     return Scaffold(
       backgroundColor: ConstantData.bgColor,
@@ -64,6 +70,9 @@ class ProductsViewScreen extends StatelessWidget {
                     margin: EdgeInsets.only(bottom: margin),
                     child: ProductViewList(
                       loginStore: loginStore,
+                      orderHistoryStore: orderHistoryStore,
+                      profileStore: profileStore,
+                      bottomNavigationStore: bottomNavigationStore,
                       list: list,
                       store: store,
                     ),

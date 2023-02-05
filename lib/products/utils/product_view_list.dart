@@ -3,12 +3,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/categories.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
+import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/add_subtract_widget.dart';
+import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
@@ -19,6 +22,9 @@ class ProductViewList extends StatelessWidget {
   const ProductViewList({
     Key? key,
     required this.loginStore,
+    required this.profileStore,
+    required this.orderHistoryStore,
+    required this.bottomNavigationStore,
     required this.list,
     required this.store,
     this.termValue,
@@ -26,6 +32,9 @@ class ProductViewList extends StatelessWidget {
   }) : super(key: key);
 
   final LoginStore loginStore;
+  final ProfileStore profileStore;
+  final OrderHistoryStore orderHistoryStore;
+  final BottomNavigationStore bottomNavigationStore;
   final List<ProductModel> list;
   final ProductsStore store;
   final bool? control;
@@ -73,6 +82,13 @@ class ProductViewList extends StatelessWidget {
         store.generalPageIndex++;
         debugPrint('---- page index------${store.generalPageIndex}');
         await store.getGenerallProducts(
+          load: true,
+        );
+        break;
+      case CategoriesType.VACCINE:
+        store.vaccinePageIndex++;
+        debugPrint('---- page index------${store.vaccinePageIndex}');
+        await store.getVaccineProducts(
           load: true,
         );
         break;
@@ -127,10 +143,19 @@ class ProductViewList extends StatelessWidget {
                           value: store,
                           child: Provider.value(
                             value: loginStore,
-                            child: ProductsDetailScreen(
-                              model: model,
-                              // modelIndex: index,
-                              // list: list,
+                            child: Provider.value(
+                              value: profileStore,
+                              child: Provider.value(
+                                value: orderHistoryStore,
+                                child: Provider.value(
+                                  value: bottomNavigationStore,
+                                  child: ProductsDetailScreen(
+                                    model: model,
+                                    // modelIndex: index,
+                                    // list: list,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -224,48 +249,18 @@ class ProductViewList extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            height:
-                                                ConstantWidget.getPercentSize(
-                                                    remainHeight, 8),
-                                          ),
-                                          //-----> Product Name
-                                          ConstantWidget.getCustomText(
-                                            list[index].productName,
-                                            ConstantData.mainTextColor,
-                                            3,
-                                            TextAlign.start,
-                                            FontWeight.w600,
-                                            font18Px(context: context),
-                                          ),
-                                          SizedBox(
-                                            height: blockSizeVertical(
-                                                context: context),
-                                          ),
-
-                                          //-----> Product description
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: ConstantWidget
-                                                    .getCustomText(
-                                                        list[index].description,
-                                                        Colors.grey,
-                                                        1,
-                                                        TextAlign.start,
-                                                        FontWeight.w600,
-                                                        font12Px(
-                                                            context: context)),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                      SizedBox(
+                                        height: ConstantWidget.getPercentSize(
+                                            remainHeight, 8),
+                                      ),
+                                      //-----> Product Name
+                                      ConstantWidget.getCustomText(
+                                        list[index].productName,
+                                        ConstantData.mainTextColor,
+                                        3,
+                                        TextAlign.start,
+                                        FontWeight.w600,
+                                        font18Px(context: context),
                                       ),
 
                                       //----> Add,Remove buttons
@@ -282,20 +277,22 @@ class ProductViewList extends StatelessWidget {
                                                     element.pid ==
                                                     list[index].pid);
 
-                                            if (list[index].cartQuantity! >=
-                                                    1 &&
+                                            if (list[index].cartQuantity >= 1 &&
                                                 _index != -1) {
                                               return Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   PlusMinusWidget(
                                                     model: list[index],
                                                     store: store,
                                                   ),
-                                                  SizedBox(
-                                                    width: blockSizeHorizontal(
-                                                            context: context) *
-                                                        2,
-                                                  ),
+                                                  // SizedBox(
+                                                  //   width: blockSizeHorizontal(
+                                                  //           context: context) *
+                                                  //       2,
+                                                  // ),
                                                   RemoveButton(
                                                     store: store,
                                                     model: list[index],

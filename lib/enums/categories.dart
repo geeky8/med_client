@@ -19,6 +19,8 @@ enum CategoriesType {
 
   ///[CategoriesType.GENERAL] for general products.
   GENERAL,
+
+  VACCINE
 }
 
 extension CategoriesTypeExtenstion on CategoriesType {
@@ -36,6 +38,8 @@ extension CategoriesTypeExtenstion on CategoriesType {
         return 'Ayurvedic';
       case CategoriesType.GENERAL:
         return 'General';
+      case CategoriesType.VACCINE:
+        return 'Vaccine';
     }
   }
 }
@@ -54,6 +58,8 @@ CategoriesType categoriesfromValue(String category) {
       return CategoriesType.AYURVEDIC;
     case 'General':
       return CategoriesType.GENERAL;
+    case 'Vaccine':
+      return CategoriesType.VACCINE;
     default:
       return CategoriesType.GENERAL;
   }

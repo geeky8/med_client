@@ -57,9 +57,11 @@ class SettingsPageScreen extends StatelessWidget {
                             color: Colors.transparent,
                             image: DecorationImage(
                               image: ExactAssetImage(
-                                  '${ConstantData.assetsPath}med_logo.png'),
-                              fit: BoxFit.cover,
+                                  '${ConstantData.assetsPath}playstore.png'),
+                              fit: BoxFit.fill,
                             ),
+                            border: Border.all(
+                                color: ConstantData.color1, width: 1.2),
                           ),
                         ),
                         Expanded(
@@ -264,27 +266,6 @@ class SettingsPageScreen extends StatelessWidget {
                       ),
                     ),
                   );
-                  // Navigator.pushReplacement(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => Provider.value(
-                  //       value: loginStore..init(),
-                  //       child: Provider.value(
-                  //         value: productStore,
-                  //         child: Provider.value(
-                  //           value: profileStore..init(),
-                  //           child: Provider.value(
-                  //             value: bottomNavigationStore,
-                  //             child: Provider.value(
-                  //               value: orderHistoryStore,
-                  //               child: LoginScreen(),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // );
                 },
               ),
             ],

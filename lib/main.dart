@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:medrpha_customer/gpayscreen.dart';
 import 'package:medrpha_customer/profile/screens/logout_screen.dart';
+import 'package:medrpha_customer/profile/screens/new_profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
@@ -41,7 +43,9 @@ class MyApp extends StatelessWidget {
           Provider<OrderHistoryStore>(create: (_) => OrderHistoryStore()),
         ],
         child: const SplashScreen(),
-        // child: const LogoutScreen(),
+        // child: NewProfileScreen(
+        //   phone: '9920483807',
+        // ),
         // child: OrderHistory(),
         // child: const HomeScreen(),
         // child: const UpdateAppScreen(),

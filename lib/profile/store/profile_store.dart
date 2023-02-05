@@ -16,6 +16,7 @@ import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:mobx/mobx.dart';
+import 'dart:collection';
 
 part 'profile_store.g.dart';
 
@@ -67,6 +68,8 @@ abstract class _ProfileStore with Store {
   Future<void> getProfile() async {
     final model = await _repository.getProfile();
     profileModel = model;
+    final dataBox = DataBox();
+    dataBox.writeFirmName(name: profileModel.firmInfoModel.firmName);
   }
 
   Future<void> _getDropDownLists() async {
@@ -251,18 +254,6 @@ abstract class _ProfileStore with Store {
     } else {
       Fluttertoast.showToast(msg: 'Failed to upload License');
     }
-
-    // certificateUploadingState = StoreState.SUCCESS;
-    // if (s == '1') {
-    //   final snackBar = ConstantWidget.customSnackBar(
-    //       text: 'Successfully Uploaded', context: context);
-    //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // } else {
-    //   final snackBar = ConstantWidget.customSnackBar(
-    //       text: 'Error in uploading please try again', context: context);
-    //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // }
-    // print(profileModel.fssaiModel.fssaiImg + ' Yes');
   }
 
   @action
@@ -298,7 +289,7 @@ abstract class _ProfileStore with Store {
 
     /// Uploading GST data
     String respGST = '';
-    if (gstToFIll) {
+    if (gstToFIll && profileModel.gstModel.gstNo.isNotEmpty) {
       final gstModel = profileModel.gstModel;
       respGST = await _repository.uploadGSTDetails(
         sessId: sessId,
@@ -310,6 +301,8 @@ abstract class _ProfileStore with Store {
       const url = 'https://api.medrpha.com/api/register/registergstnodelete';
       // const url =
       // 'https://apitest.medrpha.com/api/register/registergstnodelete';
+
+      debugPrint('---- delteting GST');
 
       final resp = await _repository.deleteLicenses(
         url: url,
@@ -332,6 +325,7 @@ abstract class _ProfileStore with Store {
       const url = 'https://api.medrpha.com/api/register/registerfssaidelete';
       // const url =
       //     'https://apitest.medrpha.com/api/register/registerfssaidelete';
+      debugPrint('---- delteting FSSAI');
 
       final resp = await _repository.deleteLicenses(
         url: url,
@@ -347,10 +341,10 @@ abstract class _ProfileStore with Store {
     if (respDrugLicense == '0') {
       Fluttertoast.showToast(msg: 'Failed to upload DRUG LICENSE DETAILS');
     }
-    if (respGST != '0') {
+    if (respGST != '0' && gstToFIll) {
       Fluttertoast.showToast(msg: 'Failed to upload GST DETAILS');
     }
-    if (respFSSAI != '0') {
+    if (respFSSAI != '0' && fssaiToFill) {
       Fluttertoast.showToast(msg: 'Failed to upload FSSAI DETAILS');
     }
     if (respFirmInfo != '0' &&
