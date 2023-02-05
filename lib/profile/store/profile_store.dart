@@ -298,9 +298,9 @@ abstract class _ProfileStore with Store {
       // saveState = ButtonState.ERROR;
     } else {
       //TODO: Update the URL's
-      const url = 'https://api.medrpha.com/api/register/registergstnodelete';
-      // const url =
-      // 'https://apitest.medrpha.com/api/register/registergstnodelete';
+      // const url = 'https://api.medrpha.com/api/register/registergstnodelete';
+      const url =
+          'https://apitest.medrpha.com/api/register/registergstnodelete';
 
       debugPrint('---- delteting GST');
 
@@ -322,9 +322,9 @@ abstract class _ProfileStore with Store {
       );
     } else {
       //TODO: Update the URL's
-      const url = 'https://api.medrpha.com/api/register/registerfssaidelete';
-      // const url =
-      //     'https://apitest.medrpha.com/api/register/registerfssaidelete';
+      // const url = 'https://api.medrpha.com/api/register/registerfssaidelete';
+      const url =
+          'https://apitest.medrpha.com/api/register/registerfssaidelete';
       debugPrint('---- delteting FSSAI');
 
       final resp = await _repository.deleteLicenses(
