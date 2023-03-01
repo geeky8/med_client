@@ -37,7 +37,7 @@ class ProductModel {
     }
 
     return ProductModel(
-      pid: (json['pid'] ?? '') as String,
+      pid: int.parse((json['pid'] ?? '-1') as String),
       wpid: (json['wpid'] ?? '') as String,
       priceId: (json['priceID'] ?? '') as String,
       salePrice: (json['saleprice'] ?? '') as String,
@@ -50,8 +50,10 @@ class ProductModel {
           : '',
       category: (json['categorystr'] ?? '') as String,
       company: (json['compnaystr'] ?? '') as String,
-      newMrp: (json['newmrp'] ?? '') as String,
-      oldMrp: (json['oldmrp'] ?? '') as String,
+      newMrp:
+          double.parse((json['newmrp'] ?? '0.0') as String).toStringAsFixed(2),
+      oldMrp:
+          double.parse((json['oldmrp'] ?? '0.0') as String).toStringAsFixed(2),
       percentDiscount: (json['percent'] ?? '') as String,
       saleQtyType: (json['saleqtytypestr'] ?? '') as String,
       prodSaleTypeDetails: (json['prodsaletypedetails'] ?? '') as String,
@@ -110,7 +112,7 @@ class ProductModel {
     );
   }
 
-  final String pid;
+  final int pid;
   final String wpid;
   final String priceId;
   final String salePrice;
@@ -126,7 +128,7 @@ class ProductModel {
   final String quantity;
   int cartQuantity;
   final String mrp;
-  final String subTotal;
+  String subTotal;
   final String expiryDate;
   final String description;
   final String totalQtyPrice;

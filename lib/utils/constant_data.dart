@@ -33,10 +33,10 @@ class ConstantData {
 
   //TODO: Change APIS from Prod to test
   //Api-key Details
-  // static String apiKey = 'rzp_test_3mRxTObsNw167K';
-  static String apiKey = 'rzp_live_kfbonxeuRfZYaL';
-  // static String apiSecretKey = 'i67GTEvHsJpSIkAKcM3etMRh';
-  static String apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
+  static String apiKey = 'rzp_test_3mRxTObsNw167K';
+  // static String apiKey = 'rzp_live_kfbonxeuRfZYaL';
+  static String apiSecretKey = 'i67GTEvHsJpSIkAKcM3etMRh';
+  // static String apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
 
   static String rupeeConversion({required String value}) {
     final numeric = double.parse(value);

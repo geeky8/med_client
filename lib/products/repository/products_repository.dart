@@ -18,25 +18,33 @@ class ProductResponseModel {
   ProductResponseModel({
     required this.message,
     required this.productList,
+    this.products,
   });
 
   factory ProductResponseModel.fromJson(
-      {required String message, required List<ProductModel> productList}) {
+      {required String message,
+      required List<ProductModel> productList,
+      LinkedHashMap<int, ProductModel>? products}) {
     return ProductResponseModel(
       message: message,
       productList: productList,
+      products: products,
     );
   }
 
   ProductResponseModel copyWith(
-      {String? message, List<ProductModel>? productList}) {
+      {String? message,
+      List<ProductModel>? productList,
+      LinkedHashMap<int, ProductModel>? products}) {
     return ProductResponseModel(
       message: message ?? this.message,
       productList: productList ?? this.productList,
+      products: products ?? this.products,
     );
   }
 
   final List<ProductModel> productList;
+  final LinkedHashMap<int, ProductModel>? products;
   final String message;
 }
 
@@ -90,18 +98,21 @@ class ProductsRepository {
 
     final productlist = <ProductModel>[];
     final sessId = await DataBox().readSessId();
+
+    debugPrint('category : ${categoryId} and pageIndex : $pageIndex');
+
     final body = {
       // "sessid": "34c4efad30e6e2d4",
       "sessid": sessId,
       "term": term ?? '',
       "catcheck": categoryId ?? '',
       "PageIndex": (pageIndex ?? '1').toString(),
-      "PageSize": pageSize ?? '16'
+      "PageSize": pageSize ?? '20'
     };
 
     final resp = await _httpClient.post(Uri.parse(_productsUrl), body: body);
 
-    debugPrint('--- prod resp ---------${resp.body}');
+    // debugPrint('--- prod resp ---------${resp.body}');
 
     if (term != null) {}
     if (resp.statusCode == 200) {
@@ -130,13 +141,63 @@ class ProductsRepository {
     return null;
   }
 
+  Future<ProductResponseModel?> getHashedProducts({
+    String? term,
+    String? categoryId,
+    int? pageIndex,
+    bool? isSearch,
+  }) async {
+    final linkedHashMap = LinkedHashMap<int, ProductModel>.from({});
+    final sessId = await DataBox().readSessId();
+
+    if (isSearch != null && term == "") {
+      Future.delayed(Duration.zero, () async {
+        return LinkedHashMap<int, ProductModel>.from({});
+      });
+    }
+
+    final body = {
+      // "sessid": "34c4efad30e6e2d4",
+      "sessid": sessId,
+      "term": term ?? '',
+      "catcheck": categoryId ?? '',
+      "PageIndex": (pageIndex ?? '1').toString(),
+      "PageSize": '20'
+    };
+
+    final resp = await _httpClient.post(Uri.parse(_productsUrl), body: body);
+
+    if (resp.statusCode == 200) {
+      final respBody = jsonDecode(resp.body);
+      // print('Message ---------------------${respBody['message']}');
+      ProductResponseModel productRespModel = ProductResponseModel.fromJson(
+        message: respBody['message'] as String,
+        productList: [],
+      );
+      if (respBody['message'] == 'successful !!') {
+        final list = respBody['data'] as List<dynamic>;
+        for (final i in list) {
+          final model = ProductModel.fromJson(json: i);
+          final entry = <int, ProductModel>{model.pid: model};
+          linkedHashMap.addAll(entry);
+        }
+        debugPrint('------products lenght ${linkedHashMap.length}');
+        productRespModel = productRespModel.copyWith(products: linkedHashMap);
+        // print('lenght ---${productRespModel.productList.length}');
+      }
+      return productRespModel;
+    }
+
+    return null;
+  }
+
   Future<ProductModel> getProductDetails({
     required ProductModel model,
     required String sessId,
   }) async {
     final body = {
       "sessid": sessId,
-      "pid": model.pid,
+      "pid": model.pid.toString(),
       "price_id": model.priceId
     };
 
@@ -190,7 +251,7 @@ class ProductsRepository {
 
     final body = {
       "sessid": sessId,
-      "pid": model.pid,
+      "pid": model.pid.toString(),
       "priceID": model.priceId,
       "quantity": model.quantity
     };
@@ -212,7 +273,7 @@ class ProductsRepository {
 
     final body = {
       "sessid": sessId,
-      "pid": model.pid,
+      "pid": model.pid.toString(),
       "priceID": model.priceId,
     };
 
@@ -234,7 +295,7 @@ class ProductsRepository {
     final body = {
       // "sessid": "34c4efad30e6e2d4",
       "sessid": sessId,
-      "pid": model.pid,
+      "pid": model.pid.toString(),
       "priceID": model.priceId,
       "quantity": model.quantity,
       "qtyfield": model.cartQuantity.toString(),
@@ -258,7 +319,7 @@ class ProductsRepository {
     final body = {
       // "sessid": "34c4efad30e6e2d4",
       "sessid": sessId,
-      "pid": model.pid,
+      "pid": model.pid.toString(),
       "priceID": model.priceId,
       "WPID": model.wpid,
       "saleprice": model.salePrice,
@@ -284,7 +345,7 @@ class ProductsRepository {
     final body = {
       // "sessid": "34c4efad30e6e2d4",
       "sessid": sessId,
-      "pid": model.pid,
+      "pid": model.pid.toString(),
       "priceID": model.priceId
     };
 
@@ -478,10 +539,18 @@ class ProductsRepository {
 
   Future<List<String>> getRecommedations({required String name}) async {
     final result = HashSet<String>();
+    final arg = name.split(" ");
+    String myArg = "";
+    for (int i = 0; i < arg.length - 1; i++) {
+      myArg += arg[i];
+      myArg += " ";
+    }
 
     final resp = await http.post(
-        Uri.parse('http://8422-34-75-21-150.ngrok.io/medicine'),
+        Uri.parse('http://b0b5-34-145-199-41.ngrok.io/medicine'),
         body: {'med': name.toUpperCase()});
+
+    print('---- name ${resp.body}');
 
     if (resp.statusCode == 200) {
       final body = jsonDecode(resp.body) as Map<String, dynamic>;

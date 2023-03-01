@@ -41,6 +41,22 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$ethicalProductsAtom =
+      Atom(name: '_ProductsStore.ethicalProducts', context: context);
+
+  @override
+  ObservableMap<int, ProductModel> get ethicalProducts {
+    _$ethicalProductsAtom.reportRead();
+    return super.ethicalProducts;
+  }
+
+  @override
+  set ethicalProducts(ObservableMap<int, ProductModel> value) {
+    _$ethicalProductsAtom.reportWrite(value, super.ethicalProducts, () {
+      super.ethicalProducts = value;
+    });
+  }
+
   late final _$categoriesTypeAtom =
       Atom(name: '_ProductsStore.categoriesType', context: context);
 
@@ -621,6 +637,15 @@ mixin _$ProductsStore on _ProductsStore, Store {
         .run(() => super.getEthicalProducts(load: load));
   }
 
+  late final _$getHashedEthicalProductsAsyncAction =
+      AsyncAction('_ProductsStore.getHashedEthicalProducts', context: context);
+
+  @override
+  Future<void> getHashedEthicalProducts({bool? load}) {
+    return _$getHashedEthicalProductsAsyncAction
+        .run(() => super.getHashedEthicalProducts(load: load));
+  }
+
   late final _$getProductDetailsAsyncAction =
       AsyncAction('_ProductsStore.getProductDetails', context: context);
 
@@ -747,7 +772,7 @@ mixin _$ProductsStore on _ProductsStore, Store {
       AsyncAction('_ProductsStore.addToCart', context: context);
 
   @override
-  Future<void> addToCart(
+  Future<ProductModel> addToCart(
       {required ProductModel model, required BuildContext context}) {
     return _$addToCartAsyncAction
         .run(() => super.addToCart(model: model, context: context));
@@ -757,7 +782,7 @@ mixin _$ProductsStore on _ProductsStore, Store {
       AsyncAction('_ProductsStore.removeFromCart', context: context);
 
   @override
-  Future<void> removeFromCart(
+  Future<ProductModel> removeFromCart(
       {required ProductModel model,
       required BuildContext context,
       int? removalByPlusMinus}) {
@@ -824,6 +849,7 @@ mixin _$ProductsStore on _ProductsStore, Store {
     return '''
 catState: ${catState},
 message: ${message},
+ethicalProducts: ${ethicalProducts},
 categoriesType: ${categoriesType},
 categories: ${categories},
 prodState: ${prodState},

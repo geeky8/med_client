@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:medrpha_customer/enums/categories.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
@@ -32,46 +33,69 @@ class PlusMinusWidget extends StatefulWidget {
 }
 
 class _PlusMinusWidgetState extends State<PlusMinusWidget> {
-  ProductModel updateCurrProduct({
-    required String category,
-    required ProductsStore store,
-  }) {
-    switch (category) {
-      case 'Ethical':
-        final index = store.ethicalProductList
+  Future<ProductModel> updateCurrProduct(ProductModel model) async {
+    final stopWatch = Stopwatch()..start();
+    switch (categoriesfromValue(model.category)) {
+      case CategoriesType.ETHICAL:
+        widget.store.ethicalProducts[model.pid] = model;
+        break;
+      case CategoriesType.GENERIC:
+        final index = widget.store.genericProductList
             .indexWhere((element) => element.pid == widget.model.pid);
-        return (index != -1) ? store.ethicalProductList[index] : widget.model;
-
-      case 'Generic':
-        final index = store.genericProductList
+        widget.store.genericProductList
+          ..removeAt(index)
+          ..insert(index, model);
+        return (index != -1) ? widget.store.genericProductList[index] : model;
+      case CategoriesType.SURGICAL:
+        final index = widget.store.surgicalProductList
             .indexWhere((element) => element.pid == widget.model.pid);
-        return (index != -1) ? store.genericProductList[index] : widget.model;
-
-      case 'Surgical':
-        final index = store.surgicalProductList
+        widget.store.surgicalProductList
+          ..removeAt(index)
+          ..insert(index, model);
+        return (index != -1) ? widget.store.surgicalProductList[index] : model;
+      case CategoriesType.VETERINARY:
+        final index = widget.store.veterinaryProductList
             .indexWhere((element) => element.pid == widget.model.pid);
-        return (index != -1) ? store.surgicalProductList[index] : widget.model;
-
-      case 'Veterinary':
-        final index = store.veterinaryProductList
-            .indexWhere((element) => element.pid == widget.model.pid);
+        widget.store.veterinaryProductList
+          ..removeAt(index)
+          ..insert(index, model);
         return (index != -1)
-            ? store.veterinaryProductList[index]
-            : widget.model;
-
-      case 'Ayurvedic':
-        final index = store.ayurvedicProductList
+            ? widget.store.veterinaryProductList[index]
+            : model;
+      case CategoriesType.AYURVEDIC:
+        final index = widget.store.ayurvedicProductList
             .indexWhere((element) => element.pid == widget.model.pid);
-        return (index != -1) ? store.ayurvedicProductList[index] : widget.model;
-
-      case 'General':
-        final index = store.generalProductList
+        widget.store.ayurvedicProductList
+          ..removeAt(index)
+          ..insert(index, model);
+        return (index != -1) ? widget.store.ayurvedicProductList[index] : model;
+      case CategoriesType.GENERAL:
+        final index = widget.store.generalProductList
             .indexWhere((element) => element.pid == widget.model.pid);
-        return (index != -1) ? store.generalProductList[index] : widget.model;
-
-      default:
-        return widget.model;
+        widget.store.generalProductList
+          ..removeAt(index)
+          ..insert(index, model);
+        return (index != -1) ? widget.store.generalProductList[index] : model;
+      case CategoriesType.VACCINE:
+        final index = widget.store.vaccineProductList
+            .indexWhere((element) => element.pid == widget.model.pid);
+        widget.store.vaccineProductList
+          ..removeAt(index)
+          ..insert(index, model);
+        return (index != -1) ? widget.store.vaccineProductList[index] : model;
     }
+    stopWatch.stop();
+    debugPrint(
+        '---- elaspsed time while adding ${stopWatch.elapsedMicroseconds}');
+    return model;
+  }
+
+  late ProductModel model;
+
+  @override
+  void initState() {
+    model = widget.model;
+    super.initState();
   }
 
   @override
@@ -82,46 +106,29 @@ class _PlusMinusWidgetState extends State<PlusMinusWidget> {
           : MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
+        InkWell(
+          onTap: () async {
+            setState(() {
+              widget.model.cartQuantity -= widget.model.minQty;
+            });
+            await widget.store.minusToCart(
+              model: widget.model,
+              context: context,
+            );
+          },
+          child: PlusMinusButton(
+            icon: CupertinoIcons.minus,
+            iconSize: widget.iconSize,
+          ),
+        ),
         Observer(builder: (_) {
-          ProductModel currModel = widget.model;
-          if (widget.model.subTotal != '0.00') {
-            currModel = updateCurrProduct(
-                category: widget.model.category, store: widget.store);
-          }
-          return InkWell(
-            onTap: () async {
-              // print(-1);
-              // if (widget.model.cartQuantity > widget.model.minQty) {
-              // widget.store.minusRemoveState = StoreState.LOADING;
-              setState(() {
-                widget.model.cartQuantity -= widget.model.minQty;
-              });
-              await widget.store.minusToCart(
-                model: widget.model,
-                context: context,
-              );
-              // widget.store.minusRemoveState = StoreState.SUCCESS;
-              // }
-            },
-            child: PlusMinusButton(
-              icon: CupertinoIcons.minus,
-              iconSize: widget.iconSize,
-            ),
-          );
-        }),
-        Observer(builder: (_) {
-          ProductModel currModel = widget.model;
-          if (widget.model.subTotal != '0.00') {
-            currModel = updateCurrProduct(
-                category: widget.model.category, store: widget.store);
-          }
-          // print('------- checking --------${currModel.cartQuantity}');
+          // final updatedModel = updateCurrProduct(model);
           return InkWell(
             onTap: () {
               showDialog(
                 context: context,
                 builder: (_) => QuantityDialog(
-                  model: widget.model,
+                  model: model,
                   store: widget.store,
                 ),
               );
@@ -134,7 +141,7 @@ class _PlusMinusWidgetState extends State<PlusMinusWidget> {
                     : 0,
               ),
               child: ConstantWidget.getCustomText(
-                '${(widget.model.cartQuantity.toString().length > 4) ? '${widget.model.cartQuantity.toString().substring(0, 3)}...' : widget.model.cartQuantity}',
+                '${(model.cartQuantity.toString().length > 4) ? '${model.cartQuantity.toString().substring(0, 3)}...' : model.cartQuantity}',
                 ConstantData.mainTextColor,
                 2,
                 TextAlign.center,
@@ -144,36 +151,30 @@ class _PlusMinusWidgetState extends State<PlusMinusWidget> {
             ),
           );
         }),
-        Observer(builder: (_) {
-          ProductModel currModel = widget.model;
-          if (widget.model.subTotal != '0.00') {
-            currModel = updateCurrProduct(
-                category: widget.model.category, store: widget.store);
-          }
-          return InkWell(
-            onTap: () async {
+        InkWell(
+          onTap: () async {
+            setState(() {
+              model.cartQuantity += model.minQty;
+              final subTotal = model.cartQuantity * double.parse(model.newMrp);
+              model = model.copyWith(subTotal: subTotal.toStringAsFixed(2));
+            });
+            if (model.cartQuantity > int.parse(model.quantity)) {
+              Fluttertoast.showToast(msg: 'Quantity Not Available');
               setState(() {
-                widget.model.cartQuantity += widget.model.minQty;
+                model.cartQuantity -= model.minQty;
               });
-              if (widget.model.cartQuantity >
-                  int.parse(widget.model.quantity)) {
-                Fluttertoast.showToast(msg: 'Quantity Not Available');
-                setState(() {
-                  widget.model.cartQuantity -= widget.model.minQty;
-                });
-              } else {
-                await widget.store.plusToCart(
-                  model: widget.model,
-                  context: context,
-                );
-              }
-            },
-            child: PlusMinusButton(
-              icon: CupertinoIcons.plus,
-              iconSize: widget.iconSize,
-            ),
-          );
-        }),
+            } else {
+              await widget.store.plusToCart(
+                model: model,
+                context: context,
+              );
+            }
+          },
+          child: PlusMinusButton(
+            icon: CupertinoIcons.plus,
+            iconSize: widget.iconSize,
+          ),
+        )
       ],
     );
   }
@@ -222,7 +223,6 @@ class AddProductButton extends StatelessWidget {
     required this.fontSize,
     required this.contextReq,
     this.isDetailScreen,
-    this.detailScreenFunc,
   }) : super(key: key);
 
   final ProductModel model;
@@ -232,19 +232,22 @@ class AddProductButton extends StatelessWidget {
   final double fontSize;
   final BuildContext contextReq;
   final bool? isDetailScreen;
-  final Function? detailScreenFunc;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        await store.addToCart(
+        final updatedModel = await store.addToCart(
           model: model,
           context: context,
         );
-        if (detailScreenFunc != null) {
-          detailScreenFunc;
-        }
+        showDialog(
+          context: context,
+          builder: (_) => QuantityDialog(
+            model: updatedModel,
+            store: store,
+          ),
+        );
       },
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -319,11 +322,7 @@ class RemoveButton extends StatelessWidget {
                 blockSizeHorizontal(context: context) * 3,
               ),
               decoration: BoxDecoration(
-                color: ConstantData.color1,
-                borderRadius: BorderRadius.circular(
-                  font22Px(context: context),
-                ),
-              ),
+                  color: ConstantData.color1, shape: BoxShape.circle),
               child: Icon(
                 CupertinoIcons.delete,
                 color: ConstantData.bgColor,

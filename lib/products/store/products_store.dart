@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -26,6 +27,33 @@ part 'products_store.g.dart';
 
 class ProductsStore = _ProductsStore with _$ProductsStore;
 
+extension UpdateName on String {
+  String updateName() {
+    final myList = split(" ");
+    final reg = RegExp("[1-(10)]");
+    int x = 0;
+    if (reg.hasMatch(myList.last)) {
+      x = 1;
+    }
+    String res = "";
+    for (int i = 0; i < myList.length - x; i++) {
+      res += myList[i];
+      res += " ";
+    }
+    return res;
+  }
+
+  String myLowerCase() {
+    final myList = split(" ");
+    String res = "${myList[0]} ";
+    for (int i = 1; i < myList.length; i++) {
+      res += myList[i];
+      res += " ";
+    }
+    return res;
+  }
+}
+
 abstract class _ProductsStore with Store {
   final _productsRepository = ProductsRepository();
 
@@ -34,6 +62,10 @@ abstract class _ProductsStore with Store {
 
   @observable
   String message = 'Coming Soon!';
+
+  @observable
+  ObservableMap<int, ProductModel> ethicalProducts =
+      ObservableMap.linkedHashMapFrom({});
 
   @observable
   CategoriesType categoriesType = CategoriesType.ETHICAL;
@@ -128,6 +160,7 @@ abstract class _ProductsStore with Store {
   Future<void> _getProducts() async {
     homeState = StoreState.LOADING;
     await getEthicalProducts();
+    // await getHashedEthicalProducts();
     homeState = StoreState.SUCCESS;
     await getGenerallProducts();
     await getGenericProducts();
@@ -168,12 +201,62 @@ abstract class _ProductsStore with Store {
       } else {
         if (productRespModel.productList.isNotEmpty) {
           if (load != null) {
-            ethicalProductList.addAll(productRespModel.productList);
+            for (final model in productRespModel.productList) {
+              final index = ethicalProductList
+                  .indexWhere((element) => element.pid == model.pid);
+              if (index == -1) {
+                ethicalProductList.add(model);
+              }
+            }
           } else {
             ethicalProductList
               ..clear()
               ..addAll(productRespModel.productList);
+
             print('----prod state ${prodState.name}');
+          }
+        } else if (ethicalPageIndex > 1) {
+          ethicalPageIndex--;
+          Fluttertoast.showToast(msg: 'No more products to show');
+        }
+        prodState = StoreState.SUCCESS;
+      }
+    } else {
+      prodState = StoreState.EMPTY;
+    }
+  }
+
+  @action
+  Future<void> getHashedEthicalProducts({bool? load}) async {
+    if (load == null) prodState = StoreState.LOADING;
+    final productRespModel = await _productsRepository.getHashedProducts(
+      categoryId: '1',
+      pageIndex: ethicalPageIndex,
+    );
+    // print(productRespModel!.message);
+    if (productRespModel != null) {
+      if (productRespModel.message ==
+          'product not serviceable in your area !!!') {
+        message = 'Products not servicable in your selected area!';
+        prodState = StoreState.ERROR;
+      } else {
+        if (productRespModel.products != null &&
+            productRespModel.products!.isNotEmpty) {
+          if (load != null) {
+            /// Adding each [ProductModel] to the linked-hashmap
+            productRespModel.products!.forEach((key, value) {
+              ethicalProducts.addAll({key: value});
+            });
+          } else {
+            if (productRespModel.products != null &&
+                productRespModel.products!.isNotEmpty) {
+              ethicalProducts.clear();
+              productRespModel.products!.forEach((key, value) {
+                ethicalProducts.addAll({key: value});
+              });
+            }
+
+            print('----prod hashed state ${prodState.name}');
           }
         } else if (ethicalPageIndex > 1) {
           ethicalPageIndex--;
@@ -212,7 +295,13 @@ abstract class _ProductsStore with Store {
       } else {
         if (productRespModel.productList.isNotEmpty) {
           if (load != null) {
-            genericProductList.addAll(productRespModel.productList);
+            for (final model in productRespModel.productList) {
+              final index = genericProductList
+                  .indexWhere((element) => element.pid == model.pid);
+              if (index == -1) {
+                genericProductList.add(model);
+              }
+            }
           } else {
             genericProductList
               ..clear()
@@ -244,7 +333,7 @@ abstract class _ProductsStore with Store {
     for (final name in list) {
       int ind = -1;
 
-      debugPrint("names $name");
+      print('names --- ${name.myLowerCase()}');
 
       ind = ethicalProductList
           .indexWhere((element) => element.productName == name);
@@ -315,7 +404,13 @@ abstract class _ProductsStore with Store {
       } else {
         if (productRespModel.productList.isNotEmpty) {
           if (load != null) {
-            surgicalProductList.addAll(productRespModel.productList);
+            for (final model in productRespModel.productList) {
+              final index = surgicalProductList
+                  .indexWhere((element) => element.pid == model.pid);
+              if (index == -1) {
+                surgicalProductList.add(model);
+              }
+            }
           } else {
             surgicalProductList
               ..clear()
@@ -348,7 +443,13 @@ abstract class _ProductsStore with Store {
       } else {
         if (productRespModel.productList.isNotEmpty) {
           if (load != null) {
-            veterinaryProductList.addAll(productRespModel.productList);
+            for (final model in productRespModel.productList) {
+              final index = veterinaryProductList
+                  .indexWhere((element) => element.pid == model.pid);
+              if (index == -1) {
+                veterinaryProductList.add(model);
+              }
+            }
           } else {
             veterinaryProductList
               ..clear()
@@ -381,7 +482,13 @@ abstract class _ProductsStore with Store {
       } else {
         if (productRespModel.productList.isNotEmpty) {
           if (load != null) {
-            ayurvedicProductList.addAll(productRespModel.productList);
+            for (final model in productRespModel.productList) {
+              final index = ayurvedicProductList
+                  .indexWhere((element) => element.pid == model.pid);
+              if (index == -1) {
+                ayurvedicProductList.add(model);
+              }
+            }
           } else {
             ayurvedicProductList
               ..clear()
@@ -414,7 +521,13 @@ abstract class _ProductsStore with Store {
       } else {
         if (productRespModel.productList.isNotEmpty) {
           if (load != null) {
-            generalProductList.addAll(productRespModel.productList);
+            for (final model in productRespModel.productList) {
+              final index = generalProductList
+                  .indexWhere((element) => element.pid == model.pid);
+              if (index == -1) {
+                generalProductList.add(model);
+              }
+            }
           } else {
             generalProductList
               ..clear()
@@ -447,7 +560,13 @@ abstract class _ProductsStore with Store {
       } else {
         if (productRespModel.productList.isNotEmpty) {
           if (load != null) {
-            vaccineProductList.addAll(productRespModel.productList);
+            for (final model in productRespModel.productList) {
+              final index = vaccineProductList
+                  .indexWhere((element) => element.pid == model.pid);
+              if (index == -1) {
+                vaccineProductList.add(model);
+              }
+            }
           } else {
             vaccineProductList
               ..clear()
@@ -547,11 +666,11 @@ abstract class _ProductsStore with Store {
       );
     } else {
       // cartModel = model;
-      cartModel.copyWith(productList: model.productList);
+      // cartModel = cartModel.copyWith(productList: model.productList);
       final list = ObservableList<ProductModel>.of([]);
       if (cartOpt != null) {
         for (final i in model.productList) {
-          final updatedModel = await _updateProductsAccordingToCart(model: i);
+          final updatedModel = await updateProductsAccordingToCart(model: i);
           list.add(updatedModel);
         }
         cartModel = model.copyWith(productList: list);
@@ -562,99 +681,110 @@ abstract class _ProductsStore with Store {
   }
 
   /// [Function] to update the product in mentioned product list.
-  Future<ProductModel> _updateProductsAccordingToCart(
+  Future<ProductModel> updateProductsAccordingToCart(
       {required ProductModel model}) async {
-    if (model.subTotal == '0.00') {
+    debugPrint('------- ${model.category}');
+    if (model.category == '') {
       final currModel = model.copyWith(
         subTotal: '0.00',
         totalQtyPrice: '0.00',
-        productName: 'Remove the product\nas the prices have been changed',
+        productName: 'Remove the product \nThe prices have been changed',
         description: '',
       );
 
       return currModel;
-    }
-    final category = categoriesfromValue(model.category);
+    } else {
+      final category = categoriesfromValue(model.category);
 
-    switch (category) {
-      case CategoriesType.ETHICAL:
-        final index = ethicalProductList
-            .indexWhere((element) => element.pid == model.pid);
+      switch (category) {
+        case CategoriesType.ETHICAL:
+          final stopWatch = Stopwatch()..start();
+          final index = ethicalProductList
+              .indexWhere((element) => element.pid == model.pid);
+          if (index != -1) {
+            final cartModel = ethicalProductList[index].copyWith(
+                cartQuantity: model.cartQuantity, subTotal: model.subTotal);
+            ethicalProductList
+              ..removeAt(index)
+              ..insert(index, cartModel);
+            stopWatch.stop();
+            debugPrint(
+                '---- addtion ethical stoppage at ${stopWatch.elapsedMicroseconds}');
 
-        if (index != -1) {
-          final cartModel = ethicalProductList[index].copyWith(
-              cartQuantity: model.cartQuantity, subTotal: model.subTotal);
-          ethicalProductList
-            ..removeAt(index)
-            ..insert(index, cartModel);
-          return cartModel;
-        }
-        return model;
-      // ethicalProductList[index] = cartModel;
-      case CategoriesType.GENERIC:
-        final index = genericProductList
-            .indexWhere((element) => element.pid == model.pid);
-        if (index != -1) {
-          final cartModel = genericProductList[index].copyWith(
-              cartQuantity: model.cartQuantity, subTotal: model.subTotal);
-          genericProductList
-            ..removeAt(index)
-            ..insert(index, cartModel);
-          return cartModel;
-        }
-        return model;
-      case CategoriesType.SURGICAL:
-        final index = surgicalProductList
-            .indexWhere((element) => element.pid == model.pid);
-        if (index != -1) {
-          final cartModel = surgicalProductList[index].copyWith(
-              cartQuantity: model.cartQuantity, subTotal: model.subTotal);
-          surgicalProductList
-            ..removeAt(index)
-            ..insert(index, cartModel);
+            return cartModel;
+          }
+          return model;
+        // ethicalProductList[index] = cartModel;
+        case CategoriesType.GENERIC:
+          final stopWatch = Stopwatch()..start();
+          final index = genericProductList
+              .indexWhere((element) => element.pid == model.pid);
+          if (index != -1) {
+            final cartModel = genericProductList[index].copyWith(
+                cartQuantity: model.cartQuantity, subTotal: model.subTotal);
+            genericProductList
+              ..removeAt(index)
+              ..insert(index, cartModel);
+            stopWatch.stop();
+            debugPrint(
+                '---- addtion generic stoppage at ${stopWatch.elapsedMicroseconds}');
 
-          return cartModel;
-        }
-        return model;
-      case CategoriesType.VETERINARY:
-        final index = veterinaryProductList
-            .indexWhere((element) => element.pid == model.pid);
-        if (index != -1) {
-          final cartModel = veterinaryProductList[index].copyWith(
+            return cartModel;
+          }
+          return model;
+        case CategoriesType.SURGICAL:
+          final index = surgicalProductList
+              .indexWhere((element) => element.pid == model.pid);
+          if (index != -1) {
+            final cartModel = surgicalProductList[index].copyWith(
+                cartQuantity: model.cartQuantity, subTotal: model.subTotal);
+            surgicalProductList
+              ..removeAt(index)
+              ..insert(index, cartModel);
+
+            return cartModel;
+          }
+          return model;
+        case CategoriesType.VETERINARY:
+          final index = veterinaryProductList
+              .indexWhere((element) => element.pid == model.pid);
+          if (index != -1) {
+            final cartModel = veterinaryProductList[index].copyWith(
+                cartQuantity: model.cartQuantity, subTotal: model.subTotal);
+            veterinaryProductList
+              ..removeAt(index)
+              ..insert(index, cartModel);
+            return cartModel;
+          }
+          return model;
+        case CategoriesType.AYURVEDIC:
+          final index = ayurvedicProductList
+              .indexWhere((element) => element.pid == model.pid);
+          final cartModel = ayurvedicProductList[index].copyWith(
               cartQuantity: model.cartQuantity, subTotal: model.subTotal);
-          veterinaryProductList
+          ayurvedicProductList
             ..removeAt(index)
             ..insert(index, cartModel);
           return cartModel;
-        }
-        return model;
-      case CategoriesType.AYURVEDIC:
-        final index = ayurvedicProductList
-            .indexWhere((element) => element.pid == model.pid);
-        final cartModel = ayurvedicProductList[index].copyWith(
-            cartQuantity: model.cartQuantity, subTotal: model.subTotal);
-        ayurvedicProductList
-          ..removeAt(index)
-          ..insert(index, cartModel);
-        return cartModel;
-      case CategoriesType.GENERAL:
-        final index = generalProductList
-            .indexWhere((element) => element.pid == model.pid);
-        final cartModel = generalProductList[index].copyWith(
-            cartQuantity: model.cartQuantity, subTotal: model.subTotal);
-        generalProductList
-          ..removeAt(index)
-          ..insert(index, cartModel);
-        return cartModel;
-      case CategoriesType.VACCINE:
-        final index = vaccineProductList
-            .indexWhere((element) => element.pid == model.pid);
-        final cartModel = vaccineProductList[index].copyWith(
-            cartQuantity: model.cartQuantity, subTotal: model.subTotal);
-        vaccineProductList
-          ..removeAt(index)
-          ..insert(index, cartModel);
-        return cartModel;
+        case CategoriesType.GENERAL:
+          final index = generalProductList
+              .indexWhere((element) => element.pid == model.pid);
+          final cartModel = generalProductList[index].copyWith(
+              cartQuantity: model.cartQuantity, subTotal: model.subTotal);
+          generalProductList
+            ..removeAt(index)
+            ..insert(index, cartModel);
+          return cartModel;
+        case CategoriesType.VACCINE:
+          final index = vaccineProductList
+              .indexWhere((element) => element.pid == model.pid);
+          final cartModel = vaccineProductList[index].copyWith(
+              cartQuantity: model.cartQuantity, subTotal: model.subTotal);
+          vaccineProductList
+            ..removeAt(index)
+            ..insert(index, cartModel);
+          return cartModel;
+      }
     }
   }
 
@@ -667,6 +797,7 @@ abstract class _ProductsStore with Store {
     if (int.parse(value) > int.parse(model.quantity) ||
         int.parse(value) < model.minQty) {
       Fluttertoast.showToast(msg: 'Quantity Not Available');
+      // return model;
     } else {
       final rem = (int.parse(value) % model.minQty);
       int val = int.parse(value);
@@ -681,7 +812,7 @@ abstract class _ProductsStore with Store {
         subTotal: (double.parse(model.newMrp) * val).toString(),
       );
 
-      await cartUpdate(
+      cartUpdate(
         totalPrice: double.parse(cartModel.totalSalePrice),
         oldTotal: (double.parse(updatedModel.newMrp) * (model.cartQuantity)),
         newTotal: (double.parse(updatedModel.newMrp) * val),
@@ -693,16 +824,18 @@ abstract class _ProductsStore with Store {
         ..removeAt(index)
         ..insert(index, updatedModel);
 
-      await _updateProductsAccordingToCart(model: updatedModel);
+      await updateProductsAccordingToCart(model: updatedModel);
 
       await _productsRepository.updateQuantity(model: updatedModel);
 
       Navigator.pop(context);
+
+      // return updatedModel;
     }
   }
 
   /// [Function] to update the cart on regular intervals
-  Future<void> cartUpdate({
+  void cartUpdate({
     required double totalPrice,
     required double oldTotal,
     required double newTotal,
@@ -727,18 +860,18 @@ abstract class _ProductsStore with Store {
     required ProductModel model,
     required BuildContext context,
   }) async {
+    final stopwatch = Stopwatch()..start();
     int qty = model.cartQuantity;
-    // debugPrint('---- added -- $qty');
+    debugPrint('---- added -- $qty');
     if (qty > int.parse(model.quantity)) {
       Fluttertoast.showToast(msg: 'Quantity Not Available');
     } else {
       final updatedModel = model.copyWith(
-        cartQuantity: qty,
         subTotal: (double.parse(model.newMrp) * qty).toString(),
       );
-      await _updateProductsAccordingToCart(model: updatedModel);
+      await updateProductsAccordingToCart(model: updatedModel);
 
-      await cartUpdate(
+      cartUpdate(
         totalPrice: double.parse(cartModel.totalSalePrice),
         oldTotal: (double.parse(model.newMrp) *
             (updatedModel.cartQuantity - updatedModel.minQty)),
@@ -755,6 +888,8 @@ abstract class _ProductsStore with Store {
         model: model,
       );
     }
+    stopwatch.stop();
+    // debugPrint('---- addtion stoppage at ${stopwatch.elapsedMilliseconds}');
   }
 
   @action
@@ -772,9 +907,9 @@ abstract class _ProductsStore with Store {
         ..removeAt(index)
         ..insert(index, updatedModel);
 
-      await _updateProductsAccordingToCart(model: updatedModel);
+      await updateProductsAccordingToCart(model: updatedModel);
 
-      await cartUpdate(
+      cartUpdate(
         totalPrice: double.parse(cartModel.totalSalePrice),
         oldTotal: (double.parse(model.newMrp) *
             (updatedModel.cartQuantity + updatedModel.minQty)),
@@ -795,7 +930,7 @@ abstract class _ProductsStore with Store {
   }
 
   @action
-  Future<void> addToCart({
+  Future<ProductModel> addToCart({
     required ProductModel model,
     required BuildContext context,
   }) async {
@@ -803,7 +938,7 @@ abstract class _ProductsStore with Store {
         cartModel.productList.indexWhere((element) => element.pid == model.pid);
     if (index != -1) {
       Fluttertoast.showToast(msg: 'Item already in cart');
-      return;
+      return model;
     }
     if (int.parse(model.quantity) >= model.minQty) {
       final updatedModel = model.copyWith(
@@ -811,22 +946,24 @@ abstract class _ProductsStore with Store {
         subTotal: (double.parse(model.newMrp) * model.minQty).toString(),
       );
       cartModel.productList.add(updatedModel);
-      await _updateProductsAccordingToCart(model: updatedModel);
-      await cartUpdate(
+      await updateProductsAccordingToCart(model: updatedModel);
+      cartUpdate(
         totalPrice: double.parse(cartModel.totalSalePrice),
         oldTotal: 0.0,
         newTotal: double.parse(updatedModel.newMrp) * model.minQty,
       );
 
       _productsRepository.addToCart(model: model);
+      return updatedModel;
       // _productsRepository.getCart();
     } else {
       Fluttertoast.showToast(msg: 'Quantity Not Available');
+      return model;
     }
   }
 
   @action
-  Future<void> removeFromCart({
+  Future<ProductModel> removeFromCart({
     required ProductModel model,
     required BuildContext context,
     int? removalByPlusMinus,
@@ -840,19 +977,21 @@ abstract class _ProductsStore with Store {
         .indexWhere((element) => element.pid == currModel.pid);
     cartModel.productList.removeAt(index);
 
-    await cartUpdate(
+    cartUpdate(
       totalPrice: double.parse(cartModel.totalSalePrice),
       oldTotal: (double.parse(model.newMrp) * (model.cartQuantity)),
       newTotal: 0.00,
     );
 
-    await _updateProductsAccordingToCart(model: currModel);
+    await updateProductsAccordingToCart(model: currModel);
 
     if (index != -1) {
       _productsRepository.removeFromCart(model: currModel);
 
       Fluttertoast.showToast(msg: 'Product Removed');
     }
+
+    return currModel;
   }
 
   //----------------------------------- Checkout ----------------------------------------------//

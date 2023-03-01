@@ -978,7 +978,9 @@ class ConstantWidget {
     return SizedBox(
       height: size,
       width: size,
-      child: const CircularProgressIndicator(),
+      child: CircularProgressIndicator(
+        color: ConstantData.primaryColor,
+      ),
     );
   }
 

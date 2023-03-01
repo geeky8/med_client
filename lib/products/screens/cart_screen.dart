@@ -11,6 +11,7 @@ import 'package:medrpha_customer/products/screens/checkout_screen.dart';
 import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/add_subtract_widget.dart';
+import 'package:medrpha_customer/products/utils/product_card.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
@@ -221,14 +222,6 @@ class CartScreen extends StatelessWidget {
                     Observer(builder: (_) {
                       final show = store.cartModel.productList.length;
                       if (show == 0 || !loginStore.loginModel.adminStatus) {
-                        // return Expanded(
-                        //   child: ConstantWidget.errorWidget(
-                        //     context: context,
-                        //     height: 20,
-                        //     width: 15,
-                        //     // fontSize: font18Px(context: context),
-                        //   ),
-                        // );
                         return Expanded(
                           child: Icon(
                             CupertinoIcons.cart,
@@ -322,7 +315,7 @@ class ListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double height = ConstantWidget.getScreenPercentSize(context, 20);
-    double imageSize = ConstantWidget.getScreenPercentSize(context, 10);
+    double imageSize = ConstantWidget.getScreenPercentSize(context, 14);
     double margin = ConstantWidget.getScreenPercentSize(context, 1.5);
     double radius = ConstantWidget.getScreenPercentSize(context, 1.5);
 
@@ -341,30 +334,7 @@ class ListItem extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: Container(
-              height: imageSize,
-              width: imageSize,
-              margin: EdgeInsets.all(margin),
-              padding: EdgeInsets.all((margin / 5)),
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                // color: ConstantData.bgColor,
-
-                borderRadius: BorderRadius.all(
-                  Radius.circular(
-                    font18Px(context: context),
-                  ),
-                ),
-                image: DecorationImage(
-                  image: CachedNetworkImageProvider(
-                    (model.productImg != '')
-                        ? ConstantData.productUrl + model.productImg
-                        : 'https://www.labikineria.shop/assets/images/no_image.png',
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+            child: imageWidget(imageSize, margin, context),
           ),
           Expanded(
             child: Container(
@@ -372,140 +342,18 @@ class ListItem extends StatelessWidget {
               // child: Row(
               child: Stack(
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ConstantWidget.getCustomText(
-                              model.productName,
-                              ConstantData.mainTextColor,
-                              3,
-                              TextAlign.start,
-                              FontWeight.w600,
-                              font18Px(context: context) * 1.12,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height:
-                            ConstantWidget.getWidthPercentSize(context, 1.2),
-                      ),
-                      ConstantWidget.getLineTextView(
-                        '₹${model.oldMrp}',
-                        Colors.grey,
-                        font18Px(context: context),
-                      ),
-                      SizedBox(
-                        height:
-                            ConstantWidget.getWidthPercentSize(context, 1.2),
-                      ),
-                      ConstantWidget.getCustomText(
-                        '₹${model.newMrp}',
-                        ConstantData.accentColor,
-                        1,
-                        TextAlign.start,
-                        FontWeight.w600,
-                        font18Px(context: context) * 1.12,
-                      ),
-                      SizedBox(
-                        height: blockSizeVertical(context: context) * 1.5,
-                      ),
-                      const Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ConstantWidget.getCustomText(
-                            'Sub-Total:',
-                            ConstantData.mainTextColor,
-                            1,
-                            TextAlign.center,
-                            FontWeight.w600,
-                            font18Px(context: context) * 1.12,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                right:
-                                    blockSizeHorizontal(context: context) * 2),
-                            child: ConstantWidget.getCustomText(
-                              '₹${(double.parse(model.newMrp) * (model.cartQuantity)).toStringAsFixed(2)}',
-                              ConstantData.mainTextColor,
-                              1,
-                              TextAlign.center,
-                              FontWeight.w600,
-                              font18Px(context: context) * 1.12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                  productDataWidget(context),
 
                   ///------------------- Remove from cart ---------------------------------
                   Align(
                     alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: blockSizeHorizontal(context: context) * 2,
-                      ),
-                      child: Observer(
-                        builder: (_) {
-                          return InkWell(
-                            onTap: () async {
-                              store.removeState = StoreState.LOADING;
-                              await store.removeFromCart(
-                                model: model,
-                                context: context,
-                              );
-                              store.removeState = StoreState.SUCCESS;
-                            },
-                            child: Icon(
-                              CupertinoIcons.delete,
-                              color: ConstantData.color1,
-                              size: font25Px(context: context),
-                            ),
-                          );
-                          // }
-                        },
-                      ),
-                    ),
+                    child: removeCartWiget(context),
                   ),
                   Observer(builder: (_) {
                     if (model.subTotal == '0.00') return const SizedBox();
                     return Align(
                       alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: blockSizeHorizontal(context: context) * 2,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Observer(
-                                  builder: (_) {
-                                    return PlusMinusWidget(
-                                      model: model,
-                                      store: store,
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: ConstantWidget.getWidthPercentSize(
-                                  context, 3),
-                            ),
-                          ],
-                        ),
-                      ),
+                      child: addToCartWidget(context),
                     );
                   }),
                 ],
@@ -513,6 +361,180 @@ class ListItem extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Padding addToCartWidget(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: blockSizeHorizontal(context: context) * 2,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.end,
+          //   crossAxisAlignment: CrossAxisAlignment.end,
+          //   children: [
+          //     Observer(
+          //       builder: (_) {
+          //         return PlusMinusWidget(
+          //           model: model,
+          //           store: store,
+          //         );
+          //       },
+          //     ),
+          //   ],
+          // ),
+          CartQuantityWidget(
+            model: model,
+            store: store,
+            fontSize: font18Px(context: context),
+            padding: EdgeInsets.symmetric(
+              horizontal: blockSizeHorizontal(context: context) * 4,
+              vertical: blockSizeHorizontal(context: context) * 2,
+            ),
+          ),
+          SizedBox(
+            width: ConstantWidget.getWidthPercentSize(context, 3),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget removeCartWiget(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: blockSizeHorizontal(context: context) * 2,
+      ),
+      child: Observer(
+        builder: (_) {
+          return InkWell(
+            onTap: () async {
+              store.removeState = StoreState.LOADING;
+              await store.removeFromCart(
+                model: model,
+                context: context,
+              );
+              store.removeState = StoreState.SUCCESS;
+            },
+            child: Icon(
+              CupertinoIcons.delete,
+              color: ConstantData.color1,
+              size: font25Px(context: context),
+            ),
+          );
+          // }
+        },
+      ),
+    );
+  }
+
+  Column productDataWidget(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: ConstantWidget.getCustomText(
+                model.productName,
+                ConstantData.mainTextColor,
+                3,
+                TextAlign.start,
+                FontWeight.w600,
+                font18Px(context: context) * 1.12,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: blockSizeVertical(context: context) * 2,
+        ),
+        ConstantWidget.getLineTextView(
+          'MRP : ₹${model.oldMrp}',
+          Colors.grey,
+          font15Px(context: context) * 1.1,
+        ),
+        SizedBox(
+          height: blockSizeHorizontal(context: context) * 2,
+        ),
+        ConstantWidget.getCustomText(
+          '₹${model.newMrp}',
+          ConstantData.primaryColor,
+          1,
+          TextAlign.start,
+          FontWeight.w600,
+          font18Px(context: context) * 1.1,
+        ),
+        SizedBox(
+          height: blockSizeVertical(context: context) * 1.5,
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            right: blockSizeHorizontal(context: context) * 2,
+          ),
+          child: Divider(
+            color: ConstantData.primaryColor,
+            thickness: 0.8,
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ConstantWidget.getCustomText(
+              'Sub-Total:',
+              ConstantData.mainTextColor,
+              1,
+              TextAlign.center,
+              FontWeight.w600,
+              font18Px(context: context) * 1.12,
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                  right: blockSizeHorizontal(context: context) * 2),
+              child: ConstantWidget.getCustomText(
+                '₹${(double.parse(model.newMrp) * (model.cartQuantity)).toStringAsFixed(2)}',
+                ConstantData.mainTextColor,
+                1,
+                TextAlign.center,
+                FontWeight.w600,
+                font18Px(context: context) * 1.12,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Container imageWidget(double imageSize, double margin, BuildContext context) {
+    return Container(
+      height: imageSize,
+      width: imageSize,
+      margin: EdgeInsets.all(margin),
+      padding: EdgeInsets.all((margin / 5)),
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        // color: ConstantData.bgColor,
+
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            font18Px(context: context),
+          ),
+        ),
+        image: DecorationImage(
+          image: CachedNetworkImageProvider(
+            (model.productImg != '')
+                ? ConstantData.productUrl + model.productImg
+                : 'https://www.labikineria.shop/assets/images/no_image.png',
+          ),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

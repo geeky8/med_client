@@ -8,24 +8,37 @@ import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 
-class QuantityDialog extends StatelessWidget {
+class QuantityDialog extends StatefulWidget {
   QuantityDialog({
     Key? key,
     required this.model,
     required this.store,
+    this.givenQty,
   }) : super(key: key);
 
   final ProductModel model;
   final ProductsStore store;
+  final String? givenQty;
+
+  @override
+  State<QuantityDialog> createState() => _QuantityDialogState();
+}
+
+class _QuantityDialogState extends State<QuantityDialog> {
   final quantityController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     quantityController.value = TextEditingValue(
-        text: model.cartQuantity.toString(),
-        selection: TextSelection.collapsed(
-            offset: model.cartQuantity.toString().length));
+      text: widget.model.cartQuantity.toString(),
+      selection: TextSelection.collapsed(
+          offset: widget.model.cartQuantity.toString().length),
+    );
+    super.initState();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Dialog(
       shape: const RoundedRectangleBorder(),
       backgroundColor: Colors.transparent,
@@ -59,7 +72,7 @@ class QuantityDialog extends StatelessWidget {
                       const Spacer(),
                       Expanded(
                         child: ConstantWidget.getCustomText(
-                          'Avl qty: ${model.quantity}',
+                          'Avl qty: ${widget.model.quantity}',
                           ConstantData.mainTextColor,
                           1,
                           TextAlign.center,
@@ -94,8 +107,8 @@ class QuantityDialog extends StatelessWidget {
 
                               onFieldSubmitted: (value) async {
                                 if (value != '') {
-                                  await store.updateCartQunatity(
-                                    model: model,
+                                  await widget.store.updateCartQunatity(
+                                    model: widget.model,
                                     value: value.split('.')[0],
                                     context: context,
                                   );
@@ -170,8 +183,8 @@ class QuantityDialog extends StatelessWidget {
                   child: InkWell(
                     onTap: () async {
                       if (quantityController.text.trim() != '') {
-                        await store.updateCartQunatity(
-                          model: model,
+                        await widget.store.updateCartQunatity(
+                          model: widget.model,
                           value: quantityController.text.trim().split('.')[0],
                           context: context,
                         );

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/categories.dart';
+import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/repository/products_repository.dart';
@@ -19,15 +20,19 @@ import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/product_card.dart';
+
 class ProductsDetailScreen extends StatefulWidget {
   const ProductsDetailScreen({
     Key? key,
     required this.model,
+    required this.store,
     // required this.modelIndex,
     // required this.list,
   }) : super(key: key);
 
   final ProductModel model;
+  final ProductsStore store;
 
   @override
   State<ProductsDetailScreen> createState() => _ProductsDetailScreenState();
@@ -41,8 +46,7 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
   }
 
   _func() async {
-    await ProductsRepository()
-        .getRecommedations(name: widget.model.productName);
+    await widget.store.getRecommendations(model: widget.model);
   }
 
   // final int modelIndex;
@@ -174,48 +178,9 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                   color: ConstantData.bgColor,
                   child: Column(
                     children: [
-                      Stack(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  blockSizeHorizontal(context: context) * 4,
-                              vertical: blockSizeVertical(context: context) * 2,
-                            ),
-                            child: Container(
-                              height: ConstantWidget.getScreenPercentSize(
-                                context,
-                                35,
-                              ),
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                    ConstantData.productUrl +
-                                        widget.model.productImg,
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                    font22Px(context: context)),
-                                border: Border.all(
-                                  color: ConstantData.clrBorder,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: ConstantData.clrBorder,
-                                      spreadRadius: 4,
-                                      blurRadius: 2),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      imageWidget(context),
                       Container(
                         width: double.infinity,
-                        // margin: EdgeInsets.only(
-                        //   top: blockSizeVertical(context: context) * 2,
-                        // ),
                         decoration: BoxDecoration(
                           color: ConstantData.bgColor,
                           borderRadius: BorderRadius.only(
@@ -226,414 +191,10 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              margin: EdgeInsets.symmetric(horizontal: margin),
-                              padding: EdgeInsets.symmetric(vertical: (margin)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: (margin),
-                                  ),
-                                  Stack(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // Expanded(
-                                          //   child:
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                flex: 3,
-                                                child: ConstantWidget
-                                                    .getCustomText(
-                                                  widget.model.productName,
-                                                  ConstantData.mainTextColor,
-                                                  2,
-                                                  TextAlign.start,
-                                                  FontWeight.w600,
-                                                  font25Px(context: context),
-                                                ),
-                                              ),
-                                              const Spacer(),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Observer(builder: (_) {
-                                                  final adminStatus = loginStore
-                                                      .loginModel.adminStatus;
-                                                  // if (adminStatus) {
-                                                  return Offstage(
-                                                    offstage: !adminStatus,
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          color: ConstantData
-                                                              .mainTextColor,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          font18Px(
-                                                              context: context),
-                                                        ),
-                                                      ),
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                        vertical:
-                                                            blockSizeVertical(
-                                                                context:
-                                                                    context),
-                                                        horizontal:
-                                                            blockSizeHorizontal(
-                                                                    context:
-                                                                        context) *
-                                                                2,
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          ConstantWidget
-                                                              .getCustomText(
-                                                            'Avl Qty : ',
-                                                            ConstantData
-                                                                .mainTextColor,
-                                                            2,
-                                                            TextAlign.center,
-                                                            FontWeight.w600,
-                                                            font18Px(
-                                                                context:
-                                                                    context),
-                                                          ),
-                                                          Expanded(
-                                                            child: ConstantWidget.getCustomText(
-                                                                ' ${widget.model.quantity} units',
-                                                                ConstantData
-                                                                    .mainTextColor,
-                                                                1,
-                                                                TextAlign.start,
-                                                                FontWeight.w600,
-                                                                ConstantWidget
-                                                                    .getScreenPercentSize(
-                                                                        context,
-                                                                        1.8)),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                }),
-                                              ),
-                                            ],
-                                          ),
-
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: blockSizeVertical(
-                                                  context: context),
-                                            ),
-                                            child: ConstantWidget.getCustomText(
-                                              'by ${widget.model.company}',
-                                              ConstantData.mainTextColor,
-                                              2,
-                                              TextAlign.start,
-                                              FontWeight.w500,
-                                              font22Px(context: context),
-                                            ),
-                                          ),
-
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: blockSizeVertical(
-                                                      context: context) *
-                                                  2,
-                                            ),
-                                            child: (widget.model.description !=
-                                                    '')
-                                                ? Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Expanded(
-                                                        child: ConstantWidget
-                                                            .getSpaceTextWidget(
-                                                          widget.model
-                                                              .description,
-                                                          Colors.black38,
-                                                          TextAlign.start,
-                                                          FontWeight.w500,
-                                                          font18Px(
-                                                              context: context),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  )
-                                                : const SizedBox(),
-                                          ),
-
-                                          // SizedBox(
-                                          //   height: (margin),
-                                          // ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: blockSizeHorizontal(
-                                                      context: context) *
-                                                  2,
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                ConstantWidget.getCustomText(
-                                                  "Expires by ${widget.model.expiryDate}",
-                                                  ConstantData.textColor,
-                                                  2,
-                                                  TextAlign.start,
-                                                  FontWeight.w500,
-                                                  font18Px(context: context) *
-                                                      1.18,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-
-                                          // ),
-
-                                          SizedBox(
-                                            height: ((margin)),
-                                          ),
-
-                                          Observer(builder: (_) {
-                                            final adminStatus = loginStore
-                                                .loginModel.adminStatus;
-                                            if (adminStatus) {
-                                              return Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      blockSizeHorizontal(
-                                                              context:
-                                                                  context) *
-                                                          4,
-                                                  vertical: blockSizeVertical(
-                                                          context: context) *
-                                                      2,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: ConstantData
-                                                          .mainTextColor),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                    font18Px(context: context),
-                                                  ),
-                                                ),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Icon(
-                                                      Icons
-                                                          .radio_button_checked,
-                                                      color: ConstantData
-                                                          .primaryColor,
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          blockSizeHorizontal(
-                                                                  context:
-                                                                      context) *
-                                                              3,
-                                                    ),
-                                                    ConstantWidget.getCustomText(
-                                                        '₹${widget.model.newMrp}',
-                                                        ConstantData
-                                                            .mainTextColor,
-                                                        2,
-                                                        TextAlign.start,
-                                                        FontWeight.w600,
-                                                        font22Px(
-                                                            context: context)),
-                                                    SizedBox(
-                                                      width: ((margin) / 4),
-                                                    ),
-                                                    ConstantWidget
-                                                        .getLineTextView(
-                                                      '₹${widget.model.oldMrp}',
-                                                      Colors.grey,
-                                                      font22Px(
-                                                          context: context),
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          blockSizeHorizontal(
-                                                                  context:
-                                                                      context) *
-                                                              6,
-                                                    ),
-                                                    ConstantWidget
-                                                        .getCustomText(
-                                                      widget.model
-                                                          .percentDiscount,
-                                                      ConstantData.accentColor,
-                                                      2,
-                                                      TextAlign.end,
-                                                      FontWeight.w600,
-                                                      ConstantWidget
-                                                          .getScreenPercentSize(
-                                                              context, 2),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            } else {
-                                              return const SizedBox();
-                                            }
-                                          }),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                            productWidget(margin, context, loginStore),
                             Align(
                               alignment: Alignment.bottomCenter,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      blockSizeHorizontal(context: context) * 4,
-                                  vertical:
-                                      blockSizeVertical(context: context) * 2,
-                                ),
-                                child: Observer(builder: (_) {
-                                  return Offstage(
-                                    offstage:
-                                        !loginStore.loginModel.adminStatus,
-                                    child: Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                          right: blockSizeHorizontal(
-                                              context: context),
-                                          bottom: blockSizeVertical(
-                                              context: context),
-                                        ),
-                                        child: Observer(builder: (_) {
-                                          final index = store
-                                              .cartModel.productList
-                                              .indexWhere(
-                                            (element) =>
-                                                element.pid == widget.model.pid,
-                                          );
-
-                                          ProductModel model = widget.model;
-
-                                          switch (categoriesfromValue(
-                                              model.category)) {
-                                            case CategoriesType.ETHICAL:
-                                              model = store.ethicalProductList
-                                                  .firstWhere((element) =>
-                                                      element.pid == model.pid);
-                                              break;
-                                            case CategoriesType.GENERIC:
-                                              model = store.genericProductList
-                                                  .firstWhere((element) =>
-                                                      element.pid == model.pid);
-                                              break;
-                                            case CategoriesType.SURGICAL:
-                                              model = store.surgicalProductList
-                                                  .firstWhere((element) =>
-                                                      element.pid == model.pid);
-                                              break;
-                                            case CategoriesType.VETERINARY:
-                                              model = store
-                                                  .veterinaryProductList
-                                                  .firstWhere((element) =>
-                                                      element.pid == model.pid);
-                                              break;
-                                            case CategoriesType.AYURVEDIC:
-                                              model = store.ayurvedicProductList
-                                                  .firstWhere((element) =>
-                                                      element.pid == model.pid);
-                                              break;
-                                            case CategoriesType.GENERAL:
-                                              model = store.generalProductList
-                                                  .firstWhere((element) =>
-                                                      element.pid == model.pid);
-                                              break;
-                                            case CategoriesType.VACCINE:
-                                              model = store.vaccineProductList
-                                                  .firstWhere((element) =>
-                                                      element.pid == model.pid);
-                                              break;
-                                          }
-
-                                          if (index != -1) {
-                                            return Row(
-                                              children: [
-                                                PlusMinusWidget(
-                                                  model: model,
-                                                  store: store,
-                                                  iconSize: ConstantWidget
-                                                      .getWidthPercentSize(
-                                                    context,
-                                                    3,
-                                                  ),
-                                                  fontSize: font22Px(
-                                                      context: context),
-                                                ),
-                                                const Spacer(),
-                                                Expanded(
-                                                  child: RemoveButton(
-                                                    store: store,
-                                                    model: model,
-                                                    width: ConstantWidget
-                                                        .getWidthPercentSize(
-                                                            context, 10),
-                                                    height: blockSizeVertical(
-                                                        context: context),
-                                                    fontSize: font18Px(
-                                                            context: context) *
-                                                        1.1,
-                                                    isDetailPage: true,
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          }
-                                          return Row(
-                                            children: [
-                                              Expanded(
-                                                child: AddProductButton(
-                                                  store: store,
-                                                  model: model,
-                                                  isDetailScreen: true,
-                                                  width: ConstantWidget
-                                                      .getWidthPercentSize(
-                                                          context, 10),
-                                                  height: blockSizeVertical(
-                                                          context: context) *
-                                                      2,
-                                                  fontSize: font18Px(
-                                                          context: context) *
-                                                      1.1,
-                                                  contextReq: context,
-                                                  // detailScreenFunc: (),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        }),
-                                      ),
-                                    ),
-                                  );
-                                }),
-                              ),
+                              child: cartWidget(context, loginStore, store),
                             ),
                           ],
                         ),
@@ -641,160 +202,581 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                     ],
                   ),
                 ),
-                // SizedBox(
-                //   height: blockSizeVertical(context: context) * 2,
-                // ),
-                // Container(
-                //   width: screenWidth(context: context),
-                //   // height: ConstantWidget.getScreenPercentSize(
-                //   //   context,
-                //   //   50,
-                //   // ),
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       Padding(
-                //         padding: EdgeInsets.only(left: margin),
-                //         child: ConstantWidget.getTextWidget(
-                //           'More Prodcuts',
-                //           ConstantData.mainTextColor,
-                //           TextAlign.start,
-                //           FontWeight.w600,
-                //           font22Px(context: context),
-                //         ),
-                //       ),
-                //       SizedBox(
-                //         height: blockSizeVertical(context: context) * 2,
-                //       ),
-                //       Row(
-                //         children: [
-                //           Expanded(
-                //             child: Observer(builder: (_) {
-                //               final category =
-                //                   categoriesfromValue(widget.model.category);
+                Observer(builder: (_) {
+                  if (store.recommedLoading == StoreState.LOADING) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ConstantWidget.getTextWidget(
+                          'Recommendations',
+                          ConstantData.mainTextColor,
+                          TextAlign.start,
+                          FontWeight.w600,
+                          font22Px(context: context) * 1.1,
+                        ),
+                        SizedBox(
+                          width: blockSizeHorizontal(context: context) * 3,
+                        ),
+                        CircularProgressIndicator(
+                          color: ConstantData.primaryColor,
+                        ),
+                      ],
+                    );
+                  }
 
-                //               switch (category) {
-                //                 case CategoriesType.ETHICAL:
-                //                   final list = store.ethicalProductList;
-
-                //                   return MoreProductsList(
-                //                     list: list,
-                //                     store: store,
-                //                     loginStore: loginStore,
-                //                   );
-                //                 case CategoriesType.GENERIC:
-                //                   final list = store.genericProductList;
-
-                //                   return MoreProductsList(
-                //                     list: list,
-                //                     store: store,
-                //                     loginStore: loginStore,
-                //                   );
-                //                 case CategoriesType.SURGICAL:
-                //                   final list = store.surgicalProductList;
-
-                //                   return MoreProductsList(
-                //                     list: list,
-                //                     store: store,
-                //                     loginStore: loginStore,
-                //                   );
-                //                 case CategoriesType.VETERINARY:
-                //                   final list = store.veterinaryProductList;
-
-                //                   return MoreProductsList(
-                //                     list: list,
-                //                     store: store,
-                //                     loginStore: loginStore,
-                //                   );
-                //                 case CategoriesType.AYURVEDIC:
-                //                   final list = store.ayurvedicProductList;
-
-                //                   return MoreProductsList(
-                //                     list: list,
-                //                     store: store,
-                //                     loginStore: loginStore,
-                //                   );
-                //                 case CategoriesType.GENERAL:
-                //                   final list = store.generalProductList;
-
-                //                   return MoreProductsList(
-                //                     list: list,
-                //                     store: store,
-                //                     loginStore: loginStore,
-                //                   );
-                //               }
-                //             }),
-                //           ),
-                //         ],
-                //       ),
-                //     ],
-                //   ),
-                // ),
+                  return Offstage(
+                    offstage: (store.recommend.isEmpty),
+                    child: Container(
+                      width: screenWidth(context: context),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: margin),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ConstantWidget.getTextWidget(
+                                  'Recommended',
+                                  ConstantData.mainTextColor,
+                                  TextAlign.start,
+                                  FontWeight.w600,
+                                  font22Px(context: context) * 1.1,
+                                ),
+                                SizedBox(
+                                    height:
+                                        blockSizeVertical(context: context)),
+                                ConstantWidget.getTextWidget(
+                                  'Add them to your basket to secure more (discount %)',
+                                  ConstantData.color1,
+                                  TextAlign.start,
+                                  FontWeight.w600,
+                                  font18Px(context: context),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: blockSizeVertical(context: context) * 2,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Observer(builder: (_) {
+                                  final category = categoriesfromValue(
+                                      widget.model.category);
+                                  final list = store.recommend;
+                                  switch (category) {
+                                    case CategoriesType.ETHICAL:
+                                      return MoreProductsList(
+                                        list: list,
+                                        store: store,
+                                        loginStore: loginStore,
+                                        orderHistoryStore: orderHistoryStore,
+                                        bottomNavigationStore:
+                                            bottomNavigationStore,
+                                        profileStore: profileStore,
+                                      );
+                                    case CategoriesType.GENERIC:
+                                      return MoreProductsList(
+                                        list: list,
+                                        store: store,
+                                        loginStore: loginStore,
+                                        orderHistoryStore: orderHistoryStore,
+                                        bottomNavigationStore:
+                                            bottomNavigationStore,
+                                        profileStore: profileStore,
+                                      );
+                                    case CategoriesType.SURGICAL:
+                                      return MoreProductsList(
+                                        list: list,
+                                        store: store,
+                                        loginStore: loginStore,
+                                        orderHistoryStore: orderHistoryStore,
+                                        bottomNavigationStore:
+                                            bottomNavigationStore,
+                                        profileStore: profileStore,
+                                      );
+                                    case CategoriesType.VETERINARY:
+                                      return MoreProductsList(
+                                        list: list,
+                                        store: store,
+                                        loginStore: loginStore,
+                                        orderHistoryStore: orderHistoryStore,
+                                        bottomNavigationStore:
+                                            bottomNavigationStore,
+                                        profileStore: profileStore,
+                                      );
+                                    case CategoriesType.AYURVEDIC:
+                                      return MoreProductsList(
+                                        list: list,
+                                        store: store,
+                                        loginStore: loginStore,
+                                        orderHistoryStore: orderHistoryStore,
+                                        bottomNavigationStore:
+                                            bottomNavigationStore,
+                                        profileStore: profileStore,
+                                      );
+                                    case CategoriesType.GENERAL:
+                                      return MoreProductsList(
+                                        list: list,
+                                        store: store,
+                                        loginStore: loginStore,
+                                        orderHistoryStore: orderHistoryStore,
+                                        bottomNavigationStore:
+                                            bottomNavigationStore,
+                                        profileStore: profileStore,
+                                      );
+                                    case CategoriesType.VACCINE:
+                                      return MoreProductsList(
+                                        list: list,
+                                        store: store,
+                                        loginStore: loginStore,
+                                        orderHistoryStore: orderHistoryStore,
+                                        bottomNavigationStore:
+                                            bottomNavigationStore,
+                                        profileStore: profileStore,
+                                      );
+                                  }
+                                }),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
               ],
             );
           }),
         ));
   }
+
+  Container productWidget(
+      double margin, BuildContext context, LoginStore loginStore) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: margin),
+      padding: EdgeInsets.symmetric(vertical: (margin)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: (margin),
+          ),
+          Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ConstantWidget.getCustomText(
+                    '(${widget.model.category})',
+                    ConstantData.mainTextColor,
+                    2,
+                    TextAlign.start,
+                    FontWeight.w600,
+                    font18Px(context: context),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: ConstantWidget.getCustomText(
+                          widget.model.productName,
+                          ConstantData.mainTextColor,
+                          2,
+                          TextAlign.start,
+                          FontWeight.w600,
+                          font25Px(context: context),
+                        ),
+                      ),
+                      const Spacer(),
+                      Expanded(
+                        flex: 2,
+                        child: Observer(builder: (_) {
+                          final adminStatus = loginStore.loginModel.adminStatus;
+                          // if (adminStatus) {
+                          return Offstage(
+                            offstage: !adminStatus,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: ConstantData.mainTextColor,
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                  font18Px(context: context),
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                vertical: blockSizeVertical(context: context),
+                                horizontal:
+                                    blockSizeHorizontal(context: context) * 2,
+                              ),
+                              child: Row(
+                                children: [
+                                  ConstantWidget.getCustomText(
+                                    'Avl Qty : ',
+                                    ConstantData.mainTextColor,
+                                    2,
+                                    TextAlign.center,
+                                    FontWeight.w600,
+                                    font18Px(context: context),
+                                  ),
+                                  Expanded(
+                                    child: ConstantWidget.getCustomText(
+                                        ' ${widget.model.quantity} units',
+                                        ConstantData.mainTextColor,
+                                        1,
+                                        TextAlign.start,
+                                        FontWeight.w600,
+                                        ConstantWidget.getScreenPercentSize(
+                                            context, 1.8)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: blockSizeVertical(context: context),
+                    ),
+                    child: ConstantWidget.getCustomText(
+                      'by ${widget.model.company}',
+                      ConstantData.mainTextColor,
+                      2,
+                      TextAlign.start,
+                      FontWeight.w500,
+                      font22Px(context: context),
+                    ),
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: blockSizeVertical(context: context) * 2,
+                    ),
+                    child: (widget.model.description != '')
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: ConstantWidget.getSpaceTextWidget(
+                                  widget.model.description,
+                                  Colors.black38,
+                                  TextAlign.start,
+                                  FontWeight.w500,
+                                  font18Px(context: context),
+                                ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox(),
+                  ),
+
+                  // SizedBox(
+                  //   height: (margin),
+                  // ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: blockSizeHorizontal(context: context),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ConstantWidget.getCustomText(
+                          "Expires by ${widget.model.expiryDate}",
+                          ConstantData.textColor,
+                          2,
+                          TextAlign.start,
+                          FontWeight.w500,
+                          font18Px(context: context) * 1.18,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ),
+
+                  SizedBox(
+                    height: ((margin)),
+                  ),
+
+                  pricesWidget(loginStore, context, margin),
+                ],
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Observer pricesWidget(
+      LoginStore loginStore, BuildContext context, double margin) {
+    return Observer(builder: (_) {
+      final adminStatus = loginStore.loginModel.adminStatus;
+      if (adminStatus) {
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: blockSizeHorizontal(context: context) * 4,
+            vertical: blockSizeVertical(context: context) * 2,
+          ),
+          decoration: BoxDecoration(
+            border: Border.all(color: ConstantData.mainTextColor, width: 1),
+            borderRadius: BorderRadius.circular(
+              font18Px(context: context),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  ConstantWidget.getLineTextView(
+                    'MRP : ₹${widget.model.oldMrp}',
+                    Colors.grey,
+                    font18Px(context: context),
+                  ),
+                  SizedBox(
+                    width: ((margin) / 4),
+                  ),
+                  ConstantWidget.getCustomText(
+                    '₹${widget.model.newMrp}',
+                    ConstantData.primaryColor,
+                    2,
+                    TextAlign.start,
+                    FontWeight.w600,
+                    font22Px(context: context) * 1.1,
+                  ),
+                ],
+              ),
+              ConstantWidget.getCustomText(
+                widget.model.percentDiscount,
+                ConstantData.color1,
+                2,
+                TextAlign.end,
+                FontWeight.w600,
+                ConstantWidget.getScreenPercentSize(context, 2),
+              ),
+            ],
+          ),
+        );
+      } else {
+        return const SizedBox();
+      }
+    });
+  }
+
+  Padding cartWidget(
+      BuildContext context, LoginStore loginStore, ProductsStore store) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: blockSizeHorizontal(context: context) * 4,
+        right: blockSizeHorizontal(context: context) * 4,
+        top: blockSizeVertical(context: context) * 2,
+      ),
+      child: Observer(builder: (_) {
+        return Offstage(
+          offstage: !loginStore.loginModel.adminStatus,
+          child: Observer(builder: (_) {
+            final index = store.cartModel.productList.indexWhere(
+              (element) => element.pid == widget.model.pid,
+            );
+
+            ProductModel model = widget.model;
+
+            switch (categoriesfromValue(model.category)) {
+              case CategoriesType.ETHICAL:
+                model = (store.ethicalProducts.containsKey(widget.model.pid)
+                    ? store.ethicalProducts[model.pid]
+                    : widget.model)!;
+
+                break;
+              case CategoriesType.GENERIC:
+                model = store.genericProductList
+                    .firstWhere((element) => element.pid == model.pid);
+                break;
+              case CategoriesType.SURGICAL:
+                model = store.surgicalProductList
+                    .firstWhere((element) => element.pid == model.pid);
+                break;
+              case CategoriesType.VETERINARY:
+                model = store.veterinaryProductList
+                    .firstWhere((element) => element.pid == model.pid);
+                break;
+              case CategoriesType.AYURVEDIC:
+                model = store.ayurvedicProductList
+                    .firstWhere((element) => element.pid == model.pid);
+                break;
+              case CategoriesType.GENERAL:
+                model = store.generalProductList
+                    .firstWhere((element) => element.pid == model.pid);
+                break;
+              case CategoriesType.VACCINE:
+                model = store.vaccineProductList
+                    .firstWhere((element) => element.pid == model.pid);
+                break;
+            }
+
+            if (index != -1) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RemoveButton(
+                    store: store,
+                    model: model,
+                    width: ConstantWidget.getWidthPercentSize(context, 10),
+                    height: blockSizeVertical(context: context),
+                    fontSize: font18Px(context: context) * 1.1,
+                    isDetailPage: true,
+                  ),
+                  // const Spacer(),
+                  Observer(builder: (_) {
+                    return CartQuantityWidget(
+                      // model: _updateProduct(),
+                      model: model,
+                      store: store,
+                      fontSize: font22Px(context: context),
+                      padding: EdgeInsets.symmetric(
+                        horizontal:
+                            ConstantWidget.getWidthPercentSize(context, 20),
+                        vertical: blockSizeVertical(context: context) * 1.5,
+                      ),
+                    );
+                  }),
+                ],
+              );
+            }
+            return Row(
+              children: [
+                Expanded(
+                  child: AddProductButton(
+                    store: store,
+                    model: model,
+                    isDetailScreen: true,
+                    width: ConstantWidget.getWidthPercentSize(context, 10),
+                    height: blockSizeVertical(context: context) * 2,
+                    fontSize: font18Px(context: context) * 1.1,
+                    contextReq: context,
+                    // detailScreenFunc: (),
+                  ),
+                ),
+              ],
+            );
+          }),
+        );
+      }),
+    );
+  }
+
+  Padding imageWidget(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: blockSizeHorizontal(context: context) * 4,
+        vertical: blockSizeVertical(context: context) * 2,
+      ),
+      child: Container(
+        height: ConstantWidget.getScreenPercentSize(
+          context,
+          35,
+        ),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: CachedNetworkImageProvider(
+              ConstantData.productUrl + widget.model.productImg,
+            ),
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.circular(font22Px(context: context)),
+          border: Border.all(
+            color: ConstantData.clrBorder,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: ConstantData.clrBorder,
+              spreadRadius: 2,
+              blurRadius: 2,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-// class MoreProductsList extends StatelessWidget {
-//   const MoreProductsList({
-//     Key? key,
-//     required this.list,
-//     required this.store,
-//     required this.loginStore,
-//   }) : super(key: key);
+class MoreProductsList extends StatelessWidget {
+  const MoreProductsList({
+    Key? key,
+    required this.list,
+    required this.store,
+    required this.loginStore,
+    required this.bottomNavigationStore,
+    required this.orderHistoryStore,
+    required this.profileStore,
+  }) : super(key: key);
 
-//   final List<ProductModel> list;
-//   final ProductsStore store;
-//   final LoginStore loginStore;
+  final List<ProductModel> list;
+  final ProductsStore store;
+  final LoginStore loginStore;
+  final ProfileStore profileStore;
+  final OrderHistoryStore orderHistoryStore;
+  final BottomNavigationStore bottomNavigationStore;
+  @override
+  Widget build(BuildContext context) {
+    double margin = ConstantWidget.getScreenPercentSize(context, 2);
+    double height = safeBlockHorizontal(context: context) * 45;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     double margin = ConstantWidget.getScreenPercentSize(context, 2);
-//     double height = safeBlockHorizontal(context: context) * 45;
+    double width = ConstantWidget.getWidthPercentSize(context, 50);
+    double sideMargin = margin * 1.2;
+    double firstHeight = ConstantWidget.getPercentSize(height, 48);
+    double remainHeight = height - firstHeight;
 
-//     double width = ConstantWidget.getWidthPercentSize(context, 50);
-//     double sideMargin = margin * 1.2;
-//     double firstHeight = ConstantWidget.getPercentSize(height, 48);
-//     double remainHeight = height - firstHeight;
-
-//     double radius = ConstantWidget.getPercentSize(height, 5);
-//     return Container(
-//       width: screenWidth(context: context),
-//       height: ConstantWidget.getScreenPercentSize(context, 24),
-//       child: ListView.builder(
-//         // gridDelegate:
-//         //     const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-//         padding: EdgeInsets.only(
-//           left: blockSizeHorizontal(context: context) * 5,
-//           right: blockSizeHorizontal(context: context) * 3,
-//         ),
-//         scrollDirection: Axis.horizontal,
-//         physics: const BouncingScrollPhysics(),
-//         itemCount: 7,
-//         itemBuilder: (context, index) {
-//           return Padding(
-//             padding: EdgeInsets.only(
-//                 right: blockSizeHorizontal(context: context) * 3),
-//             child: ProductsCard(
-//               store: store,
-//               loginStore: loginStore,
-//               list: list,
-//               width: width,
-//               firstHeight: firstHeight,
-//               radius: radius,
-//               sideMargin: sideMargin,
-//               remainHeight: remainHeight,
-//               index: index,
-//               // isMoreProducts: true,
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
+    double radius = ConstantWidget.getPercentSize(height, 5);
+    return Container(
+      width: screenWidth(context: context),
+      height: ConstantWidget.getScreenPercentSize(context, 24),
+      child: ListView.builder(
+        // gridDelegate:
+        //     const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        padding: EdgeInsets.only(
+          left: blockSizeHorizontal(context: context) * 5,
+          right: blockSizeHorizontal(context: context) * 3,
+        ),
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: EdgeInsets.only(
+                right: blockSizeHorizontal(context: context) * 3),
+            child: ProductsCard(
+              store: store,
+              loginStore: loginStore,
+              list: list,
+              width: width,
+              firstHeight: firstHeight,
+              radius: radius,
+              sideMargin: sideMargin,
+              remainHeight: remainHeight,
+              index: index,
+              bottomNavigationStore: bottomNavigationStore,
+              profileStore: profileStore,
+              orderHistoryStore: orderHistoryStore,
+              // isMoreProducts: true,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
 
 class CustomQuantity extends StatelessWidget {
   const CustomQuantity({

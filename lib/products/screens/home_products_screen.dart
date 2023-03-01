@@ -46,11 +46,58 @@ class ProductHomeScreen extends StatelessWidget {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
         store.paginationState = StoreState.LOADING;
-        store.ethicalPageIndex++;
-        debugPrint('---- page index------${store.ethicalPageIndex}');
-        await store.getEthicalProducts(
-          load: true,
-        );
+        final category = store.categoriesType;
+        switch (category) {
+          case CategoriesType.ETHICAL:
+            store.ethicalPageIndex++;
+            debugPrint('---- page index------${store.ethicalPageIndex}');
+            await store.getEthicalProducts(
+              load: true,
+            );
+            break;
+          case CategoriesType.GENERIC:
+            store.genericPageIndex++;
+            debugPrint('---- page index------${store.genericPageIndex}');
+            await store.getGenericProducts(
+              load: true,
+            );
+            break;
+          case CategoriesType.SURGICAL:
+            store.surgicalPageIndex++;
+            debugPrint('---- page index------${store.surgicalPageIndex}');
+            await store.getSurgicalProducts(
+              load: true,
+            );
+            break;
+          case CategoriesType.VETERINARY:
+            store.vetPageIndex++;
+            debugPrint('---- page index------${store.vetPageIndex}');
+            await store.getVeterinaryProducts(
+              load: true,
+            );
+            break;
+          case CategoriesType.AYURVEDIC:
+            store.ayurvedicPageIndex++;
+            debugPrint('---- page index------${store.ayurvedicPageIndex}');
+            await store.getAyurvedicProducts(
+              load: true,
+            );
+            break;
+          case CategoriesType.GENERAL:
+            store.generalPageIndex++;
+            debugPrint('---- page index------${store.generalPageIndex}');
+            await store.getGenerallProducts(
+              load: true,
+            );
+            break;
+          case CategoriesType.VACCINE:
+            store.vaccinePageIndex++;
+            debugPrint('---- page index------${store..vaccinePageIndex}');
+            await store.getVaccineProducts(
+              load: true,
+            );
+            break;
+        }
         store.paginationState = StoreState.SUCCESS;
       }
     });
@@ -155,9 +202,7 @@ class ProductHomeScreen extends StatelessWidget {
           SafeArea(
             child: Container(
               color: ConstantData.bgColor,
-              // height: screenHeight(context: context) / 1.2,
               child: Column(
-                // controller: ScrollController(),
                 children: [
                   ///----------------------------------- Admin Status Banner --------------------------------------------
                   Observer(builder: (_) {

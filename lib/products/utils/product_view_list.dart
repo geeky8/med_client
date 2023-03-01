@@ -11,6 +11,7 @@ import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/add_subtract_widget.dart';
+import 'package:medrpha_customer/products/utils/product_card.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
@@ -95,6 +96,32 @@ class ProductViewList extends StatelessWidget {
     }
   }
 
+  void addToList(ProductModel model) {
+    switch (categoriesfromValue(model.category)) {
+      case CategoriesType.ETHICAL:
+        store.ethicalProductList.add(model);
+        break;
+      case CategoriesType.GENERIC:
+        store.genericProductList.add(model);
+        break;
+      case CategoriesType.SURGICAL:
+        store.surgicalProductList.add(model);
+        break;
+      case CategoriesType.VETERINARY:
+        store.veterinaryProductList.add(model);
+        break;
+      case CategoriesType.AYURVEDIC:
+        store.ayurvedicProductList.add(model);
+        break;
+      case CategoriesType.GENERAL:
+        store.generalProductList.add(model);
+        break;
+      case CategoriesType.VACCINE:
+        store.vaccineProductList.add(model);
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double margin = ConstantWidget.getScreenPercentSize(context, 2);
@@ -107,8 +134,6 @@ class ProductViewList extends StatelessWidget {
 
     final scrollController = ScrollController();
     scrollController.addListener(() async {
-      // print('scrollpositon------------${scrollController.positions.last}');
-      // print('----------${termValue}');
       if (scrollController.position.pixels ==
               scrollController.position.maxScrollExtent &&
           termValue == null) {
@@ -120,281 +145,149 @@ class ProductViewList extends StatelessWidget {
 
     double radius = ConstantWidget.getPercentSize(height, 5);
     return (list.isNotEmpty)
-        ? ListView.builder(
-            padding: EdgeInsets.only(right: sideMargin),
+        ? ListView.separated(
+            separatorBuilder: (context, index) => SizedBox(
+                  height: blockSizeVertical(context: context) * 2.5,
+                ),
+            padding: EdgeInsets.symmetric(
+                horizontal: blockSizeHorizontal(context: context) * 4),
             physics: const BouncingScrollPhysics(),
             controller: scrollController,
             itemCount: list.length,
             itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: blockSizeVertical(context: context) * 1.5),
-                child: InkWell(
-                  onTap: () async {
-                    ProductModel model = list[index];
+              return InkWell(
+                onTap: () async {
+                  ProductModel model = list[index];
 
-                    if (list[index].expiryDate == '') {
-                      model = await store.getProductDetails(model: list[index]);
-                    }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => Provider.value(
-                          value: store,
+                  if (list[index].expiryDate == '') {
+                    model = await store.getProductDetails(model: list[index]);
+                  }
+
+                  addToList(model);
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => Provider.value(
+                        value: store,
+                        child: Provider.value(
+                          value: loginStore,
                           child: Provider.value(
-                            value: loginStore,
+                            value: profileStore,
                             child: Provider.value(
-                              value: profileStore,
+                              value: orderHistoryStore,
                               child: Provider.value(
-                                value: orderHistoryStore,
-                                child: Provider.value(
-                                  value: bottomNavigationStore,
-                                  child: ProductsDetailScreen(
-                                    model: model,
-                                    // modelIndex: index,
-                                    // list: list,
-                                  ),
+                                value: bottomNavigationStore,
+                                child: ProductsDetailScreen(
+                                  model: model,
+                                  store: store,
+                                  // modelIndex: index,
+                                  // list: list,
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    );
-                    // }
-                  },
-                  child: SizedBox(
-                    width: width,
-                    child: Container(
-                      margin: EdgeInsets.only(
-                        left: sideMargin,
+                    ),
+                  );
+                  // }
+                },
+                child: Container(
+                  height: ConstantWidget.getScreenPercentSize(context, 18),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      font18Px(context: context),
+                    ),
+                    border:
+                        Border.all(color: ConstantData.borderColor, width: 0.5),
+                  ),
+                  child: Stack(
+                    children: [
+                      DiscountPercent(
+                        loginStore: loginStore,
+                        sideMargin: sideMargin,
+                        radius: radius,
+                        list: list,
+                        index: index,
+                        isViewList: true,
                       ),
-                      decoration: BoxDecoration(
-                          // color: ConstantData.bgColor,
-                          borderRadius: BorderRadius.circular(radius),
-                          border: Border.all(
-                              color: ConstantData.borderColor,
-                              width: ConstantWidget.getWidthPercentSize(
-                                  context, 0.08)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade200,
-                            )
-                          ]),
-                      child: Stack(
+                      Row(
                         children: [
-                          //-----> Discount percent
-                          Observer(builder: (_) {
-                            print(
-                                '----prod image --------${list[index].productImg}');
-                            final adminStatus =
-                                loginStore.loginModel.adminStatus;
-                            return Offstage(
-                              offstage: !adminStatus,
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: Container(
-                                  padding: EdgeInsets.all(sideMargin / 4),
-                                  decoration: BoxDecoration(
-                                    color: ConstantData.accentColor,
-                                    borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(radius)),
-                                  ),
-                                  child: ConstantWidget.getCustomText(
-                                    list[index].percentDiscount,
-                                    Colors.white,
-                                    // ConstantData.accentColor,
-                                    1,
-                                    TextAlign.start,
-                                    FontWeight.w400,
-                                    font15Px(context: context),
-                                  ),
-                                ),
+                          /// Image
+                          widgetImage(context, index),
+
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    blockSizeHorizontal(context: context) * 2,
+                                vertical: blockSizeHorizontal(context: context),
                               ),
-                            );
-                          }),
-
-                          SizedBox(
-                            height: firstHeight,
-                            child: Row(
-                              //----> Image
-                              children: [
-                                Container(
-                                  height: firstHeight,
-                                  width: firstHeight,
-                                  decoration: BoxDecoration(
-                                    color: ConstantData.cellColor,
-                                    shape: BoxShape.rectangle,
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(radius),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      top: blockSizeVertical(context: context) *
+                                              3 +
+                                          blockSizeHorizontal(context: context),
                                     ),
-                                    // ,
-                                    image: DecorationImage(
-                                        image: CachedNetworkImageProvider(
-                                          ConstantData.productUrl +
-                                              list[index].productImg,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        /// Product Name
+                                        ConstantWidget.getCustomText(
+                                          list[index].productName,
+                                          ConstantData.mainTextColor,
+                                          3,
+                                          TextAlign.start,
+                                          FontWeight.w600,
+                                          font18Px(context: context) * 1.1,
                                         ),
-                                        fit: BoxFit.fill),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width:
-                                      blockSizeHorizontal(context: context) * 5,
-                                ),
-
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        height: ConstantWidget.getPercentSize(
-                                            remainHeight, 8),
-                                      ),
-                                      //-----> Product Name
-                                      ConstantWidget.getCustomText(
-                                        list[index].productName,
-                                        ConstantData.mainTextColor,
-                                        3,
-                                        TextAlign.start,
-                                        FontWeight.w600,
-                                        font18Px(context: context),
-                                      ),
-
-                                      //----> Add,Remove buttons
-                                      Observer(builder: (_) {
-                                        final adminStatus =
-                                            loginStore.loginModel.adminStatus;
-
-                                        return Offstage(
-                                          offstage: !adminStatus,
-                                          child: Observer(builder: (_) {
-                                            final _index = store
-                                                .cartModel.productList
-                                                .indexWhere((element) =>
-                                                    element.pid ==
-                                                    list[index].pid);
-
-                                            if (list[index].cartQuantity >= 1 &&
-                                                _index != -1) {
-                                              return Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  PlusMinusWidget(
-                                                    model: list[index],
-                                                    store: store,
-                                                  ),
-                                                  // SizedBox(
-                                                  //   width: blockSizeHorizontal(
-                                                  //           context: context) *
-                                                  //       2,
-                                                  // ),
-                                                  RemoveButton(
-                                                    store: store,
-                                                    model: list[index],
-                                                    width: width,
-                                                    height: height,
-                                                    fontSize: font12Px(
-                                                        context: context),
-                                                  ),
-                                                ],
-                                              );
-                                            } else {
-                                              return AddProductButton(
-                                                store: store,
-                                                model: list[index],
-                                                width: blockSizeHorizontal(
-                                                        context: context) *
-                                                    5,
-                                                height: blockSizeVertical(
-                                                    context: context),
-                                                fontSize:
-                                                    font18Px(context: context),
-                                                contextReq: context,
-                                              );
-                                            }
-                                          }),
-                                        );
-                                      }),
-                                    ],
-                                  ),
-                                ),
-                                // const Spacer(),
-                                //----> MRP widgets
-                                Observer(builder: (_) {
-                                  final adminStatus =
-                                      loginStore.loginModel.adminStatus;
-
-                                  return Expanded(
-                                    child: Offstage(
-                                      offstage: !adminStatus,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                            right: blockSizeHorizontal(
-                                                context: context)),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Expanded(
-                                                child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                ConstantWidget.getLineTextView(
-                                                  '₹${list[index].oldMrp}',
-                                                  Colors.grey,
-                                                  font15Px(context: context),
-                                                ),
-                                                SizedBox(
-                                                  height: ConstantWidget
-                                                      .getPercentSize(
-                                                          firstHeight, 8),
-                                                ),
-                                                ConstantWidget.getCustomText(
-                                                  '₹${list[index].newMrp}',
-                                                  ConstantData.mainTextColor,
-                                                  1,
-                                                  TextAlign.start,
-                                                  FontWeight.w600,
-                                                  font15Px(context: context) *
-                                                      1.1,
-                                                ),
-                                                SizedBox(
-                                                  height: ConstantWidget
-                                                      .getPercentSize(
-                                                          firstHeight, 8),
-                                                ),
-                                              ],
-                                            ))
-                                          ],
+                                        SizedBox(
+                                          height: blockSizeHorizontal(
+                                                  context: context) *
+                                              2,
                                         ),
-                                      ),
+
+                                        /// Available quantity
+                                        ConstantWidget.getCustomText(
+                                          'Avl Qty : ${list[index].quantity}',
+                                          Colors.black38,
+                                          3,
+                                          TextAlign.start,
+                                          FontWeight.w600,
+                                          font15Px(context: context) * 1.1,
+                                        ),
+                                        SizedBox(
+                                          height: blockSizeVertical(
+                                              context: context),
+                                        ),
+
+                                        /// Prices
+                                        pricesWidget(
+                                            context, index, firstHeight),
+                                      ],
                                     ),
-                                  );
-                                })
-                              ],
+                                  ),
+                                  cartWidget(index, context),
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
                 ),
               );
             })
         : Center(
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Image.asset(
                   '${ConstantData.assetsPath}med_logo_text.png',
@@ -426,5 +319,116 @@ class ProductViewList extends StatelessWidget {
               ],
             ),
           );
+  }
+
+  Observer pricesWidget(BuildContext context, int index, double firstHeight) {
+    return Observer(builder: (_) {
+      final adminStatus = loginStore.loginModel.adminStatus;
+
+      return Offstage(
+        offstage: !adminStatus,
+        child: Row(
+          children: [
+            ConstantWidget.getLineTextView(
+              'MRP : ₹${list[index].oldMrp}',
+              Colors.grey,
+              font15Px(context: context),
+            ),
+            SizedBox(
+              width: blockSizeHorizontal(context: context) * 2,
+            ),
+            ConstantWidget.getCustomText(
+              '₹${list[index].newMrp}',
+              ConstantData.primaryColor,
+              1,
+              TextAlign.start,
+              FontWeight.w600,
+              font18Px(context: context) * 1.1,
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Observer cartWidget(int index, BuildContext context) {
+    return Observer(builder: (_) {
+      final adminStatus = loginStore.loginModel.adminStatus;
+
+      return Offstage(
+        offstage: !adminStatus,
+        child: Observer(builder: (_) {
+          final _index = store.cartModel.productList
+              .indexWhere((element) => element.pid == list[index].pid);
+
+          if (list[index].cartQuantity >= 1 && _index != -1) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                RemoveButton(
+                  store: store,
+                  model: list[index],
+                  width: blockSizeVertical(context: context) / 1.2,
+                  height: blockSizeHorizontal(context: context) * 4,
+                  fontSize: font12Px(context: context),
+                ),
+                Observer(builder: (_) {
+                  // final updatedModel = updateCurrProduct(model);
+                  final model = list[index];
+                  return CartQuantityWidget(
+                    model: model,
+                    store: store,
+                    fontSize: font18Px(context: context),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: blockSizeHorizontal(context: context) * 3,
+                      vertical: blockSizeHorizontal(context: context) * 2,
+                    ),
+                  );
+                }),
+              ],
+            );
+          } else {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                AddProductButton(
+                  store: store,
+                  model: list[index],
+                  width: blockSizeHorizontal(context: context) * 5,
+                  height: blockSizeVertical(context: context),
+                  fontSize: font18Px(context: context),
+                  contextReq: context,
+                ),
+              ],
+            );
+          }
+        }),
+      );
+    });
+  }
+
+  Container widgetImage(BuildContext context, int index) {
+    return Container(
+      height: ConstantWidget.getScreenPercentSize(context, 18),
+      width: ConstantWidget.getWidthPercentSize(context, 30),
+      decoration: BoxDecoration(
+        // color: ConstantData.cellColor,
+        // shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(font18Px(context: context)),
+          bottomLeft: Radius.circular(font18Px(context: context)),
+        ),
+        // border: Border.all(color: ConstantData.clrBorder),
+        // ,
+        image: DecorationImage(
+          image: CachedNetworkImageProvider(
+            ConstantData.productUrl + list[index].productImg,
+            errorListener: () =>
+                Image.asset('${ConstantData.assetsPath}no_image.png'),
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
   }
 }
