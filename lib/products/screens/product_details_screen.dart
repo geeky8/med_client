@@ -42,6 +42,7 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
   @override
   void initState() {
     // _func();
+    debugPrint('----- details avl qty ---- ${widget.model.quantity}');
     super.initState();
   }
 
@@ -733,15 +734,15 @@ class MoreProductsList extends StatelessWidget {
     double margin = ConstantWidget.getScreenPercentSize(context, 2);
     double height = safeBlockHorizontal(context: context) * 45;
 
-    double width = ConstantWidget.getWidthPercentSize(context, 50);
+    double width = ConstantWidget.getWidthPercentSize(context, 45);
     double sideMargin = margin * 1.2;
-    double firstHeight = ConstantWidget.getPercentSize(height, 48);
+    double firstHeight = ConstantWidget.getPercentSize(height, 80);
     double remainHeight = height - firstHeight;
 
     double radius = ConstantWidget.getPercentSize(height, 5);
     return Container(
       width: screenWidth(context: context),
-      height: ConstantWidget.getScreenPercentSize(context, 24),
+      height: ConstantWidget.getScreenPercentSize(context, 32),
       child: ListView.builder(
         // gridDelegate:
         //     const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),

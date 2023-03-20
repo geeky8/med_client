@@ -1,4 +1,5 @@
-import 'package:country_code_picker/country_code_picker.dart';
+// import 'package:country_code_picker/country_code_picker.dart';
+import 'package:country_picker/country_picker.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -208,62 +209,62 @@ class PhoneInput extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
-          Container(
-            height: subHeight,
-            margin: const EdgeInsets.only(right: 7),
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            decoration: BoxDecoration(
-              color: ConstantData.cellColor,
-              borderRadius: BorderRadius.all(
-                Radius.circular(radius),
-              ),
-            ),
-            child: CountryCodePicker(
-              boxDecoration: BoxDecoration(
-                color: ConstantData.cellColor,
-              ),
-              closeIcon: Icon(Icons.close,
-                  size: ConstantWidget.getScreenPercentSize(context, 3),
-                  color: ConstantData.mainTextColor),
+          // Container(
+          //   height: subHeight,
+          //   margin: const EdgeInsets.only(right: 7),
+          //   padding: const EdgeInsets.symmetric(horizontal: 5),
+          //   decoration: BoxDecoration(
+          //     color: ConstantData.cellColor,
+          //     borderRadius: BorderRadius.all(
+          //       Radius.circular(radius),
+          //     ),
+          //   ),
+          //   child: CountryPickerDropDown(
+          //     boxDecoration: BoxDecoration(
+          //       color: ConstantData.cellColor,
+          //     ),
+          //     closeIcon: Icon(Icons.close,
+          //         size: ConstantWidget.getScreenPercentSize(context, 3),
+          //         color: ConstantData.mainTextColor),
 
-              onChanged: (value) {
-                // countryCode = value.dialCode;
-                // print("changeval===$countryCode");
-              },
-              // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-              initialSelection: 'IN',
-              searchStyle: TextStyle(
-                color: ConstantData.mainTextColor,
-                fontFamily: ConstantData.fontFamily,
-              ),
-              searchDecoration: InputDecoration(
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: ConstantData.textColor),
-                  ),
-                  hintStyle: TextStyle(
-                      color: ConstantData.mainTextColor,
-                      fontFamily: ConstantData.fontFamily)),
-              textStyle: TextStyle(
-                color: ConstantData.mainTextColor,
-                fontFamily: ConstantData.fontFamily,
-                fontWeight: FontWeight.w600,
-                fontSize: font18Px(context: context),
-              ),
-              dialogTextStyle: TextStyle(
-                color: ConstantData.mainTextColor,
-                fontFamily: ConstantData.fontFamily,
-              ),
+          //     onChanged: (value) {
+          //       // countryCode = value.dialCode;
+          //       // print("changeval===$countryCode");
+          //     },
+          //     // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+          //     initialSelection: 'IN',
+          //     searchStyle: TextStyle(
+          //       color: ConstantData.mainTextColor,
+          //       fontFamily: ConstantData.fontFamily,
+          //     ),
+          //     searchDecoration: InputDecoration(
+          //         border: UnderlineInputBorder(
+          //           borderSide: BorderSide(color: ConstantData.textColor),
+          //         ),
+          //         hintStyle: TextStyle(
+          //             color: ConstantData.mainTextColor,
+          //             fontFamily: ConstantData.fontFamily)),
+          //     textStyle: TextStyle(
+          //       color: ConstantData.mainTextColor,
+          //       fontFamily: ConstantData.fontFamily,
+          //       fontWeight: FontWeight.w600,
+          //       fontSize: font18Px(context: context),
+          //     ),
+          //     dialogTextStyle: TextStyle(
+          //       color: ConstantData.mainTextColor,
+          //       fontFamily: ConstantData.fontFamily,
+          //     ),
 
-              showFlagDialog: true,
-              hideSearch: true,
-              // comparator: (a, b) => b.name!.compareTo(a.name),
+          //     showFlagDialog: true,
+          //     hideSearch: true,
+          //     // comparator: (a, b) => b.name!.compareTo(a.name),
 
-              onInit: (code) {
-                // countryCode = code.dialCode;
-                // print("on init ${code!.name} ${code.dialCode} ${code.name}");
-              },
-            ),
-          ),
+          //     onInit: (code) {
+          //       // countryCode = code.dialCode;
+          //       // print("on init ${code!.name} ${code.dialCode} ${code.name}");
+          //     },
+          //   ),
+          // ),
           Expanded(
             flex: 1,
             child: Container(

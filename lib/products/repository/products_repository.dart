@@ -547,8 +547,10 @@ class ProductsRepository {
     }
 
     final resp = await http.post(
-        Uri.parse('http://b0b5-34-145-199-41.ngrok.io/medicine'),
-        body: {'med': name.toUpperCase()});
+      Uri.parse(
+          'http://799b-35-201-246-111.ngrok.io/medicine?med=${name.toUpperCase()}'),
+      // body: {'med': name.toUpperCase()},
+    );
 
     print('---- name ${resp.body}');
 

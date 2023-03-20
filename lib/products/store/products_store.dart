@@ -688,7 +688,7 @@ abstract class _ProductsStore with Store {
       final currModel = model.copyWith(
         subTotal: '0.00',
         totalQtyPrice: '0.00',
-        productName: 'Remove the product \nThe prices have been changed',
+        productName: 'Remove product \nprices are changed',
         description: '',
       );
 

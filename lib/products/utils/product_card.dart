@@ -561,9 +561,39 @@ class CartQuantityWidget extends StatelessWidget {
   final EdgeInsets padding;
 
   ProductModel _updateProduct(ProductModel model) {
-    final index = store.cartModel.productList
-        .indexWhere((element) => element.pid == model.pid);
-    return store.cartModel.productList[index];
+    // final index = store.cartModel.productList
+    //     .indexWhere((element) => element.pid == model.pid);
+    // return store.cartModel.productList[index];
+    switch (categoriesfromValue(model.category)) {
+      case CategoriesType.ETHICAL:
+        final index = store.ethicalProductList
+            .indexWhere((element) => element.pid == model.pid);
+        return store.ethicalProductList[index];
+      case CategoriesType.GENERIC:
+        final index = store.genericProductList
+            .indexWhere((element) => element.pid == model.pid);
+        return store.genericProductList[index];
+      case CategoriesType.SURGICAL:
+        final index = store.surgicalProductList
+            .indexWhere((element) => element.pid == model.pid);
+        return store.surgicalProductList[index];
+      case CategoriesType.VETERINARY:
+        final index = store.veterinaryProductList
+            .indexWhere((element) => element.pid == model.pid);
+        return store.veterinaryProductList[index];
+      case CategoriesType.AYURVEDIC:
+        final index = store.ayurvedicProductList
+            .indexWhere((element) => element.pid == model.pid);
+        return store.ayurvedicProductList[index];
+      case CategoriesType.GENERAL:
+        final index = store.generalProductList
+            .indexWhere((element) => element.pid == model.pid);
+        return store.generalProductList[index];
+      case CategoriesType.VACCINE:
+        final index = store.vaccineProductList
+            .indexWhere((element) => element.pid == model.pid);
+        return store.vaccineProductList[index];
+    }
   }
 
   @override
@@ -571,6 +601,7 @@ class CartQuantityWidget extends StatelessWidget {
     return InkWell(
       onTap: () {
         final updatedModel = _updateProduct(model);
+        debugPrint('---- updated model avl qty --- ${updatedModel.quantity}');
         showDialog(
           context: context,
           builder: (_) => QuantityDialog(

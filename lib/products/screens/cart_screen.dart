@@ -314,7 +314,7 @@ class ListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double height = ConstantWidget.getScreenPercentSize(context, 20);
+    double height = ConstantWidget.getScreenPercentSize(context, 22);
     double imageSize = ConstantWidget.getScreenPercentSize(context, 14);
     double margin = ConstantWidget.getScreenPercentSize(context, 1.5);
     double radius = ConstantWidget.getScreenPercentSize(context, 1.5);
@@ -483,30 +483,32 @@ class ListItem extends StatelessWidget {
             thickness: 0.8,
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ConstantWidget.getCustomText(
-              'Sub-Total:',
-              ConstantData.mainTextColor,
-              1,
-              TextAlign.center,
-              FontWeight.w600,
-              font18Px(context: context) * 1.12,
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  right: blockSizeHorizontal(context: context) * 2),
-              child: ConstantWidget.getCustomText(
-                '₹${(double.parse(model.newMrp) * (model.cartQuantity)).toStringAsFixed(2)}',
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ConstantWidget.getCustomText(
+                'Sub-Total:',
                 ConstantData.mainTextColor,
                 1,
                 TextAlign.center,
                 FontWeight.w600,
                 font18Px(context: context) * 1.12,
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.only(
+                    right: blockSizeHorizontal(context: context) * 2),
+                child: ConstantWidget.getCustomText(
+                  '₹${(double.parse(model.newMrp) * (model.cartQuantity)).toStringAsFixed(2)}',
+                  ConstantData.mainTextColor,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font18Px(context: context) * 1.12,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
