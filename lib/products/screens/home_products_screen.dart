@@ -197,6 +197,32 @@ class ProductHomeScreen extends StatelessWidget {
           return const SizedBox();
         }
       }),
+      floatingActionButton: Container(
+        padding: EdgeInsets.all(blockSizeVertical(context: context) / 1.5),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: ConstantData.primaryColor,
+        ),
+        child: Observer(builder: (_) {
+          return IconButton(
+            onPressed: () async {
+              debugPrint('------ listenin--- ');
+              if (store.micEnabled && store.speechToText.isNotListening) {
+                await store.startListening();
+              } else if (store.micEnabled && store.speechToText.isListening) {
+                await store.stopListening();
+              } else {
+                await store.intializeMic();
+              }
+            },
+            icon: Icon(
+              (store.speechToText.isListening) ? Icons.stop : Icons.mic,
+              size: blockSizeVertical(context: context) * 3,
+              color: ConstantData.bgColor,
+            ),
+          );
+        }),
+      ),
       body: Stack(
         children: [
           SafeArea(

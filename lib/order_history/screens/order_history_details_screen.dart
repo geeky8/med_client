@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_const
+// ignore_for_file: unnecessary_const, use_build_context_synchronously
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -125,57 +125,7 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ConstantWidget.customAppBar(context: context, title: 'ORDER DETAILS'),
-        Padding(
-          padding: EdgeInsets.only(
-            bottom: blockSizeVertical(context: context),
-          ),
-          child: Container(
-            decoration: BoxDecoration(color: ConstantData.bgColor),
-            padding: EdgeInsets.symmetric(
-              horizontal: blockSizeHorizontal(context: context) * 4,
-              vertical: blockSizeVertical(context: context) * 2,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ConstantWidget.getCustomText(
-                  'Order #${widget.model.orderId}',
-                  ConstantData.mainTextColor,
-                  1,
-                  TextAlign.center,
-                  FontWeight.w600,
-                  font18Px(context: context),
-                ),
-                SizedBox(
-                  height: blockSizeVertical(context: context) * 2,
-                ),
-                Row(
-                  children: [
-                    ConstantWidget.getCustomText(
-                      'Payment Mode : ',
-                      Colors.black38,
-                      1,
-                      TextAlign.center,
-                      FontWeight.w600,
-                      font15Px(context: context),
-                    ),
-                    SizedBox(
-                      width: blockSizeHorizontal(context: context) * 2,
-                    ),
-                    ConstantWidget.getCustomText(
-                      getText(paymentStatus: widget.model.paymentStatusType),
-                      ConstantData.mainTextColor,
-                      1,
-                      TextAlign.center,
-                      FontWeight.w600,
-                      font15Px(context: context),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
+        OrderDetailHeader(context),
         Padding(
           padding: EdgeInsets.symmetric(
             vertical: blockSizeVertical(context: context),
@@ -190,29 +140,7 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ConstantWidget.getCustomText(
-                  'Product Details',
-                  ConstantData.mainTextColor,
-                  1,
-                  TextAlign.center,
-                  FontWeight.w600,
-                  font22Px(context: context),
-                ),
-                SizedBox(height: blockSizeVertical(context: context) * 2),
-                SizedBox(
-                  height: ConstantWidget.getScreenPercentSize(context, 30),
-                  child: ListView.builder(
-                    itemCount: widget.model.ordersList.length,
-                    physics: const BouncingScrollPhysics(),
-                    itemBuilder: (_, index) {
-                      return ProductDetailsTile(
-                        model: widget.model.ordersList[index],
-                        productsStore: widget.productsStore,
-                        loginStore: widget.loginStore,
-                      );
-                    },
-                  ),
-                ),
+                productDetailsWidget(context),
                 const Divider(thickness: 1),
                 SizedBox(height: blockSizeVertical(context: context) * 3),
                 ConstantWidget.getCustomText(
@@ -448,10 +376,6 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                                         if (remarksContoller.text
                                             .trim()
                                             .isNotEmpty) {
-                                          setState(() {
-                                            cancelOrder = !cancelOrder;
-                                          });
-
                                           await widget.orderHistoryStore
                                               .cancelOrder(
                                             id: widget.model.orderId,
@@ -472,6 +396,9 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                                       },
                                     ),
                                   );
+                                  setState(() {
+                                    cancelOrder = !cancelOrder;
+                                  });
                                 },
                                 child: Container(
                                   width: ConstantWidget.getWidthPercentSize(
@@ -747,6 +674,91 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
       ],
     );
   }
+
+  Widget productDetailsWidget(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ConstantWidget.getCustomText(
+          'Product Details',
+          ConstantData.mainTextColor,
+          1,
+          TextAlign.left,
+          FontWeight.w600,
+          font22Px(context: context),
+        ),
+        SizedBox(height: blockSizeVertical(context: context) * 2),
+        Container(
+          height: ConstantWidget.getScreenPercentSize(context, 30),
+          child: ListView.builder(
+            itemCount: widget.model.ordersList.length,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (_, index) {
+              return ProductDetailsTile(
+                model: widget.model.ordersList[index],
+                productsStore: widget.productsStore,
+                loginStore: widget.loginStore,
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Padding OrderDetailHeader(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: blockSizeVertical(context: context),
+      ),
+      child: Container(
+        decoration: BoxDecoration(color: ConstantData.bgColor),
+        padding: EdgeInsets.symmetric(
+          horizontal: blockSizeHorizontal(context: context) * 4,
+          vertical: blockSizeVertical(context: context) * 2,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ConstantWidget.getCustomText(
+              'Order #${widget.model.orderId}',
+              ConstantData.mainTextColor,
+              1,
+              TextAlign.center,
+              FontWeight.w600,
+              font18Px(context: context),
+            ),
+            SizedBox(
+              height: blockSizeVertical(context: context) * 2,
+            ),
+            Row(
+              children: [
+                ConstantWidget.getCustomText(
+                  'Payment Mode : ',
+                  Colors.black38,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font15Px(context: context),
+                ),
+                SizedBox(
+                  width: blockSizeHorizontal(context: context) * 2,
+                ),
+                ConstantWidget.getCustomText(
+                  getText(paymentStatus: widget.model.paymentStatusType),
+                  ConstantData.mainTextColor,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font15Px(context: context),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class OrderTrackingRadioTile extends StatelessWidget {
@@ -830,54 +842,60 @@ class ProductDetailsTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: CachedNetworkImage(
-              imageUrl: ConstantData.productUrl + model.productImg,
-              fit: BoxFit.cover,
-              height: imageSize,
-              width: imageSize * 1.5,
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: CachedNetworkImage(
+                imageUrl: ConstantData.productUrl + model.productImg,
+                fit: BoxFit.cover,
+                height: imageSize,
+                width: imageSize * 1.5,
+              ),
             ),
           ),
           SizedBox(
             width: blockSizeHorizontal(context: context) * 4,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ConstantWidget.getCustomText(
-                model.productName,
-                ConstantData.mainTextColor,
-                1,
-                TextAlign.center,
-                FontWeight.w600,
-                font18Px(context: context) * 1.1,
-              ),
-              SizedBox(
-                height: blockSizeVertical(context: context),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ConstantWidget.getCustomText(
-                    '₹${model.mrp}',
-                    ConstantData.mainTextColor,
-                    1,
-                    TextAlign.center,
-                    FontWeight.w600,
-                    font18Px(context: context),
-                  ),
-                  ConstantWidget.getCustomText(
-                    'Qty: ${model.quantity}',
-                    Colors.black38,
-                    1,
-                    TextAlign.center,
-                    FontWeight.w600,
-                    font15Px(context: context),
-                  ),
-                ],
-              ),
-            ],
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ConstantWidget.getCustomText(
+                  model.productName,
+                  ConstantData.mainTextColor,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font18Px(context: context) * 1.1,
+                ),
+                SizedBox(
+                  height: blockSizeVertical(context: context),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ConstantWidget.getCustomText(
+                      '₹${model.mrp}',
+                      ConstantData.mainTextColor,
+                      1,
+                      TextAlign.center,
+                      FontWeight.w600,
+                      font18Px(context: context),
+                    ),
+                    // const Spacer(),
+                    ConstantWidget.getCustomText(
+                      'Qty: ${model.quantity}',
+                      Colors.black38,
+                      1,
+                      TextAlign.center,
+                      FontWeight.w600,
+                      font15Px(context: context),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),

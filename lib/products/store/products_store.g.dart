@@ -395,6 +395,38 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$speechToTextAtom =
+      Atom(name: '_ProductsStore.speechToText', context: context);
+
+  @override
+  SpeechToText get speechToText {
+    _$speechToTextAtom.reportRead();
+    return super.speechToText;
+  }
+
+  @override
+  set speechToText(SpeechToText value) {
+    _$speechToTextAtom.reportWrite(value, super.speechToText, () {
+      super.speechToText = value;
+    });
+  }
+
+  late final _$micEnabledAtom =
+      Atom(name: '_ProductsStore.micEnabled', context: context);
+
+  @override
+  bool get micEnabled {
+    _$micEnabledAtom.reportRead();
+    return super.micEnabled;
+  }
+
+  @override
+  set micEnabled(bool value) {
+    _$micEnabledAtom.reportWrite(value, super.micEnabled, () {
+      super.micEnabled = value;
+    });
+  }
+
   late final _$recommendAtom =
       Atom(name: '_ProductsStore.recommend', context: context);
 
@@ -424,6 +456,22 @@ mixin _$ProductsStore on _ProductsStore, Store {
   set recommedLoading(StoreState value) {
     _$recommedLoadingAtom.reportWrite(value, super.recommedLoading, () {
       super.recommedLoading = value;
+    });
+  }
+
+  late final _$micIsListeningAtom =
+      Atom(name: '_ProductsStore.micIsListening', context: context);
+
+  @override
+  bool get micIsListening {
+    _$micIsListeningAtom.reportRead();
+    return super.micIsListening;
+  }
+
+  @override
+  set micIsListening(bool value) {
+    _$micIsListeningAtom.reportWrite(value, super.micIsListening, () {
+      super.micIsListening = value;
     });
   }
 
@@ -673,6 +721,32 @@ mixin _$ProductsStore on _ProductsStore, Store {
         .run(() => super.getRecommendations(model: model));
   }
 
+  late final _$textSpeechTaskAsyncAction =
+      AsyncAction('_ProductsStore.textSpeechTask', context: context);
+
+  @override
+  Future<void> textSpeechTask({required String text, ProductModel? model}) {
+    return _$textSpeechTaskAsyncAction
+        .run(() => super.textSpeechTask(text: text, model: model));
+  }
+
+  late final _$startListeningAsyncAction =
+      AsyncAction('_ProductsStore.startListening', context: context);
+
+  @override
+  Future<void> startListening({ProductModel? model}) {
+    return _$startListeningAsyncAction
+        .run(() => super.startListening(model: model));
+  }
+
+  late final _$intializeMicAsyncAction =
+      AsyncAction('_ProductsStore.intializeMic', context: context);
+
+  @override
+  Future<void> intializeMic() {
+    return _$intializeMicAsyncAction.run(() => super.intializeMic());
+  }
+
   late final _$getSurgicalProductsAsyncAction =
       AsyncAction('_ProductsStore.getSurgicalProducts', context: context);
 
@@ -772,10 +846,8 @@ mixin _$ProductsStore on _ProductsStore, Store {
       AsyncAction('_ProductsStore.addToCart', context: context);
 
   @override
-  Future<ProductModel> addToCart(
-      {required ProductModel model, required BuildContext context}) {
-    return _$addToCartAsyncAction
-        .run(() => super.addToCart(model: model, context: context));
+  Future<ProductModel> addToCart({required ProductModel model}) {
+    return _$addToCartAsyncAction.run(() => super.addToCart(model: model));
   }
 
   late final _$removeFromCartAsyncAction =
@@ -783,13 +855,9 @@ mixin _$ProductsStore on _ProductsStore, Store {
 
   @override
   Future<ProductModel> removeFromCart(
-      {required ProductModel model,
-      required BuildContext context,
-      int? removalByPlusMinus}) {
-    return _$removeFromCartAsyncAction.run(() => super.removeFromCart(
-        model: model,
-        context: context,
-        removalByPlusMinus: removalByPlusMinus));
+      {required ProductModel model, int? removalByPlusMinus}) {
+    return _$removeFromCartAsyncAction.run(() => super
+        .removeFromCart(model: model, removalByPlusMinus: removalByPlusMinus));
   }
 
   late final _$checkoutAsyncAction =
@@ -871,8 +939,11 @@ generalPageIndex: ${generalPageIndex},
 vaccinePageIndex: ${vaccinePageIndex},
 searchIndex: ${searchIndex},
 paginationState: ${paginationState},
+speechToText: ${speechToText},
+micEnabled: ${micEnabled},
 recommend: ${recommend},
 recommedLoading: ${recommedLoading},
+micIsListening: ${micIsListening},
 searchState: ${searchState},
 searchController: ${searchController},
 searchList: ${searchList},

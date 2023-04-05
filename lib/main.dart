@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:medrpha_customer/gpayscreen.dart';
 import 'package:medrpha_customer/profile/screens/logout_screen.dart';
 import 'package:medrpha_customer/profile/screens/new_profile_screen.dart';
+import 'package:medrpha_customer/speech_to_text.dart';
 import 'package:provider/provider.dart';
 
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
         // ),
         // child: OrderHistory(),
         // child: const HomeScreen(),
-        // child: const UpdateAppScreen(),
+        // child: const SpeechText(),
       ),
     );
   }

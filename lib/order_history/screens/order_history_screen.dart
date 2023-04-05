@@ -71,25 +71,6 @@ class OrderHistoryScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Padding(
-                            //   padding: EdgeInsets.symmetric(
-                            //     horizontal:
-                            //         blockSizeHorizontal(context: context) * 4,
-                            //     vertical:
-                            //         blockSizeVertical(context: context) * 2,
-                            //   ),
-                            //   child: ConstantWidget.getCustomText(
-                            //     'Your Orders',
-                            //     ConstantData.mainTextColor,
-                            //     1,
-                            //     TextAlign.left,
-                            //     FontWeight.w600,
-                            //     font18Px(context: context) * 1.1,
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //   height: blockSizeVertical(context: context) * 2,
-                            // ),
                             Padding(
                               padding: EdgeInsets.symmetric(
                                 vertical:
@@ -172,30 +153,7 @@ class OrderHistoryScreen extends StatelessWidget {
                             );
                             break;
                         }
-                        // return TabBarView(
-                        //   children: [
-                        //     // Center(
-                        //     //     child: Text(
-                        //     //   "0",
-                        //     //   style: TextStyle(fontSize: 40),
-                        //     // )),
-                        //     AllOrdersList(
-                        //       list: store.orders,
-                        //       store: store,
-                        //       loginStore: loginStore,
-                        //     ),
-                        //     OrdersList(
-                        //       store: store,
-                        //       list: store.orders,
-                        //       loginStore: loginStore,
-                        //     ),
-                        //     OrdersList(
-                        //       store: store,
-                        //       list: store.orders,
-                        //       loginStore: loginStore,
-                        //     ),
-                        //   ],
-                        // );
+
                         final adminStatus = loginStore.loginModel.adminStatus;
                         return Expanded(
                           child: (adminStatus)

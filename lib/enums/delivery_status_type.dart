@@ -43,11 +43,11 @@ extension OrderStatusTypeExtenstion on OrderStatusType {
   }
 }
 
-OrderStatusType deliverStatusFromValue(String status) {
+OrderStatusType orderStatusFromValue(String status) {
   switch (status) {
     case 'Confirmed':
       return OrderStatusType.CONFIRMED;
-    case 'On-Delivery':
+    case 'Dispatched':
       return OrderStatusType.DISPATCHED;
     case 'Delivered':
       return OrderStatusType.DELIVERED;

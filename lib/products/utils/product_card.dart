@@ -379,7 +379,8 @@ class ProductsCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (_) => Provider.value(
-              value: store..getRecommendations(model: model),
+              // value: store..getRecommendations(model: model),
+              value: store,
               child: Provider.value(
                 value: loginStore,
                 child: Provider.value(

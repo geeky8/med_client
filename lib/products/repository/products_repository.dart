@@ -537,6 +537,8 @@ class ProductsRepository {
     }
   }
 
+  final myNgorkUrl = 'http://5a4a-35-185-56-208.ngrok.io/';
+
   Future<List<String>> getRecommedations({required String name}) async {
     final result = HashSet<String>();
     final arg = name.split(" ");
@@ -546,26 +548,39 @@ class ProductsRepository {
       myArg += " ";
     }
 
-    final resp = await http.post(
-      Uri.parse(
-          'http://799b-35-201-246-111.ngrok.io/medicine?med=${name.toUpperCase()}'),
-      // body: {'med': name.toUpperCase()},
-    );
+    final resp = await http.get(Uri.parse('$myNgorkUrl${name.toUpperCase()}'));
 
-    print('---- name ${resp.body}');
+    // print('---- name ${resp.body}');
 
     if (resp.statusCode == 200) {
       final body = jsonDecode(resp.body) as Map<String, dynamic>;
-      final data = (body['data'] as Map<String, dynamic>);
-      data.forEach(
-        (key, value) {
-          final name = (value as String).split(",")[0];
-          // print("Name hai ${name[0] + name.substring(1).toLowerCase()}");
+      final data = body['data'] as List<dynamic>;
+
+      for (final consequentList in data) {
+        print("consequentList : ${(consequentList as String).length}");
+        final deflist = (consequentList as String).trim().split(",");
+        deflist.remove(deflist.last);
+        // print(deflist);
+        // print(deflist.length);
+        for (final name in deflist) {
           result.add(name[0] + name.substring(1).toLowerCase());
-        },
-      );
+        }
+      }
       // debugPrint(resp.body);
     }
     return result.toList();
+  }
+
+  Future<String> getVoiceText({required String text}) async {
+    if (text != "") {
+      final resp = await http.get(Uri.parse('${myNgorkUrl}voice/$text'));
+      debugPrint('---- speech text resp ${resp.body}');
+      if (resp.statusCode == 200) {
+        final body = jsonDecode(resp.body) as Map<String, dynamic>;
+        final data = body['data'] as String;
+        return data;
+      }
+    }
+    return "";
   }
 }

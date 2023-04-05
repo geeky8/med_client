@@ -9,6 +9,7 @@ import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/categories.dart';
 import 'package:medrpha_customer/enums/payment_options.dart';
+import 'package:medrpha_customer/enums/product_text_speech.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/repository/order_history_repository.dart';
 import 'package:medrpha_customer/order_history/screens/order_history_details_screen.dart';
@@ -20,9 +21,12 @@ import 'package:medrpha_customer/products/repository/products_repository.dart';
 import 'package:medrpha_customer/products/utils/order_dialog.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
+import 'package:medrpha_customer/speech_to_text.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 part 'products_store.g.dart';
 
 class ProductsStore = _ProductsStore with _$ProductsStore;
@@ -137,6 +141,12 @@ abstract class _ProductsStore with Store {
   @observable
   StoreState paginationState = StoreState.SUCCESS;
 
+  @observable
+  SpeechToText speechToText = SpeechToText();
+
+  @observable
+  bool micEnabled = false;
+
   Future<void> init() async {
     ethicalPageIndex = 1;
     generalPageIndex = 1;
@@ -153,6 +163,8 @@ abstract class _ProductsStore with Store {
     if (ethicalProductList.isNotEmpty) {
       await getCartItems(cartOpt: true);
     }
+
+    micEnabled = await speechToText.initialize();
 
     cartState = StoreState.SUCCESS;
   }
@@ -386,6 +398,92 @@ abstract class _ProductsStore with Store {
     }
     debugPrint("Size of recommend ${recommend.toString()}");
     recommedLoading = StoreState.SUCCESS;
+  }
+
+  @action
+  Future<void> textSpeechTask(
+      {required String text, ProductModel? model}) async {
+    final resp = await _productsRepository.getVoiceText(text: text);
+    switch (getFromTextSpeech(resp)) {
+      case ProductTextSpeech.ADDTOCART:
+        debugPrint('Adding to cart');
+        if (model != null) {
+          final updatedModel = await addToCart(model: model);
+        }
+        break;
+      case ProductTextSpeech.ERROR:
+        debugPrint("could not fetch");
+        break;
+      case ProductTextSpeech.PRODUCT:
+        debugPrint("fetched $resp");
+        break;
+      case ProductTextSpeech.REMOVECART:
+        debugPrint('Adding to cart');
+        if (model != null) {
+          final index = cartModel.productList
+              .indexWhere((element) => element.pid == model.pid);
+          if (index != -1) {
+            await removeFromCart(model: model);
+          }
+        }
+        break;
+    }
+  }
+
+  @action
+  Future<void> startListening({ProductModel? model}) async {
+    if (micEnabled) {
+      micIsListening = true;
+      await speechToText.listen(
+        // cancelOnError: (),
+        onResult: (result) async {
+          await _onSpeechResult(
+            result: result,
+            model: model,
+          );
+        },
+        listenFor: const Duration(seconds: 3),
+      );
+      await Future.delayed(
+          const Duration(seconds: 3), () => micIsListening = false);
+      debugPrint('---- last status ${speechToText.lastStatus}');
+      // micIsListening = (speech);
+    } else {
+      Fluttertoast.showToast(msg: 'Mic is not enabled');
+    }
+  }
+
+  @action
+  Future<void> intializeMic() async {
+    micEnabled = await speechToText.initialize(
+      onError: (errorNotification) {
+        Fluttertoast.showToast(msg: errorNotification.errorMsg);
+      },
+    );
+    if (micEnabled) {
+      await startListening();
+    }
+  }
+
+  @observable
+  bool micIsListening = false;
+
+  Future<void> stopListening() async {
+    await speechToText.stop();
+  }
+
+  String lastWords = "";
+
+  Future<void> _onSpeechResult({
+    required SpeechRecognitionResult result,
+    ProductModel? model,
+  }) async {
+    lastWords = result.recognizedWords;
+    await textSpeechTask(
+      text: lastWords,
+      model: model,
+    );
+    debugPrint('--------- recognized $lastWords');
   }
 
   @action
@@ -921,7 +1019,7 @@ abstract class _ProductsStore with Store {
       final currModel = model.copyWith(cartQuantity: model.minQty);
       await removeFromCart(
         model: currModel,
-        context: context,
+        // context: context,
       );
       // Fluttertoast.showToast(msg: 'Item Removed');
     } else {
@@ -932,7 +1030,7 @@ abstract class _ProductsStore with Store {
   @action
   Future<ProductModel> addToCart({
     required ProductModel model,
-    required BuildContext context,
+    // required BuildContext context,
   }) async {
     final index =
         cartModel.productList.indexWhere((element) => element.pid == model.pid);
@@ -965,7 +1063,7 @@ abstract class _ProductsStore with Store {
   @action
   Future<ProductModel> removeFromCart({
     required ProductModel model,
-    required BuildContext context,
+    // required BuildContext context,
     int? removalByPlusMinus,
   }) async {
     final currModel = model.copyWith(

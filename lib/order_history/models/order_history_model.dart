@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:medrpha_customer/enums/delivery_status_type.dart';
 import 'package:medrpha_customer/enums/payment_status_type.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
@@ -19,6 +20,8 @@ class OrderHistoryModel {
   });
 
   factory OrderHistoryModel.fromJson({required Map<String, dynamic> json}) {
+    debugPrint('------- order status ----- $json ------------');
+
     return OrderHistoryModel(
       orderId: (json['order_id'] ?? '') as String,
       orderNo: (json['order_no'] ?? '') as String,
@@ -31,7 +34,8 @@ class OrderHistoryModel {
       dispatchedDate: (json['Dispatched_Date'] ?? '') as String,
       deliveredDate: (json['Delivered_Date'] ?? '') as String,
       roundValTotal: (json['roundvaltotal'] ?? '') as String,
-      orderStatusType: OrderStatusType.CONFIRMED,
+      orderStatusType:
+          orderStatusFromValue(json['order_status'] ?? 'Cancelled'),
       isView: false,
     );
   }

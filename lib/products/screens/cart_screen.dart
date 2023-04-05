@@ -134,12 +134,14 @@ class CartScreen extends StatelessWidget {
                                 Fluttertoast.showToast(
                                     msg:
                                         'Please remove the unnecessary products');
-                              } else if (double.parse(
-                                      store.cartModel.totalSalePrice) <
-                                  500.00) {
-                                Fluttertoast.showToast(
-                                    msg: 'Mimimum Order of ₹500');
-                              } else {
+                              }
+                              // else if (double.parse(
+                              //         store.cartModel.totalSalePrice) <
+                              //     500.00) {
+                              //   Fluttertoast.showToast(
+                              //       msg: 'Mimimum Order of ₹500');
+                              // }
+                              else {
                                 if (store.cartModel.productList.isNotEmpty) {
                                   Navigator.push(
                                     context,
@@ -417,7 +419,7 @@ class ListItem extends StatelessWidget {
               store.removeState = StoreState.LOADING;
               await store.removeFromCart(
                 model: model,
-                context: context,
+                // context: context,
               );
               store.removeState = StoreState.SUCCESS;
             },

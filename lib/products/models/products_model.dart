@@ -36,6 +36,8 @@ class ProductModel {
       }
     }
 
+    // debugPrint('------------------- ${json} ------');
+
     return ProductModel(
       pid: int.parse((json['pid'] ?? '-1') as String),
       wpid: (json['wpid'] ?? '') as String,
@@ -51,7 +53,7 @@ class ProductModel {
       category: (json['categorystr'] ?? '') as String,
       company: (json['compnaystr'] ?? '') as String,
       newMrp:
-          double.parse((json['newmrp'] ?? '0.0') as String).toStringAsFixed(2),
+          double.parse((json['newmrp'] ?? '0.00') as String).toStringAsFixed(2),
       oldMrp:
           double.parse((json['oldmrp'] ?? '0.0') as String).toStringAsFixed(2),
       percentDiscount: (json['percent'] ?? '') as String,

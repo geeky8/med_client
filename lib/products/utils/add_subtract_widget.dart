@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -239,7 +241,7 @@ class AddProductButton extends StatelessWidget {
       onTap: () async {
         final updatedModel = await store.addToCart(
           model: model,
-          context: context,
+          // context: context,
         );
         showDialog(
           context: context,
@@ -298,7 +300,7 @@ class RemoveButton extends StatelessWidget {
         // store.removeState = StoreState.LOADING;
         await store.removeFromCart(
           model: model,
-          context: context,
+          // context: context,
         );
         // store.removeState = StoreState.SUCCESS;
       },
