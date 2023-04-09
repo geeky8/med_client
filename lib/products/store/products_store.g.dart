@@ -725,18 +725,19 @@ mixin _$ProductsStore on _ProductsStore, Store {
       AsyncAction('_ProductsStore.textSpeechTask', context: context);
 
   @override
-  Future<void> textSpeechTask({required String text, ProductModel? model}) {
-    return _$textSpeechTaskAsyncAction
-        .run(() => super.textSpeechTask(text: text, model: model));
+  Future<void> textSpeechTask(
+      {required String text, ProductModel? model, BuildContext? context}) {
+    return _$textSpeechTaskAsyncAction.run(
+        () => super.textSpeechTask(text: text, model: model, context: context));
   }
 
   late final _$startListeningAsyncAction =
       AsyncAction('_ProductsStore.startListening', context: context);
 
   @override
-  Future<void> startListening({ProductModel? model}) {
+  Future<void> startListening({ProductModel? model, BuildContext? context}) {
     return _$startListeningAsyncAction
-        .run(() => super.startListening(model: model));
+        .run(() => super.startListening(model: model, context: context));
   }
 
   late final _$intializeMicAsyncAction =

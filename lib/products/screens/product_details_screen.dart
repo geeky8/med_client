@@ -26,13 +26,13 @@ class ProductsDetailScreen extends StatefulWidget {
   const ProductsDetailScreen({
     Key? key,
     required this.model,
-    required this.store,
+    // required this.store,
     // required this.modelIndex,
     // required this.list,
   }) : super(key: key);
 
   final ProductModel model;
-  final ProductsStore store;
+  // final ProductsStore store;
 
   @override
   State<ProductsDetailScreen> createState() => _ProductsDetailScreenState();
@@ -46,9 +46,9 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
     super.initState();
   }
 
-  _func() async {
-    await widget.store.getRecommendations(model: widget.model);
-  }
+  // _func() async {
+  //   await widget.store.getRecommendations(model: widget.model);
+  // }
 
   // final int modelIndex;
   @override

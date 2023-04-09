@@ -18,6 +18,7 @@ import 'package:medrpha_customer/products/models/cart_model.dart';
 import 'package:medrpha_customer/products/models/category_model.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/repository/products_repository.dart';
+import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/utils/order_dialog.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
@@ -401,14 +402,17 @@ abstract class _ProductsStore with Store {
   }
 
   @action
-  Future<void> textSpeechTask(
-      {required String text, ProductModel? model}) async {
+  Future<void> textSpeechTask({
+    required String text,
+    ProductModel? model,
+    BuildContext? context,
+  }) async {
     final resp = await _productsRepository.getVoiceText(text: text);
     switch (getFromTextSpeech(resp)) {
       case ProductTextSpeech.ADDTOCART:
         debugPrint('Adding to cart');
         if (model != null) {
-          final updatedModel = await addToCart(model: model);
+          await addToCart(model: model);
         }
         break;
       case ProductTextSpeech.ERROR:
@@ -416,9 +420,35 @@ abstract class _ProductsStore with Store {
         break;
       case ProductTextSpeech.PRODUCT:
         debugPrint("fetched $resp");
+        final index = ethicalProductList
+            .indexWhere((element) => element.productName == resp);
+        if (index != -1 && context != null) {
+          /// Initalisation of required stores [ProductsStore,LoginStore,ProfileStore,OrderHistoryStore]
+          final store = context.read<ProductsStore>();
+          final loginStore = context.read<LoginStore>();
+          final profileStore = context.read<ProfileStore>();
+          final orderHistoryStore = context.read<OrderHistoryStore>();
+          final bottomNavigationStore = context.read<BottomNavigationStore>();
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MultiProvider(
+                providers: [
+                  Provider.value(value: store),
+                  Provider.value(value: loginStore),
+                  Provider.value(value: profileStore),
+                  Provider.value(value: orderHistoryStore),
+                  Provider.value(value: bottomNavigationStore),
+                ],
+                child: ProductsDetailScreen(model: ethicalProductList[index]),
+              ),
+            ),
+          );
+        }
         break;
       case ProductTextSpeech.REMOVECART:
-        debugPrint('Adding to cart');
+        debugPrint('Removing from cart');
         if (model != null) {
           final index = cartModel.productList
               .indexWhere((element) => element.pid == model.pid);
@@ -431,7 +461,10 @@ abstract class _ProductsStore with Store {
   }
 
   @action
-  Future<void> startListening({ProductModel? model}) async {
+  Future<void> startListening({
+    ProductModel? model,
+    BuildContext? context,
+  }) async {
     if (micEnabled) {
       micIsListening = true;
       await speechToText.listen(
@@ -440,6 +473,7 @@ abstract class _ProductsStore with Store {
           await _onSpeechResult(
             result: result,
             model: model,
+            context: context,
           );
         },
         listenFor: const Duration(seconds: 3),
@@ -477,11 +511,13 @@ abstract class _ProductsStore with Store {
   Future<void> _onSpeechResult({
     required SpeechRecognitionResult result,
     ProductModel? model,
+    BuildContext? context,
   }) async {
     lastWords = result.recognizedWords;
     await textSpeechTask(
       text: lastWords,
       model: model,
+      context: context,
     );
     debugPrint('--------- recognized $lastWords');
   }

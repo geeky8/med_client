@@ -180,7 +180,7 @@ class ProductViewList extends StatelessWidget {
                                 value: bottomNavigationStore,
                                 child: ProductsDetailScreen(
                                   model: model,
-                                  store: store,
+                                  // store: store,
                                   // modelIndex: index,
                                   // list: list,
                                 ),
