@@ -805,13 +805,25 @@ abstract class _ProductsStore with Store {
       if (cartOpt != null) {
         for (final i in model.productList) {
           final updatedModel = await updateProductsAccordingToCart(model: i);
+          findProductInProductList(model: updatedModel);
           list.add(updatedModel);
         }
         cartModel = model.copyWith(productList: list);
+        // findProductInProductList(model: )
       }
     }
 
     debugPrint('----- cart total----${cartModel.totalSalePrice}');
+  }
+
+  /// Updates the [searchList] with updated [ProductModel]
+  void updateSearchScreenList({required ProductModel model}) {
+    final index = searchList.indexWhere((element) => element.pid == model.pid);
+    if (index != -1) {
+      searchList
+        ..removeAt(index)
+        ..insert(index, model);
+    }
   }
 
   /// [Function] to update the product in mentioned product list.
@@ -830,9 +842,11 @@ abstract class _ProductsStore with Store {
     } else {
       final category = categoriesfromValue(model.category);
 
+      updateSearchScreenList(model: model);
+
       switch (category) {
         case CategoriesType.ETHICAL:
-          final stopWatch = Stopwatch()..start();
+          // final stopWatch = Stopwatch()..start();
           final index = ethicalProductList
               .indexWhere((element) => element.pid == model.pid);
           if (index != -1) {
@@ -841,16 +855,16 @@ abstract class _ProductsStore with Store {
             ethicalProductList
               ..removeAt(index)
               ..insert(index, cartModel);
-            stopWatch.stop();
-            debugPrint(
-                '---- addtion ethical stoppage at ${stopWatch.elapsedMicroseconds}');
+            // stopWatch.stop();
+            // debugPrint(
+            //     '---- addtion ethical stoppage at ${stopWatch.elapsedMicroseconds}');
 
             return cartModel;
           }
           return model;
         // ethicalProductList[index] = cartModel;
         case CategoriesType.GENERIC:
-          final stopWatch = Stopwatch()..start();
+          // final stopWatch = Stopwatch()..start();
           final index = genericProductList
               .indexWhere((element) => element.pid == model.pid);
           if (index != -1) {
@@ -859,9 +873,9 @@ abstract class _ProductsStore with Store {
             genericProductList
               ..removeAt(index)
               ..insert(index, cartModel);
-            stopWatch.stop();
-            debugPrint(
-                '---- addtion generic stoppage at ${stopWatch.elapsedMicroseconds}');
+            // stopWatch.stop();
+            // debugPrint(
+            //     '---- addtion generic stoppage at ${stopWatch.elapsedMicroseconds}');
 
             return cartModel;
           }
@@ -922,17 +936,23 @@ abstract class _ProductsStore with Store {
     }
   }
 
+  @observable
+  StoreState cartAddState = StoreState.SUCCESS;
+
   @action
   Future<void> updateCartQunatity({
     required ProductModel model,
     required String value,
     required BuildContext context,
   }) async {
+    // cartAddState = StoreState.LOADING;
+
     if (int.parse(value) > int.parse(model.quantity) ||
         int.parse(value) < model.minQty) {
       Fluttertoast.showToast(msg: 'Quantity Not Available');
       // return model;
     } else {
+      Navigator.pop(context);
       final rem = (int.parse(value) % model.minQty);
       int val = int.parse(value);
       if (rem < (model.minQty) / 2) {
@@ -948,7 +968,7 @@ abstract class _ProductsStore with Store {
 
       cartUpdate(
         totalPrice: double.parse(cartModel.totalSalePrice),
-        oldTotal: (double.parse(updatedModel.newMrp) * (model.cartQuantity)),
+        oldTotal: (double.parse(model.newMrp) * (model.cartQuantity)),
         newTotal: (double.parse(updatedModel.newMrp) * val),
       );
 
@@ -962,8 +982,7 @@ abstract class _ProductsStore with Store {
 
       await _productsRepository.updateQuantity(model: updatedModel);
 
-      Navigator.pop(context);
-
+      // cartAddState = StoreState.SUCCESS;
       // return updatedModel;
     }
   }
@@ -975,6 +994,7 @@ abstract class _ProductsStore with Store {
     required double newTotal,
   }) async {
     double total = (totalPrice - oldTotal) + newTotal;
+    total = (total < 0) ? 0.00 : total;
     final updatedCartModel =
         cartModel.copyWith(totalSalePrice: total.toStringAsFixed(2)..trim());
     cartModel = updatedCartModel;
@@ -1063,6 +1083,63 @@ abstract class _ProductsStore with Store {
     }
   }
 
+  void findProductInProductList({required ProductModel model}) {
+    final category = categoriesfromValue(model.category);
+
+    switch (category) {
+      case CategoriesType.ETHICAL:
+        final index = ethicalProductList
+            .indexWhere((element) => element.pid == model.pid);
+        if (index == -1) {
+          ethicalProductList.add(model);
+        }
+        break;
+
+      case CategoriesType.GENERIC:
+        final index = genericProductList
+            .indexWhere((element) => element.pid == model.pid);
+        if (index == -1) {
+          generalProductList.add(model);
+        }
+        break;
+      case CategoriesType.SURGICAL:
+        final index = surgicalProductList
+            .indexWhere((element) => element.pid == model.pid);
+        if (index == -1) {
+          surgicalProductList.add(model);
+        }
+        break;
+      case CategoriesType.VETERINARY:
+        final index = veterinaryProductList
+            .indexWhere((element) => element.pid == model.pid);
+        if (index == -1) {
+          veterinaryProductList.add(model);
+        }
+        break;
+      case CategoriesType.AYURVEDIC:
+        final index = ayurvedicProductList
+            .indexWhere((element) => element.pid == model.pid);
+        if (index == -1) {
+          ayurvedicProductList.add(model);
+        }
+        break;
+      case CategoriesType.GENERAL:
+        final index = generalProductList
+            .indexWhere((element) => element.pid == model.pid);
+        if (index == -1) {
+          generalProductList.add(model);
+        }
+        break;
+      case CategoriesType.VACCINE:
+        final index = vaccineProductList
+            .indexWhere((element) => element.pid == model.pid);
+        if (index == -1) {
+          vaccineProductList.add(model);
+        }
+        break;
+    }
+  }
+
   @action
   Future<ProductModel> addToCart({
     required ProductModel model,
@@ -1074,6 +1151,7 @@ abstract class _ProductsStore with Store {
       Fluttertoast.showToast(msg: 'Item already in cart');
       return model;
     }
+    findProductInProductList(model: model);
     if (int.parse(model.quantity) >= model.minQty) {
       final updatedModel = model.copyWith(
         cartQuantity: model.minQty,

@@ -539,6 +539,22 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$cartAddStateAtom =
+      Atom(name: '_ProductsStore.cartAddState', context: context);
+
+  @override
+  StoreState get cartAddState {
+    _$cartAddStateAtom.reportRead();
+    return super.cartAddState;
+  }
+
+  @override
+  set cartAddState(StoreState value) {
+    _$cartAddStateAtom.reportWrite(value, super.cartAddState, () {
+      super.cartAddState = value;
+    });
+  }
+
   late final _$plusStateAtom =
       Atom(name: '_ProductsStore.plusState', context: context);
 
@@ -949,6 +965,7 @@ searchState: ${searchState},
 searchController: ${searchController},
 searchList: ${searchList},
 cartModel: ${cartModel},
+cartAddState: ${cartAddState},
 plusState: ${plusState},
 minusRemoveState: ${minusRemoveState},
 removeState: ${removeState},

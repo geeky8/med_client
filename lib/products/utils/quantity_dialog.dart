@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
@@ -43,7 +44,7 @@ class _QuantityDialogState extends State<QuantityDialog> {
       shape: const RoundedRectangleBorder(),
       backgroundColor: Colors.transparent,
       child: Container(
-        height: ConstantWidget.getScreenPercentSize(context, 23),
+        height: ConstantWidget.getScreenPercentSize(context, 25),
         decoration: BoxDecoration(
           color: ConstantData.bgColor,
           borderRadius: BorderRadius.circular(10),
@@ -54,7 +55,7 @@ class _QuantityDialogState extends State<QuantityDialog> {
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: blockSizeHorizontal(context: context) * 3,
-                vertical: blockSizeVertical(context: context) * 3,
+                vertical: blockSizeVertical(context: context) * 2,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,6 +138,29 @@ class _QuantityDialogState extends State<QuantityDialog> {
                       ],
                     );
                   }),
+                  SizedBox(
+                    height: blockSizeVertical(context: context),
+                  ),
+                  Row(
+                    children: [
+                      ConstantWidget.getCustomText(
+                        "Order in multiples of ",
+                        ConstantData.clrBorder,
+                        1,
+                        TextAlign.right,
+                        FontWeight.w500,
+                        font15Px(context: context) * 1.1,
+                      ),
+                      ConstantWidget.getCustomText(
+                        " X ${widget.model.minQty}",
+                        ConstantData.mainTextColor,
+                        1,
+                        TextAlign.right,
+                        FontWeight.w600,
+                        font15Px(context: context) * 1.1,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -146,8 +170,9 @@ class _QuantityDialogState extends State<QuantityDialog> {
                 Expanded(
                   flex: 4,
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
                       Navigator.pop(context);
+                      await widget.store.removeFromCart(model: widget.model);
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -167,8 +192,8 @@ class _QuantityDialogState extends State<QuantityDialog> {
                         ),
                       ),
                       child: ConstantWidget.getCustomText(
-                        'Cancel',
-                        ConstantData.primaryColor,
+                        'Remove',
+                        ConstantData.mainTextColor,
                         1,
                         TextAlign.center,
                         FontWeight.w600,
@@ -180,41 +205,44 @@ class _QuantityDialogState extends State<QuantityDialog> {
                 // const Spacer(),
                 Expanded(
                   flex: 4,
-                  child: InkWell(
-                    onTap: () async {
-                      if (quantityController.text.trim() != '') {
-                        await widget.store.updateCartQunatity(
-                          model: widget.model,
-                          value: quantityController.text.trim().split('.')[0],
-                          context: context,
-                        );
-                        // Navigator.pop(context);
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        // horizontal: blockSizeHorizontal(context: context) * 2,
-                        vertical: blockSizeVertical(context: context) * 2.5,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: ConstantData.viewColor,
-                            width: 3,
-                          ),
-                          right: BorderSide(
-                            color: ConstantData.viewColor,
-                            width: 3,
+                  child: Observer(
+                    builder: (_) => InkWell(
+                      onTap: () async {
+                        if (quantityController.text.trim() != '' &&
+                            widget.store.cartAddState == StoreState.SUCCESS) {
+                          await widget.store.updateCartQunatity(
+                            model: widget.model,
+                            value: quantityController.text.trim().split('.')[0],
+                            context: context,
+                          );
+                          // Navigator.pop(context);
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          // horizontal: blockSizeHorizontal(context: context) * 2,
+                          vertical: blockSizeVertical(context: context) * 2.5,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(
+                              color: ConstantData.viewColor,
+                              width: 3,
+                            ),
+                            right: BorderSide(
+                              color: ConstantData.viewColor,
+                              width: 3,
+                            ),
                           ),
                         ),
-                      ),
-                      child: ConstantWidget.getCustomText(
-                        'Confirm',
-                        ConstantData.mainTextColor,
-                        1,
-                        TextAlign.center,
-                        FontWeight.w600,
-                        font15Px(context: context) * 1.2,
+                        child: ConstantWidget.getCustomText(
+                          'Confirm',
+                          ConstantData.primaryColor,
+                          1,
+                          TextAlign.center,
+                          FontWeight.w600,
+                          font15Px(context: context) * 1.2,
+                        ),
                       ),
                     ),
                   ),

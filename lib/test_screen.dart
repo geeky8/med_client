@@ -28,7 +28,7 @@ class TestScreen extends StatelessWidget {
               ),
               InkWell(
                 onTap: () async {
-                  await DataBox().removeDataBox();
+                  // await DataBox().removeDataBox();
                 },
                 child: ConstantWidget.getButtonWidget(
                     context, 'Remove Data', ConstantData.primaryColor),
