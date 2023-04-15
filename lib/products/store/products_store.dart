@@ -951,6 +951,8 @@ abstract class _ProductsStore with Store {
         int.parse(value) < model.minQty) {
       Fluttertoast.showToast(msg: 'Quantity Not Available');
       // return model;
+    } else if (int.parse(value) % model.minQty != 0) {
+      Fluttertoast.showToast(msg: "Order in multiple of ${model.minQty}");
     } else {
       Navigator.pop(context);
       final rem = (int.parse(value) % model.minQty);
