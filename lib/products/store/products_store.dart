@@ -805,7 +805,7 @@ abstract class _ProductsStore with Store {
       if (cartOpt != null) {
         for (final i in model.productList) {
           final updatedModel = await updateProductsAccordingToCart(model: i);
-          findProductInProductList(model: updatedModel);
+          await findProductInProductList(model: updatedModel);
           list.add(updatedModel);
         }
         cartModel = model.copyWith(productList: list);
@@ -1085,9 +1085,10 @@ abstract class _ProductsStore with Store {
     }
   }
 
-  void findProductInProductList({required ProductModel model}) {
+  Future<void> findProductInProductList({required ProductModel model}) async {
     final category = categoriesfromValue(model.category);
-
+    final resp = await getProductDetails(model: model);
+    // debugPrint("------ checking details ----- ${resp.minQty}");
     switch (category) {
       case CategoriesType.ETHICAL:
         final index = ethicalProductList

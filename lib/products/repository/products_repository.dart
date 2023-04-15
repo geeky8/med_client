@@ -210,16 +210,16 @@ class ProductsRepository {
       final respBody = jsonDecode(resp.body);
       if (respBody['status'] == '1') {
         final data = respBody['data'] as Map<String, dynamic>;
-        // print(_data);
+        print("---- checking ----- s$data");
         currModel = model.copyWith(
-          expiryDate: data['dtExpiryDate'] as String,
-          description: data['Description'] as String,
-          productName: data['product_name'] as String,
-          productImg: data['product_img'] as String,
-          prodSaleTypeDetails: data['prodsaletypedetails'] as String,
-          company: data['compnaystr'] as String,
-          category: data['categorystr'] as String,
-        );
+            expiryDate: data['dtExpiryDate'] as String,
+            description: data['Description'] as String,
+            productName: data['product_name'] as String,
+            productImg: data['product_img'] as String,
+            prodSaleTypeDetails: data['prodsaletypedetails'] as String,
+            company: data['compnaystr'] as String,
+            category: data['categorystr'] as String,
+            minQty: int.parse((data['minqty'] ?? "1") as String));
       }
     }
     return currModel;
