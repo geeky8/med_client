@@ -569,31 +569,33 @@ class CartQuantityWidget extends StatelessWidget {
       case CategoriesType.ETHICAL:
         final index = store.ethicalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.ethicalProductList[index];
+        return (index != -1) ? store.ethicalProductList[index] : model;
       case CategoriesType.GENERIC:
         final index = store.genericProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.genericProductList[index];
+        return (index != -1) ? store.genericProductList[index] : model;
       case CategoriesType.SURGICAL:
         final index = store.surgicalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.surgicalProductList[index];
+        return (index != -1) ? store.surgicalProductList[index] : model;
       case CategoriesType.VETERINARY:
         final index = store.veterinaryProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.veterinaryProductList[index];
+        return (index != -1) ? store.veterinaryProductList[index] : model;
       case CategoriesType.AYURVEDIC:
         final index = store.ayurvedicProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.ayurvedicProductList[index];
+        return (index != -1) ? store.ayurvedicProductList[index] : model;
       case CategoriesType.GENERAL:
         final index = store.generalProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.generalProductList[index];
+        return (index != -1) ? store.generalProductList[index] : model;
       case CategoriesType.VACCINE:
         final index = store.vaccineProductList
             .indexWhere((element) => element.pid == model.pid);
-        return store.vaccineProductList[index];
+        return (index != -1) ? store.vaccineProductList[index] : model;
+      default:
+        return model;
     }
   }
 

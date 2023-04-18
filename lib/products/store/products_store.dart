@@ -805,7 +805,7 @@ abstract class _ProductsStore with Store {
       if (cartOpt != null) {
         for (final i in model.productList) {
           final updatedModel = await updateProductsAccordingToCart(model: i);
-          await findProductInProductList(model: updatedModel);
+          // await findProductInProductList(model: updatedModel);
           list.add(updatedModel);
         }
         cartModel = model.copyWith(productList: list);
