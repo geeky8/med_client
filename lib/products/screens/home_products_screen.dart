@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations
+// ignore_for_file: unnecessary_string_interpolations, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -218,6 +218,12 @@ class ProductHomeScreen extends StatelessWidget {
                 // setState(() {});
               } else {
                 await store.intializeMic();
+              }
+              if (store.speechToText.lastRecognizedWords.isNotEmpty) {
+                await store.textSpeechTask(
+                  text: store.speechToText.lastRecognizedWords,
+                  context: context,
+                );
               }
               // setState(() {});
             },

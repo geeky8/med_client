@@ -201,6 +201,50 @@ class CartScreen extends StatelessWidget {
             ],
           ),
         ),
+        floatingActionButton: Observer(builder: (_) {
+          return Padding(
+            padding: EdgeInsets.only(
+              top: blockSizeVertical(context: context) * 7,
+            ),
+            child: Container(
+              padding:
+                  EdgeInsets.all(blockSizeVertical(context: context) / 1.5),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: (!store.micIsListening)
+                    ? ConstantData.primaryColor
+                    : ConstantData.color1,
+              ),
+              child: IconButton(
+                onPressed: () async {
+                  debugPrint('------ listenin--- ');
+                  if (store.micEnabled && store.speechToText.isNotListening) {
+                    await store.startListening(context: context);
+                    // setState(() {});
+                  } else if (store.micEnabled &&
+                      !store.speechToText.isNotListening) {
+                    await store.stopListening();
+                    // setState(() {});
+                  } else {
+                    await store.intializeMic();
+                  }
+                  if (store.speechToText.lastRecognizedWords.isNotEmpty) {
+                    await store.textSpeechTask(
+                      text: store.speechToText.lastRecognizedWords,
+                      // context: context,
+                    );
+                  }
+                  // setState(() {});
+                },
+                icon: Icon(
+                  (!store.micIsListening) ? Icons.mic : Icons.stop,
+                  size: blockSizeVertical(context: context) * 3,
+                  color: ConstantData.bgColor,
+                ),
+              ),
+            ),
+          );
+        }),
         body: SafeArea(
           child: Observer(builder: (_) {
             final state = store.cartState;
@@ -258,7 +302,8 @@ class CartScreen extends StatelessWidget {
                     }),
                   ],
                 ),
-                if (state == StoreState.LOADING)
+                if (state == StoreState.LOADING &&
+                    store.speechLoaded == StoreState.LOADING)
                   Container(
                     height: screenHeight(context: context),
                     width: screenWidth(context: context),

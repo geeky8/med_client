@@ -475,6 +475,22 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$speechLoadedAtom =
+      Atom(name: '_ProductsStore.speechLoaded', context: context);
+
+  @override
+  StoreState get speechLoaded {
+    _$speechLoadedAtom.reportRead();
+    return super.speechLoaded;
+  }
+
+  @override
+  set speechLoaded(StoreState value) {
+    _$speechLoadedAtom.reportWrite(value, super.speechLoaded, () {
+      super.speechLoaded = value;
+    });
+  }
+
   late final _$searchStateAtom =
       Atom(name: '_ProductsStore.searchState', context: context);
 
@@ -945,6 +961,7 @@ micEnabled: ${micEnabled},
 recommend: ${recommend},
 recommedLoading: ${recommedLoading},
 micIsListening: ${micIsListening},
+speechLoaded: ${speechLoaded},
 searchState: ${searchState},
 searchController: ${searchController},
 searchList: ${searchList},

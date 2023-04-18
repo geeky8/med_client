@@ -537,7 +537,7 @@ class ProductsRepository {
     }
   }
 
-  final myNgorkUrl = 'http://29b9-104-199-255-16.ngrok.io/';
+  final myNgorkUrl = 'http://2f6c-34-170-214-208.ngrok.io/';
 
   Future<List<String>> getRecommedations({required String name}) async {
     final result = HashSet<String>();

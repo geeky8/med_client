@@ -174,7 +174,10 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                 onPressed: () async {
                   debugPrint('------ listenin--- ');
                   if (store.micEnabled && store.speechToText.isNotListening) {
-                    await store.startListening(model: widget.model);
+                    await store.startListening(
+                      model: widget.model,
+                      context: context,
+                    );
                     setState(() {});
                   } else if (store.micEnabled &&
                       !store.speechToText.isNotListening) {
@@ -182,6 +185,13 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                     setState(() {});
                   } else {
                     await store.intializeMic();
+                  }
+                  if (store.speechToText.lastRecognizedWords.isNotEmpty) {
+                    await store.textSpeechTask(
+                      text: store.speechToText.lastRecognizedWords,
+                      context: context,
+                      model: widget.model,
+                    );
                   }
                   setState(() {});
                 },

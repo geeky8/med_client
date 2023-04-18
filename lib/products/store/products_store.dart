@@ -18,6 +18,7 @@ import 'package:medrpha_customer/products/models/cart_model.dart';
 import 'package:medrpha_customer/products/models/category_model.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/repository/products_repository.dart';
+import 'package:medrpha_customer/products/screens/cart_screen.dart';
 import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/utils/order_dialog.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
@@ -420,10 +421,23 @@ abstract class _ProductsStore with Store {
         break;
       case ProductTextSpeech.PRODUCT:
         debugPrint("fetched $resp");
-        final index = ethicalProductList
-            .indexWhere((element) => element.productName == resp);
-        if (index != -1 && context != null) {
-          /// Initalisation of required stores [ProductsStore,LoginStore,ProfileStore,OrderHistoryStore]
+        if (context != null) {
+          checkAllProducts(resp: resp, context: context);
+        }
+
+        break;
+      case ProductTextSpeech.REMOVECART:
+        debugPrint('Removing from cart');
+        if (model != null) {
+          final index = cartModel.productList
+              .indexWhere((element) => element.pid == model.pid);
+          if (index != -1) {
+            await removeFromCart(model: model);
+          }
+        }
+        break;
+      case ProductTextSpeech.GOTOCART:
+        if (context != null) {
           final store = context.read<ProductsStore>();
           final loginStore = context.read<LoginStore>();
           final profileStore = context.read<ProfileStore>();
@@ -441,22 +455,121 @@ abstract class _ProductsStore with Store {
                   Provider.value(value: orderHistoryStore),
                   Provider.value(value: bottomNavigationStore),
                 ],
-                child: ProductsDetailScreen(model: ethicalProductList[index]),
+                child: const CartScreen(),
               ),
             ),
           );
         }
         break;
-      case ProductTextSpeech.REMOVECART:
-        debugPrint('Removing from cart');
-        if (model != null) {
-          final index = cartModel.productList
-              .indexWhere((element) => element.pid == model.pid);
-          if (index != -1) {
-            await removeFromCart(model: model);
-          }
-        }
+      case ProductTextSpeech.CHECKOUT:
+        // TODO: Handle this case.
         break;
+      case ProductTextSpeech.CONFIRM_CHECKOUT:
+        // TODO: Handle this case.
+        break;
+      case ProductTextSpeech.CLEAR_CART:
+        await clearCart();
+        break;
+    }
+  }
+
+  Future<void> clearCart() async {
+    speechLoaded = StoreState.LOADING;
+    for (final model in cartModel.productList) {
+      await removeFromCart(model: model);
+    }
+    speechLoaded = StoreState.SUCCESS;
+  }
+
+  void checkAllProducts({required String resp, required BuildContext context}) {
+    /// Initalisation of required stores [ProductsStore,LoginStore,ProfileStore,OrderHistoryStore]
+    final store = context.read<ProductsStore>();
+    final loginStore = context.read<LoginStore>();
+    final profileStore = context.read<ProfileStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
+    final ethIndex =
+        ethicalProductList.indexWhere((element) => element.productName == resp);
+    if (ethIndex != -1) {
+      debugPrint("ethical product nav -----");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MultiProvider(
+            providers: [
+              Provider.value(value: store),
+              Provider.value(value: loginStore),
+              Provider.value(value: profileStore),
+              Provider.value(value: orderHistoryStore),
+              Provider.value(value: bottomNavigationStore),
+            ],
+            child: ProductsDetailScreen(model: ethicalProductList[ethIndex]),
+          ),
+        ),
+      );
+      return;
+    }
+    final vetIndex = veterinaryProductList
+        .indexWhere((element) => element.productName == resp);
+    if (vetIndex != -1) {
+      debugPrint("vet product nav -----");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MultiProvider(
+            providers: [
+              Provider.value(value: store),
+              Provider.value(value: loginStore),
+              Provider.value(value: profileStore),
+              Provider.value(value: orderHistoryStore),
+              Provider.value(value: bottomNavigationStore),
+            ],
+            child: ProductsDetailScreen(model: veterinaryProductList[vetIndex]),
+          ),
+        ),
+      );
+      return;
+    }
+    final genIndex =
+        generalProductList.indexWhere((element) => element.productName == resp);
+    if (genIndex != -1) {
+      debugPrint("---- gen nav prodcts");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MultiProvider(
+            providers: [
+              Provider.value(value: store),
+              Provider.value(value: loginStore),
+              Provider.value(value: profileStore),
+              Provider.value(value: orderHistoryStore),
+              Provider.value(value: bottomNavigationStore),
+            ],
+            child: ProductsDetailScreen(model: generalProductList[genIndex]),
+          ),
+        ),
+      );
+      return;
+    }
+    final vacIndex =
+        vaccineProductList.indexWhere((element) => element.productName == resp);
+    if (vacIndex != -1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MultiProvider(
+            providers: [
+              Provider.value(value: store),
+              Provider.value(value: loginStore),
+              Provider.value(value: profileStore),
+              Provider.value(value: orderHistoryStore),
+              Provider.value(value: bottomNavigationStore),
+            ],
+            child: ProductsDetailScreen(model: vaccineProductList[vacIndex]),
+          ),
+        ),
+      );
+      return;
     }
   }
 
@@ -470,11 +583,11 @@ abstract class _ProductsStore with Store {
       await speechToText.listen(
         // cancelOnError: (),
         onResult: (result) async {
-          await _onSpeechResult(
-            result: result,
-            model: model,
-            context: context,
-          );
+          // await _onSpeechResult(
+          //   result: result,
+          //   model: model,
+          //   context: context,
+          // );
         },
         listenFor: const Duration(seconds: 3),
       );
@@ -508,19 +621,24 @@ abstract class _ProductsStore with Store {
 
   String lastWords = "";
 
-  Future<void> _onSpeechResult({
-    required SpeechRecognitionResult result,
-    ProductModel? model,
-    BuildContext? context,
-  }) async {
-    lastWords = result.recognizedWords;
-    await textSpeechTask(
-      text: lastWords,
-      model: model,
-      context: context,
-    );
-    debugPrint('--------- recognized $lastWords');
-  }
+  @observable
+  StoreState speechLoaded = StoreState.SUCCESS;
+
+  // Future<void> _onSpeechResult({
+  //   required SpeechRecognitionResult result,
+  //   ProductModel? model,
+  //   BuildContext? context,
+  // }) async {
+  //   lastWords = result.recognizedWords;
+  //   if (lastWords.isNotEmpty && speechLoaded == StoreState.SUCCESS) {
+  //     await textSpeechTask(
+  //       text: lastWords,
+  //       model: model,
+  //       context: context,
+  //     );
+  //   }
+  //   debugPrint('--------- recognized $lastWords');
+  // }
 
   @action
   Future<void> getSurgicalProducts({bool? load}) async {
