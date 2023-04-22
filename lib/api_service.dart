@@ -1,4 +1,4 @@
-// ----------------------------------------------------------- PRODUCTION APIS ------------------------------------------------------------------//
+// // ----------------------------------------------------------- PRODUCTION APIS ------------------------------------------------------------------//
 
 // --------------------- Version URL ----------------------------------//
 const versionUrl = 'https://api.medrpha.com/api/Default/latestappversion';
@@ -54,17 +54,18 @@ const productUrl = 'https://partner.medrpha.com/product_image/';
 const licenseUrl = 'https://medrpha.com/user_reg/';
 const invoiceUrl = 'https://medrpha.com/InvoicePDF/';
 const apiKey = 'rzp_live_kfbonxeuRfZYaL';
-const apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR'; 
+const apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
 
 // ----------------------------------------------------------- TEST APIS ------------------------------------------------------------------//
 
-//// --------------------- Version URL ----------------------------------//
-//const versionUrl = 'https://apitest.medrpha.com/api/Default/latestappversion';
+// // --------------------- Version URL ----------------------------------//
+// const versionUrl = 'https://apitest.medrpha.com/api/Default/latestappversion';
 
-//// --------------------- Products URL ---------------------------------//
+// // --------------------- Products URL ---------------------------------//
 // const categoryUrl = 'https://apitest.medrpha.com/api/product/getcategory';
 // const productsUrl = 'https://apitest.medrpha.com/api/product/productlist';
-// const productDetailsUrl = 'https://apitest.medrpha.com/api/product/productdetails';
+// const productDetailsUrl =
+//     'https://apitest.medrpha.com/api/product/productdetails';
 // const updateProductQuantityUrl =
 //     'https://apitest.medrpha.com/api/cart/updatequantity';
 // const addToCartUrl = 'https://apitest.medrpha.com/api/cart/addtocart';
@@ -75,9 +76,10 @@ const apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
 // const checkoutUrl = 'https://test.medrpha.com/api/checkout/checkout';
 // const ordersPayment = 'https://api.razorpay.com/v1/orders';
 // const paymentConfirmUrl = 'https://test.medrpha.com/api/order/payconfirmed';
-// const checkoutConfirmUrl = 'https://test.medrpha.com/api/checkout/checkoutconfirm';
+// const checkoutConfirmUrl =
+//     'https://test.medrpha.com/api/checkout/checkoutconfirm';
 
-//// ---------------------- Profile URL -----------------------------------//
+// // ---------------------- Profile URL -----------------------------------//
 // const getProfileUrl = 'https://apitest.medrpha.com/api/profile/getprofile';
 // const uploadProfileUrl = 'https://apitest.medrpha.com/api/register/register';
 // const uploadDLUrl = 'https://apitest.medrpha.com/api/register/registerdlno';
@@ -92,8 +94,10 @@ const apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
 // const fssaiImgUrl = 'https://test.medrpha.com/api/register/registerfssaiimg';
 // const dl1ImgUrl = 'https://test.medrpha.com/api/register/registerdl1';
 // const dl2ImgUrl = 'https://test.medrpha.com/api/register/registerdl2';
-// const gstNoDelete = 'https://apitest.medrpha.com/api/register/registergstnodelete';
-// const fssaiNoDelete = 'https://apitest.medrpha.com/api/register/registerfssaidelete';
+// const gstNoDelete =
+//     'https://apitest.medrpha.com/api/register/registergstnodelete';
+// const fssaiNoDelete =
+//     'https://apitest.medrpha.com/api/register/registerfssaidelete';
 
 // // ------------------------------ Order History URL ------------------------------//
 // const orderUrl = 'https://apitest.medrpha.com/api/order/orderlist';
@@ -105,7 +109,7 @@ const apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
 // const checkOTPUrl = 'https://apitest.medrpha.com/api/Default/otpverify';
 // const checkStatus = 'https://apitest.medrpha.com/api/Default/userstatus';
 
-////------------------------------- Micellenous URL -------------------------------//
+// //------------------------------- Micellenous URL -------------------------------//
 // const catImgUrl = 'https://superadmintest.medrpha.com/allimage/';
 // const productUrl = 'https://partnertest.medrpha.com/product_image/';
 // const licenseUrl = 'https://test.medrpha.com/user_reg/';
