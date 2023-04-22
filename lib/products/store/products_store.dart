@@ -470,11 +470,11 @@ abstract class _ProductsStore with Store {
       await speechToText.listen(
         // cancelOnError: (),
         onResult: (result) async {
-          await _onSpeechResult(
-            result: result,
-            model: model,
-            context: context,
-          );
+          // await _onSpeechResult(
+          //   result: result,
+          //   model: model,
+          //   context: context,
+          // );
         },
         listenFor: const Duration(seconds: 3),
       );
@@ -508,19 +508,19 @@ abstract class _ProductsStore with Store {
 
   String lastWords = "";
 
-  Future<void> _onSpeechResult({
-    required SpeechRecognitionResult result,
-    ProductModel? model,
-    BuildContext? context,
-  }) async {
-    lastWords = result.recognizedWords;
-    await textSpeechTask(
-      text: lastWords,
-      model: model,
-      context: context,
-    );
-    debugPrint('--------- recognized $lastWords');
-  }
+  // Future<void> _onSpeechResult({
+  //   required SpeechRecognitionResult result,
+  //   ProductModel? model,
+  //   BuildContext? context,
+  // }) async {
+  //   lastWords = result.recognizedWords;
+  //   await textSpeechTask(
+  //     text: lastWords,
+  //     model: model,
+  //     context: context,
+  //   );
+  //   debugPrint('--------- recognized $lastWords');
+  // }
 
   @action
   Future<void> getSurgicalProducts({bool? load}) async {
