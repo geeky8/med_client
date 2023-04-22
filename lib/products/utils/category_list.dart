@@ -9,6 +9,8 @@ import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 
+import '../../api_service.dart';
+
 class CategoryList extends StatelessWidget {
   /// List of all categories based on [CategoryModel]
   const CategoryList({
@@ -118,8 +120,8 @@ class CategoryList extends StatelessWidget {
                                 shape: BoxShape.circle,
                               ),
                               child: CachedNetworkImage(
-                                imageUrl: ConstantData.catImgUrl +
-                                    list[index].categoryImgUrl,
+                                imageUrl:
+                                    catImgUrl + list[index].categoryImgUrl,
                                 fit: BoxFit.fill,
                               ),
                             ),

@@ -14,6 +14,8 @@ import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:mobx/mobx.dart';
 
+import '../../api_service.dart';
+
 class ProductResponseModel {
   ProductResponseModel({
     required this.message,
@@ -50,17 +52,6 @@ class ProductResponseModel {
 
 class ProductsRepository {
   //---------------------------------------------- Products --------------------------------------------------//
-  //TODO: Change API to test or prod.
-
-  final _categoryUrl = 'https://api.medrpha.com/api/product/getcategory';
-  // final _categoryUrl = 'https://apitest.medrpha.com/api/product/getcategory';
-  final _productsUrl = 'https://api.medrpha.com/api/product/productlist';
-  // final _productsUrl = 'https://apitest.medrpha.com/api/product/productlist';
-  final _productDetailsUrl =
-      'https://api.medrpha.com/api/product/productdetails';
-  // final _productDetailsUrl =
-  //     'https://apitest.medrpha.com/api/product/productdetails';
-
   Future<List<CategoryModel>> getCategories() async {
     final catlist = <CategoryModel>[];
     final sessId = await DataBox().readSessId();
@@ -68,7 +59,7 @@ class ProductsRepository {
       // "sessid": "34c4efad30e6e2d4",
       "sessid": sessId,
     };
-    final resp = await _httpClient.post(Uri.parse(_categoryUrl), body: body);
+    final resp = await _httpClient.post(Uri.parse(categoryUrl), body: body);
 
     if (kDebugMode) {
       print('category resp -----------${resp.body}');
@@ -110,7 +101,7 @@ class ProductsRepository {
       "PageSize": pageSize ?? '20'
     };
 
-    final resp = await _httpClient.post(Uri.parse(_productsUrl), body: body);
+    final resp = await _httpClient.post(Uri.parse(productsUrl), body: body);
 
     // debugPrint('--- prod resp ---------${resp.body}');
 
@@ -165,7 +156,7 @@ class ProductsRepository {
       "PageSize": '20'
     };
 
-    final resp = await _httpClient.post(Uri.parse(_productsUrl), body: body);
+    final resp = await _httpClient.post(Uri.parse(productsUrl), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
@@ -204,7 +195,7 @@ class ProductsRepository {
     ProductModel currModel = model;
 
     final resp =
-        await _httpClient.post(Uri.parse(_productDetailsUrl), body: body);
+        await _httpClient.post(Uri.parse(productDetailsUrl), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
@@ -212,14 +203,15 @@ class ProductsRepository {
         final data = respBody['data'] as Map<String, dynamic>;
         print("---- checking ----- s$data");
         currModel = model.copyWith(
-            expiryDate: data['dtExpiryDate'] as String,
-            description: data['Description'] as String,
-            productName: data['product_name'] as String,
-            productImg: data['product_img'] as String,
-            prodSaleTypeDetails: data['prodsaletypedetails'] as String,
-            company: data['compnaystr'] as String,
-            category: data['categorystr'] as String,
-            minQty: int.parse((data['minqty'] ?? "1") as String));
+          expiryDate: data['dtExpiryDate'] as String,
+          description: data['Description'] as String,
+          productName: data['product_name'] as String,
+          productImg: data['product_img'] as String,
+          prodSaleTypeDetails: data['prodsaletypedetails'] as String,
+          company: data['compnaystr'] as String,
+          category: data['categorystr'] as String,
+          // minQty: int.parse((data['minqty'] ?? "1") as String),
+        );
       }
     }
     return currModel;
@@ -228,23 +220,6 @@ class ProductsRepository {
   final _httpClient = http.Client();
 
 //------------------------------------------------ Cart -----------------------------------------//
-  //TODO: Change API to test or prod.
-
-  final _updateProductQuantityUrl =
-      'https://api.medrpha.com/api/cart/updatequantity';
-  // final _updateProductQuantityUrl =
-  //     'https://apitest.medrpha.com/api/cart/updatequantity';
-  final _addToCartUrl = 'https://api.medrpha.com/api/cart/addtocart';
-  // final _addToCartUrl = 'https://apitest.medrpha.com/api/cart/addtocart';
-  final _getCartUrl = 'https://api.medrpha.com/api/cart/viewcart';
-  // final _getCartUrl = 'https://apitest.medrpha.com/api/cart/viewcart';
-  final _removeCartUrl = 'https://api.medrpha.com/api/cart/deletecart';
-  // final _removeCartUrl = 'https://apitest.medrpha.com/api/cart/deletecart';
-
-  final _plusCart = 'https://api.medrpha.com/api/cart/cartplus';
-  // final _plusCart = 'https://apitest.medrpha.com/api/cart/cartplus';
-  final _minusCart = 'https://api.medrpha.com/api/cart/cartminus';
-  // final _minusCart = 'https://apitest.medrpha.com/api/cart/cartminus';
 
   Future<int?> plusTheCart({required ProductModel model}) async {
     final sessId = await DataBox().readSessId();
@@ -256,7 +231,7 @@ class ProductsRepository {
       "quantity": model.quantity
     };
 
-    final resp = await _httpClient.post(Uri.parse(_plusCart), body: body);
+    final resp = await _httpClient.post(Uri.parse(plusCart), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
@@ -277,7 +252,7 @@ class ProductsRepository {
       "priceID": model.priceId,
     };
 
-    final resp = await _httpClient.post(Uri.parse(_minusCart), body: body);
+    final resp = await _httpClient.post(Uri.parse(minusCart), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
@@ -301,8 +276,8 @@ class ProductsRepository {
       "qtyfield": model.cartQuantity.toString(),
     };
 
-    final resp = await _httpClient.post(Uri.parse(_updateProductQuantityUrl),
-        body: body);
+    final resp =
+        await _httpClient.post(Uri.parse(updateProductQuantityUrl), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
@@ -325,7 +300,7 @@ class ProductsRepository {
       "saleprice": model.salePrice,
     };
 
-    final resp = await _httpClient.post(Uri.parse(_addToCartUrl), body: body);
+    final resp = await _httpClient.post(Uri.parse(addToCartUrl), body: body);
 
     // print('------ add to cart${resp.body}');
 
@@ -349,7 +324,7 @@ class ProductsRepository {
       "priceID": model.priceId
     };
 
-    final resp = await _httpClient.post(Uri.parse(_removeCartUrl), body: body);
+    final resp = await _httpClient.post(Uri.parse(removeCartUrl), body: body);
 
     debugPrint('------ removal from cart -------${resp.body}');
 
@@ -376,7 +351,7 @@ class ProductsRepository {
     int count = 0;
     String total = '';
 
-    final resp = await _httpClient.post(Uri.parse(_getCartUrl), body: body);
+    final resp = await _httpClient.post(Uri.parse(getCartUrl), body: body);
 
     if (kDebugMode) {
       print('------ get cart${resp.body}');
@@ -407,18 +382,6 @@ class ProductsRepository {
   }
 
   //------------------- ----------------Checkout ------------------------------------------------------//
-  //TODO: Change API to test or prod.
-
-  final _checkoutUrl = 'https://medrpha.com/api/checkout/checkout';
-  // final _checkoutUrl = 'https://test.medrpha.com/api/checkout/checkout';
-  final _ordersPayment = 'https://api.razorpay.com/v1/orders';
-  final _paymentConfirmUrl = 'https://medrpha.com/api/order/payconfirmed';
-  // final _paymentConfirmUrl =
-  //     'https://apitest.medrpha.com/api/order/payconfirmed';
-  final _checkoutConfirmUrl =
-      'https://medrpha.com/api/checkout/checkoutconfirm';
-  // final _checkoutConfirmUrl =
-  //     'https://test.medrpha.com/api/checkout/checkoutconfirm';
 
   Future<String?> checkout({
     required String amount,
@@ -437,7 +400,7 @@ class ProductsRepository {
       print(body.toString());
     }
 
-    final resp = await _httpClient.post(Uri.parse(_checkoutUrl), body: body);
+    final resp = await _httpClient.post(Uri.parse(checkoutUrl), body: body);
 
     if (kDebugMode) {
       print('------ checkout${resp.body}');
@@ -445,7 +408,7 @@ class ProductsRepository {
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      print('---------- checkout ${respBody}');
+      // print('---------- checkout ${respBody}');
       if (respBody['status'] == '1') {
         return respBody['order_id'] as String;
       } else {
@@ -469,7 +432,7 @@ class ProductsRepository {
     String confirm = '';
 
     final resp =
-        await _httpClient.post(Uri.parse(_checkoutConfirmUrl), body: body);
+        await _httpClient.post(Uri.parse(checkoutConfirmUrl), body: body);
     if (kDebugMode) {
       print('---------- Confirm checkout ---------- ${resp.body}');
     }
@@ -488,7 +451,7 @@ class ProductsRepository {
     int status = 0;
 
     final resp =
-        await _httpClient.post(Uri.parse(_paymentConfirmUrl), body: body);
+        await _httpClient.post(Uri.parse(paymentConfirmUrl), body: body);
 
     print('--------Payement resp ${resp.body}');
 
@@ -506,8 +469,8 @@ class ProductsRepository {
     required String payment,
     required int noOfProducts,
   }) async {
-    final userName = ConstantData.apiKey;
-    final pass = ConstantData.apiSecretKey;
+    const userName = apiKey;
+    const pass = apiSecretKey;
 
     final basicAuth = 'Basic ${base64Encode(utf8.encode('$userName:$pass'))}';
 
@@ -523,7 +486,7 @@ class ProductsRepository {
     };
 
     final resp = await http.post(
-      Uri.parse(_ordersPayment),
+      Uri.parse(ordersPayment),
       headers: headers,
       body: body,
     );

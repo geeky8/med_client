@@ -154,7 +154,7 @@ class BackGroundTile extends StatelessWidget {
               ),
               child: Center(
                 child: CachedNetworkImage(
-                  imageUrl: ConstantData.catImgUrl + catImgUrl,
+                  imageUrl: catImgUrl + catImgUrl,
                   fit: BoxFit.fill,
                 ),
               ),

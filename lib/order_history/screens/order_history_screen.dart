@@ -20,6 +20,8 @@ import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+
+import '../../api_service.dart';
 // import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class OrderHistoryScreen extends StatelessWidget {
@@ -372,7 +374,7 @@ class _OrderTileState extends State<OrderTile> {
     final email = profileModel.firmInfoModel.email;
 
     var options = {
-      'key': ConstantData.apiKey,
+      'key': apiKey,
       'amount': double.parse(payment) * 100,
       'name': 'Mederpha',
       'order_id': id,
@@ -510,7 +512,7 @@ class _OrderTileState extends State<OrderTile> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: CachedNetworkImage(
-                        imageUrl: ConstantData.productUrl +
+                        imageUrl: productUrl +
                             widget.model.ordersList.first.productImg,
                         fit: BoxFit.cover,
                         height: imageSize * 1.5,
@@ -1096,7 +1098,7 @@ class OrdersList extends StatelessWidget {
                                       ),
                                       image: DecorationImage(
                                           image: CachedNetworkImageProvider(
-                                              ConstantData.productUrl +
+                                              productUrl +
                                                   list[index]
                                                       .ordersList[0]
                                                       .productImg),

@@ -19,6 +19,8 @@ import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:provider/provider.dart';
 
+import '../../api_service.dart';
+
 class ProductViewList extends StatelessWidget {
   const ProductViewList({
     Key? key,
@@ -162,6 +164,8 @@ class ProductViewList extends StatelessWidget {
                   if (list[index].expiryDate == '') {
                     model = await store.getProductDetails(model: list[index]);
                   }
+
+                  debugPrint("---- testing product -------- ${model.toMap()}");
 
                   addToList(model);
 
@@ -422,7 +426,7 @@ class ProductViewList extends StatelessWidget {
         // ,
         image: DecorationImage(
           image: CachedNetworkImageProvider(
-            ConstantData.productUrl + list[index].productImg,
+            productUrl + list[index].productImg,
             errorListener: () =>
                 Image.asset('${ConstantData.assetsPath}no_image.png'),
           ),

@@ -27,6 +27,8 @@ class SearchScreen extends StatelessWidget {
     double radius = ConstantWidget.getPercentSize(height, 10);
     double margin = ConstantWidget.getScreenPercentSize(context, 2);
 
+    final controller = TextEditingController();
+
     String? termValue;
 
     return Scaffold(
@@ -61,16 +63,27 @@ class SearchScreen extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all((margin * 1.2)),
                   child: TextFormField(
+                    controller: controller,
                     enabled: true,
-                    autofocus: true,
+                    autofocus: false,
                     style: TextStyle(
                       fontFamily: ConstantData.fontFamily,
                       fontWeight: FontWeight.w400,
                     ),
                     onChanged: (value) async {
                       await store.getSearchedResults(term: value);
-                      termValue = value;
+                      // termValue = value;
                     },
+                    // onEditingComplete: () async {
+                    //   await store.getSearchedResults(
+                    //     term: controller.text.trim(),
+                    //   );
+                    //   // termValue = value;
+                    // },
+                    // onTapOutside: (data) {
+                    //   debugPrint(data.position.toString());
+                    //   store.searchList.clear();
+                    // },
                     maxLines: 1,
                     textAlignVertical: TextAlignVertical.center,
                     textAlign: TextAlign.left,

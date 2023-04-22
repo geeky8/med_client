@@ -7,16 +7,10 @@ import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../../api_service.dart';
+
 class OrderHistoryRepository {
   final _httpClient = http.Client();
-  //TODO: Change APIS from test to Prod.
-
-  final _orderUrl = 'https://api.medrpha.com/api/order/orderlist';
-  // final _orderUrl = 'https://apitest.medrpha.com/api/order/orderlist';
-  final _ordersListUrl = 'https://api.medrpha.com/api/order/orderdetail';
-  // final _ordersListUrl = 'https://apitest.medrpha.com/api/order/orderdetail';
-  final _cancelOrderUrl = 'https://api.medrpha.com/api/order/ordercancel';
-  // final _cancelOrderUrl = 'https://apitest.medrpha.com/api/order/ordercancel';
 
   Future<List<OrderHistoryModel>> getListOrdersHistory(
       {String? fromDate, String? toDate, String? orderNo}) async {
@@ -30,7 +24,7 @@ class OrderHistoryRepository {
       "sessid": sessId,
     };
 
-    final resp = await _httpClient.post(Uri.parse(_orderUrl), body: body);
+    final resp = await _httpClient.post(Uri.parse(orderUrl), body: body);
     // print('------ history model ${_resp.body}');
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
@@ -78,7 +72,7 @@ class OrderHistoryRepository {
     final sessId = await DataBox().readSessId();
     final body = {"sessid": sessId, "order_id": orderId};
 
-    final resp = await _httpClient.post(Uri.parse(_ordersListUrl), body: body);
+    final resp = await _httpClient.post(Uri.parse(ordersListUrl), body: body);
 
     OrderHistoryResponseModel responseModel = OrderHistoryResponseModel(
       productList: [],
@@ -115,7 +109,7 @@ class OrderHistoryRepository {
     final sessId = await DataBox().readSessId();
     final body = {"sessid": sessId, "order_id": id, "remarks": text};
 
-    final resp = await _httpClient.post(Uri.parse(_cancelOrderUrl), body: body);
+    final resp = await _httpClient.post(Uri.parse(cancelOrderUrl), body: body);
     if (kDebugMode) {
       print('cancel order ---------------- ${resp.body}');
     }

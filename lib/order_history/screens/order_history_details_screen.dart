@@ -21,6 +21,8 @@ import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 
+import '../../api_service.dart';
+
 class OrderHistoryDetailsScreen extends StatelessWidget {
   const OrderHistoryDetailsScreen({Key? key, required this.model})
       : super(key: key);
@@ -846,7 +848,7 @@ class ProductDetailsTile extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: CachedNetworkImage(
-                imageUrl: ConstantData.productUrl + model.productImg,
+                imageUrl: productUrl + model.productImg,
                 fit: BoxFit.cover,
                 height: imageSize,
                 width: imageSize * 1.5,
@@ -952,8 +954,7 @@ class OrderDetailsProductList extends StatelessWidget {
                               ),
                               image: DecorationImage(
                                   image: CachedNetworkImageProvider(
-                                      ConstantData.productUrl +
-                                          list[index].productImg),
+                                      productUrl + list[index].productImg),
                                   fit: BoxFit.cover),
                             ),
                             // child: Image.asset(ConstantData.assetsPath +

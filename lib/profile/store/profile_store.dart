@@ -18,6 +18,8 @@ import 'package:medrpha_customer/utils/storage.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:collection';
 
+import '../../api_service.dart';
+
 part 'profile_store.g.dart';
 
 class ProfileStore = _ProfileStore with _$ProfileStore;
@@ -297,10 +299,7 @@ abstract class _ProfileStore with Store {
       );
       // saveState = ButtonState.ERROR;
     } else {
-      //TODO: Update the URL's
-      const url = 'https://api.medrpha.com/api/register/registergstnodelete';
-      // const url =
-      // 'https://apitest.medrpha.com/api/register/registergstnodelete';
+      const url = gstNoDelete;
 
       debugPrint('---- delteting GST');
 
@@ -321,10 +320,8 @@ abstract class _ProfileStore with Store {
         model: fssaiModel,
       );
     } else {
-      //TODO: Update the URL's
-      const url = 'https://api.medrpha.com/api/register/registerfssaidelete';
-      // const url =
-      //     'https://apitest.medrpha.com/api/register/registerfssaidelete';
+      const url = fssaiNoDelete;
+
       debugPrint('---- delteting FSSAI');
 
       final resp = await _repository.deleteLicenses(

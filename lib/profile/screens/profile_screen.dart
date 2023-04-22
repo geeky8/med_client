@@ -31,6 +31,8 @@ import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../api_service.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({
     Key? key,
@@ -1394,11 +1396,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               UploadIconButton(
                                 icon: Icons.note_add_outlined,
                                 color: Colors.orange,
-                                // TODO: Update URL's
-                                // url:  'https://test.medrpha.com/api/register/registerfssaiimg',
-                                url:
-                                    'https://medrpha.com/api/register/registerfssaiimg',
-
+                                url: fssaiImgUrl,
                                 text: 'Camera',
                                 store: store,
                                 certificateType: LicenseType.FSSAI_CAMERA,
@@ -1417,11 +1415,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               UploadIconButton(
                                 icon: Icons.note_add_outlined,
                                 color: Colors.orange,
-                                // TODO: Update URL's
-                                // url:  'https://test.medrpha.com/api/register/registerfssaiimg',
-                                url:
-                                    'https://medrpha.com/api/register/registerfssaiimg',
-
+                                url: fssaiImgUrl,
                                 text: 'Gallery',
                                 store: store,
                                 certificateType: LicenseType.FSSAI_GALLERY,
@@ -1469,12 +1463,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                   context, 40),
                               child: CachedNetworkImage(
                                 imageUrl:
-                                    '${ConstantData.licenseUrl}${widget.phone}/${model.fssaiModel.fssaiImg}',
+                                    '$licenseUrl${widget.phone}/${model.fssaiModel.fssaiImg}',
                                 fit: BoxFit.cover,
                                 errorWidget: (context, e, _) =>
                                     CachedNetworkImage(
                                   imageUrl:
-                                      '${ConstantData.licenseUrl}${widget.phone}/${widget.model.fssaiModel.fssaiImg}',
+                                      '$licenseUrl${widget.phone}/${widget.model.fssaiModel.fssaiImg}',
                                   // errorWidget: (context, s, _) {
                                   //   return ConstantWidget.errorWidget(
                                   //       context: context,
@@ -1726,11 +1720,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             UploadIconButton(
                               icon: Icons.note_add_outlined,
                               color: Colors.orange,
-                              // TODO: Update URL's
-                              // url:  'https://test.medrpha.com/api/register/registerdl1',
-                              url:
-                                  'https://medrpha.com/api/register/registerdl1',
-
+                              url: dl1ImgUrl,
                               text: 'DL1',
                               store: store,
                               certificateType: LicenseType.DL1,
@@ -1738,10 +1728,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             UploadIconButton(
                               icon: Icons.note_add_outlined,
                               color: Colors.blue,
-                              // TODO: Update URL's
-                              // url:  'https://test.medrpha.com/api/register/registerdl2',
-                              url:
-                                  'https://medrpha.com/api/register/registerdl2',
+                              url: dl2ImgUrl,
                               text: 'DL2',
                               store: store,
                               certificateType: LicenseType.DL2,
@@ -1843,7 +1830,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       context, 40),
                                   child: CachedNetworkImage(
                                     imageUrl:
-                                        '${ConstantData.licenseUrl}${widget.phone}/${store.profileModel.drugLicenseModel.dlImg1}',
+                                        '$licenseUrl${widget.phone}/${store.profileModel.drugLicenseModel.dlImg1}',
                                     fit: BoxFit.cover,
                                     // errorWidget: (context, s, _) {
                                     //   return ConstantWidget.errorWidget(
@@ -1867,7 +1854,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       context, 40),
                                   child: CachedNetworkImage(
                                     imageUrl:
-                                        '${ConstantData.licenseUrl}${widget.phone}/${store.profileModel.drugLicenseModel.dlImg2}',
+                                        '$licenseUrl${widget.phone}/${store.profileModel.drugLicenseModel.dlImg2}',
                                     fit: BoxFit.cover,
                                     // errorWidget: (context, s, _) {
                                     //   return ConstantWidget.errorWidget(

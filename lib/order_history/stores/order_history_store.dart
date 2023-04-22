@@ -15,6 +15,8 @@ import 'package:mobx/mobx.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../api_service.dart';
+
 part 'order_history_store.g.dart';
 
 class OrderHistoryStore = _OrderHistoryStore with _$OrderHistoryStore;
@@ -80,7 +82,7 @@ abstract class _OrderHistoryStore with Store {
     required String invoice,
     required BuildContext context,
   }) async {
-    final url = '${ConstantData.invoiceUrl}$invoice.pdf';
+    final url = '$invoiceUrl$invoice.pdf';
 
     PermissionStatus status = await Permission.storage.status;
 

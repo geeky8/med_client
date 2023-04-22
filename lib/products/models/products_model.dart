@@ -114,6 +114,32 @@ class ProductModel {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      "id": pid,
+      "wpid": wpid,
+      "priceId": priceId,
+      "salePrice": salePrice,
+      "productImg": productImg,
+      "productName": productName,
+      "category": category,
+      "company": company,
+      "newMrp": newMrp,
+      "oldMrp": oldMrp,
+      "percentDiscount": percentDiscount,
+      "saleQtyType": saleQtyType,
+      "prodSaleTypeDetails": prodSaleTypeDetails,
+      "quantity": quantity,
+      "cartQuantity": cartQuantity,
+      "mrp": mrp,
+      "subTotal": subTotal,
+      "expiryDate": expiryDate,
+      "description": description,
+      "totalQtyPrice": totalQtyPrice,
+      "minQty": minQty,
+    };
+  }
+
   final int pid;
   final String wpid;
   final String priceId;

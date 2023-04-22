@@ -11,6 +11,7 @@ import 'package:medrpha_customer/products/utils/quantity_dialog.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:provider/provider.dart';
 
+import '../../api_service.dart';
 import '../../bottom_navigation/store/bottom_navigation_store.dart';
 import '../../order_history/stores/order_history_store.dart';
 import '../../profile/store/profile_store.dart';
@@ -665,7 +666,7 @@ class ImageWidget extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(font18Px(context: context)),
           child: CachedNetworkImage(
-              imageUrl: ConstantData.productUrl + list[index].productImg,
+              imageUrl: productUrl + list[index].productImg,
               height: ConstantWidget.getScreenPercentSize(context, 15),
               width: ConstantWidget.getWidthPercentSize(context, 45),
               fit: BoxFit.cover,

@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:medrpha_customer/api_service.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
@@ -99,15 +100,12 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<bool> _checkVersion() async {
     final httpClient = http.Client();
 
-    // TODO: Change from Production to Testing
-    const url = 'https://api.medrpha.com/api/Default/latestappversion';
-    // const url = 'https://apitest.medrpha.com/api/Default/latestappversion';
     final packageInfo = await PackageInfo.fromPlatform();
     if (kDebugMode) {
       print(packageInfo.buildNumber);
     }
     bool versionTrue = true;
-    final resp = await httpClient.get(Uri.parse(url));
+    final resp = await httpClient.get(Uri.parse(versionUrl));
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body) as Map<String, dynamic>;
       if (respBody['status'] as String == '1') {

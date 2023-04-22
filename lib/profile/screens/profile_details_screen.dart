@@ -17,6 +17,8 @@ import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:provider/provider.dart';
 
+import '../../api_service.dart';
+
 class ProfileDetailsScreen extends StatelessWidget {
   const ProfileDetailsScreen({Key? key}) : super(key: key);
 
@@ -419,7 +421,7 @@ class CertificateDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(radius),
         ),
         child: CachedNetworkImage(
-          imageUrl: '${ConstantData.licenseUrl}$phone/$url',
+          imageUrl: '$licenseUrl$phone/$url',
           fit: BoxFit.cover,
           errorWidget: (context, e, _) => SizedBox(
             height: ConstantWidget.getScreenPercentSize(context, 20),

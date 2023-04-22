@@ -9,6 +9,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:medrpha_customer/api_service.dart';
 import 'package:medrpha_customer/bottom_navigation/screens/landing_screen.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/button_state.dart';
@@ -27,6 +28,8 @@ import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:provider/provider.dart';
+
+import '../../api_service.dart';
 
 class NewProfileScreen extends StatefulWidget {
   const NewProfileScreen(
@@ -1210,7 +1213,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
               return UploadLicense(
                 certificateType: LicenseType.DL1,
                 store: store,
-                url: 'https://medrpha.com/api/register/registerdl1',
+                url: dl1ImgUrl,
                 descp: '(Upload from Gallery)',
                 label: 'Certificate DL1',
               );
@@ -1218,16 +1221,16 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
             return CustomImageWidget(
                 store: store,
                 certificateType: LicenseType.DL1,
-                url: 'https://medrpha.com/api/register/registerdl1',
+                url: dl1ImgUrl,
                 imageUrl:
-                    '${ConstantData.licenseUrl}${widget.phone}/${store.profileModel.drugLicenseModel.dlImg1}');
+                    '$licenseUrl${widget.phone}/${store.profileModel.drugLicenseModel.dlImg1}');
           }),
           Observer(builder: (_) {
             if (store.profileModel.drugLicenseModel.dlImg2 == '') {
               return UploadLicense(
                 certificateType: LicenseType.DL2,
                 store: store,
-                url: 'https://medrpha.com/api/register/registerdl2',
+                url: dl2ImgUrl,
                 descp: '(Upload from Gallery)',
                 label: 'Certificate DL2',
               );
@@ -1235,9 +1238,9 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
             return CustomImageWidget(
                 store: store,
                 certificateType: LicenseType.DL2,
-                url: 'https://medrpha.com/api/register/registerdl2',
+                url: dl2ImgUrl,
                 imageUrl:
-                    '${ConstantData.licenseUrl}${widget.phone}/${store.profileModel.drugLicenseModel.dlImg2}');
+                    '$licenseUrl${widget.phone}/${store.profileModel.drugLicenseModel.dlImg2}');
           }),
         ],
       ),
@@ -1541,7 +1544,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                     return UploadLicense(
                       certificateType: LicenseType.FSSAI_CAMERA,
                       store: store,
-                      url: 'https://medrpha.com/api/register/registerfssaiimg',
+                      url: fssaiImgUrl,
                       descp: '(Upload from Camera)',
                       label: 'FSSAI Certificate',
                     );
@@ -1549,9 +1552,9 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                   return CustomImageWidget(
                       store: store,
                       certificateType: LicenseType.FSSAI_CAMERA,
-                      url: 'https://medrpha.com/api/register/registerfssaiimg',
+                      url: fssaiImgUrl,
                       imageUrl:
-                          '${ConstantData.licenseUrl}${widget.phone}/${store.profileModel.fssaiModel.fssaiImg}');
+                          '$licenseUrl${widget.phone}/${store.profileModel.fssaiModel.fssaiImg}');
                 }),
                 Observer(
                   builder: (_) {
@@ -1573,7 +1576,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                     return UploadLicense(
                       certificateType: LicenseType.FSSAI_GALLERY,
                       store: store,
-                      url: 'https://medrpha.com/api/register/registerfssaiimg',
+                      url: fssaiImgUrl,
                       descp: '(Upload from Gallery)',
                       label: 'FSSAI Certificate',
                     );

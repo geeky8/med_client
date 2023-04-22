@@ -24,6 +24,7 @@ import 'package:medrpha_customer/utils/storage.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
+import '../../api_service.dart';
 import 'order_dialog.dart';
 
 class OnlinePaymentScreen extends StatefulWidget {
@@ -142,7 +143,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
     print('----- paybale -${payment}');
 
     var options = {
-      'key': ConstantData.apiKey,
+      'key': apiKey,
       'amount': double.parse(payment) * 100,
       'name': 'Mederpha',
       'order_id': id,

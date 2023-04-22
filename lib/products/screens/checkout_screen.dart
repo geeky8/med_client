@@ -16,6 +16,8 @@ import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:provider/provider.dart';
 
+import '../../api_service.dart';
+
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({
     Key? key,
@@ -167,7 +169,7 @@ class CheckoutScreen extends StatelessWidget {
                                           ),
                                           image: DecorationImage(
                                               image: CachedNetworkImageProvider(
-                                                ConstantData.productUrl +
+                                                productUrl +
                                                     productStore
                                                         .cartModel
                                                         .productList[index]

@@ -14,37 +14,9 @@ import 'package:medrpha_customer/profile/models/state_model.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 
+import '../../api_service.dart';
+
 class ProfileRepository {
-  //TODO: CHANGE APIS FROM TEST TO PROD
-
-  /// Get Profile
-  final _getProfileUrl = 'https://api.medrpha.com/api/profile/getprofile';
-  // final _getProfileUrl = 'https://apitest.medrpha.com/api/profile/getprofile';
-
-  /// For Customer Profile
-  final _uploadProfileUrl = 'https://api.medrpha.com/api/register/register';
-  // final _uploadProfileUrl = 'https://apitest.medrpha.com/api/register/register';
-
-  /// For Customer Drug License Details.
-  final _uploadDLUrl = 'https://api.medrpha.com/api/register/registerdlno';
-  // final _uploadDLUrl = 'https://apitest.medrpha.com/api/register/registerdlno';
-
-  /// For Customer GST Details.
-  final _uploadGSTUrl = 'https://api.medrpha.com/api/register/registergstno';
-  // final _uploadGSTUrl =
-  //     'https://apitest.medrpha.com/api/register/registergstno';
-
-  /// Customer address details
-  final _countryUrl = 'https://api.medrpha.com/api/register/getcountryall';
-  // final _countryUrl = 'https://apitest.medrpha.com/api/register/getcountryall';
-  final _stateUrl = 'https://api.medrpha.com/api/register/getstateall';
-  // final _stateUrl = 'https://apitest.medrpha.com/api/register/getstateall';
-
-  /// Register FSSAI
-  final _uploadFssaiUrl = 'https://api.medrpha.com/api/register/registerfssai';
-  // final _uploadFssaiUrl =
-  //     'https://apitest.medrpha.com/api/register/registerfssai';
-
   final httpClient = http.Client();
 
   Future<int?> deleteLicenses({required String url}) async {
@@ -71,7 +43,7 @@ class ProfileRepository {
 
     final countryList = <CountryModel>[];
 
-    final resp = await httpClient.post(Uri.parse(_countryUrl), body: body);
+    final resp = await httpClient.post(Uri.parse(countryUrl), body: body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       if (respBody['status'] == '1') {
@@ -95,7 +67,7 @@ class ProfileRepository {
 
     final stateList = <StateModel>[];
 
-    final resp = await httpClient.post(Uri.parse(_stateUrl), body: body);
+    final resp = await httpClient.post(Uri.parse(stateUrl), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
@@ -112,16 +84,14 @@ class ProfileRepository {
 
   Future<List<CityModel>> getCity({String? stateId}) async {
     final sessId = await DataBox().readSessId();
-    String cityUrl = 'https://api.medrpha.com/api/register/getcityall';
-    // final _cityUrl = 'https://apitest.medrpha.com/api/register/getcityall';
+    String cityUrl = cityUrlAll;
 
     Map<String, dynamic> body = {
       "sessid": sessId,
     };
 
     if (stateId != null) {
-      cityUrl = 'https://api.medrpha.com/api/register/getcity';
-      // cityUrl = 'https://api.medrpha.com/api/register/getcity';
+      cityUrl = cityUrlSingle;
       body = {"sessid": sessId, "stateid": stateId};
     }
 
@@ -147,18 +117,14 @@ class ProfileRepository {
 
   Future<List<AreaModel>> getArea({String? id}) async {
     final sessId = await DataBox().readSessId();
-    //TODO: Change APIS from prod to test
+    String areaUrl = areaUrlAll;
 
-    String areaUrl = 'https://api.medrpha.com/api/register/getpincodeall';
-    // String areaUrl = 'https://apitest.medrpha.com/api/register/getpincodeall';
     Map<String, dynamic> body = {
       "sessid": sessId,
     };
 
     if (id != null) {
-      //TODO: Change APIS from prod to test
-      areaUrl = 'https://api.medrpha.com/api/register/getpincode';
-      // areaUrl = 'https://apitest.medrpha.com/api/register/getpincode';
+      areaUrl = areaUrlSingle;
       body = {"sessid": sessId, 'cityid': id};
     }
 
@@ -199,8 +165,7 @@ class ProfileRepository {
       "AlternateNumber": model.altContactNo,
     };
 
-    final resp =
-        await httpClient.post(Uri.parse(_uploadProfileUrl), body: body);
+    final resp = await httpClient.post(Uri.parse(uploadProfileUrl), body: body);
     if (kDebugMode) {
       print(resp.body);
     }
@@ -226,7 +191,7 @@ class ProfileRepository {
       "gstno": model.gstNo,
     };
 
-    final resp = await httpClient.post(Uri.parse(_uploadGSTUrl), body: body);
+    final resp = await httpClient.post(Uri.parse(uploadGSTUrl), body: body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       if (respBody['status'] == '0' || respBody['status'] == null) {
@@ -248,7 +213,7 @@ class ProfileRepository {
       "txtdlname": model.name,
     };
 
-    final resp = await httpClient.post(Uri.parse(_uploadDLUrl), body: body);
+    final resp = await httpClient.post(Uri.parse(uploadDLUrl), body: body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       if (kDebugMode) {
@@ -271,7 +236,7 @@ class ProfileRepository {
       "fssaiNo": model.number,
     };
 
-    final resp = await httpClient.post(Uri.parse(_uploadFssaiUrl), body: body);
+    final resp = await httpClient.post(Uri.parse(uploadFssaiUrl), body: body);
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       if (respBody['status'] == '0' || respBody['status'] == null) {
@@ -329,7 +294,7 @@ class ProfileRepository {
       fssaiModel: ConstantData().initFssaiModel,
     );
 
-    final resp = await httpClient.post(Uri.parse(_getProfileUrl), body: body);
+    final resp = await httpClient.post(Uri.parse(getProfileUrl), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);

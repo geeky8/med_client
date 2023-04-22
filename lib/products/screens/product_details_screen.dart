@@ -20,6 +20,7 @@ import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../api_service.dart';
 import '../utils/product_card.dart';
 
 class ProductsDetailScreen extends StatefulWidget {
@@ -729,7 +730,7 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: CachedNetworkImageProvider(
-              ConstantData.productUrl + widget.model.productImg,
+              productUrl + widget.model.productImg,
             ),
             fit: BoxFit.cover,
           ),

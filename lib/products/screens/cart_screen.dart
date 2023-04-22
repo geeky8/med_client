@@ -19,6 +19,8 @@ import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../api_service.dart';
+
 class CartScreen extends StatelessWidget {
   const CartScreen({
     Key? key,
@@ -534,7 +536,7 @@ class ListItem extends StatelessWidget {
         image: DecorationImage(
           image: CachedNetworkImageProvider(
             (model.productImg != '')
-                ? ConstantData.productUrl + model.productImg
+                ? productUrl + model.productImg
                 : 'https://www.labikineria.shop/assets/images/no_image.png',
           ),
           fit: BoxFit.cover,
