@@ -536,7 +536,7 @@ class ListItem extends StatelessWidget {
         image: DecorationImage(
           image: CachedNetworkImageProvider(
             (model.productImg != '')
-                ? productUrl + model.productImg
+                ? productImageUrl + model.productImg
                 : 'https://www.labikineria.shop/assets/images/no_image.png',
           ),
           fit: BoxFit.cover,

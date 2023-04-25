@@ -146,7 +146,7 @@ import '../store/products_store.dart';
 //                           borderRadius:
 //                               BorderRadius.circular(font18Px(context: context)),
 //                           child: CachedNetworkImage(
-//                               imageUrl: ConstantData.productUrl +
+//                               imageUrl: ConstantData.productImageUrl +
 //                                   list[index].productImg,
 //                               height: firstHeight,
 //                               width: ConstantWidget.getWidthPercentSize(
@@ -380,8 +380,8 @@ class ProductsCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (_) => Provider.value(
-              // value: store..getRecommendations(model: model),
-              value: store,
+              value: store..getRecommendations(model: model),
+              // value: store,
               child: Provider.value(
                 value: loginStore,
                 child: Provider.value(
@@ -666,7 +666,7 @@ class ImageWidget extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(font18Px(context: context)),
           child: CachedNetworkImage(
-              imageUrl: productUrl + list[index].productImg,
+              imageUrl: productImageUrl + list[index].productImg,
               height: ConstantWidget.getScreenPercentSize(context, 15),
               width: ConstantWidget.getWidthPercentSize(context, 45),
               fit: BoxFit.cover,

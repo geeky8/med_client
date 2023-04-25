@@ -512,7 +512,7 @@ class _OrderTileState extends State<OrderTile> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: CachedNetworkImage(
-                        imageUrl: productUrl +
+                        imageUrl: productImageUrl +
                             widget.model.ordersList.first.productImg,
                         fit: BoxFit.cover,
                         height: imageSize * 1.5,
@@ -1098,7 +1098,7 @@ class OrdersList extends StatelessWidget {
                                       ),
                                       image: DecorationImage(
                                           image: CachedNetworkImageProvider(
-                                              productUrl +
+                                              productImageUrl +
                                                   list[index]
                                                       .ordersList[0]
                                                       .productImg),

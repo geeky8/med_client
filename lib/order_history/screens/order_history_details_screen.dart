@@ -848,7 +848,7 @@ class ProductDetailsTile extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: CachedNetworkImage(
-                imageUrl: productUrl + model.productImg,
+                imageUrl: productImageUrl + model.productImg,
                 fit: BoxFit.cover,
                 height: imageSize,
                 width: imageSize * 1.5,
@@ -954,7 +954,7 @@ class OrderDetailsProductList extends StatelessWidget {
                               ),
                               image: DecorationImage(
                                   image: CachedNetworkImageProvider(
-                                      productUrl + list[index].productImg),
+                                      productImageUrl + list[index].productImg),
                                   fit: BoxFit.cover),
                             ),
                             // child: Image.asset(ConstantData.assetsPath +

@@ -10,6 +10,7 @@ import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/repository/products_repository.dart';
 import 'package:medrpha_customer/products/screens/cart_screen.dart';
+import 'package:medrpha_customer/products/screens/home_products_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/add_subtract_widget.dart';
 import 'package:medrpha_customer/products/utils/products_list.dart';
@@ -243,149 +244,88 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                   ),
                 ),
                 Observer(builder: (_) {
-                  if (store.recommedLoading == StoreState.LOADING) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ConstantWidget.getTextWidget(
-                          'Recommendations',
-                          ConstantData.mainTextColor,
-                          TextAlign.start,
-                          FontWeight.w600,
-                          font22Px(context: context) * 1.1,
-                        ),
-                        SizedBox(
-                          width: blockSizeHorizontal(context: context) * 3,
-                        ),
-                        CircularProgressIndicator(
-                          color: ConstantData.primaryColor,
-                        ),
-                      ],
-                    );
-                  }
-
-                  return Offstage(
-                    offstage: (store.recommend.isEmpty),
-                    child: Container(
-                      width: screenWidth(context: context),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  switch (store.recommedLoading) {
+                    case StoreState.LOADING:
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: margin),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ConstantWidget.getTextWidget(
-                                  'Recommended',
-                                  ConstantData.mainTextColor,
-                                  TextAlign.start,
-                                  FontWeight.w600,
-                                  font22Px(context: context) * 1.1,
-                                ),
-                                SizedBox(
-                                    height:
-                                        blockSizeVertical(context: context)),
-                                ConstantWidget.getTextWidget(
-                                  'Add them to your basket to secure more (discount %)',
-                                  ConstantData.color1,
-                                  TextAlign.start,
-                                  FontWeight.w600,
-                                  font18Px(context: context),
-                                ),
-                              ],
-                            ),
+                          ConstantWidget.getTextWidget(
+                            'Recommendations',
+                            ConstantData.mainTextColor,
+                            TextAlign.start,
+                            FontWeight.w600,
+                            font22Px(context: context),
                           ),
                           SizedBox(
-                            height: blockSizeVertical(context: context) * 2,
+                            height: blockSizeHorizontal(context: context) * 2,
                           ),
-                          Row(
+                          LinearProgressIndicator(
+                            color: ConstantData.primaryColor,
+                          ),
+                        ],
+                      );
+                    case StoreState.SUCCESS:
+                      return Offstage(
+                        offstage: (store.recommend.isEmpty),
+                        child: Container(
+                          width: screenWidth(context: context),
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                blockSizeHorizontal(context: context) * 4,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Observer(builder: (_) {
-                                  final category = categoriesfromValue(
-                                      widget.model.category);
-                                  final list = store.recommend;
-                                  switch (category) {
-                                    case CategoriesType.ETHICAL:
-                                      return MoreProductsList(
-                                        list: list,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ConstantWidget.getTextWidget(
+                                    'Recommended',
+                                    ConstantData.mainTextColor,
+                                    TextAlign.start,
+                                    FontWeight.w600,
+                                    font22Px(context: context) * 1.1,
+                                  ),
+                                  SizedBox(
+                                      height:
+                                          blockSizeVertical(context: context)),
+                                  ConstantWidget.getTextWidget(
+                                    'Add them to your basket to secure more (discount %)',
+                                    ConstantData.color1,
+                                    TextAlign.start,
+                                    FontWeight.w600,
+                                    font18Px(context: context),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: blockSizeVertical(context: context) * 2,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Observer(builder: (_) {
+                                      return ProjectProductList(
                                         store: store,
                                         loginStore: loginStore,
-                                        orderHistoryStore: orderHistoryStore,
+                                        profileStore: profileStore,
                                         bottomNavigationStore:
                                             bottomNavigationStore,
-                                        profileStore: profileStore,
-                                      );
-                                    case CategoriesType.GENERIC:
-                                      return MoreProductsList(
-                                        list: list,
-                                        store: store,
-                                        loginStore: loginStore,
                                         orderHistoryStore: orderHistoryStore,
-                                        bottomNavigationStore:
-                                            bottomNavigationStore,
-                                        profileStore: profileStore,
                                       );
-                                    case CategoriesType.SURGICAL:
-                                      return MoreProductsList(
-                                        list: list,
-                                        store: store,
-                                        loginStore: loginStore,
-                                        orderHistoryStore: orderHistoryStore,
-                                        bottomNavigationStore:
-                                            bottomNavigationStore,
-                                        profileStore: profileStore,
-                                      );
-                                    case CategoriesType.VETERINARY:
-                                      return MoreProductsList(
-                                        list: list,
-                                        store: store,
-                                        loginStore: loginStore,
-                                        orderHistoryStore: orderHistoryStore,
-                                        bottomNavigationStore:
-                                            bottomNavigationStore,
-                                        profileStore: profileStore,
-                                      );
-                                    case CategoriesType.AYURVEDIC:
-                                      return MoreProductsList(
-                                        list: list,
-                                        store: store,
-                                        loginStore: loginStore,
-                                        orderHistoryStore: orderHistoryStore,
-                                        bottomNavigationStore:
-                                            bottomNavigationStore,
-                                        profileStore: profileStore,
-                                      );
-                                    case CategoriesType.GENERAL:
-                                      return MoreProductsList(
-                                        list: list,
-                                        store: store,
-                                        loginStore: loginStore,
-                                        orderHistoryStore: orderHistoryStore,
-                                        bottomNavigationStore:
-                                            bottomNavigationStore,
-                                        profileStore: profileStore,
-                                      );
-                                    case CategoriesType.VACCINE:
-                                      return MoreProductsList(
-                                        list: list,
-                                        store: store,
-                                        loginStore: loginStore,
-                                        orderHistoryStore: orderHistoryStore,
-                                        bottomNavigationStore:
-                                            bottomNavigationStore,
-                                        profileStore: profileStore,
-                                      );
-                                  }
-                                }),
+                                    }),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
+                        ),
+                      );
+                    case StoreState.ERROR:
+                      return const SizedBox();
+                    case StoreState.EMPTY:
+                      return const SizedBox();
+                  }
                 }),
               ],
             );
@@ -730,7 +670,7 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: CachedNetworkImageProvider(
-              productUrl + widget.model.productImg,
+              productImageUrl + widget.model.productImg,
             ),
             fit: BoxFit.cover,
           ),

@@ -500,38 +500,18 @@ class ProductsRepository {
     }
   }
 
-  final myNgorkUrl = 'http://29b9-104-199-255-16.ngrok.io/';
+  final myNgorkUrl = 'http://52c0-34-68-90-7.ngrok.io/';
 
-  Future<List<String>> getRecommedations({required String name}) async {
-    final result = HashSet<String>();
-    final arg = name.split(" ");
-    String myArg = "";
-    for (int i = 0; i < arg.length - 1; i++) {
-      myArg += arg[i];
-      myArg += " ";
-    }
-
+  Future<List<ProductModel>> getRecommedations({required String name}) async {
     final resp = await http.get(Uri.parse('$myNgorkUrl${name.toUpperCase()}'));
-
-    // print('---- name ${resp.body}');
 
     if (resp.statusCode == 200) {
       final body = jsonDecode(resp.body) as Map<String, dynamic>;
       final data = body['data'] as List<dynamic>;
-
-      for (final consequentList in data) {
-        print("consequentList : ${(consequentList as String).length}");
-        final deflist = (consequentList as String).trim().split(",");
-        deflist.remove(deflist.last);
-        // print(deflist);
-        // print(deflist.length);
-        for (final name in deflist) {
-          result.add(name[0] + name.substring(1).toLowerCase());
-        }
-      }
+      return await getSpecificSearchResults(products: data);
       // debugPrint(resp.body);
     }
-    return result.toList();
+    return <ProductModel>[];
   }
 
   Future<String> getVoiceText({required String text}) async {
@@ -545,5 +525,44 @@ class ProductsRepository {
       }
     }
     return "";
+  }
+
+  Future<List<ProductModel>> getSpecificSearchResults(
+      {required List<dynamic> products}) async {
+    final productlist = <ProductModel>[];
+    final sessId = await DataBox().readSessId();
+    for (final product in products) {
+      final urlBody = {
+        // "sessid": "34c4efad30e6e2d4",
+        "sessid": sessId,
+        "term": product as String,
+        "catcheck": '',
+        "PageIndex": '1',
+        "PageSize": '20'
+      };
+      final resp = await http.post(Uri.parse(productsUrl), body: urlBody);
+      if (resp.statusCode == 200) {
+        final body = jsonDecode(resp.body) as Map<String, dynamic>;
+        if (body['message'] == 'successful !!') {
+          final list = body['data'] as List<dynamic>;
+          if (list.isNotEmpty) {
+            final model = ProductModel.fromJson(json: list[0]);
+            productlist.add(model);
+          }
+        }
+      }
+    }
+    debugPrint("----- trending products ----- $productlist");
+    return productlist;
+  }
+
+  Future<List<ProductModel>> getTrendingList() async {
+    final resp = await http.get(Uri.parse("${myNgorkUrl}getTrending"));
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body) as Map<String, dynamic>;
+      final data = body['data'] as List<dynamic>;
+      return await getSpecificSearchResults(products: data);
+    }
+    return <ProductModel>[];
   }
 }

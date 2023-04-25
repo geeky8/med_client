@@ -50,7 +50,7 @@ const checkStatus = 'https://api.medrpha.com/api/Default/userstatus';
 
 //------------------------------- Micellenous URL -------------------------------//
 const catImgUrl = 'https://superadmin.medrpha.com/allimage/';
-const productUrl = 'https://partner.medrpha.com/product_image/';
+const productImageUrl = 'https://partner.medrpha.com/product_image/';
 const licenseUrl = 'https://medrpha.com/user_reg/';
 const invoiceUrl = 'https://medrpha.com/InvoicePDF/';
 const apiKey = 'rzp_live_kfbonxeuRfZYaL';
@@ -111,7 +111,7 @@ const apiSecretKey = '1fdFnhoGt47VZlhDha7KkMaR';
 
 // //------------------------------- Micellenous URL -------------------------------//
 // const catImgUrl = 'https://superadmintest.medrpha.com/allimage/';
-// const productUrl = 'https://partnertest.medrpha.com/product_image/';
+// const productImageUrl = 'https://partnertest.medrpha.com/product_image/';
 // const licenseUrl = 'https://test.medrpha.com/user_reg/';
 // const invoiceUrl = 'https://test.medrpha.com/InvoicePDF/';
 // const apiKey = 'rzp_test_3mRxTObsNw167K';

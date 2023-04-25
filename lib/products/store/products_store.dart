@@ -110,6 +110,10 @@ abstract class _ProductsStore with Store {
       ObservableList<ProductModel>.of([]);
 
   @observable
+  ObservableList<ProductModel> trendingProductsList =
+      ObservableList<ProductModel>.of([]);
+
+  @observable
   StoreState homeState = StoreState.SUCCESS;
 
   @observable
@@ -164,7 +168,7 @@ abstract class _ProductsStore with Store {
     if (ethicalProductList.isNotEmpty) {
       await getCartItems(cartOpt: true);
     }
-
+    await getTrendingProducts();
     micEnabled = await speechToText.initialize();
 
     cartState = StoreState.SUCCESS;
@@ -341,64 +345,17 @@ abstract class _ProductsStore with Store {
   Future<void> getRecommendations({required ProductModel model}) async {
     recommedLoading = StoreState.LOADING;
     recommend.clear();
-    final list =
-        await _productsRepository.getRecommedations(name: model.productName);
-    for (final name in list) {
-      int ind = -1;
-
-      print('names --- ${name.myLowerCase()}');
-
-      ind = ethicalProductList
-          .indexWhere((element) => element.productName == name);
-      if (ind != -1) {
-        recommend.add(ethicalProductList[ind]);
-        continue;
-      }
-
-      ind = genericProductList
-          .indexWhere((element) => element.productName == name);
-      if (ind != -1) {
-        recommend.add(genericProductList[ind]);
-        continue;
-      }
-
-      ind = surgicalProductList
-          .indexWhere((element) => element.productName == name);
-      if (ind != -1) {
-        recommend.add(surgicalProductList[ind]);
-        continue;
-      }
-
-      ind = ayurvedicProductList
-          .indexWhere((element) => element.productName == name);
-      if (ind != -1) {
-        recommend.add(ayurvedicProductList[ind]);
-        continue;
-      }
-
-      ind = generalProductList
-          .indexWhere((element) => element.productName == name);
-      if (ind != -1) {
-        recommend.add(generalProductList[ind]);
-        continue;
-      }
-
-      ind = vaccineProductList
-          .indexWhere((element) => element.productName == name);
-      if (ind != -1) {
-        recommend.add(vaccineProductList[ind]);
-        continue;
-      }
-
-      ind = veterinaryProductList
-          .indexWhere((element) => element.productName == name);
-      if (ind != -1) {
-        recommend.add(veterinaryProductList[ind]);
-        continue;
-      }
+    final list = await _productsRepository.getRecommedations(
+        name: model.productName.trim());
+    if (list.isNotEmpty) {
+      recommend
+        ..clear()
+        ..addAll(list);
+      recommedLoading = StoreState.SUCCESS;
+    } else {
+      recommedLoading = StoreState.EMPTY;
     }
     debugPrint("Size of recommend ${recommend.toString()}");
-    recommedLoading = StoreState.SUCCESS;
   }
 
   @action
@@ -521,6 +478,24 @@ abstract class _ProductsStore with Store {
   //   );
   //   debugPrint('--------- recognized $lastWords');
   // }
+
+  @observable
+  StoreState trendLoader = StoreState.SUCCESS;
+
+  @action
+  Future<void> getTrendingProducts() async {
+    trendLoader = StoreState.LOADING;
+    final list = await _productsRepository.getTrendingList();
+    debugPrint("--- my list $list");
+    if (list.isNotEmpty) {
+      trendingProductsList
+        ..clear()
+        ..addAll(list);
+    } else {
+      trendLoader = StoreState.EMPTY;
+    }
+    trendLoader = StoreState.SUCCESS;
+  }
 
   @action
   Future<void> getSurgicalProducts({bool? load}) async {

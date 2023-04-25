@@ -169,7 +169,7 @@ class CheckoutScreen extends StatelessWidget {
                                           ),
                                           image: DecorationImage(
                                               image: CachedNetworkImageProvider(
-                                                productUrl +
+                                                productImageUrl +
                                                     productStore
                                                         .cartModel
                                                         .productList[index]

@@ -219,6 +219,23 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$trendingProductsListAtom =
+      Atom(name: '_ProductsStore.trendingProductsList', context: context);
+
+  @override
+  ObservableList<ProductModel> get trendingProductsList {
+    _$trendingProductsListAtom.reportRead();
+    return super.trendingProductsList;
+  }
+
+  @override
+  set trendingProductsList(ObservableList<ProductModel> value) {
+    _$trendingProductsListAtom.reportWrite(value, super.trendingProductsList,
+        () {
+      super.trendingProductsList = value;
+    });
+  }
+
   late final _$homeStateAtom =
       Atom(name: '_ProductsStore.homeState', context: context);
 
@@ -472,6 +489,22 @@ mixin _$ProductsStore on _ProductsStore, Store {
   set micIsListening(bool value) {
     _$micIsListeningAtom.reportWrite(value, super.micIsListening, () {
       super.micIsListening = value;
+    });
+  }
+
+  late final _$trendLoaderAtom =
+      Atom(name: '_ProductsStore.trendLoader', context: context);
+
+  @override
+  StoreState get trendLoader {
+    _$trendLoaderAtom.reportRead();
+    return super.trendLoader;
+  }
+
+  @override
+  set trendLoader(StoreState value) {
+    _$trendLoaderAtom.reportWrite(value, super.trendLoader, () {
+      super.trendLoader = value;
     });
   }
 
@@ -764,6 +797,15 @@ mixin _$ProductsStore on _ProductsStore, Store {
     return _$intializeMicAsyncAction.run(() => super.intializeMic());
   }
 
+  late final _$getTrendingProductsAsyncAction =
+      AsyncAction('_ProductsStore.getTrendingProducts', context: context);
+
+  @override
+  Future<void> getTrendingProducts() {
+    return _$getTrendingProductsAsyncAction
+        .run(() => super.getTrendingProducts());
+  }
+
   late final _$getSurgicalProductsAsyncAction =
       AsyncAction('_ProductsStore.getSurgicalProducts', context: context);
 
@@ -945,6 +987,7 @@ veterinaryProductList: ${veterinaryProductList},
 ayurvedicProductList: ${ayurvedicProductList},
 generalProductList: ${generalProductList},
 vaccineProductList: ${vaccineProductList},
+trendingProductsList: ${trendingProductsList},
 homeState: ${homeState},
 cartState: ${cartState},
 ethicalPageIndex: ${ethicalPageIndex},
@@ -961,6 +1004,7 @@ micEnabled: ${micEnabled},
 recommend: ${recommend},
 recommedLoading: ${recommedLoading},
 micIsListening: ${micIsListening},
+trendLoader: ${trendLoader},
 searchState: ${searchState},
 searchController: ${searchController},
 searchList: ${searchList},

@@ -426,7 +426,7 @@ class ProductViewList extends StatelessWidget {
         // ,
         image: DecorationImage(
           image: CachedNetworkImageProvider(
-            productUrl + list[index].productImg,
+            productImageUrl + list[index].productImg,
             errorListener: () =>
                 Image.asset('${ConstantData.assetsPath}no_image.png'),
           ),

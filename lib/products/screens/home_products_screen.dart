@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations
+// ignore_for_file: unnecessary_string_interpolations, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -13,6 +13,7 @@ import 'package:medrpha_customer/products/screens/products_view_screen.dart';
 import 'package:medrpha_customer/products/screens/search_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/category_list.dart';
+import 'package:medrpha_customer/products/utils/product_card.dart';
 import 'package:medrpha_customer/products/utils/products_list.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
@@ -218,6 +219,12 @@ class ProductHomeScreen extends StatelessWidget {
                 // setState(() {});
               } else {
                 await store.intializeMic();
+              }
+              if (store.speechToText.lastRecognizedWords.isNotEmpty) {
+                await store.textSpeechTask(
+                  text: store.speechToText.lastRecognizedWords,
+                  context: context,
+                );
               }
               // setState(() {});
             },
@@ -482,6 +489,76 @@ class ProductHomeScreen extends StatelessWidget {
                               ),
                             ),
                             onTap: () {},
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: blockSizeVertical(context: context) * 2,
+                              horizontal:
+                                  blockSizeHorizontal(context: context) * 4,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ConstantWidget.getCustomText(
+                                  "Best Seller's",
+                                  ConstantData.mainTextColor,
+                                  1,
+                                  TextAlign.left,
+                                  FontWeight.w600,
+                                  font22Px(context: context),
+                                ),
+                                SizedBox(
+                                  height:
+                                      blockSizeVertical(context: context) * 2,
+                                ),
+                                Row(children: [
+                                  Expanded(
+                                    child: Observer(
+                                      builder: (_) {
+                                        final state = store.trendLoader;
+                                        switch (state) {
+                                          case StoreState.LOADING:
+                                            return Column(
+                                              children: [
+                                                ConstantWidget
+                                                    .getCustomTextWithoutAlign(
+                                                  'Loading....',
+                                                  ConstantData.mainTextColor,
+                                                  FontWeight.w600,
+                                                  font22Px(context: context),
+                                                ),
+                                                SizedBox(
+                                                  height: blockSizeVertical(
+                                                      context: context),
+                                                ),
+                                                const LinearProgressIndicator(),
+                                              ],
+                                            );
+                                          case StoreState.SUCCESS:
+                                            return Offstage(
+                                              offstage: store
+                                                  .trendingProductsList.isEmpty,
+                                              child: ProjectProductList(
+                                                store: store,
+                                                loginStore: loginStore,
+                                                profileStore: profileStore,
+                                                bottomNavigationStore:
+                                                    bottomNavigationStore,
+                                                orderHistoryStore:
+                                                    orderHistoryStore,
+                                              ),
+                                            );
+                                          case StoreState.ERROR:
+                                            return const SizedBox();
+                                          case StoreState.EMPTY:
+                                            return const SizedBox();
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ]),
+                              ],
+                            ),
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -788,6 +865,64 @@ class ProductHomeScreen extends StatelessWidget {
       ),
     );
     // });
+  }
+}
+
+class ProjectProductList extends StatelessWidget {
+  const ProjectProductList({
+    Key? key,
+    required this.store,
+    required this.loginStore,
+    required this.profileStore,
+    required this.bottomNavigationStore,
+    required this.orderHistoryStore,
+  }) : super(key: key);
+
+  final ProductsStore store;
+  final LoginStore loginStore;
+  final ProfileStore profileStore;
+  final BottomNavigationStore bottomNavigationStore;
+  final OrderHistoryStore orderHistoryStore;
+
+  @override
+  Widget build(BuildContext context) {
+    double width = ConstantWidget.getWidthPercentSize(context, 40);
+    double height = ConstantWidget.getScreenPercentSize(context, 14);
+    double margin = ConstantWidget.getScreenPercentSize(context, 2);
+    double sideMargin = margin * 1.2;
+    double firstHeight = ConstantWidget.getPercentSize(height, 35);
+    double remainHeight = height - firstHeight;
+    double radius = ConstantWidget.getPercentSize(height, 10);
+    return Container(
+      height: ConstantWidget.getScreenPercentSize(context, 30),
+      child: ListView.separated(
+        itemBuilder: (_, index) {
+          return ProductsCard(
+            store: store,
+            loginStore: loginStore,
+            profileStore: profileStore,
+            bottomNavigationStore: bottomNavigationStore,
+            orderHistoryStore: orderHistoryStore,
+            list: store.trendingProductsList,
+            width: width,
+            firstHeight: firstHeight,
+            radius: radius,
+            sideMargin: sideMargin,
+            remainHeight: remainHeight,
+            index: index,
+          );
+        },
+        separatorBuilder: (_, index) {
+          return SizedBox(
+            width: blockSizeVertical(context: context) * 2,
+          );
+        },
+        itemCount: store.trendingProductsList.length,
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        physics: const BouncingScrollPhysics(),
+      ),
+    );
   }
 }
 
