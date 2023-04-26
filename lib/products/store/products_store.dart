@@ -449,10 +449,18 @@ abstract class _ProductsStore with Store {
         break;
 
       case ProductTextSpeech.CLEAR_CART:
-        // await clearCart();
+        await clearCart();
         break;
     }
     textSpeechLoader = StoreState.SUCCESS;
+  }
+
+  Future<void> clearCart() async {
+    // speechLoaded = StoreState.LOADING;
+    for (final model in cartModel.productList) {
+      await removeFromCart(model: model);
+    }
+    // speechLoaded = StoreState.SUCCESS;
   }
 
   void navigateToProduct(
