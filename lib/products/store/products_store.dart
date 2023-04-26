@@ -18,6 +18,7 @@ import 'package:medrpha_customer/products/models/cart_model.dart';
 import 'package:medrpha_customer/products/models/category_model.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 import 'package:medrpha_customer/products/repository/products_repository.dart';
+import 'package:medrpha_customer/products/screens/cart_screen.dart';
 import 'package:medrpha_customer/products/screens/product_details_screen.dart';
 import 'package:medrpha_customer/products/utils/order_dialog.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
@@ -419,6 +420,36 @@ abstract class _ProductsStore with Store {
             await removeFromCart(model: model);
           }
         }
+        break;
+
+      case ProductTextSpeech.GOTOCART:
+        if (context != null) {
+          final store = context.read<ProductsStore>();
+          final loginStore = context.read<LoginStore>();
+          final profileStore = context.read<ProfileStore>();
+          final orderHistoryStore = context.read<OrderHistoryStore>();
+          final bottomNavigationStore = context.read<BottomNavigationStore>();
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MultiProvider(
+                providers: [
+                  Provider.value(value: store),
+                  Provider.value(value: loginStore),
+                  Provider.value(value: profileStore),
+                  Provider.value(value: orderHistoryStore),
+                  Provider.value(value: bottomNavigationStore),
+                ],
+                child: const CartScreen(),
+              ),
+            ),
+          );
+        }
+        break;
+
+      case ProductTextSpeech.CLEAR_CART:
+        // await clearCart();
         break;
     }
     textSpeechLoader = StoreState.SUCCESS;
