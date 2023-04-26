@@ -158,44 +158,45 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
             ),
           ],
         ),
-        // floatingActionButton: Padding(
-        //   padding: EdgeInsets.only(
-        //     bottom: blockSizeVertical(context: context) * 5,
-        //   ),
-        //   child: Observer(builder: (_) {
-        //     return Container(
-        //       padding:
-        //           EdgeInsets.all(blockSizeVertical(context: context) / 1.5),
-        //       decoration: BoxDecoration(
-        //         shape: BoxShape.circle,
-        //         color: (!store.micIsListening)
-        //             ? ConstantData.primaryColor
-        //             : ConstantData.color1,
-        //       ),
-        //       child: IconButton(
-        //         onPressed: () async {
-        //           debugPrint('------ listenin--- ');
-        //           if (store.micEnabled && store.speechToText.isNotListening) {
-        //             await store.startListening(model: widget.model);
-        //             setState(() {});
-        //           } else if (store.micEnabled &&
-        //               !store.speechToText.isNotListening) {
-        //             await store.stopListening();
-        //             setState(() {});
-        //           } else {
-        //             await store.intializeMic();
-        //           }
-        //           setState(() {});
-        //         },
-        //         icon: Icon(
-        //           (!store.micIsListening) ? Icons.mic : Icons.stop,
-        //           size: blockSizeVertical(context: context) * 3,
-        //           color: ConstantData.bgColor,
-        //         ),
-        //       ),
-        //     );
-        //   }),
-        // ),
+        floatingActionButton: Observer(builder: (_) {
+          return Container(
+            padding: EdgeInsets.all(blockSizeVertical(context: context) / 1.5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: (!store.micIsListening)
+                  ? ConstantData.primaryColor
+                  : ConstantData.color1,
+            ),
+            child: IconButton(
+              onPressed: () async {
+                debugPrint('------ listenin--- ');
+                if (store.micEnabled && store.speechToText.isNotListening) {
+                  await store.startListening(context: context);
+                  // setState(() {});
+                } else if (store.micEnabled &&
+                    !store.speechToText.isNotListening) {
+                  await store.stopListening();
+                  // setState(() {});
+                } else {
+                  await store.intializeMic();
+                }
+                if (store.speechToText.lastRecognizedWords.isNotEmpty) {
+                  await store.textSpeechTask(
+                    text: store.speechToText.lastRecognizedWords,
+                    context: context,
+                    model: widget.model,
+                  );
+                }
+                // setState(() {});
+              },
+              icon: Icon(
+                (!store.micIsListening) ? Icons.mic : Icons.stop,
+                size: blockSizeVertical(context: context) * 3,
+                color: ConstantData.bgColor,
+              ),
+            ),
+          );
+        }),
         body: SafeArea(
           child: Observer(builder: (_) {
             return ListView(
@@ -312,6 +313,7 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                         bottomNavigationStore:
                                             bottomNavigationStore,
                                         orderHistoryStore: orderHistoryStore,
+                                        list: store.recommend,
                                       );
                                     }),
                                   ),

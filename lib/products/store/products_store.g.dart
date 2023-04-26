@@ -476,6 +476,22 @@ mixin _$ProductsStore on _ProductsStore, Store {
     });
   }
 
+  late final _$textSpeechLoaderAtom =
+      Atom(name: '_ProductsStore.textSpeechLoader', context: context);
+
+  @override
+  StoreState get textSpeechLoader {
+    _$textSpeechLoaderAtom.reportRead();
+    return super.textSpeechLoader;
+  }
+
+  @override
+  set textSpeechLoader(StoreState value) {
+    _$textSpeechLoaderAtom.reportWrite(value, super.textSpeechLoader, () {
+      super.textSpeechLoader = value;
+    });
+  }
+
   late final _$micIsListeningAtom =
       Atom(name: '_ProductsStore.micIsListening', context: context);
 
@@ -775,7 +791,9 @@ mixin _$ProductsStore on _ProductsStore, Store {
 
   @override
   Future<void> textSpeechTask(
-      {required String text, ProductModel? model, BuildContext? context}) {
+      {required String text,
+      ProductModel? model,
+      required BuildContext context}) {
     return _$textSpeechTaskAsyncAction.run(
         () => super.textSpeechTask(text: text, model: model, context: context));
   }
@@ -1003,6 +1021,7 @@ speechToText: ${speechToText},
 micEnabled: ${micEnabled},
 recommend: ${recommend},
 recommedLoading: ${recommedLoading},
+textSpeechLoader: ${textSpeechLoader},
 micIsListening: ${micIsListening},
 trendLoader: ${trendLoader},
 searchState: ${searchState},

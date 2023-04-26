@@ -173,7 +173,7 @@ class ProductViewList extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (_) => Provider.value(
-                        value: store,
+                        value: store..getRecommendations(model: model),
                         child: Provider.value(
                           value: loginStore,
                           child: Provider.value(

@@ -45,6 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     } else {
       final sessId = await DataBox().readSessId();
+      debugPrint("----- my session id -------$sessId");
       if (sessId == '') {
         /// For first time user
 

@@ -23,6 +23,9 @@ import 'package:medrpha_customer/products/utils/order_dialog.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/speech_to_text.dart';
+import 'package:medrpha_customer/utils/constant_data.dart';
+import 'package:medrpha_customer/utils/constant_widget.dart';
+import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
@@ -346,7 +349,9 @@ abstract class _ProductsStore with Store {
     recommedLoading = StoreState.LOADING;
     recommend.clear();
     final list = await _productsRepository.getRecommedations(
-        name: model.productName.trim());
+      name: model.productName.trim(),
+      category: model.category,
+    );
     if (list.isNotEmpty) {
       recommend
         ..clear()
@@ -358,13 +363,34 @@ abstract class _ProductsStore with Store {
     debugPrint("Size of recommend ${recommend.toString()}");
   }
 
+  @observable
+  StoreState textSpeechLoader = StoreState.SUCCESS;
+
   @action
   Future<void> textSpeechTask({
     required String text,
     ProductModel? model,
-    BuildContext? context,
+    required BuildContext context,
   }) async {
+    textSpeechLoader = StoreState.LOADING;
     final resp = await _productsRepository.getVoiceText(text: text);
+    // BuildContext myContext;
+    // showModalBottomSheet(
+    //   context: context,
+    //   builder: (BuildContext context) => Column(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       ConstantWidget.getCustomText(
+    //         'Listening....',
+    //         ConstantData.mainTextColor,
+    //         1,
+    //         TextAlign.center,
+    //         FontWeight.w600,
+    //         font22Px(context: context),
+    //       ),
+    //     ],
+    //   ),
+    // );
     switch (getFromTextSpeech(resp)) {
       case ProductTextSpeech.ADDTOCART:
         debugPrint('Adding to cart');
@@ -376,32 +402,12 @@ abstract class _ProductsStore with Store {
         debugPrint("could not fetch");
         break;
       case ProductTextSpeech.PRODUCT:
-        debugPrint("fetched $resp");
-        final index = ethicalProductList
-            .indexWhere((element) => element.productName == resp);
-        if (index != -1 && context != null) {
-          /// Initalisation of required stores [ProductsStore,LoginStore,ProfileStore,OrderHistoryStore]
-          final store = context.read<ProductsStore>();
-          final loginStore = context.read<LoginStore>();
-          final profileStore = context.read<ProfileStore>();
-          final orderHistoryStore = context.read<OrderHistoryStore>();
-          final bottomNavigationStore = context.read<BottomNavigationStore>();
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => MultiProvider(
-                providers: [
-                  Provider.value(value: store),
-                  Provider.value(value: loginStore),
-                  Provider.value(value: profileStore),
-                  Provider.value(value: orderHistoryStore),
-                  Provider.value(value: bottomNavigationStore),
-                ],
-                child: ProductsDetailScreen(model: ethicalProductList[index]),
-              ),
-            ),
-          );
+        debugPrint("fetched product $resp");
+        if (context != null) {
+          // Navigator.pop(context);
+          navigateToProduct(resp: resp, context: context);
+        } else {
+          Fluttertoast.showToast(msg: "Failed to navigate");
         }
         break;
       case ProductTextSpeech.REMOVECART:
@@ -414,6 +420,109 @@ abstract class _ProductsStore with Store {
           }
         }
         break;
+    }
+    textSpeechLoader = StoreState.SUCCESS;
+  }
+
+  void navigateToProduct(
+      {required String resp, required BuildContext context}) {
+    /// Initalisation of required stores [ProductsStore,LoginStore,ProfileStore,OrderHistoryStore]
+    final store = context.read<ProductsStore>();
+    final loginStore = context.read<LoginStore>();
+    final profileStore = context.read<ProfileStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
+    final ethIndex = ethicalProductList
+        .indexWhere((element) => element.productName.trim() == resp);
+    if (ethIndex != -1) {
+      debugPrint("ethical product nav -----");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MultiProvider(
+            providers: [
+              Provider.value(
+                  value: store
+                    ..getRecommendations(model: ethicalProductList[ethIndex])),
+              Provider.value(value: loginStore),
+              Provider.value(value: profileStore),
+              Provider.value(value: orderHistoryStore),
+              Provider.value(value: bottomNavigationStore),
+            ],
+            child: ProductsDetailScreen(model: ethicalProductList[ethIndex]),
+          ),
+        ),
+      );
+      return;
+    }
+    final vetIndex = veterinaryProductList
+        .indexWhere((element) => element.productName.trim() == resp);
+    if (vetIndex != -1) {
+      debugPrint("vet product nav -----");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MultiProvider(
+            providers: [
+              Provider.value(
+                  value: store
+                    ..getRecommendations(
+                        model: veterinaryProductList[vetIndex])),
+              Provider.value(value: loginStore),
+              Provider.value(value: profileStore),
+              Provider.value(value: orderHistoryStore),
+              Provider.value(value: bottomNavigationStore),
+            ],
+            child: ProductsDetailScreen(model: veterinaryProductList[vetIndex]),
+          ),
+        ),
+      );
+      return;
+    }
+    final genIndex = generalProductList
+        .indexWhere((element) => element.productName.trim() == resp);
+    if (genIndex != -1) {
+      debugPrint("---- gen nav prodcts");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MultiProvider(
+            providers: [
+              Provider.value(
+                  value: store
+                    ..getRecommendations(model: generalProductList[genIndex])),
+              Provider.value(value: loginStore),
+              Provider.value(value: profileStore),
+              Provider.value(value: orderHistoryStore),
+              Provider.value(value: bottomNavigationStore),
+            ],
+            child: ProductsDetailScreen(model: generalProductList[genIndex]),
+          ),
+        ),
+      );
+      return;
+    }
+    final vacIndex = vaccineProductList
+        .indexWhere((element) => element.productName.trim() == resp);
+    if (vacIndex != -1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MultiProvider(
+            providers: [
+              Provider.value(
+                  value: store
+                    ..getRecommendations(model: vaccineProductList[vacIndex])),
+              Provider.value(value: loginStore),
+              Provider.value(value: profileStore),
+              Provider.value(value: orderHistoryStore),
+              Provider.value(value: bottomNavigationStore),
+            ],
+            child: ProductsDetailScreen(model: vaccineProductList[vacIndex]),
+          ),
+        ),
+      );
+      return;
     }
   }
 

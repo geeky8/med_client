@@ -546,6 +546,8 @@ class ProductHomeScreen extends StatelessWidget {
                                                     bottomNavigationStore,
                                                 orderHistoryStore:
                                                     orderHistoryStore,
+                                                list:
+                                                    store.trendingProductsList,
                                               ),
                                             );
                                           case StoreState.ERROR:
@@ -876,6 +878,7 @@ class ProjectProductList extends StatelessWidget {
     required this.profileStore,
     required this.bottomNavigationStore,
     required this.orderHistoryStore,
+    required this.list,
   }) : super(key: key);
 
   final ProductsStore store;
@@ -883,6 +886,7 @@ class ProjectProductList extends StatelessWidget {
   final ProfileStore profileStore;
   final BottomNavigationStore bottomNavigationStore;
   final OrderHistoryStore orderHistoryStore;
+  final List<ProductModel> list;
 
   @override
   Widget build(BuildContext context) {
@@ -903,7 +907,7 @@ class ProjectProductList extends StatelessWidget {
             profileStore: profileStore,
             bottomNavigationStore: bottomNavigationStore,
             orderHistoryStore: orderHistoryStore,
-            list: store.trendingProductsList,
+            list: list,
             width: width,
             firstHeight: firstHeight,
             radius: radius,
@@ -917,7 +921,7 @@ class ProjectProductList extends StatelessWidget {
             width: blockSizeVertical(context: context) * 2,
           );
         },
-        itemCount: store.trendingProductsList.length,
+        itemCount: list.length,
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),

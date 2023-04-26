@@ -500,9 +500,10 @@ class ProductsRepository {
     }
   }
 
-  final myNgorkUrl = 'http://52c0-34-68-90-7.ngrok.io/';
+  final myNgorkUrl = 'http://9c24-34-80-162-63.ngrok.io/';
 
-  Future<List<ProductModel>> getRecommedations({required String name}) async {
+  Future<List<ProductModel>> getRecommedations(
+      {required String name, required String category}) async {
     final resp = await http.get(Uri.parse('$myNgorkUrl${name.toUpperCase()}'));
 
     if (resp.statusCode == 200) {
