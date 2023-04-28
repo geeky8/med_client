@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
@@ -94,6 +95,10 @@ class _QuantityDialogState extends State<QuantityDialog> {
                             width: blockSizeVertical(context: context) * 15,
                             height: blockSizeVertical(context: context) * 5,
                             child: TextFormField(
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.allow(
+                                    RegExp("[0-9a-zA-Z]")),
+                              ],
                               keyboardType: TextInputType.number,
                               controller: quantityController,
                               // cursorHeight:

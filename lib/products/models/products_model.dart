@@ -45,32 +45,33 @@ class ProductModel {
       salePrice: (json['saleprice'] ?? '') as String,
       productImg: (json['product_img'] ?? '') as String,
       productName: (json['product_name'] != null)
-          ? (((json['product_name']) as String) != '')
+          ? (((json['product_name']) as String).trim() != '')
               ? (((json['product_name']) as String)[0] +
                   (json['product_name'] as String).substring(1).toLowerCase())
               : ''
           : '',
-      category: (json['categorystr'] ?? '') as String,
-      company: (json['compnaystr'] ?? '') as String,
-      newMrp:
-          double.parse((json['newmrp'] ?? '0.00') as String).toStringAsFixed(2),
-      oldMrp:
-          double.parse((json['oldmrp'] ?? '0.0') as String).toStringAsFixed(2),
-      percentDiscount: (json['percent'] ?? '') as String,
-      saleQtyType: (json['saleqtytypestr'] ?? '') as String,
-      prodSaleTypeDetails: (json['prodsaletypedetails'] ?? '') as String,
-      quantity: ((json['quantity'] ?? '') as String),
+      category: ((json['categorystr'] ?? '') as String).trim(),
+      company: ((json['compnaystr'] ?? '') as String).trim(),
+      newMrp: double.parse(((json['newmrp'] ?? '0.00') as String).trim())
+          .toStringAsFixed(2),
+      oldMrp: double.parse(((json['oldmrp'] ?? '0.0') as String).trim())
+          .toStringAsFixed(2),
+      percentDiscount: ((json['percent'] ?? '') as String).trim(),
+      saleQtyType: ((json['saleqtytypestr'] ?? '') as String).trim(),
+      prodSaleTypeDetails:
+          ((json['prodsaletypedetails'] ?? '') as String).trim(),
+      quantity: ((json['quantity'] ?? '') as String).trim(),
       cartQuantity: int.parse(
           (json['cartquantity'] == '' || json['cartquantity'] == null)
               ? '0'
-              : json['cartquantity']),
-      mrp: (json['mrp'] ?? '') as String,
-      subTotal: (json['subtotal'] ?? '') as String,
+              : (json['cartquantity'] as String).trim()),
+      mrp: ((json['mrp'] ?? '') as String).trim(),
+      subTotal: ((json['subtotal'] ?? '') as String).trim(),
       expiryDate: '',
       description: '',
-      totalQtyPrice: (json['totalqtymrp'] ?? '') as String,
+      totalQtyPrice: ((json['totalqtymrp'] ?? '') as String).trim(),
       minQty: getMinimumQuantity(json['minqty']),
-      warehouseId: (json['warehouse_id'] ?? '') as String,
+      warehouseId: ((json['warehouse_id'] ?? '') as String).trim(),
     );
   }
 
