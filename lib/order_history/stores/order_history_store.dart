@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:flutter/material.dart';
-import 'package:medrpha_customer/enums/delivery_status_type.dart';
+import 'package:medrpha_customer/enums/order_status_type.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/models/order_history_model.dart';
 import 'package:medrpha_customer/order_history/repository/order_history_repository.dart';
@@ -28,7 +28,7 @@ abstract class _OrderHistoryStore with Store {
   StoreState state = StoreState.SUCCESS;
 
   @observable
-  ObservableList<OrderHistoryModel> orders =
+  ObservableList<OrderHistoryModel> liveOrders =
       ObservableList<OrderHistoryModel>.of([]);
 
   @observable
@@ -40,17 +40,21 @@ abstract class _OrderHistoryStore with Store {
       ObservableList<OrderHistoryModel>.of([]);
 
   @observable
-  OrderStatusType viewOrdersStatusType = OrderStatusType.CONFIRMED;
+  ObservableList<OrderHistoryModel> returnCancelledOrders =
+      ObservableList<OrderHistoryModel>.of([]);
 
-  @action
-  Future<void> updateTheOrdersState({required OrderHistoryModel model}) async {
-    final index =
-        orders.indexWhere((element) => element.orderId == model.orderId);
-    final updateModel = model.copyWith(isView: !model.isView);
-    orders
-      ..removeAt(index)
-      ..insert(index, updateModel);
-  }
+  @observable
+  int orderStatusTypeSelected = 0;
+
+  // @action
+  // Future<void> updateTheOrdersState({required OrderHistoryModel model}) async {
+  //   final index =
+  //       orders.indexWhere((element) => element.orderId == model.orderId);
+  //   final updateModel = model.copyWith(isView: !model.isView);
+  //   orders
+  //     ..removeAt(index)
+  //     ..insert(index, updateModel);
+  // }
 
   @action
   Future<void> getOrdersList() async {
@@ -59,9 +63,30 @@ abstract class _OrderHistoryStore with Store {
     // print(
     //     '---------- order history resp -------------->${_list.first.ordersList.length}');
     if (list.isNotEmpty) {
-      orders
-        ..clear()
-        ..addAll(list);
+      liveOrders.clear();
+      dispatchedOrders.clear();
+      deliveredOrders.clear();
+      returnCancelledOrders.clear();
+
+      for (final order in list) {
+        switch (order.orderStatusType) {
+          case OrderStatusType.CONFIRMED:
+            liveOrders.add(order);
+            break;
+          case OrderStatusType.DISPATCHED:
+            dispatchedOrders.add(order);
+            break;
+          case OrderStatusType.DELIVERED:
+            deliveredOrders.add(order);
+            break;
+          case OrderStatusType.CANCELLED:
+            returnCancelledOrders.add(order);
+            break;
+          case OrderStatusType.RETURNED:
+            returnCancelledOrders.add(order);
+            break;
+        }
+      }
     }
   }
 

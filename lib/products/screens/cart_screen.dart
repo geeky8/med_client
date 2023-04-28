@@ -248,10 +248,35 @@ class CartScreen extends StatelessWidget {
                                 physics: const BouncingScrollPhysics(),
                                 itemCount: store.cartModel.productList.length,
                                 itemBuilder: (context, index) {
-                                  return ListItem(
-                                    model: store.cartModel.productList[index],
-                                    store: store,
-                                    loginStore: loginStore,
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => MultiProvider(
+                                            providers: [
+                                              Provider.value(value: store),
+                                              Provider.value(value: loginStore),
+                                              Provider.value(
+                                                  value: profileStore),
+                                              Provider.value(
+                                                  value: orderHistoryStore),
+                                              Provider.value(
+                                                  value: bottomNavigationStore),
+                                            ],
+                                            child: ProductsDetailScreen(
+                                              model: store
+                                                  .cartModel.productList[index],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: ListItem(
+                                      model: store.cartModel.productList[index],
+                                      store: store,
+                                      loginStore: loginStore,
+                                    ),
                                   );
                                 }),
                           ),

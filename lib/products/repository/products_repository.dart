@@ -339,6 +339,35 @@ class ProductsRepository {
     return null;
   }
 
+  Future<List<ProductModel>> getSpecificSearchResults(
+      {required List<dynamic> products}) async {
+    final productlist = <ProductModel>[];
+    final sessId = await DataBox().readSessId();
+    for (final product in products) {
+      final urlBody = {
+        // "sessid": "34c4efad30e6e2d4",
+        "sessid": sessId,
+        "term": product as String,
+        "catcheck": '',
+        "PageIndex": '1',
+        "PageSize": '20'
+      };
+      final resp = await http.post(Uri.parse(productsUrl), body: urlBody);
+      if (resp.statusCode == 200) {
+        final body = jsonDecode(resp.body) as Map<String, dynamic>;
+        if (body['message'] == 'successful !!') {
+          final list = body['data'] as List<dynamic>;
+          if (list.isNotEmpty) {
+            final model = ProductModel.fromJson(json: list[0]);
+            productlist.add(model);
+          }
+        }
+      }
+    }
+    debugPrint("----- trending products ----- $productlist");
+    return productlist;
+  }
+
   Future<CartModel> getCart() async {
     final sessId = await DataBox().readSessId();
 
@@ -346,8 +375,7 @@ class ProductsRepository {
       "sessid": sessId,
       // "sessid": sessId,
     };
-
-    final prodList = ObservableList<ProductModel>.of([]);
+    final prodList = <ProductModel>[];
     int count = 0;
     String total = '';
 
@@ -363,22 +391,22 @@ class ProductsRepository {
       if (respBody['status'] == '1') {
         final list = respBody['data'] as List<dynamic>;
         count = int.parse(respBody['count'] as String);
-        // print("$count ");
         total = (respBody['final'] as String);
-        // print('Total Cart : $total');
-        for (final i in list) {
-          // print(i['quantity'] + 'cart');
-          final model = ProductModel.fromJson(
-            json: i,
-          );
-          // print(model.cartQuantity.toString() + 'cartAdded');
-
-          prodList.add(model);
-        }
+        final nameList = list.map((e) => e['product_name']).toList();
+        // for (final i in list) {
+        //   ProductModel model = ProductModel.fromJson(
+        //     json: i,
+        //   );
+        //   prodList.add(model);
+        // }
+        prodList.addAll(await getSpecificSearchResults(products: nameList));
       }
     }
     return CartModel(
-        totalSalePrice: total, noOfProducts: count, productList: prodList);
+      totalSalePrice: total,
+      noOfProducts: count,
+      productList: ObservableList.of(prodList),
+    );
   }
 
   //------------------- ----------------Checkout ------------------------------------------------------//

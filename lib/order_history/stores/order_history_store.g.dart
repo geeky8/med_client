@@ -25,19 +25,19 @@ mixin _$OrderHistoryStore on _OrderHistoryStore, Store {
     });
   }
 
-  late final _$ordersAtom =
-      Atom(name: '_OrderHistoryStore.orders', context: context);
+  late final _$liveOrdersAtom =
+      Atom(name: '_OrderHistoryStore.liveOrders', context: context);
 
   @override
-  ObservableList<OrderHistoryModel> get orders {
-    _$ordersAtom.reportRead();
-    return super.orders;
+  ObservableList<OrderHistoryModel> get liveOrders {
+    _$liveOrdersAtom.reportRead();
+    return super.liveOrders;
   }
 
   @override
-  set orders(ObservableList<OrderHistoryModel> value) {
-    _$ordersAtom.reportWrite(value, super.orders, () {
-      super.orders = value;
+  set liveOrders(ObservableList<OrderHistoryModel> value) {
+    _$liveOrdersAtom.reportWrite(value, super.liveOrders, () {
+      super.liveOrders = value;
     });
   }
 
@@ -73,20 +73,37 @@ mixin _$OrderHistoryStore on _OrderHistoryStore, Store {
     });
   }
 
-  late final _$viewOrdersStatusTypeAtom =
-      Atom(name: '_OrderHistoryStore.viewOrdersStatusType', context: context);
+  late final _$returnCancelledOrdersAtom =
+      Atom(name: '_OrderHistoryStore.returnCancelledOrders', context: context);
 
   @override
-  OrderStatusType get viewOrdersStatusType {
-    _$viewOrdersStatusTypeAtom.reportRead();
-    return super.viewOrdersStatusType;
+  ObservableList<OrderHistoryModel> get returnCancelledOrders {
+    _$returnCancelledOrdersAtom.reportRead();
+    return super.returnCancelledOrders;
   }
 
   @override
-  set viewOrdersStatusType(OrderStatusType value) {
-    _$viewOrdersStatusTypeAtom.reportWrite(value, super.viewOrdersStatusType,
+  set returnCancelledOrders(ObservableList<OrderHistoryModel> value) {
+    _$returnCancelledOrdersAtom.reportWrite(value, super.returnCancelledOrders,
         () {
-      super.viewOrdersStatusType = value;
+      super.returnCancelledOrders = value;
+    });
+  }
+
+  late final _$orderStatusTypeSelectedAtom = Atom(
+      name: '_OrderHistoryStore.orderStatusTypeSelected', context: context);
+
+  @override
+  int get orderStatusTypeSelected {
+    _$orderStatusTypeSelectedAtom.reportRead();
+    return super.orderStatusTypeSelected;
+  }
+
+  @override
+  set orderStatusTypeSelected(int value) {
+    _$orderStatusTypeSelectedAtom
+        .reportWrite(value, super.orderStatusTypeSelected, () {
+      super.orderStatusTypeSelected = value;
     });
   }
 
@@ -104,15 +121,6 @@ mixin _$OrderHistoryStore on _OrderHistoryStore, Store {
     _$invoiceDwdStateAtom.reportWrite(value, super.invoiceDwdState, () {
       super.invoiceDwdState = value;
     });
-  }
-
-  late final _$updateTheOrdersStateAsyncAction =
-      AsyncAction('_OrderHistoryStore.updateTheOrdersState', context: context);
-
-  @override
-  Future<void> updateTheOrdersState({required OrderHistoryModel model}) {
-    return _$updateTheOrdersStateAsyncAction
-        .run(() => super.updateTheOrdersState(model: model));
   }
 
   late final _$getOrdersListAsyncAction =
@@ -137,10 +145,11 @@ mixin _$OrderHistoryStore on _OrderHistoryStore, Store {
   String toString() {
     return '''
 state: ${state},
-orders: ${orders},
+liveOrders: ${liveOrders},
 dispatchedOrders: ${dispatchedOrders},
 deliveredOrders: ${deliveredOrders},
-viewOrdersStatusType: ${viewOrdersStatusType},
+returnCancelledOrders: ${returnCancelledOrders},
+orderStatusTypeSelected: ${orderStatusTypeSelected},
 invoiceDwdState: ${invoiceDwdState}
     ''';
   }

@@ -3,10 +3,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:medrpha_customer/signup_login/screens/phone_verification_screen.dart';
+
 import 'package:provider/provider.dart';
 
-import 'package:medrpha_customer/enums/delivery_status_type.dart';
+import 'package:medrpha_customer/enums/order_status_type.dart';
 import 'package:medrpha_customer/enums/payment_status_type.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/models/order_history_model.dart';
@@ -20,6 +20,7 @@ import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
+import 'package:timeline_tile/timeline_tile.dart';
 
 import '../../api_service.dart';
 
@@ -59,7 +60,8 @@ class OrderHistoryDetailsScreen extends StatelessWidget {
             return const SizedBox();
         }
       }),
-      body: Container(
+      body: SizedBox(
+        height: double.infinity,
         // margin: EdgeInsets.only(left: leftMargin, right: leftMargin),
         // padding: EdgeInsets.only(top: margin),
         child: SingleChildScrollView(
@@ -144,58 +146,49 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
               children: [
                 productDetailsWidget(context),
                 const Divider(thickness: 1),
-                SizedBox(height: blockSizeVertical(context: context) * 3),
-                ConstantWidget.getCustomText(
-                  'Order Tracking',
-                  ConstantData.mainTextColor,
-                  1,
-                  TextAlign.center,
-                  FontWeight.w600,
-                  font18Px(context: context) * 1.1,
-                ),
-                SizedBox(height: blockSizeVertical(context: context) * 2.5),
-                OrderTrackingRadioTile(
-                  orderStatusType: widget.model.orderStatusType,
-                  date:
-                      '${widget.model.placedDateTime.split(' ')[0]} ${widget.model.placedDateTime.split(' ')[1]}',
-                  status: 'Placed',
-                  color: Colors.green[700]!,
-                ),
-                OrderTrackingRadioTile(
-                  orderStatusType: OrderStatusType.CONFIRMED,
-                  date:
-                      '${widget.model.placedDateTime.split(' ')[0]} ${widget.model.placedDateTime.split(' ')[1]}',
-                  color: (widget.model.orderStatusType ==
-                          OrderStatusType.CONFIRMED)
-                      ? Colors.green[700]!
-                      : ConstantData.cellColor,
-                ),
-                OrderTrackingRadioTile(
-                  orderStatusType: OrderStatusType.DISPATCHED,
-                  date: (widget.model.dispatchedDate == '')
-                      ? 'Not yet dispatched'
-                      : widget.model.dispatchedDate,
-                  color: (widget.model.orderStatusType ==
-                          OrderStatusType.DISPATCHED)
-                      ? Colors.green[700]!
-                      : ConstantData.cellColor,
-                ),
-                OrderTrackingRadioTile(
-                  orderStatusType: OrderStatusType.DELIVERED,
-                  date: (widget.model.deliveredDate == '')
-                      ? 'Not yet delivered'
-                      : widget.model.deliveredDate,
-                  color: (widget.model.orderStatusType ==
-                          OrderStatusType.DELIVERED)
-                      ? Colors.green[700]!
-                      : ConstantData.cellColor,
-                ),
-                if (widget.model.orderStatusType == OrderStatusType.CANCELLED)
-                  OrderTrackingRadioTile(
-                    orderStatusType: OrderStatusType.CANCELLED,
-                    date: 'Order cancelled',
-                    color: Colors.red[700]!,
-                  ),
+                orderTrackingWidget(),
+                // OrderTrackingRadioTile(
+                //   orderStatusType: widget.model.orderStatusType,
+                //   date:
+                //       '${widget.model.placedDateTime.split(' ')[0]} ${widget.model.placedDateTime.split(' ')[1]}',
+                //   status: 'Placed',
+                //   color: Colors.green[700]!,
+                // ),
+                // OrderTrackingRadioTile(
+                //   orderStatusType: OrderStatusType.CONFIRMED,
+                //   date:
+                //       '${widget.model.placedDateTime.split(' ')[0]} ${widget.model.placedDateTime.split(' ')[1]}',
+                //   color: (widget.model.orderStatusType ==
+                //           OrderStatusType.CONFIRMED)
+                //       ? Colors.green[700]!
+                //       : ConstantData.cellColor,
+                // ),
+                // OrderTrackingRadioTile(
+                //   orderStatusType: OrderStatusType.DISPATCHED,
+                //   date: (widget.model.dispatchedDate == '')
+                //       ? 'Not yet dispatched'
+                //       : widget.model.dispatchedDate,
+                //   color: (widget.model.orderStatusType ==
+                //           OrderStatusType.DISPATCHED)
+                //       ? Colors.green[700]!
+                //       : ConstantData.cellColor,
+                // ),
+                // OrderTrackingRadioTile(
+                //   orderStatusType: OrderStatusType.DELIVERED,
+                //   date: (widget.model.deliveredDate == '')
+                //       ? 'Not yet delivered'
+                //       : widget.model.deliveredDate,
+                //   color: (widget.model.orderStatusType ==
+                //           OrderStatusType.DELIVERED)
+                //       ? Colors.green[700]!
+                //       : ConstantData.cellColor,
+                // ),
+                // if (widget.model.orderStatusType == OrderStatusType.CANCELLED)
+                //   OrderTrackingRadioTile(
+                //     orderStatusType: OrderStatusType.CANCELLED,
+                //     date: 'Order cancelled',
+                //     color: Colors.red[700]!,
+                //   ),
               ],
             ),
           ),
@@ -677,6 +670,168 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
     );
   }
 
+  Widget orderTrackingWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: blockSizeVertical(context: context) * 3),
+        ConstantWidget.getCustomText(
+          'Order Tracking',
+          ConstantData.mainTextColor,
+          1,
+          TextAlign.center,
+          FontWeight.w600,
+          font18Px(context: context) * 1.1,
+        ),
+        SizedBox(height: blockSizeVertical(context: context) * 2.5),
+        // ListView.builder(
+        //   itemCount: 5,
+        //   shrinkWrap: true,
+        //   physics: const NeverScrollableScrollPhysics(),
+        //   itemBuilder: (context, index) {
+        //     return Container(
+        //       // padding: EdgeInsets.all(5),
+        //       child: buildTimelineTile(
+        //           orderStatusType: OrderStatusType.DELIVERED, index: index),
+        //     );
+        //   },
+        // )
+        TimelineTile(
+          alignment: TimelineAlign.start,
+          lineXY: 0.4,
+          isFirst: true,
+          isLast: false,
+          indicatorStyle: IndicatorStyle(
+            width: font25Px(context: context),
+            height: font25Px(context: context),
+            indicator: _buildIndicator(Colors.green),
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            indicatorXY: 0,
+          ),
+          afterLineStyle: LineStyle(
+            thickness: 1,
+            color: ConstantData.primaryColor,
+          ),
+          // beforeLineStyle: LineStyle(
+          //   thickness: 1,
+          //   color: ConstantData.primaryColor,
+          // ),
+          endChild: Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ConstantWidget.getCustomText(
+                  widget.model.orderStatusType.orderStatusString(),
+                  ConstantData.mainTextColor,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font15Px(context: context) * 1.1,
+                ),
+                SizedBox(
+                  height: blockSizeHorizontal(context: context) * 2,
+                ),
+                ConstantWidget.getCustomText(
+                  widget.model.placedDateTime,
+                  Colors.black38,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font15Px(context: context),
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildTimelineTile(
+      {required OrderStatusType orderStatusType,
+      required OrderStatusType orderStatusTypeTile,
+      required int index}) {
+    return TimelineTile(
+      alignment: TimelineAlign.start,
+      lineXY: 0.4,
+      isFirst: orderStatusType == OrderStatusType.CONFIRMED ? true : false,
+      isLast: orderStatusType == OrderStatusType.CANCELLED ? true : false,
+      indicatorStyle: IndicatorStyle(
+        width: font25Px(context: context),
+        height: font25Px(context: context),
+        indicator: _buildIndicator(Colors.grey),
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        indicatorXY: 0,
+      ),
+      afterLineStyle: LineStyle(
+        thickness: 1,
+        color: ConstantData.primaryColor,
+      ),
+      // beforeLineStyle: LineStyle(
+      //   thickness: 1,
+      //   color: ConstantData.primaryColor,
+      // ),
+      endChild: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ConstantWidget.getCustomText(
+              widget.model.orderStatusType.orderStatusString(),
+              ConstantData.mainTextColor,
+              1,
+              TextAlign.center,
+              FontWeight.w600,
+              font15Px(context: context) * 1.1,
+            ),
+            SizedBox(
+              height: blockSizeHorizontal(context: context) * 2,
+            ),
+            ConstantWidget.getCustomText(
+              widget.model.placedDateTime,
+              Colors.black38,
+              1,
+              TextAlign.center,
+              FontWeight.w600,
+              font15Px(context: context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIndicator(Color color) {
+    // Color getMyColor() {
+    //   if (actualIndex == 4) {
+    //     return ConstantData.color1;
+    //   }
+    //   if ((currentIndex == 1 || completed) && actualIndex != 4) {
+    //     return Colors.green;
+    //   }
+    //   return Colors.black26;
+    // }
+
+    return Container(
+      child: Container(
+        width: 20,
+        height: 20,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Icon(
+            Icons.check,
+            color: ConstantData.bgColor,
+            size: 15,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget productDetailsWidget(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -690,9 +845,16 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
           font22Px(context: context),
         ),
         SizedBox(height: blockSizeVertical(context: context) * 2),
-        Container(
-          height: ConstantWidget.getScreenPercentSize(context, 30),
-          child: ListView.builder(
+        SizedBox(
+          height: ConstantWidget.getScreenPercentSize(context, 12) *
+              widget.model.ordersList.length,
+          child: ListView.separated(
+            separatorBuilder: (context, index) {
+              return Divider(
+                color: ConstantData.clrBlack20,
+                thickness: 0.5,
+              );
+            },
             itemCount: widget.model.ordersList.length,
             physics: const BouncingScrollPhysics(),
             itemBuilder: (_, index) {
@@ -842,64 +1004,67 @@ class ProductDetailsTile extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         vertical: blockSizeVertical(context: context),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: CachedNetworkImage(
-                imageUrl: productUrl + model.productImg,
-                fit: BoxFit.cover,
-                height: imageSize,
-                width: imageSize * 1.5,
+      child: SizedBox(
+        width: double.infinity,
+        child: Row(
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: CachedNetworkImage(
+                  imageUrl: productUrl + model.productImg,
+                  fit: BoxFit.cover,
+                  height: imageSize,
+                  width: imageSize * 1.5,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            width: blockSizeHorizontal(context: context) * 4,
-          ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ConstantWidget.getCustomText(
-                  model.productName,
-                  ConstantData.mainTextColor,
-                  1,
-                  TextAlign.center,
-                  FontWeight.w600,
-                  font18Px(context: context) * 1.1,
-                ),
-                SizedBox(
-                  height: blockSizeVertical(context: context),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ConstantWidget.getCustomText(
-                      '₹${model.mrp}',
-                      ConstantData.mainTextColor,
-                      1,
-                      TextAlign.center,
-                      FontWeight.w600,
-                      font18Px(context: context),
-                    ),
-                    // const Spacer(),
-                    ConstantWidget.getCustomText(
-                      'Qty: ${model.quantity}',
-                      Colors.black38,
-                      1,
-                      TextAlign.center,
-                      FontWeight.w600,
-                      font15Px(context: context),
-                    ),
-                  ],
-                ),
-              ],
+            SizedBox(
+              width: blockSizeHorizontal(context: context) * 4,
             ),
-          ),
-        ],
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ConstantWidget.getCustomText(
+                    model.productName,
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w600,
+                    font18Px(context: context) * 1.1,
+                  ),
+                  SizedBox(
+                    height: blockSizeVertical(context: context),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ConstantWidget.getCustomText(
+                        '₹${model.mrp}',
+                        ConstantData.mainTextColor,
+                        1,
+                        TextAlign.center,
+                        FontWeight.w600,
+                        font18Px(context: context),
+                      ),
+                      // const Spacer(),
+                      ConstantWidget.getCustomText(
+                        'Qty: ${model.quantity}',
+                        Colors.black38,
+                        1,
+                        TextAlign.center,
+                        FontWeight.w600,
+                        font15Px(context: context),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -924,186 +1089,192 @@ class OrderDetailsProductList extends StatelessWidget {
     double margin = safeBlockVertical(context: context) * 2;
 
     return Container(
-        margin: const EdgeInsets.only(top: 10),
-        child: ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: list.length,
-            itemBuilder: (context, index) {
-              return InkWell(
-                child: Container(
-                  child: Column(
+      margin: const EdgeInsets.only(top: 10),
+      child: ListView.separated(
+        separatorBuilder: (context, index) {
+          return SizedBox(
+            height: blockSizeHorizontal(context: context) * 2,
+          );
+        },
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            child: SizedBox(
+              height: double.infinity,
+              child: Column(
+                children: [
+                  // Container(
+                  //   height: 0.3,
+                  //   color: ConstantData.textColor,
+                  //   margin: EdgeInsets.only(bottom: margin, top: margin),
+                  // ),
+                  Row(
                     children: [
-                      Container(
-                        height: 0.3,
-                        color: ConstantData.textColor,
-                        margin: EdgeInsets.only(bottom: margin, top: margin),
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            height: imageSize,
-                            width: imageSize,
-                            margin: EdgeInsets.only(right: margin),
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              color: ConstantData.cellColor,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(margin),
-                              ),
-                              image: DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                      productUrl + list[index].productImg),
-                                  fit: BoxFit.cover),
-                            ),
-                            // child: Image.asset(ConstantData.assetsPath +
-                            //     myOrderList[index].image),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      productImageWidget(imageSize, margin, index),
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    ConstantWidget.getCustomText(
-                                      list[index].productName,
-                                      ConstantData.mainTextColor,
-                                      1,
-                                      TextAlign.start,
-                                      FontWeight.w600,
-                                      font18Px(context: context),
-                                    ),
-                                    const Spacer(),
-                                    ConstantWidget.getCustomText(
-                                      "Quantity: ",
-                                      ConstantData.textColor,
-                                      1,
-                                      TextAlign.start,
-                                      FontWeight.w600,
-                                      font15Px(context: context),
-                                    ),
-                                    ConstantWidget.getCustomText(
-                                      list[index].quantity,
-                                      ConstantData.accentColor,
-                                      1,
-                                      TextAlign.start,
-                                      FontWeight.w600,
-                                      font15Px(context: context),
-                                    ),
-                                  ],
+                                ConstantWidget.getCustomText(
+                                  list[index].productName,
+                                  ConstantData.mainTextColor,
+                                  1,
+                                  TextAlign.start,
+                                  FontWeight.w600,
+                                  font18Px(context: context),
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 8, bottom: 8),
-                                  child: ConstantWidget.getCustomText(
-                                    '₹${list[index].totalQtyPrice}',
-                                    ConstantData.mainTextColor,
-                                    1,
-                                    TextAlign.start,
-                                    FontWeight.w600,
-                                    font15Px(context: context) * 1.1,
-                                  ),
+                                const Spacer(),
+                                ConstantWidget.getCustomText(
+                                  "Quantity: ",
+                                  ConstantData.textColor,
+                                  1,
+                                  TextAlign.start,
+                                  FontWeight.w600,
+                                  font15Px(context: context),
                                 ),
-                                Observer(builder: (_) {
-                                  final index = store.orders.indexWhere(
-                                      (element) =>
-                                          element.orderId == model.orderId);
-                                  final state =
-                                      store.orders[index].orderStatusType;
-
-                                  switch (state) {
-                                    case OrderStatusType.CONFIRMED:
-                                      return Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.brightness_1,
-                                            color: Colors.grey,
-                                            size: 10,
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 5),
-                                              child:
-                                                  ConstantWidget.getCustomText(
-                                                "Confirmed at ${model.placedDateTime.split(' ')[1]}",
-                                                ConstantData.textColor,
-                                                1,
-                                                TextAlign.start,
-                                                FontWeight.w600,
-                                                font15Px(context: context),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-
-                                    case OrderStatusType.DISPATCHED:
-                                      return Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.brightness_1,
-                                            color: Colors.grey,
-                                            size: 10,
-                                          ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 5),
-                                            child: ConstantWidget.getCustomText(
-                                                "Dispatched at ${model.dispatchedDate}",
-                                                ConstantData.textColor,
-                                                1,
-                                                TextAlign.start,
-                                                FontWeight.w600,
-                                                ConstantWidget
-                                                    .getScreenPercentSize(
-                                                        context, 1.8)),
-                                          ),
-                                        ],
-                                      );
-                                    case OrderStatusType.DELIVERED:
-                                      return Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.brightness_1,
-                                            color: Colors.grey,
-                                            size: 10,
-                                          ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 5),
-                                            child: ConstantWidget.getCustomText(
-                                                "Delivered at ${model.deliveredDate}",
-                                                ConstantData.textColor,
-                                                1,
-                                                TextAlign.start,
-                                                FontWeight.w600,
-                                                ConstantWidget
-                                                    .getScreenPercentSize(
-                                                        context, 1.8)),
-                                          ),
-                                        ],
-                                      );
-                                    case OrderStatusType.CANCELLED:
-                                      return const SizedBox();
-                                  }
-                                }),
+                                ConstantWidget.getCustomText(
+                                  list[index].quantity,
+                                  ConstantData.accentColor,
+                                  1,
+                                  TextAlign.start,
+                                  FontWeight.w600,
+                                  font15Px(context: context),
+                                ),
                               ],
                             ),
-                          )
-                        ],
-                      ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8, bottom: 8),
+                              child: ConstantWidget.getCustomText(
+                                '₹${list[index].totalQtyPrice}',
+                                ConstantData.mainTextColor,
+                                1,
+                                TextAlign.start,
+                                FontWeight.w600,
+                                font15Px(context: context) * 1.1,
+                              ),
+                            ),
+                            Observer(builder: (_) {
+                              // final index = store.orders.indexWhere(
+                              //     (element) =>
+                              //         element.orderId == model.orderId);
+                              // final state =
+                              //     store.orders[index].orderStatusType;
 
-                      //   ],
-                      // )
+                              switch (OrderStatusType.CONFIRMED) {
+                                case OrderStatusType.CONFIRMED:
+                                  return Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.brightness_1,
+                                        color: Colors.grey,
+                                        size: 10,
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5),
+                                          child: ConstantWidget.getCustomText(
+                                            "Confirmed at ${model.placedDateTime.split(' ')[1]}",
+                                            ConstantData.textColor,
+                                            1,
+                                            TextAlign.start,
+                                            FontWeight.w600,
+                                            font15Px(context: context),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+
+                                case OrderStatusType.DISPATCHED:
+                                  return Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.brightness_1,
+                                        color: Colors.grey,
+                                        size: 10,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: ConstantWidget.getCustomText(
+                                            "Dispatched at ${model.dispatchedDate}",
+                                            ConstantData.textColor,
+                                            1,
+                                            TextAlign.start,
+                                            FontWeight.w600,
+                                            ConstantWidget.getScreenPercentSize(
+                                                context, 1.8)),
+                                      ),
+                                    ],
+                                  );
+                                case OrderStatusType.DELIVERED:
+                                  return Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.brightness_1,
+                                        color: Colors.grey,
+                                        size: 10,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: ConstantWidget.getCustomText(
+                                            "Delivered at ${model.deliveredDate}",
+                                            ConstantData.textColor,
+                                            1,
+                                            TextAlign.start,
+                                            FontWeight.w600,
+                                            ConstantWidget.getScreenPercentSize(
+                                                context, 1.8)),
+                                      ),
+                                    ],
+                                  );
+                                case OrderStatusType.CANCELLED:
+                                  return const SizedBox();
+                                case OrderStatusType.RETURNED:
+                                  return const SizedBox();
+                              }
+                            }),
+                          ],
+                        ),
+                      )
                     ],
                   ),
-                ),
-                onTap: () {},
-              );
-            }));
+
+                  //   ],
+                  // )
+                ],
+              ),
+            ),
+            onTap: () {},
+          );
+        },
+      ),
+    );
+  }
+
+  Container productImageWidget(double imageSize, double margin, int index) {
+    return Container(
+      height: imageSize,
+      width: imageSize,
+      margin: EdgeInsets.only(right: margin),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: ConstantData.cellColor,
+        borderRadius: BorderRadius.all(
+          Radius.circular(margin),
+        ),
+        image: DecorationImage(
+            image:
+                CachedNetworkImageProvider(productUrl + list[index].productImg),
+            fit: BoxFit.cover),
+      ),
+    );
   }
 }

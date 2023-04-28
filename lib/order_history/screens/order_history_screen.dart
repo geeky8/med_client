@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:medrpha_customer/enums/delivery_status_type.dart';
+import 'package:medrpha_customer/enums/order_status_type.dart';
 import 'package:medrpha_customer/enums/payment_status_type.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/models/order_history_model.dart';
@@ -24,22 +24,39 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../api_service.dart';
 // import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class OrderHistoryScreen extends StatelessWidget {
+class OrderHistoryScreen extends StatefulWidget {
   const OrderHistoryScreen({Key? key, this.fromSettingsPage}) : super(key: key);
 
   final bool? fromSettingsPage;
 
-  List<OrderHistoryModel> getUpdatedList({
-    required OrderStatusType orderStatusType,
-    required OrderHistoryStore store,
-  }) {
-    final list = <OrderHistoryModel>[];
-    for (final model in store.orders) {
-      if (model.orderStatusType == orderStatusType) {
-        list.add(model);
-      }
-    }
-    return list;
+  @override
+  State<OrderHistoryScreen> createState() => _OrderHistoryScreenState();
+}
+
+class _OrderHistoryScreenState extends State<OrderHistoryScreen>
+    with SingleTickerProviderStateMixin {
+  // List<OrderHistoryModel> getUpdatedList({
+  //   required OrderStatusType orderStatusType,
+  //   required OrderHistoryStore store,
+  // }) {
+  //   final list = <OrderHistoryModel>[];
+  //   for (final model in store.orders) {
+  //     if (model.orderStatusType == orderStatusType) {
+  //       list.add(model);
+  //     }
+  //   }
+  //   return list;
+  // }
+
+  late TabController tabController;
+
+  @override
+  void initState() {
+    tabController = TabController(
+      length: 4,
+      vsync: this,
+    );
+    super.initState();
   }
 
   @override
@@ -50,131 +67,30 @@ class OrderHistoryScreen extends StatelessWidget {
     final profileStore = context.read<ProfileStore>();
 
     return Scaffold(
-        backgroundColor: ConstantData.cellColor,
+        backgroundColor: ConstantData.bgColor,
         appBar: ConstantWidget.customAppBar(
           context: context,
           title: 'ORDERS',
-          isHome: (fromSettingsPage ?? false) ? true : false,
+          isHome: (widget.fromSettingsPage ?? false) ? true : false,
         ),
         body: Observer(
           builder: (_) {
             return Stack(
               children: [
-                Container(
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(color: ConstantData.bgColor),
-                        width: screenWidth(context: context),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: blockSizeHorizontal(context: context) * 2,
-                          // vertical: blockSizeVertical(context: context) * 2,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical:
-                                    blockSizeVertical(context: context) * 2,
-                              ),
-                              child: Container(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  physics: const BouncingScrollPhysics(),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      CurrentOrderStatusTile(
-                                        store: store,
-                                        status: 'All',
-                                        orderStatusType:
-                                            OrderStatusType.CONFIRMED,
-                                      ),
-                                      CurrentOrderStatusTile(
-                                        store: store,
-                                        status: 'Dispatched',
-                                        orderStatusType:
-                                            OrderStatusType.DISPATCHED,
-                                      ),
-                                      CurrentOrderStatusTile(
-                                        store: store,
-                                        status: 'Delivered',
-                                        orderStatusType:
-                                            OrderStatusType.DELIVERED,
-                                      ),
-                                      CurrentOrderStatusTile(
-                                        store: store,
-                                        status: 'Cancelled',
-                                        orderStatusType:
-                                            OrderStatusType.CANCELLED,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.topCenter,
-                              child: Observer(builder: (_) {
-                                final adminStatus =
-                                    loginStore.loginModel.adminStatus;
-                                return Offstage(
-                                  offstage: adminStatus,
-                                  child:
-                                      ConstantWidget.adminStatusbanner(context),
-                                );
-                              }),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Observer(builder: (_) {
-                        List<OrderHistoryModel> list = <OrderHistoryModel>[];
-                        final state = store.viewOrdersStatusType;
-                        switch (state) {
-                          case OrderStatusType.CONFIRMED:
-                            list = store.orders;
-                            break;
-                          case OrderStatusType.DISPATCHED:
-                            list = getUpdatedList(
-                              orderStatusType: OrderStatusType.DISPATCHED,
-                              store: store,
-                            );
-                            break;
-                          case OrderStatusType.DELIVERED:
-                            list = getUpdatedList(
-                              orderStatusType: OrderStatusType.DELIVERED,
-                              store: store,
-                            );
-                            break;
-                          case OrderStatusType.CANCELLED:
-                            list = getUpdatedList(
-                              orderStatusType: OrderStatusType.CANCELLED,
-                              store: store,
-                            );
-                            break;
-                        }
-
+                Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Observer(builder: (_) {
                         final adminStatus = loginStore.loginModel.adminStatus;
-                        return Expanded(
-                          child: (adminStatus)
-                              ? ViewOrdersList(
-                                  list: list,
-                                  store: store,
-                                  productsStore: productStore,
-                                  loginStore: loginStore,
-                                  profileStore: profileStore,
-                                )
-                              : ConstantWidget.errorWidget(
-                                  context: context,
-                                  height: 20,
-                                  width: 25,
-                                ),
+                        return Offstage(
+                          offstage: adminStatus,
+                          child: ConstantWidget.adminStatusbanner(context),
                         );
                       }),
-                    ],
-                  ),
+                    ),
+                    Expanded(child: listMyOrders(context)),
+                  ],
                 ),
                 if (productStore.checkoutState == StoreState.LOADING)
                   Container(
@@ -194,59 +110,265 @@ class OrderHistoryScreen extends StatelessWidget {
           },
         ));
   }
-}
 
-class CurrentOrderStatusTile extends StatelessWidget {
-  const CurrentOrderStatusTile({
-    Key? key,
-    required this.store,
-    required this.status,
-    required this.orderStatusType,
-  }) : super(key: key);
+  Widget listMyOrders(BuildContext context) {
+    final store = context.read<OrderHistoryStore>();
+    final loginStore = context.read<LoginStore>();
+    final productStore = context.read<ProductsStore>();
+    final profileStore = context.read<ProfileStore>();
 
-  final OrderHistoryStore store;
-  final String status;
-  final OrderStatusType orderStatusType;
+    int currentTab = 0;
 
-  @override
-  Widget build(BuildContext context) {
-    return Observer(builder: (_) {
-      return Padding(
+    return SizedBox(
+      height: double.infinity,
+      child: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: blockSizeHorizontal(context: context) * 4,
+          vertical: blockSizeVertical(context: context) * 2,
+          horizontal: blockSizeHorizontal(context: context) * 2,
         ),
-        child: InkWell(
-          onTap: () {
-            store.viewOrdersStatusType = orderStatusType;
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: blockSizeHorizontal(context: context) * 3,
-              vertical: blockSizeVertical(context: context),
+        child: Column(
+          children: [
+            Observer(builder: (_) {
+              return TabBar(
+                controller: tabController,
+                physics: const ScrollPhysics(),
+                indicatorColor: ConstantData.primaryColor,
+                indicator: BoxDecoration(
+                  color: ConstantData.primaryColor,
+                  borderRadius: BorderRadius.circular(
+                    font22Px(context: context),
+                  ),
+                ),
+                isScrollable: true,
+                unselectedLabelColor: ConstantData.mainTextColor,
+                labelStyle: TextStyle(
+                  fontFamily: ConstantData.fontFamily,
+                  fontWeight: FontWeight.w600,
+                  fontSize: font18Px(context: context),
+                ),
+                tabs: const [
+                  Tab(
+                    text: 'Live',
+                    // child: ConstantWidget.getCustomText(
+                    //   'Live ',
+                    //   (tabController.index == 0)
+                    //       ? ConstantData.bgColor
+                    //       : ConstantData.mainTextColor,
+                    //   2,
+                    //   TextAlign.center,
+                    //   FontWeight.w600,
+                    //   font18Px(context: context),
+                    // ),
+                  ),
+                  Tab(
+                    text: 'Dispatched',
+                    // child: ConstantWidget.getCustomText(
+                    //     'Dispatch',
+                    //     (tabController.index == 1)
+                    //         ? ConstantData.bgColor
+                    //         : ConstantData.mainTextColor,
+                    //     2,
+                    //     TextAlign.center,
+                    //     FontWeight.w600,
+                    //     font18Px(context: context)),
+                  ),
+                  Tab(
+                    text: 'Delivered',
+                    // child: ConstantWidget.getCustomText(
+                    //     'Deliver',
+                    //     (tabController.index == 2)
+                    //         ? ConstantData.bgColor
+                    //         : ConstantData.mainTextColor,
+                    //     2,
+                    //     TextAlign.center,
+                    //     FontWeight.w600,
+                    //     font18Px(context: context)),
+                  ),
+                  Tab(
+                    text: 'Return/Cancelled',
+                    // child: ConstantWidget.getCustomText(
+                    //   'Cancel/Return',
+                    //   (tabController.index == 3)
+                    //       ? ConstantData.bgColor
+                    //       : ConstantData.mainTextColor,
+                    //   2,
+                    //   TextAlign.center,
+                    //   FontWeight.w600,
+                    //   font18Px(context: context),
+                    // ),
+                  ),
+                ],
+                onTap: (tab) {
+                  store.orderStatusTypeSelected = tab;
+                },
+              );
+            }),
+            Divider(
+              color: ConstantData.cartColor,
+              thickness: 1,
             ),
-            decoration: BoxDecoration(
-              color: (store.viewOrdersStatusType == orderStatusType)
-                  ? ConstantData.bgColor
-                  : ConstantData.cartColor,
-              borderRadius: BorderRadius.circular(15),
-              border: (store.viewOrdersStatusType == orderStatusType)
-                  ? Border.all(color: ConstantData.mainTextColor, width: 1.5)
-                  : Border.all(color: ConstantData.clrBlack20, width: 1.5),
+            Expanded(
+              child: TabBarView(controller: tabController, children: [
+                Column(
+                  children: [
+                    Expanded(
+                      child: Observer(builder: (_) {
+                        return ViewOrdersList(
+                          list: store.liveOrders,
+                          store: store,
+                          productsStore: productStore,
+                          loginStore: loginStore,
+                          profileStore: profileStore,
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Expanded(
+                      child: Observer(builder: (_) {
+                        return ViewOrdersList(
+                          list: store.dispatchedOrders,
+                          store: store,
+                          productsStore: productStore,
+                          loginStore: loginStore,
+                          profileStore: profileStore,
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Expanded(
+                      child: Observer(builder: (_) {
+                        return ViewOrdersList(
+                          list: store.deliveredOrders,
+                          store: store,
+                          productsStore: productStore,
+                          loginStore: loginStore,
+                          profileStore: profileStore,
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Expanded(
+                      child: Observer(builder: (c_) {
+                        return ViewOrdersList(
+                          list: store.returnCancelledOrders,
+                          store: store,
+                          productsStore: productStore,
+                          loginStore: loginStore,
+                          profileStore: profileStore,
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              ]),
             ),
-            child: ConstantWidget.getCustomText(
-              status,
-              ConstantData.mainTextColor,
-              1,
-              TextAlign.center,
-              FontWeight.w600,
-              font15Px(context: context),
-            ),
-          ),
+            // TabBarView(
+            //   child: Observer(builder: (_) {
+            //     final list = <OrderHistoryModel>[];
+            //     final adminStatus = loginStore.loginModel.adminStatus;
+            //     switch (store.orderStatusTypeSelected) {
+            //       case 0:
+            //         list
+            //           ..clear()
+            //           ..addAll(store.liveOrders);
+            //         break;
+            //       case 1:
+            //         list
+            //           ..clear()
+            //           ..addAll(store.dispatchedOrders);
+            //         break;
+            //       case 2:
+            //         list
+            //           ..clear()
+            //           ..addAll(store.deliveredOrders);
+            //         break;
+            //       case 3:
+            //         list
+            //           ..clear()
+            //           ..addAll(store.returnCancelledOrders);
+            //         break;
+            //     }
+            //     return Expanded(
+            //       child: Offstage(
+            //         offstage: !adminStatus,
+            //         child: ViewOrdersList(
+            //           list: list,
+            //           store: store,
+            //           productsStore: productStore,
+            //           loginStore: loginStore,
+            //           profileStore: profileStore,
+            //         ),
+            //       ),
+            //     );
+            //   }),
+            // ),
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 }
+
+// class CurrentOrderStatusTile extends StatelessWidget {
+//   const CurrentOrderStatusTile({
+//     Key? key,
+//     required this.store,
+//     required this.status,
+//     required this.orderStatusType,
+//   }) : super(key: key);
+
+//   final OrderHistoryStore store;
+//   final String status;
+//   final OrderStatusType orderStatusType;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Observer(builder: (_) {
+//       return Padding(
+//         padding: EdgeInsets.symmetric(
+//           horizontal: blockSizeHorizontal(context: context) * 4,
+//         ),
+//         child: InkWell(
+//           onTap: () {
+//             store.viewOrdersStatusType = orderStatusType;
+//           },
+//           child: Container(
+//             padding: EdgeInsets.symmetric(
+//               horizontal: blockSizeHorizontal(context: context) * 3,
+//               vertical: blockSizeVertical(context: context),
+//             ),
+//             decoration: BoxDecoration(
+//               color: (store.viewOrdersStatusType == orderStatusType)
+//                   ? ConstantData.bgColor
+//                   : ConstantData.cartColor,
+//               borderRadius: BorderRadius.circular(15),
+//               border: (store.viewOrdersStatusType == orderStatusType)
+//                   ? Border.all(color: ConstantData.mainTextColor, width: 1.5)
+//                   : Border.all(color: ConstantData.clrBlack20, width: 1.5),
+//             ),
+//             child: ConstantWidget.getCustomText(
+//               status,
+//               ConstantData.mainTextColor,
+//               1,
+//               TextAlign.center,
+//               FontWeight.w600,
+//               font15Px(context: context),
+//             ),
+//           ),
+//         ),
+//       );
+//     });
+//   }
+// }
 
 class ViewOrdersList extends StatelessWidget {
   const ViewOrdersList({
@@ -279,7 +401,16 @@ class ViewOrdersList extends StatelessWidget {
               onRefresh: () async {
                 await store.getOrdersList();
               },
-              child: ListView.builder(
+              child: ListView.separated(
+                separatorBuilder: (context, index) {
+                  // return Divider(
+                  //   thickness: 1,
+                  //   color: ConstantData.mainTextColor,
+                  // );
+                  return SizedBox(
+                    height: blockSizeVertical(context: context) * 2,
+                  );
+                },
                 physics: const BouncingScrollPhysics(),
                 // shrinkWrap: true,
                 padding: EdgeInsets.symmetric(
@@ -394,15 +525,20 @@ class _OrderTileState extends State<OrderTile> {
   }
 
   Color boxColor({required OrderStatusType orderStatus}) {
-    switch (orderStatus) {
-      case OrderStatusType.CONFIRMED:
-        return Colors.yellow[700]!;
-      case OrderStatusType.DISPATCHED:
-        return Colors.orange;
-      case OrderStatusType.DELIVERED:
+    if (orderStatus == OrderStatusType.CANCELLED) {
+      return ConstantData.color1;
+    }
+    return Colors.green;
+  }
+
+  Color paymentBoxColor({required PaymentStatusType paymentStatus}) {
+    switch (paymentStatus) {
+      case PaymentStatusType.PAID:
         return Colors.green;
-      case OrderStatusType.CANCELLED:
-        return Colors.red;
+      case PaymentStatusType.UNPAID:
+        return ConstantData.color1;
+      case PaymentStatusType.PAYLATER:
+        return ConstantData.color2;
     }
   }
 
@@ -428,10 +564,10 @@ class _OrderTileState extends State<OrderTile> {
 
   @override
   Widget build(BuildContext context) {
-    double imageSize = safeBlockVertical(context: context) * 6;
+    // double imageSize = safeBlockVertical(context: context) * 6;
     return Padding(
       padding: EdgeInsets.symmetric(
-        vertical: blockSizeVertical(context: context),
+        horizontal: blockSizeVertical(context: context),
       ),
       child: InkWell(
         onTap: () {
@@ -458,221 +594,200 @@ class _OrderTileState extends State<OrderTile> {
         },
         child: Container(
           padding: EdgeInsets.symmetric(
-            vertical: blockSizeVertical(context: context),
+            vertical: blockSizeHorizontal(context: context) * 3,
           ),
           decoration: BoxDecoration(
             color: ConstantData.bgColor,
             borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: ConstantData.mainTextColor),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: blockSizeVertical(context: context),
-                  horizontal: blockSizeHorizontal(context: context) * 4,
-                ),
-                child: ConstantWidget.getCustomText(
-                  'Date : ${widget.model.placedDateTime.split(' ')[0]}',
-                  ConstantData.mainTextColor,
-                  1,
-                  TextAlign.center,
-                  FontWeight.w600,
-                  font18Px(context: context),
+              Expanded(
+                child: Icon(
+                  Icons.medication,
+                  color: ConstantData.clrBlack30,
+                  size: ConstantWidget.getWidthPercentSize(context, 20),
                 ),
               ),
-              Divider(
-                thickness: 1,
-                color: ConstantData.cellColor,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: blockSizeVertical(context: context),
-                  horizontal: blockSizeHorizontal(context: context) * 4,
-                ),
-                child: ConstantWidget.getCustomText(
-                  'Order ID : ${widget.model.orderId}',
-                  ConstantData.mainTextColor,
-                  1,
-                  TextAlign.center,
-                  FontWeight.w600,
-                  font18Px(context: context),
-                ),
-              ),
-              const Divider(
-                thickness: 1.5,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: blockSizeVertical(context: context) * 1.5,
-                  horizontal: blockSizeHorizontal(context: context) * 5,
-                ),
-                child: Row(
+              // SizedBox(
+              //   width: blockSizeHorizontal(context: context) * 4,
+              // ),
+              const Spacer(),
+              Expanded(
+                flex: 5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                        imageUrl: productUrl +
-                            widget.model.ordersList.first.productImg,
-                        fit: BoxFit.cover,
-                        height: imageSize * 1.5,
-                        width: imageSize * 1.5,
+                    Observer(
+                      builder: (_) => Container(
+                        padding: EdgeInsets.all(
+                          blockSizeHorizontal(context: context) * 2,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(font12Px(context: context)),
+                          border: Border.all(
+                            color: paymentBoxColor(
+                                paymentStatus: widget.model.paymentStatusType),
+                          ),
+                        ),
+                        child: ConstantWidget.getCustomText(
+                          getText(
+                              paymentStatus: widget.model.paymentStatusType),
+                          ConstantData.mainTextColor,
+                          1,
+                          TextAlign.center,
+                          FontWeight.w600,
+                          font18Px(context: context),
+                        ),
                       ),
                     ),
                     SizedBox(
-                      width: blockSizeHorizontal(context: context) * 4,
+                      height: blockSizeVertical(context: context) * 2,
                     ),
-                    // const Spacer(),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(
-                              blockSizeHorizontal(context: context) * 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ConstantData.cartColor,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: ConstantWidget.getCustomText(
-                              getText(
-                                  paymentStatus:
-                                      widget.model.paymentStatusType),
-                              ConstantData.mainTextColor,
-                              1,
-                              TextAlign.center,
-                              FontWeight.w600,
-                              font12Px(context: context),
-                            ),
-                          ),
-                          SizedBox(height: blockSizeVertical(context: context)),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height:
-                                      blockSizeVertical(context: context) * 2,
-                                  child: ListView.builder(
-                                    itemCount: widget.model.ordersList.length,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (_, index) {
-                                      return ConstantWidget.getCustomText(
-                                        widget.model.ordersList[index]
-                                                .productName +
-                                            ((index !=
-                                                    widget.model.ordersList
-                                                            .length -
-                                                        1)
-                                                ? ', '
-                                                : ''),
-                                        ConstantData.mainTextColor,
-                                        2,
-                                        TextAlign.left,
-                                        FontWeight.w600,
-                                        font15Px(context: context) * 1.1,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                              height:
-                                  blockSizeVertical(context: context) * 2.5),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.circle,
-                                size: blockSizeHorizontal(context: context) * 2,
-                                color: boxColor(
-                                    orderStatus: widget.model.orderStatusType),
-                              ),
-                              SizedBox(
-                                width:
-                                    blockSizeHorizontal(context: context) * 2,
-                              ),
-                              ConstantWidget.getCustomText(
-                                widget.model.orderStatusType
-                                    .orderStatusString(),
-                                ConstantData.mainTextColor,
-                                1,
-                                TextAlign.center,
-                                FontWeight.w600,
-                                font15Px(context: context),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
+                    ConstantWidget.getCustomText(
+                      'Order ID : ${widget.model.orderId}',
+                      ConstantData.mainTextColor,
+                      1,
+                      TextAlign.center,
+                      FontWeight.w600,
+                      font18Px(context: context),
                     ),
-                    // const Spacer(),
-                    Column(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.arrow_right,
-                            size: font25Px(context: context),
-                            color: ConstantData.clrBlack30,
-                          ),
-                        ),
-                        if ((widget.model.paymentStatusType !=
-                                PaymentStatusType.PAID) &&
-                            (widget.model.orderStatusType ==
-                                OrderStatusType.CONFIRMED))
-                          InkWell(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (_) => ConstantWidget.alertDialog(
-                                  context: context,
-                                  func: () async {
-                                    Navigator.pop(context);
-                                    openGateway(
-                                      payment: widget.model.orderAmount,
-                                      noOfProducts:
-                                          widget.model.ordersList.length,
-                                      profileModel:
-                                          widget.profileStore.profileModel,
-                                    );
-                                  },
-                                  buttonText: 'Confirm',
-                                  title: 'Please confirm to continue payment',
-                                ),
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      blockSizeHorizontal(context: context) * 3,
-                                  vertical:
-                                      blockSizeVertical(context: context)),
-                              decoration: BoxDecoration(
-                                color: ConstantData.primaryColor,
-                                borderRadius: BorderRadius.circular(
-                                  font25Px(context: context),
-                                ),
-                              ),
-                              child: ConstantWidget.getCustomText(
-                                'Pay Now',
-                                ConstantData.bgColor,
-                                1,
-                                TextAlign.center,
-                                FontWeight.w600,
-                                font12Px(context: context) * 1.1,
-                              ),
-                            ),
-                          ),
-                      ],
+                    SizedBox(
+                      height: blockSizeVertical(context: context),
                     ),
-                    const Divider(
-                      thickness: 1.5,
+                    ConstantWidget.getCustomText(
+                      'Date : ${widget.model.placedDateTime.split(' ')[0]}',
+                      ConstantData.clrBorder,
+                      1,
+                      TextAlign.center,
+                      FontWeight.w600,
+                      font15Px(context: context),
                     ),
+                    // SizedBox(height: blockSizeVertical(context: context)),
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: Container(
+                    //         height:
+                    //             blockSizeVertical(context: context) * 2,
+                    //         child: ListView.builder(
+                    //           itemCount: widget.model.ordersList.length,
+                    //           scrollDirection: Axis.horizontal,
+                    //           itemBuilder: (_, index) {
+                    //             return ConstantWidget.getCustomText(
+                    //               widget.model.ordersList[index]
+                    //                       .productName +
+                    //                   ((index !=
+                    //                           widget.model.ordersList
+                    //                                   .length -
+                    //                               1)
+                    //                       ? ', '
+                    //                       : ''),
+                    //               ConstantData.mainTextColor,
+                    //               2,
+                    //               TextAlign.left,
+                    //               FontWeight.w600,
+                    //               font15Px(context: context) * 1.1,
+                    //             );
+                    //           },
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    // SizedBox(
+                    //     height:
+                    //         blockSizeVertical(context: context) * 2.5),
+                    // Row(
+                    //   children: [
+                    //     Icon(
+                    //       Icons.circle,
+                    //       size: blockSizeHorizontal(context: context) * 2,
+                    //       color: boxColor(
+                    //           orderStatus: widget.model.orderStatusType),
+                    //     ),
+                    //     SizedBox(
+                    //       width:
+                    //           blockSizeHorizontal(context: context) * 2,
+                    //     ),
+                    //     ConstantWidget.getCustomText(
+                    //       widget.model.orderStatusType
+                    //           .orderStatusString(),
+                    //       ConstantData.mainTextColor,
+                    //       1,
+                    //       TextAlign.center,
+                    //       FontWeight.w600,
+                    //       font15Px(context: context),
+                    //     ),
+                    //   ],
+                    // )
                   ],
                 ),
               ),
+              // if ((widget.model.paymentStatusType != PaymentStatusType.PAID) &&
+              //     (widget.model.orderStatusType == OrderStatusType.CONFIRMED))
+              Offstage(
+                offstage: (widget.model.paymentStatusType ==
+                        PaymentStatusType.PAID) ||
+                    (widget.model.orderStatusType == OrderStatusType.CANCELLED),
+                child: InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => ConstantWidget.alertDialog(
+                        context: context,
+                        func: () async {
+                          Navigator.pop(context);
+                          openGateway(
+                            payment: widget.model.orderAmount,
+                            noOfProducts: widget.model.ordersList.length,
+                            profileModel: widget.profileStore.profileModel,
+                          );
+                        },
+                        buttonText: 'Confirm',
+                        title: 'Please confirm to continue payment',
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: blockSizeHorizontal(context: context) * 3,
+                        vertical: blockSizeVertical(context: context)),
+                    decoration: BoxDecoration(
+                      color: ConstantData.primaryColor,
+                      borderRadius: BorderRadius.circular(
+                        font25Px(context: context),
+                      ),
+                    ),
+                    child: ConstantWidget.getCustomText(
+                      'Pay Now',
+                      ConstantData.bgColor,
+                      1,
+                      TextAlign.center,
+                      FontWeight.w600,
+                      font12Px(context: context) * 1.1,
+                    ),
+                  ),
+                ),
+              ),
+              // const Spacer(),
+              // Column(
+              //   children: [
+              //     IconButton(
+              //       onPressed: () {},
+              //       icon: Icon(
+              //         Icons.arrow_right,
+              //         size: font25Px(context: context),
+              //         color: ConstantData.clrBlack30,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              // const Divider(
+              //   thickness: 1.5,
+              // ),
             ],
           ),
         ),
@@ -816,9 +931,9 @@ class AllOrdersList extends StatelessWidget {
                                   ],
                                 ),
                                 onTap: () async {
-                                  await store.updateTheOrdersState(
-                                    model: list[index],
-                                  );
+                                  // await store.updateTheOrdersState(
+                                  //   model: list[index],
+                                  // );
                                 },
                               ),
                             ),
@@ -1028,19 +1143,9 @@ class OrdersList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double leftMargin = MediaQuery.of(context).size.width * 0.05;
-    double imageSize = safeBlockVertical(context: context) * 8;
-
-    double cellHeight = safeBlockVertical(context: context) * 5.5;
-    double radius = safeBlockVertical(context: context) * 2;
-    double subRadius = safeBlockVertical(context: context) * 1.5;
-
-    double margin = safeBlockVertical(context: context) * 2;
-    double padding = safeBlockVertical(context: context) * 1.5;
-    double fontSize = ConstantWidget.getPercentSize(cellHeight, 35);
-
     return (list.isNotEmpty && loginStore.loginModel.adminStatus)
-        ? Container(
+        ? SizedBox(
+            height: double.infinity,
             child: Observer(builder: (_) {
               // final list = store.dispatchedOrders;
               return ListView.builder(
@@ -1051,205 +1156,17 @@ class OrdersList extends StatelessWidget {
                     return InkWell(
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => OrderHistoryDetailsScreen(
-                                    model: list[index])));
-                      },
-                      child: Container(
-                        // decoration: BoxDecoration(
-                        //     color: ConstantData.whiteColor,
-                        //     borderRadius: BorderRadius.circular(radius),
-                        //     boxShadow: [
-                        //       BoxShadow(
-                        //         color: Colors.grey.shade200,
-                        //         blurRadius: 10,
-                        //       )
-                        //     ]),
-
-                        decoration: BoxDecoration(
-                            color: ConstantData.bgColor,
-                            borderRadius: BorderRadius.circular(radius),
-                            border: Border.all(
-                                color: ConstantData.borderColor,
-                                width: ConstantWidget.getWidthPercentSize(
-                                    context, 0.08)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade200,
-                              )
-                            ]),
-                        margin: EdgeInsets.only(
-                            left: leftMargin, top: margin, right: leftMargin),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  height: imageSize,
-                                  width: imageSize,
-                                  margin: EdgeInsets.all(radius),
-                                  padding: EdgeInsets.all(padding),
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      color: ConstantData.cellColor,
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(radius),
-                                      ),
-                                      image: DecorationImage(
-                                          image: CachedNetworkImageProvider(
-                                              productUrl +
-                                                  list[index]
-                                                      .ordersList[0]
-                                                      .productImg),
-                                          fit: BoxFit.cover)),
-                                  // child: Image.asset(ConstantData.assetsPath +
-                                  //     myOrderList[index].image),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // RichText(
-                                      //   text: TextSpan(
-                                      //     text: 'OrderId: ',
-                                      //     style: TextStyle(
-                                      //       fontFamily: ConstantData.fontFamily,
-                                      //       fontSize:
-                                      //           font18Px(context: context),
-                                      //       fontWeight: FontWeight.w600,
-                                      //     ),
-                                      //     children: [
-                                      //       TextSpan(
-                                      //         text: list[index].orderId,
-                                      //         style: TextStyle(
-                                      //           fontFamily:
-                                      //               ConstantData.fontFamily,
-                                      //           fontSize:
-                                      //               font18Px(context: context) *
-                                      //                   1.2,
-                                      //           fontWeight: FontWeight.w600,
-                                      //         ),
-                                      //       ),
-                                      //     ],
-                                      //   ),
-                                      // ),
-                                      ConstantWidget.getCustomText(
-                                        "Order: #${list[index].orderId}",
-                                        ConstantData.mainTextColor,
-                                        1,
-                                        TextAlign.start,
-                                        FontWeight.w600,
-                                        font18Px(context: context) * 1.1,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: (padding / 1.8)),
-                                        child: ConstantWidget.getCustomText(
-                                          '${list[index].ordersList.length} items',
-                                          ConstantData.textColor,
-                                          1,
-                                          TextAlign.start,
-                                          FontWeight.w600,
-                                          font18Px(context: context),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => OrderHistoryDetailsScreen(
+                              model: list[index],
                             ),
-
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: padding,
-                                  bottom: margin,
-                                  left: margin,
-                                  right: margin),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Offstage(
-                                      offstage: !(list[index].orderStatusType ==
-                                          OrderStatusType.DELIVERED),
-                                      child: InkWell(
-                                        child: Container(
-                                          height: cellHeight,
-                                          margin: EdgeInsets.only(left: margin),
-                                          decoration: BoxDecoration(
-                                            color: ConstantData.primaryColor,
-                                            shape: BoxShape.rectangle,
-                                            borderRadius: BorderRadius.circular(
-                                                subRadius),
-                                          ),
-                                          child: Center(
-                                            child: ConstantWidget
-                                                .getCustomTextWithoutAlign(
-                                              'Re-order',
-                                              Colors.white,
-                                              FontWeight.w600,
-                                              fontSize,
-                                            ),
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          // Navigator.push(
-                                          //     context,
-                                          //     MaterialPageRoute(
-                                          //       builder: (context) => OrderTrackMap(),
-                                          //     ));
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Expanded(
-                                    child: InkWell(
-                                      child: Container(
-                                        height: cellHeight,
-                                        margin: EdgeInsets.only(right: margin),
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          color: ConstantData.cellColor,
-                                          shape: BoxShape.rectangle,
-                                          borderRadius:
-                                              BorderRadius.circular(subRadius),
-                                          // border: Border.all(
-                                          //     width: 0.5,
-                                          //     color: Colors.grey.shade400)
-                                        ),
-                                        child: Center(
-                                          child: ConstantWidget
-                                              .getCustomTextWithoutAlign(
-                                                  'Invoice',
-                                                  ConstantData.mainTextColor,
-                                                  FontWeight.w600,
-                                                  fontSize),
-                                        ),
-                                      ),
-                                      onTap: () async {
-                                        // final _contact =
-                                        //     await DataBox().readPhoneNo();
-                                        // showDialog(
-                                        //   context: context,
-                                        //   builder: (context) => InvoiceView(
-                                        //       phone: _contact, url: '111.pdf'),
-                                        // );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-
-                            //   ],
-                            // )
-                          ],
-                        ),
+                          ),
+                        );
+                      },
+                      child: orderTile(
+                        model: list[index],
+                        context: context,
                       ),
                     );
                   });
@@ -1271,14 +1188,6 @@ class OrdersList extends StatelessWidget {
               SizedBox(
                 height: ConstantWidget.getScreenPercentSize(context, 17),
               ),
-              // SizedBox(
-              //   height: ConstantWidget.getScreenPercentSize(context, 30),
-              //   width: ConstantWidget.getWidthPercentSize(context, 60),
-              //   child: Image.asset(
-              //     ConstantData.assetsPath + 'thank_you.png',
-              //     fit: BoxFit.cover,
-              //   ),
-              // ),
               ConstantWidget.errorWidget(
                 context: context,
                 height: 25,
@@ -1286,6 +1195,166 @@ class OrdersList extends StatelessWidget {
               ),
             ],
           );
+  }
+
+  Widget orderTile(
+      {required OrderHistoryModel model, required BuildContext context}) {
+    double leftMargin = MediaQuery.of(context).size.width * 0.05;
+    double imageSize = safeBlockVertical(context: context) * 8;
+
+    double cellHeight = safeBlockVertical(context: context) * 5.5;
+    double radius = safeBlockVertical(context: context) * 2;
+    double subRadius = safeBlockVertical(context: context) * 1.5;
+
+    double margin = safeBlockVertical(context: context) * 2;
+    double padding = safeBlockVertical(context: context) * 1.5;
+    double fontSize = ConstantWidget.getPercentSize(cellHeight, 35);
+    return Container(
+      decoration: BoxDecoration(
+          color: ConstantData.bgColor,
+          borderRadius: BorderRadius.circular(radius),
+          border: Border.all(
+              color: ConstantData.borderColor,
+              width: ConstantWidget.getWidthPercentSize(context, 0.08)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+            )
+          ]),
+      margin: EdgeInsets.only(left: leftMargin, top: margin, right: leftMargin),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              orderImageWidget(imageSize, radius, padding, model),
+              productListOrderWidget(model, context, padding)
+            ],
+          ),
+
+          Padding(
+            padding: EdgeInsets.only(
+                top: padding, bottom: margin, left: margin, right: margin),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: reorderWidget(
+                      model, cellHeight, margin, subRadius, fontSize),
+                ),
+                const Spacer(),
+                Expanded(
+                  child: viewInvoiceWidget(
+                      cellHeight, margin, subRadius, fontSize),
+                ),
+              ],
+            ),
+          )
+
+          //   ],
+          // )
+        ],
+      ),
+    );
+  }
+
+  InkWell viewInvoiceWidget(
+      double cellHeight, double margin, double subRadius, double fontSize) {
+    return InkWell(
+      child: Container(
+        height: cellHeight,
+        margin: EdgeInsets.only(right: margin),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: ConstantData.cellColor,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(subRadius),
+        ),
+        child: Center(
+          child: ConstantWidget.getCustomTextWithoutAlign(
+              'Invoice', ConstantData.mainTextColor, FontWeight.w600, fontSize),
+        ),
+      ),
+      onTap: () async {},
+    );
+  }
+
+  Offstage reorderWidget(OrderHistoryModel model, double cellHeight,
+      double margin, double subRadius, double fontSize) {
+    return Offstage(
+      offstage: !(model.orderStatusType == OrderStatusType.DELIVERED),
+      child: InkWell(
+        child: Container(
+          height: cellHeight,
+          margin: EdgeInsets.only(left: margin),
+          decoration: BoxDecoration(
+            color: ConstantData.primaryColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(subRadius),
+          ),
+          child: Center(
+            child: ConstantWidget.getCustomTextWithoutAlign(
+              'Re-order',
+              Colors.white,
+              FontWeight.w600,
+              fontSize,
+            ),
+          ),
+        ),
+        onTap: () {},
+      ),
+    );
+  }
+
+  Expanded productListOrderWidget(
+      OrderHistoryModel model, BuildContext context, double padding) {
+    return Expanded(
+      flex: 1,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ConstantWidget.getCustomText(
+            "Order: #${model.orderId}",
+            ConstantData.mainTextColor,
+            1,
+            TextAlign.start,
+            FontWeight.w600,
+            font18Px(context: context) * 1.1,
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: (padding / 1.8)),
+            child: ConstantWidget.getCustomText(
+              '${model.ordersList.length} items',
+              ConstantData.textColor,
+              1,
+              TextAlign.start,
+              FontWeight.w600,
+              font18Px(context: context),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container orderImageWidget(double imageSize, double radius, double padding,
+      OrderHistoryModel model) {
+    return Container(
+      height: imageSize,
+      width: imageSize,
+      margin: EdgeInsets.all(radius),
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          color: ConstantData.cellColor,
+          borderRadius: BorderRadius.all(
+            Radius.circular(radius),
+          ),
+          image: DecorationImage(
+              image: CachedNetworkImageProvider(
+                  productUrl + model.ordersList[0].productImg),
+              fit: BoxFit.cover)),
+    );
   }
 }
 
@@ -1327,14 +1396,7 @@ class InvoiceView extends StatelessWidget {
           borderRadius: BorderRadius.circular(radius),
         ),
         child: Column(
-          children: [
-            // Expanded(
-            //   flex: 1,
-            //   child: SfPdfViewer.network(
-            //     ConstantData.invoiceUrl + url,
-            //   ),
-            // ),
-          ],
+          children: [],
         ),
       ),
     );

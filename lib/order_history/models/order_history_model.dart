@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:medrpha_customer/enums/delivery_status_type.dart';
+import 'package:medrpha_customer/enums/order_status_type.dart';
 import 'package:medrpha_customer/enums/payment_status_type.dart';
 import 'package:medrpha_customer/products/models/products_model.dart';
 
