@@ -500,7 +500,7 @@ class ProductsRepository {
     }
   }
 
-  final myNgorkUrl = 'http://9c24-34-80-162-63.ngrok.io/';
+  final myNgorkUrl = 'http://6f4b-34-90-18-159.ngrok.io/';
 
   Future<List<ProductModel>> getRecommedations(
       {required String name, required String category}) async {

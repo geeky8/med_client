@@ -373,6 +373,7 @@ abstract class _ProductsStore with Store {
     ProductModel? model,
     required BuildContext context,
   }) async {
+    debugPrint("----- my words --------$text");
     textSpeechLoader = StoreState.LOADING;
     final resp = await _productsRepository.getVoiceText(text: text);
     // BuildContext myContext;
