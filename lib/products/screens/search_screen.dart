@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
+import 'package:medrpha_customer/products/screens/cart_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/products/utils/product_view_list.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
@@ -36,7 +37,82 @@ class SearchScreen extends StatelessWidget {
       appBar: ConstantWidget.customAppBar(
         context: context,
         title: 'Products',
-        //TODO: Add Cart icons everywhere possible for wasy navigatiom.
+        widgetList: [
+          Padding(
+            padding: EdgeInsets.only(
+              right: blockSizeHorizontal(context: context) * 4,
+            ),
+            child: InkWell(
+              child: Stack(
+                children: [
+                  /// Cart-Icon
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: blockSizeVertical(context: context) * 3,
+                    ),
+                    child: Icon(
+                      Icons.shopping_cart,
+                      color: ConstantData.mainTextColor,
+                      size: ConstantWidget.getWidthPercentSize(context, 5.5),
+                    ),
+                  ),
+
+                  /// No of items in cart
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: blockSizeHorizontal(context: context) * 2.5,
+                      bottom: blockSizeVertical(context: context) * 3,
+                    ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding:
+                          EdgeInsets.all(blockSizeVertical(context: context)),
+                      decoration: BoxDecoration(
+                          color: ConstantData.primaryColor,
+                          shape: BoxShape.circle),
+                      child: Observer(builder: (_) {
+                        final adminStatus = loginStore.loginModel.adminStatus;
+                        final value = (store.cartModel.productList.length > 10)
+                            ? '9+'
+                            : store.cartModel.productList.length.toString();
+                        return ConstantWidget.getCustomText(
+                          (adminStatus) ? value : '0',
+                          Colors.white,
+                          1,
+                          TextAlign.center,
+                          FontWeight.w600,
+                          font12Px(context: context) / 1.2,
+                        );
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Provider.value(
+                        value: store,
+                        child: Provider.value(
+                          value: loginStore,
+                          child: Provider.value(
+                            value: profileStore,
+                            child: Provider.value(
+                              value: orderHistoryStore,
+                              child: Provider.value(
+                                value: bottomNavigationStore,
+                                child: const CartScreen(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ));
+              },
+            ),
+          ),
+        ],
       ),
       body: Observer(builder: (_) {
         return SafeArea(

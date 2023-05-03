@@ -52,9 +52,13 @@ class ProductModel {
           : '',
       category: ((json['categorystr'] ?? '') as String).trim(),
       company: ((json['compnaystr'] ?? '') as String).trim(),
-      newMrp: double.parse(((json['newmrp'] ?? '0.00') as String).trim())
+      newMrp: double.parse(((json['newmrp'] ?? '0.00') as String).isNotEmpty
+              ? ((json['newmrp'] ?? '0.00') as String)
+              : '0.00'.trim())
           .toStringAsFixed(2),
-      oldMrp: double.parse(((json['oldmrp'] ?? '0.0') as String).trim())
+      oldMrp: double.parse(((json['oldmrp'] ?? '0.00') as String).isNotEmpty
+              ? ((json['oldmrp'] ?? '0.00') as String)
+              : '0.00'.trim())
           .toStringAsFixed(2),
       percentDiscount: ((json['percent'] ?? '') as String).trim(),
       saleQtyType: ((json['saleqtytypestr'] ?? '') as String).trim(),

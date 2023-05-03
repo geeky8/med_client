@@ -108,7 +108,7 @@ class ProductsRepository {
     if (term != null) {}
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
-      // print('Message ---------------------${respBody['message']}');
+      print('Message ---------------------${respBody['data']}');
       ProductResponseModel productRespModel = ProductResponseModel.fromJson(
         message: respBody['message'] as String,
         productList: [],

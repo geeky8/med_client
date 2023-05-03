@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -53,7 +55,7 @@ class SignInPage extends StatelessWidget {
             child: ConstantWidget.getBottomButton(
               context: context,
               func: () async {
-                if (pin == confirmPin) {
+                if (pin != "" && confirmPin != "" && pin == confirmPin) {
                   final dataBox = DataBox();
                   await dataBox.writePin(pin: pin);
 
@@ -91,7 +93,6 @@ class SignInPage extends StatelessWidget {
                         );
                       });
                   // ignore: use_build_context_synchronously
-
                 } else {
                   Fluttertoast.showToast(msg: 'Pin do not match, try again');
                 }

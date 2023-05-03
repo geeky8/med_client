@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medrpha_customer/enums/order_status_type.dart';
 import 'package:medrpha_customer/enums/payment_status_type.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
@@ -22,6 +24,8 @@ import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../api_service.dart';
+import '../../bottom_navigation/store/bottom_navigation_store.dart';
+import '../../products/screens/search_screen.dart';
 // import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
@@ -53,7 +57,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
   @override
   void initState() {
     tabController = TabController(
-      length: 4,
+      length: 5,
       vsync: this,
     );
     super.initState();
@@ -61,17 +65,53 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
 
   @override
   Widget build(BuildContext context) {
-    final store = context.read<OrderHistoryStore>();
     final loginStore = context.read<LoginStore>();
-    final productStore = context.read<ProductsStore>();
+    final store = context.read<ProductsStore>();
     final profileStore = context.read<ProfileStore>();
-
+    // final bottomNavigationStore = context.read<BottomNavigationStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
     return Scaffold(
         backgroundColor: ConstantData.bgColor,
         appBar: ConstantWidget.customAppBar(
           context: context,
           title: 'ORDERS',
           isHome: (widget.fromSettingsPage ?? false) ? true : false,
+          widgetList: [
+            Observer(builder: (context) {
+              final adminStatus = loginStore.loginModel.adminStatus;
+              return Offstage(
+                offstage: !adminStatus,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: blockSizeVertical(context: context) * 3,
+                    right: blockSizeHorizontal(context: context) * 4,
+                  ),
+                  child: Observer(builder: (context) {
+                    return InkWell(
+                      onTap: () {
+                        orderHistoryStore.filter = !orderHistoryStore.filter;
+                        if (!orderHistoryStore.filter) {
+                          orderHistoryStore.searchOrders
+                            ..clear()
+                            ..addAll(orderHistoryStore.allOrders);
+                        }
+                      },
+                      child: ConstantWidget.getCustomText(
+                        (orderHistoryStore.filter)
+                            ? "Remove Filter"
+                            : "Apply Filter",
+                        ConstantData.mainTextColor,
+                        1,
+                        TextAlign.center,
+                        FontWeight.w600,
+                        font18Px(context: context),
+                      ),
+                    );
+                  }),
+                ),
+              );
+            }),
+          ],
         ),
         body: Observer(
           builder: (_) {
@@ -89,10 +129,22 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                         );
                       }),
                     ),
-                    Expanded(child: listMyOrders(context)),
+                    Offstage(
+                      offstage: (!orderHistoryStore.filter),
+                      child: searchOrders(),
+                    ),
+                    Observer(builder: (_) {
+                      final adminStatus = loginStore.loginModel.adminStatus;
+                      return Expanded(
+                        child: Offstage(
+                          offstage: !adminStatus,
+                          child: listMyOrders(context),
+                        ),
+                      );
+                    }),
                   ],
                 ),
-                if (productStore.checkoutState == StoreState.LOADING)
+                if (store.checkoutState == StoreState.LOADING)
                   Container(
                     height: screenHeight(context: context),
                     width: screenWidth(context: context),
@@ -111,13 +163,93 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
         ));
   }
 
+  Widget searchOrders() {
+    final loginStore = context.read<LoginStore>();
+    final store = context.read<ProductsStore>();
+    final profileStore = context.read<ProfileStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
+
+    double height = ConstantWidget.getScreenPercentSize(context, 14);
+    double searchHeight = ConstantWidget.getPercentSize(height, 50);
+    double radius = ConstantWidget.getPercentSize(height, 10);
+    double margin = ConstantWidget.getScreenPercentSize(context, 2);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: blockSizeHorizontal(context: context) * 4,
+        vertical: blockSizeVertical(context: context) * 2,
+      ),
+      child: SizedBox(
+        width: double.infinity,
+        height: searchHeight,
+        child: TextFormField(
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]")),
+          ],
+          enabled: true,
+          style: TextStyle(
+            fontFamily: ConstantData.fontFamily,
+            fontWeight: FontWeight.w400,
+          ),
+          onChanged: (value) async {
+            if (value.isNotEmpty) {
+              final list = orderHistoryStore.allOrders
+                  .where((element) => element.orderId.startsWith(value));
+              if (list.isNotEmpty) {
+                orderHistoryStore.searchOrders
+                  ..clear()
+                  ..addAll(list);
+              } else {
+                Fluttertoast.showToast(msg: "Order not found");
+              }
+            }
+          },
+          maxLines: 1,
+          keyboardType: TextInputType.number,
+          textAlignVertical: TextAlignVertical.center,
+          textAlign: TextAlign.left,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.zero,
+            hintText: 'Find Orders',
+            prefixIcon: Icon(
+              Icons.search,
+              color: Colors.grey,
+              size: font25Px(context: context) * 1.2,
+            ),
+            hintStyle: TextStyle(
+              color: Colors.grey,
+              fontFamily: ConstantData.fontFamily,
+              fontWeight: FontWeight.w300,
+              fontSize: font15Px(context: context) * 1.2,
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(radius)),
+              borderSide: BorderSide(color: ConstantData.cellColor, width: 2),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(radius)),
+              borderSide: BorderSide(color: ConstantData.cellColor, width: 2),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(radius)),
+              borderSide: BorderSide(color: ConstantData.cellColor, width: 2),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget listMyOrders(BuildContext context) {
     final store = context.read<OrderHistoryStore>();
     final loginStore = context.read<LoginStore>();
     final productStore = context.read<ProductsStore>();
     final profileStore = context.read<ProfileStore>();
 
-    int currentTab = 0;
+    // int currentTab = 0;
 
     return SizedBox(
       height: double.infinity,
@@ -148,54 +280,19 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                 ),
                 tabs: const [
                   Tab(
-                    text: 'Live',
-                    // child: ConstantWidget.getCustomText(
-                    //   'Live ',
-                    //   (tabController.index == 0)
-                    //       ? ConstantData.bgColor
-                    //       : ConstantData.mainTextColor,
-                    //   2,
-                    //   TextAlign.center,
-                    //   FontWeight.w600,
-                    //   font18Px(context: context),
-                    // ),
+                    text: 'ALL',
                   ),
                   Tab(
-                    text: 'Dispatched',
-                    // child: ConstantWidget.getCustomText(
-                    //     'Dispatch',
-                    //     (tabController.index == 1)
-                    //         ? ConstantData.bgColor
-                    //         : ConstantData.mainTextColor,
-                    //     2,
-                    //     TextAlign.center,
-                    //     FontWeight.w600,
-                    //     font18Px(context: context)),
+                    text: 'LIVE',
                   ),
                   Tab(
-                    text: 'Delivered',
-                    // child: ConstantWidget.getCustomText(
-                    //     'Deliver',
-                    //     (tabController.index == 2)
-                    //         ? ConstantData.bgColor
-                    //         : ConstantData.mainTextColor,
-                    //     2,
-                    //     TextAlign.center,
-                    //     FontWeight.w600,
-                    //     font18Px(context: context)),
+                    text: 'DISPATCHED',
                   ),
                   Tab(
-                    text: 'Return/Cancelled',
-                    // child: ConstantWidget.getCustomText(
-                    //   'Cancel/Return',
-                    //   (tabController.index == 3)
-                    //       ? ConstantData.bgColor
-                    //       : ConstantData.mainTextColor,
-                    //   2,
-                    //   TextAlign.center,
-                    //   FontWeight.w600,
-                    //   font18Px(context: context),
-                    // ),
+                    text: 'DELIVERED',
+                  ),
+                  Tab(
+                    text: 'RETURNED/CANCELLED',
                   ),
                 ],
                 onTap: (tab) {
@@ -213,6 +310,25 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                   children: [
                     Expanded(
                       child: Observer(builder: (_) {
+                        if (store.searchOrders.isEmpty) {
+                          return const SizedBox();
+                        }
+                        return ViewOrdersList(
+                          list: store.searchOrders,
+                          store: store,
+                          productsStore: productStore,
+                          loginStore: loginStore,
+                          profileStore: profileStore,
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Expanded(
+                      child: Observer(builder: (_) {
+                        // final list = store.liveOrders;
                         return ViewOrdersList(
                           list: store.liveOrders,
                           store: store,

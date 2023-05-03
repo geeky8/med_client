@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/api_service.dart';
 import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store.dart';
 import 'package:medrpha_customer/enums/categories.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
@@ -88,7 +89,7 @@ class CategoriesListScreen extends StatelessWidget {
                         profileStore: profileStore,
                         cellHeight: cellHeight,
                         colorIndex: 1,
-                        catImgUrl: list[index].categoryImgUrl,
+                        catUrl: list[index].categoryImgUrl,
                         store: store,
                         loginStore: loginStore,
                       );
@@ -106,7 +107,7 @@ class BackGroundTile extends StatelessWidget {
   final String categoryName;
   final double cellHeight;
   final int colorIndex;
-  final String catImgUrl;
+  final String catUrl;
   final ProductsStore store;
   final LoginStore loginStore;
   final ProfileStore profileStore;
@@ -118,7 +119,7 @@ class BackGroundTile extends StatelessWidget {
     required this.categoryName,
     required this.cellHeight,
     required this.colorIndex,
-    required this.catImgUrl,
+    required this.catUrl,
     required this.store,
     required this.loginStore,
     required this.profileStore,
@@ -154,7 +155,7 @@ class BackGroundTile extends StatelessWidget {
               ),
               child: Center(
                 child: CachedNetworkImage(
-                  imageUrl: catImgUrl + catImgUrl,
+                  imageUrl: catImgUrl + catUrl,
                   fit: BoxFit.fill,
                 ),
               ),

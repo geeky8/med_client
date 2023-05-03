@@ -28,6 +28,14 @@ abstract class _OrderHistoryStore with Store {
   StoreState state = StoreState.SUCCESS;
 
   @observable
+  ObservableList<OrderHistoryModel> allOrders =
+      ObservableList<OrderHistoryModel>.of([]);
+
+  @observable
+  ObservableList<OrderHistoryModel> searchOrders =
+      ObservableList<OrderHistoryModel>.of([]);
+
+  @observable
   ObservableList<OrderHistoryModel> liveOrders =
       ObservableList<OrderHistoryModel>.of([]);
 
@@ -45,6 +53,9 @@ abstract class _OrderHistoryStore with Store {
 
   @observable
   int orderStatusTypeSelected = 0;
+
+  @observable
+  bool filter = false;
 
   // @action
   // Future<void> updateTheOrdersState({required OrderHistoryModel model}) async {
@@ -67,6 +78,14 @@ abstract class _OrderHistoryStore with Store {
       dispatchedOrders.clear();
       deliveredOrders.clear();
       returnCancelledOrders.clear();
+
+      allOrders
+        ..clear()
+        ..addAll(list);
+
+      searchOrders
+        ..clear()
+        ..addAll(allOrders);
 
       for (final order in list) {
         switch (order.orderStatusType) {

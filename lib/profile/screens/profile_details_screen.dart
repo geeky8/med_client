@@ -43,29 +43,31 @@ class ProfileDetailsScreen extends StatelessWidget {
           func: () async {
             final phone = await DataBox().readPhoneNo();
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => Provider.value(
-                        value: store,
+              context,
+              MaterialPageRoute(
+                builder: (_) => Provider.value(
+                  value: store,
+                  child: Provider.value(
+                    value: loginStore,
+                    child: Provider.value(
+                      value: productStore,
+                      child: Provider.value(
+                        value: bottomNavigationStore,
                         child: Provider.value(
-                          value: loginStore,
-                          child: Provider.value(
-                            value: productStore,
-                            child: Provider.value(
-                              value: bottomNavigationStore,
-                              child: Provider.value(
-                                value: orderHistoryStore,
-                                // child: ProfilePage(
-                                //   model: model,
-                                //   phone: phone,
-                                //   // beginToFill: '',
-                                // ),
-                                child: NewProfileScreen(
-                                    model: model, phone: phone),
-                              ),
-                            ),
-                          ),
-                        ))));
+                          value: orderHistoryStore,
+                          // child: ProfilePage(
+                          //   model: model,
+                          //   phone: phone,
+                          //   // beginToFill: '',
+                          // ),
+                          child: NewProfileScreen(model: model, phone: phone),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
           },
           label: 'Update',
         );

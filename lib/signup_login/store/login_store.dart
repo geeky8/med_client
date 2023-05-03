@@ -9,6 +9,7 @@ import 'package:medrpha_customer/enums/button_state.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
+import 'package:medrpha_customer/profile/screens/new_profile_screen.dart';
 import 'package:medrpha_customer/profile/screens/profile_screen.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/models/otp_model.dart';
@@ -115,10 +116,10 @@ abstract class _LoginStore with Store {
                       value: bottomNavigationStore,
                       child: Provider.value(
                         value: orderHistoryStore,
-                        child: ProfilePage(
+                        child: NewProfileScreen(
                           model: profileStore.profileModel,
                           phone: phone,
-                          beginToFill: '',
+                          beginToFill: true,
                         ),
                       ),
                     ),

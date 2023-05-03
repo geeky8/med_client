@@ -25,6 +25,38 @@ mixin _$OrderHistoryStore on _OrderHistoryStore, Store {
     });
   }
 
+  late final _$allOrdersAtom =
+      Atom(name: '_OrderHistoryStore.allOrders', context: context);
+
+  @override
+  ObservableList<OrderHistoryModel> get allOrders {
+    _$allOrdersAtom.reportRead();
+    return super.allOrders;
+  }
+
+  @override
+  set allOrders(ObservableList<OrderHistoryModel> value) {
+    _$allOrdersAtom.reportWrite(value, super.allOrders, () {
+      super.allOrders = value;
+    });
+  }
+
+  late final _$searchOrdersAtom =
+      Atom(name: '_OrderHistoryStore.searchOrders', context: context);
+
+  @override
+  ObservableList<OrderHistoryModel> get searchOrders {
+    _$searchOrdersAtom.reportRead();
+    return super.searchOrders;
+  }
+
+  @override
+  set searchOrders(ObservableList<OrderHistoryModel> value) {
+    _$searchOrdersAtom.reportWrite(value, super.searchOrders, () {
+      super.searchOrders = value;
+    });
+  }
+
   late final _$liveOrdersAtom =
       Atom(name: '_OrderHistoryStore.liveOrders', context: context);
 
@@ -107,6 +139,22 @@ mixin _$OrderHistoryStore on _OrderHistoryStore, Store {
     });
   }
 
+  late final _$filterAtom =
+      Atom(name: '_OrderHistoryStore.filter', context: context);
+
+  @override
+  bool get filter {
+    _$filterAtom.reportRead();
+    return super.filter;
+  }
+
+  @override
+  set filter(bool value) {
+    _$filterAtom.reportWrite(value, super.filter, () {
+      super.filter = value;
+    });
+  }
+
   late final _$invoiceDwdStateAtom =
       Atom(name: '_OrderHistoryStore.invoiceDwdState', context: context);
 
@@ -145,11 +193,14 @@ mixin _$OrderHistoryStore on _OrderHistoryStore, Store {
   String toString() {
     return '''
 state: ${state},
+allOrders: ${allOrders},
+searchOrders: ${searchOrders},
 liveOrders: ${liveOrders},
 dispatchedOrders: ${dispatchedOrders},
 deliveredOrders: ${deliveredOrders},
 returnCancelledOrders: ${returnCancelledOrders},
 orderStatusTypeSelected: ${orderStatusTypeSelected},
+filter: ${filter},
 invoiceDwdState: ${invoiceDwdState}
     ''';
   }

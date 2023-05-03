@@ -652,8 +652,8 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                   children: [
                     Expanded(
                       child: ConstantWidget.getCustomText(
-                        widget.profileStore.profileModel.firmInfoModel.address,
-                        ConstantData.mainTextColor,
+                        '${widget.profileStore.profileModel.firmInfoModel.address}\n${widget.profileStore.getState(stateId: int.parse(widget.profileStore.profileModel.firmInfoModel.state))} - ${widget.profileStore.getArea(areaId: int.parse(widget.profileStore.profileModel.firmInfoModel.pin))}',
+                        Colors.black45,
                         4,
                         TextAlign.left,
                         FontWeight.w600,
@@ -684,101 +684,95 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
           font18Px(context: context) * 1.1,
         ),
         SizedBox(height: blockSizeVertical(context: context) * 2.5),
-        // ListView.builder(
-        //   itemCount: 5,
-        //   shrinkWrap: true,
-        //   physics: const NeverScrollableScrollPhysics(),
-        //   itemBuilder: (context, index) {
-        //     return Container(
-        //       // padding: EdgeInsets.all(5),
-        //       child: buildTimelineTile(
-        //           orderStatusType: OrderStatusType.DELIVERED, index: index),
-        //     );
-        //   },
+        // TimelineTile(
+        //   alignment: TimelineAlign.start,
+        //   lineXY: 0.4,
+        //   isFirst: true,
+        //   isLast: false,
+        //   indicatorStyle: IndicatorStyle(
+        //     width: font25Px(context: context),
+        //     height: font25Px(context: context),
+        //     indicator: _buildIndicator(Colors.green),
+        //     padding: const EdgeInsets.symmetric(vertical: 16.0),
+        //     indicatorXY: 0,
+        //   ),
+        //   afterLineStyle: LineStyle(
+        //     thickness: 1,
+        //     color: ConstantData.primaryColor,
+        //   ),
+        //   endChild: Container(
+        //     padding: const EdgeInsets.all(20),
+        //     child: Column(
+        //       crossAxisAlignment: CrossAxisAlignment.start,
+        //       children: [
+        //         ConstantWidget.getCustomText(
+        //           widget.model.orderStatusType.orderStatusString(),
+        //           ConstantData.mainTextColor,
+        //           1,
+        //           TextAlign.center,
+        //           FontWeight.w600,
+        //           font15Px(context: context) * 1.1,
+        //         ),
+        //         SizedBox(
+        //           height: blockSizeHorizontal(context: context) * 2,
+        //         ),
+        //         ConstantWidget.getCustomText(
+        //           widget.model.placedDateTime,
+        //           Colors.black38,
+        //           1,
+        //           TextAlign.center,
+        //           FontWeight.w600,
+        //           font15Px(context: context),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
         // )
-        TimelineTile(
-          alignment: TimelineAlign.start,
-          lineXY: 0.4,
-          isFirst: true,
-          isLast: false,
-          indicatorStyle: IndicatorStyle(
-            width: font25Px(context: context),
-            height: font25Px(context: context),
-            indicator: _buildIndicator(Colors.green),
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            indicatorXY: 0,
-          ),
-          afterLineStyle: LineStyle(
-            thickness: 1,
-            color: ConstantData.primaryColor,
-          ),
-          // beforeLineStyle: LineStyle(
-          //   thickness: 1,
-          //   color: ConstantData.primaryColor,
-          // ),
-          endChild: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ConstantWidget.getCustomText(
-                  widget.model.orderStatusType.orderStatusString(),
-                  ConstantData.mainTextColor,
-                  1,
-                  TextAlign.center,
-                  FontWeight.w600,
-                  font15Px(context: context) * 1.1,
-                ),
-                SizedBox(
-                  height: blockSizeHorizontal(context: context) * 2,
-                ),
-                ConstantWidget.getCustomText(
-                  widget.model.placedDateTime,
-                  Colors.black38,
-                  1,
-                  TextAlign.center,
-                  FontWeight.w600,
-                  font15Px(context: context),
-                ),
-              ],
-            ),
-          ),
-        )
+        ListView.builder(
+            itemCount: 5,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (_, index) {
+              return buildTimelineTile(index: index);
+            }),
       ],
     );
   }
 
-  Widget buildTimelineTile(
-      {required OrderStatusType orderStatusType,
-      required OrderStatusType orderStatusTypeTile,
-      required int index}) {
+  Widget buildTimelineTile({
+    required int index,
+  }) {
     return TimelineTile(
       alignment: TimelineAlign.start,
       lineXY: 0.4,
-      isFirst: orderStatusType == OrderStatusType.CONFIRMED ? true : false,
-      isLast: orderStatusType == OrderStatusType.CANCELLED ? true : false,
+      isFirst: orderStatusFromIndex(index) == OrderStatusType.CONFIRMED
+          ? true
+          : false,
+      isLast: orderStatusFromIndex(index) == OrderStatusType.CANCELLED
+          ? true
+          : false,
       indicatorStyle: IndicatorStyle(
         width: font25Px(context: context),
         height: font25Px(context: context),
-        indicator: _buildIndicator(Colors.grey),
+        indicator: _buildIndicator(
+          index: index,
+          orderStatusType: widget.model.orderStatusType,
+        ),
         padding: const EdgeInsets.symmetric(vertical: 16.0),
         indicatorXY: 0,
       ),
       afterLineStyle: LineStyle(
         thickness: 1,
-        color: ConstantData.primaryColor,
+        color: getMyColor(
+            index: index, orderStatusType: widget.model.orderStatusType),
       ),
-      // beforeLineStyle: LineStyle(
-      //   thickness: 1,
-      //   color: ConstantData.primaryColor,
-      // ),
       endChild: Container(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ConstantWidget.getCustomText(
-              widget.model.orderStatusType.orderStatusString(),
+              orderStatusFromIndex(index).orderStatusString(),
               ConstantData.mainTextColor,
               1,
               TextAlign.center,
@@ -789,7 +783,7 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
               height: blockSizeHorizontal(context: context) * 2,
             ),
             ConstantWidget.getCustomText(
-              widget.model.placedDateTime,
+              getDateText(index),
               Colors.black38,
               1,
               TextAlign.center,
@@ -802,34 +796,67 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
     );
   }
 
-  Widget _buildIndicator(Color color) {
-    // Color getMyColor() {
-    //   if (actualIndex == 4) {
-    //     return ConstantData.color1;
-    //   }
-    //   if ((currentIndex == 1 || completed) && actualIndex != 4) {
-    //     return Colors.green;
-    //   }
-    //   return Colors.black26;
-    // }
-
+  Widget _buildIndicator({
+    required int index,
+    required OrderStatusType orderStatusType,
+  }) {
     return Container(
-      child: Container(
-        width: 20,
-        height: 20,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Icon(
-            Icons.check,
-            color: ConstantData.bgColor,
-            size: 15,
-          ),
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+        color: getMyColor(index: index, orderStatusType: orderStatusType),
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Icon(
+          Icons.check,
+          color: ConstantData.bgColor,
+          size: 15,
         ),
       ),
     );
+  }
+
+  Color getMyColor(
+      {required int index, required OrderStatusType orderStatusType}) {
+    switch (index) {
+      case 0:
+        return (widget.model.placedDateTime != "")
+            ? Colors.green
+            : Colors.black26;
+      case 1:
+        return (widget.model.dispatchedDate != "")
+            ? Colors.green
+            : Colors.black26;
+      case 2:
+        return (widget.model.deliveredDate != "")
+            ? Colors.green
+            : Colors.black26;
+      case 3:
+        return (orderStatusType == OrderStatusType.RETURNED)
+            ? Colors.orange
+            : Colors.black26;
+      case 4:
+        return (orderStatusType == OrderStatusType.CANCELLED)
+            ? ConstantData.color1
+            : Colors.black26;
+      default:
+        return Colors.black26;
+    }
+  }
+
+  String getDateText(int index) {
+    if (index == 0 && widget.model.placedDateTime != "") {
+      return widget.model.placedDateTime;
+    } else if (index == 1 && widget.model.dispatchedDate != "") {
+      return widget.model.dispatchedDate;
+    } else if (index == 2 && widget.model.deliveredDate != "") {
+      return widget.model.deliveredDate;
+    }
+    // else if(index == 3 || index == 4){
+    //   return ""'
+    // }
+    return "";
   }
 
   Widget productDetailsWidget(BuildContext context) {
@@ -845,9 +872,8 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
           font22Px(context: context),
         ),
         SizedBox(height: blockSizeVertical(context: context) * 2),
-        SizedBox(
-          height: ConstantWidget.getScreenPercentSize(context, 12) *
-              widget.model.ordersList.length,
+        Container(
+          // height: double.infinity,
           child: ListView.separated(
             separatorBuilder: (context, index) {
               return Divider(
@@ -856,7 +882,8 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
               );
             },
             itemCount: widget.model.ordersList.length,
-            physics: const BouncingScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
             itemBuilder: (_, index) {
               return ProductDetailsTile(
                 model: widget.model.ordersList[index],

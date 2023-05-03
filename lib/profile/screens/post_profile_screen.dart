@@ -75,7 +75,9 @@ class ProfileSubmission extends StatelessWidget {
               height: blockSizeVertical(context: context) * 4,
             ),
             ConstantWidget.getCustomText(
-              'Profile Created Successfully!',
+              (beginToFill != null)
+                  ? 'Profile Created Successfully!'
+                  : 'Profile Updated Successfully!',
               ConstantData.mainTextColor,
               1,
               TextAlign.center,
