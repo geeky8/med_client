@@ -13,6 +13,7 @@ import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/models/cart_model.dart';
 import 'package:medrpha_customer/products/repository/products_repository.dart';
 import 'package:medrpha_customer/products/screens/checkout_screen.dart';
+import 'package:medrpha_customer/products/screens/home_products_screen.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/profile/models/profile_model.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
@@ -25,7 +26,7 @@ import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../api_service.dart';
-import 'order_dialog.dart';
+import '../utils/order_dialog.dart';
 
 class OnlinePaymentScreen extends StatefulWidget {
   const OnlinePaymentScreen({
@@ -190,23 +191,41 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
     double topMargin = blockSizeVertical(context: context) * 2;
 
     return WillPopScope(
-      onWillPop: () {
+      onWillPop: () async {
         showDialog(
           context: context,
           builder: (_) => ConstantWidget.alertDialog(
             context: context,
             buttonText: 'Cancel',
             title: 'Sure you want to cancel the payment?',
-            func: () {
+            func: () async {
               Navigator.pop(context);
-              Navigator.pop(context);
-              // Navigator.pop(widget.checkoutContext);
+              productStore.checkoutState = StoreState.LOADING;
+              await orderHistoryStore.cancelOrder(
+                id: productStore.orderId,
+                remarks: 'cancelling order ${productStore.orderId}',
+                context: context,
+              );
+              productStore.checkoutState = StoreState.SUCCESS;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => MultiProvider(
+                    providers: [
+                      Provider.value(value: productStore),
+                      Provider.value(value: profileStore),
+                      Provider.value(value: loginStore),
+                      Provider.value(value: orderHistoryStore),
+                      Provider.value(value: bottomNavigationStore),
+                    ],
+                    child: const HomeScreen(),
+                  ),
+                ),
+              );
             },
           ),
         );
-        return Future.delayed(const Duration(seconds: 1), () {
-          return true;
-        });
+        return false;
       },
       child: Scaffold(
         backgroundColor: ConstantData.bgColor,
@@ -388,7 +407,27 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                                         productStore.checkoutState =
                                             StoreState.SUCCESS;
 
-                                        Navigator.pop(context);
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => MultiProvider(
+                                              providers: [
+                                                Provider.value(
+                                                    value: productStore),
+                                                Provider.value(
+                                                    value: profileStore),
+                                                Provider.value(
+                                                    value: loginStore),
+                                                Provider.value(
+                                                    value: orderHistoryStore),
+                                                Provider.value(
+                                                    value:
+                                                        bottomNavigationStore),
+                                              ],
+                                              child: const ProductHomeScreen(),
+                                            ),
+                                          ),
+                                        );
                                       },
                                     ),
                                   );

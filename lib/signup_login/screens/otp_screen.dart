@@ -44,139 +44,146 @@ class SignUpPage extends StatelessWidget {
     double radius = ConstantWidget.getPercentSize(subHeight, 20);
     double fontSize = ConstantWidget.getPercentSize(subHeight, 25);
 
-    return Scaffold(
-      backgroundColor: ConstantData.bgColor,
-      bottomNavigationBar: Observer(builder: (_) {
-        final state = store.buttonState;
-        switch (state) {
-          case ButtonState.LOADING:
-            return const LinearProgressIndicator();
-          case ButtonState.SUCCESS:
-            return const SizedBox();
-          case ButtonState.ERROR:
-            return const SizedBox();
-        }
-      }),
-      body: SafeArea(
-        child: Container(
-          padding:
-              EdgeInsets.all(ConstantWidget.getScreenPercentSize(context, 2.5)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              //--> Logo
-              MedLogo(height: height),
-              SizedBox(
-                height: ConstantWidget.getScreenPercentSize(context, 1.5),
-              ),
-              //---> Enter phone no
-              PhoneInput(
-                subHeight: subHeight,
-                radius: radius,
-                fontSize: fontSize,
-                controller: textPhoneController,
-                hintFontSize: font18Px(context: context),
-              ),
+    return WillPopScope(
+      onWillPop: () async {
+        SystemNavigator.pop();
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: ConstantData.bgColor,
+        bottomNavigationBar: Observer(builder: (_) {
+          final state = store.buttonState;
+          switch (state) {
+            case ButtonState.LOADING:
+              return const LinearProgressIndicator();
+            case ButtonState.SUCCESS:
+              return const SizedBox();
+            case ButtonState.ERROR:
+              return const SizedBox();
+          }
+        }),
+        body: SafeArea(
+          child: Container(
+            padding: EdgeInsets.all(
+                ConstantWidget.getScreenPercentSize(context, 2.5)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                //--> Logo
+                MedLogo(height: height),
+                SizedBox(
+                  height: ConstantWidget.getScreenPercentSize(context, 1.5),
+                ),
+                //---> Enter phone no
+                PhoneInput(
+                  subHeight: subHeight,
+                  radius: radius,
+                  fontSize: fontSize,
+                  controller: textPhoneController,
+                  hintFontSize: font18Px(context: context),
+                ),
 
-              //---> Get OTP Button
-              InkWell(
-                onTap: () async {
-                  if (textPhoneController.text.trim().isNotEmpty) {
-                    await store.getOTP(mobile: textPhoneController.text.trim());
-                    final phone = textPhoneController.text.trim();
-                    // ignore: use_build_context_synchronously
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Provider.value(
-                                  value: store,
-                                  child: Provider.value(
-                                    value: productStore,
+                //---> Get OTP Button
+                InkWell(
+                  onTap: () async {
+                    if (textPhoneController.text.trim().isNotEmpty) {
+                      await store.getOTP(
+                          mobile: textPhoneController.text.trim());
+                      final phone = textPhoneController.text.trim();
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Provider.value(
+                                    value: store,
                                     child: Provider.value(
-                                      value: profileStore,
+                                      value: productStore,
                                       child: Provider.value(
-                                        value: bottomNavigationStore,
+                                        value: profileStore,
                                         child: Provider.value(
-                                          value: orderHistoryStore,
-                                          child: PhoneVerification(
-                                            phone: phone,
+                                          value: bottomNavigationStore,
+                                          child: Provider.value(
+                                            value: orderHistoryStore,
+                                            child: PhoneVerification(
+                                              phone: phone,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                )));
-                    textPhoneController.clear();
-                  } else {
-                    Fluttertoast.showToast(msg: 'Enter a valid number');
-                  }
-                },
-                child: Container(
-                  height: ConstantWidget.getScreenPercentSize(context, 7.5),
-                  // width: ConstantWidget.getWidthPercentSize(context, 40),
-                  decoration: BoxDecoration(
-                    color: ConstantData.primaryColor,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(
-                        ConstantWidget.getPercentSize(height, 20),
+                                  )));
+                      textPhoneController.clear();
+                    } else {
+                      Fluttertoast.showToast(msg: 'Enter a valid number');
+                    }
+                  },
+                  child: Container(
+                    height: ConstantWidget.getScreenPercentSize(context, 7.5),
+                    // width: ConstantWidget.getWidthPercentSize(context, 40),
+                    decoration: BoxDecoration(
+                      color: ConstantData.primaryColor,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                          ConstantWidget.getPercentSize(height, 20),
+                        ),
+                      ),
+                    ),
+                    child: Center(
+                      child: ConstantWidget.getDefaultTextWidget(
+                        'Get OTP',
+                        TextAlign.center,
+                        FontWeight.w600,
+                        font22Px(context: context),
+                        Colors.white,
                       ),
                     ),
                   ),
-                  child: Center(
-                    child: ConstantWidget.getDefaultTextWidget(
-                      'Get OTP',
-                      TextAlign.center,
-                      FontWeight.w600,
-                      font22Px(context: context),
-                      Colors.white,
-                    ),
-                  ),
                 ),
-              ),
-              Column(
-                children: [
-                  ConstantWidget.getTextWidget(
-                    'Already have an account?\n',
-                    ConstantData.mainTextColor,
-                    TextAlign.center,
-                    FontWeight.w600,
-                    font18Px(context: context),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => Provider.value(
-                            value: store,
-                            child: Provider.value(
-                              value: productStore,
-                              child: Provider.value(
-                                value: profileStore..init(),
-                                child: Provider.value(
-                                  value: bottomNavigationStore,
-                                  child: Provider.value(
-                                    value: orderHistoryStore,
-                                    child: LoginScreen(),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    child: ConstantWidget.getTextWidget(
-                      'Login with pin',
-                      ConstantData.accentColor,
-                      TextAlign.center,
-                      FontWeight.w600,
-                      font22Px(context: context),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                // Column(
+                //   children: [
+                //     ConstantWidget.getTextWidget(
+                //       'Already have an account?\n',
+                //       ConstantData.mainTextColor,
+                //       TextAlign.center,
+                //       FontWeight.w600,
+                //       font18Px(context: context),
+                //     ),
+                //     InkWell(
+                //       onTap: () {
+                //         Navigator.pushReplacement(
+                //           context,
+                //           MaterialPageRoute(
+                //             builder: (_) => Provider.value(
+                //               value: store,
+                //               child: Provider.value(
+                //                 value: productStore,
+                //                 child: Provider.value(
+                //                   value: profileStore..init(),
+                //                   child: Provider.value(
+                //                     value: bottomNavigationStore,
+                //                     child: Provider.value(
+                //                       value: orderHistoryStore,
+                //                       child: LoginScreen(),
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                //         );
+                //       },
+                //       child: ConstantWidget.getTextWidget(
+                //         'Login with pin',
+                //         ConstantData.accentColor,
+                //         TextAlign.center,
+                //         FontWeight.w600,
+                //         font22Px(context: context),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+              ],
+            ),
           ),
         ),
       ),

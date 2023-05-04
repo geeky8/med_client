@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medrpha_customer/enums/order_status_type.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/models/order_history_model.dart';
@@ -11,6 +12,7 @@ import 'package:medrpha_customer/order_history/repository/order_history_reposito
 import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
+import 'package:medrpha_customer/utils/storage.dart';
 import 'package:mobx/mobx.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -65,6 +67,16 @@ abstract class _OrderHistoryStore with Store {
   //   orders
   //     ..removeAt(index)
   //     ..insert(index, updateModel);
+  // }
+
+  // @action
+  // Future<void> getMyOrderDetails({required String orderId}) async {
+  //   final sessId = await DataBox().readSessId();
+
+  //   final ordersResponse = await _orderHistoryRepository.getOrdersResponseModel(
+  //     sessId: sessId,
+  //     orderId: orderId,
+  //   );
   // }
 
   @action
@@ -259,18 +271,20 @@ abstract class _OrderHistoryStore with Store {
       text: remarks,
     );
     if (value != null) {
-      snackBar = ConstantWidget.customSnackBar(
-        text: 'Order cancelled successfully, status will be updated soon.',
-        context: context,
-      );
+      // snackBar = ConstantWidget.customSnackBar(
+      //   text: 'Order cancelled successfully, status will be updated soon.',
+      //   context: context,
+      // );
+      Fluttertoast.showToast(msg: "Order Cancellation Successful");
     } else {
-      snackBar = ConstantWidget.customSnackBar(
-        text: 'Order cancellation failed, please try again.',
-        context: context,
-      );
+      // snackBar = ConstantWidget.customSnackBar(
+      //   text: 'Order cancellation failed, please try again.',
+      //   context: context,
+      // );
+      Fluttertoast.showToast(msg: "Order Cancellation Failure");
     }
     invoiceDwdState = StoreState.SUCCESS;
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    // ScaffoldMessenger.of(context).showSnackBar(snackBar);
     await getOrdersList();
   }
 }

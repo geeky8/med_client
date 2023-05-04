@@ -134,19 +134,26 @@ class SettingsPageScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => Provider.value(
-                        value: orderHistoryStore,
-                        child: Provider.value(
-                          value: loginStore,
-                          child: Provider.value(
-                            value: profileStore,
-                            child: Provider.value(
-                              value: productStore,
-                              child: const OrderHistoryScreen(
-                                fromSettingsPage: true,
-                              ),
-                            ),
+                      builder: (_) => MultiProvider(
+                        providers: [
+                          Provider.value(
+                            value: loginStore,
                           ),
+                          Provider.value(
+                            value: productStore,
+                          ),
+                          Provider.value(
+                            value: profileStore,
+                          ),
+                          Provider.value(
+                            value: bottomNavigationStore,
+                          ),
+                          Provider.value(
+                            value: orderHistoryStore,
+                          ),
+                        ],
+                        child: const OrderHistoryScreen(
+                          fromSettingsPage: true,
                         ),
                       ),
                     ),

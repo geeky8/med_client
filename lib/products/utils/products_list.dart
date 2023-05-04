@@ -169,7 +169,7 @@ class ProductsList extends StatelessWidget {
               mainAxisSpacing: sideMargin,
               childAspectRatio:
                   ConstantWidget.getWidthPercentSize(context, 40) /
-                      ConstantWidget.getScreenPercentSize(context, 30),
+                      ConstantWidget.getScreenPercentSize(context, 35),
             ),
 
             // physics: const BouncingScrollPhysics(),
@@ -183,7 +183,7 @@ class ProductsList extends StatelessWidget {
                 loginStore: loginStore,
                 list: list,
                 width: width,
-                firstHeight: ConstantWidget.getWidthPercentSize(context, 17),
+                firstHeight: ConstantWidget.getWidthPercentSize(context, 20),
                 radius: radius,
                 sideMargin: sideMargin,
                 remainHeight: remainHeight,

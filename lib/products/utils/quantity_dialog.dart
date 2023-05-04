@@ -62,23 +62,28 @@ class _QuantityDialogState extends State<QuantityDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ConstantWidget.getCustomText(
-                        'Enter Quantity',
-                        ConstantData.mainTextColor,
-                        1,
-                        TextAlign.center,
-                        FontWeight.w600,
-                        font18Px(context: context),
-                      ),
-                      const Spacer(),
                       Expanded(
+                        flex: 2,
                         child: ConstantWidget.getCustomText(
-                          'Avl qty: ${widget.model.quantity}',
+                          'Enter Quantity',
                           ConstantData.mainTextColor,
                           1,
                           TextAlign.center,
-                          FontWeight.bold,
+                          FontWeight.w600,
+                          font18Px(context: context),
+                        ),
+                      ),
+                      const Spacer(),
+                      Expanded(
+                        flex: 2,
+                        child: ConstantWidget.getCustomText(
+                          'Avl qty : ${widget.model.quantity}',
+                          ConstantData.mainTextColor,
+                          1,
+                          TextAlign.center,
+                          FontWeight.w600,
                           font15Px(context: context) * 1.1,
                         ),
                       ),

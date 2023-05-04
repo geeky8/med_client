@@ -465,7 +465,7 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
                                   ),
                                   Expanded(
                                     child: ConstantWidget.getCustomText(
-                                        ' ${widget.model.quantity} units',
+                                        widget.model.quantity.trim(),
                                         ConstantData.mainTextColor,
                                         1,
                                         TextAlign.start,
@@ -634,9 +634,8 @@ class _ProductsDetailScreenState extends State<ProductsDetailScreen> {
 
             switch (categoriesfromValue(model.category)) {
               case CategoriesType.ETHICAL:
-                model = (store.ethicalProducts.containsKey(widget.model.pid)
-                    ? store.ethicalProducts[model.pid]
-                    : widget.model)!;
+                model = store.ethicalProductList
+                    .firstWhere((element) => element.pid == model.pid);
 
                 break;
               case CategoriesType.GENERIC:

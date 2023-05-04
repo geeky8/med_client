@@ -1192,9 +1192,11 @@ abstract class _ProductsStore with Store {
         .indexWhere((element) => element.pid == currModel.pid);
     cartModel.productList.removeAt(index);
 
+    debugPrint("---- model cart quantity ${model.cartQuantity}");
+
     cartUpdate(
       totalPrice: double.parse(cartModel.totalSalePrice),
-      oldTotal: (double.parse(model.newMrp) * (model.cartQuantity)),
+      oldTotal: (double.parse(currModel.newMrp) * (model.cartQuantity)),
       newTotal: 0.00,
     );
 

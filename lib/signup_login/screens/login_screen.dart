@@ -128,7 +128,9 @@ class LoginScreen extends StatelessWidget {
 
                 //---> Again login with OTP
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    await DataBox().writePin(pin: "");
+                    await DataBox().writeSessId(sessId: "");
                     Navigator.push(
                       context,
                       MaterialPageRoute(

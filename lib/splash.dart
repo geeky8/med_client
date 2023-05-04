@@ -8,6 +8,7 @@ import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
+import 'package:medrpha_customer/signup_login/screens/create_pin_screen.dart';
 import 'package:medrpha_customer/signup_login/screens/login_screen.dart';
 import 'package:medrpha_customer/signup_login/screens/otp_screen.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
@@ -45,6 +46,9 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     } else {
       final sessId = await DataBox().readSessId();
+      final pin = await DataBox().readPin();
+
+      debugPrint("------- get sess Id $sessId ");
       if (sessId == '') {
         /// For first time user
 
@@ -67,6 +71,19 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
             ),
+          ),
+        );
+      } else if (pin == "") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MultiProvider(providers: [
+              Provider.value(value: store),
+              Provider.value(value: productsStore),
+              Provider.value(value: profileStore),
+              Provider.value(value: orderHistoryStore),
+              Provider.value(value: bottomNavigationStore),
+            ], child: SignInPage()),
           ),
         );
       } else {

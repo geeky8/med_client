@@ -207,6 +207,8 @@ class SearchScreen extends StatelessWidget {
 
                 final list = store.searchList;
 
+                final adminStatus = loginStore.loginModel.adminStatus;
+
                 switch (state) {
                   case StoreState.LOADING:
                     return const SizedBox(
@@ -214,14 +216,55 @@ class SearchScreen extends StatelessWidget {
                     );
                   case StoreState.SUCCESS:
                     return Expanded(
-                      child: ProductViewList(
-                        loginStore: loginStore,
-                        orderHistoryStore: orderHistoryStore,
-                        bottomNavigationStore: bottomNavigationStore,
-                        profileStore: profileStore,
-                        list: list,
-                        store: store,
-                      ),
+                      child: (adminStatus)
+                          ? ProductViewList(
+                              loginStore: loginStore,
+                              orderHistoryStore: orderHistoryStore,
+                              bottomNavigationStore: bottomNavigationStore,
+                              profileStore: profileStore,
+                              list: list,
+                              store: store,
+                            )
+                          : Center(
+                              child: Column(
+                                // mainAxisAlignment: MainAxisAlignment.center,
+                                // crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    '${ConstantData.assetsPath}med_logo_text.png',
+                                    height: ConstantWidget.getScreenPercentSize(
+                                        context, 15),
+                                    width: ConstantWidget.getWidthPercentSize(
+                                        context, 30),
+                                  ),
+                                  SizedBox(
+                                    height:
+                                        blockSizeVertical(context: context) * 2,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal:
+                                          ConstantWidget.getWidthPercentSize(
+                                              context, 10),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: ConstantWidget.getCustomText(
+                                            "Admin Approval is Pending",
+                                            ConstantData.mainTextColor,
+                                            3,
+                                            TextAlign.center,
+                                            FontWeight.w600,
+                                            font18Px(context: context) * 1.1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                     );
                   case StoreState.ERROR:
                     return Center(

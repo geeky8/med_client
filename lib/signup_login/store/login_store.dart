@@ -69,7 +69,7 @@ abstract class _LoginStore with Store {
   }) async {
     // buttonState = ButtonState.LOADING;
     final pin = await DataBox().readPin();
-    SnackBar snackBar;
+
     if (pin == '') {
       Fluttertoast.showToast(
           msg: 'Session expired, try again using phone number');

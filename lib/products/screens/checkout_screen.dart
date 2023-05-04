@@ -8,7 +8,7 @@ import 'package:medrpha_customer/enums/payment_options.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
-import 'package:medrpha_customer/products/utils/online_payment_bottom_sheet.dart';
+import 'package:medrpha_customer/products/screens/online_payment_screen.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
 import 'package:medrpha_customer/signup_login/store/login_store.dart';
 import 'package:medrpha_customer/utils/constant_data.dart';
@@ -194,9 +194,9 @@ class CheckoutScreen extends StatelessWidget {
                                           ConstantWidget.getCustomText(
                                             productStore.cartModel
                                                 .productList[index].productName
-                                              ..trim(),
+                                                .trim(),
                                             ConstantData.mainTextColor,
-                                            1,
+                                            2,
                                             TextAlign.center,
                                             FontWeight.w600,
                                             font15Px(context: context) * 1.2,
@@ -214,7 +214,7 @@ class CheckoutScreen extends StatelessWidget {
                                     ),
                                     const Spacer(),
                                     ConstantWidget.getCustomText(
-                                      '₹${double.parse(productStore.cartModel.productList[index].subTotal).toStringAsFixed(2)}',
+                                      '₹${(double.parse(productStore.cartModel.productList[index].newMrp) * (productStore.cartModel.productList[index].cartQuantity)).toStringAsFixed(2)}',
                                       ConstantData.mainTextColor,
                                       1,
                                       TextAlign.center,
@@ -257,48 +257,7 @@ class CheckoutScreen extends StatelessWidget {
                           ),
                           Observer(builder: (_) {
                             return InkWell(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            ConstantWidget.getCustomText(
-                                              profileStore.profileModel
-                                                  .firmInfoModel.address,
-                                              ConstantData.mainTextColor,
-                                              1,
-                                              TextAlign.center,
-                                              FontWeight.w400,
-                                              font15Px(context: context) * 1.1,
-                                            ),
-                                            SizedBox(
-                                              height: blockSizeVertical(
-                                                  context: context),
-                                            ),
-                                            ConstantWidget.getCustomText(
-                                              '${profileStore.getCityName(cityId: int.parse(profileStore.profileModel.firmInfoModel.city))} , ${profileStore.getState(stateId: int.parse(profileStore.profileModel.firmInfoModel.state))} - ${profileStore.getArea(areaId: int.parse(profileStore.profileModel.firmInfoModel.pin))}',
-                                              ConstantData.mainTextColor,
-                                              1,
-                                              TextAlign.center,
-                                              FontWeight.w400,
-                                              font15Px(context: context) * 1.1,
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
+                              child: addressBlockWidget(profileStore, context),
                               onTap: () {},
                             );
                           }),
@@ -421,6 +380,69 @@ class CheckoutScreen extends StatelessWidget {
         ),
       );
     });
+  }
+
+  Column addressBlockWidget(ProfileStore profileStore, BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ConstantWidget.getCustomText(
+                    profileStore.profileModel.firmInfoModel.contactName,
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w500,
+                    font15Px(context: context) * 1.2,
+                  ),
+                  SizedBox(
+                    height: blockSizeVertical(context: context),
+                  ),
+                  ConstantWidget.getCustomText(
+                    '${profileStore.profileModel.firmInfoModel.address} - ${profileStore.getArea(areaId: int.parse(profileStore.profileModel.firmInfoModel.pin))}',
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w400,
+                    font15Px(context: context) * 1.1,
+                  ),
+                  SizedBox(
+                    height: blockSizeVertical(context: context),
+                  ),
+                  ConstantWidget.getCustomText(
+                    '${profileStore.getCityName(cityId: int.parse(profileStore.profileModel.firmInfoModel.city))} , ${profileStore.getState(stateId: int.parse(profileStore.profileModel.firmInfoModel.state))} , ${profileStore.getCountry(countryId: int.parse(profileStore.profileModel.firmInfoModel.country))}',
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w400,
+                    font15Px(context: context) * 1.1,
+                  ),
+                  SizedBox(
+                    height: blockSizeVertical(context: context),
+                  ),
+                  ConstantWidget.getCustomText(
+                    'Phone : ${profileStore.profileModel.firmInfoModel.phone}',
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w400,
+                    font15Px(context: context) * 1.1,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ],
+    );
   }
 }
 

@@ -34,8 +34,7 @@ class OrderHistoryModel {
       dispatchedDate: (json['Dispatched_Date'] ?? '') as String,
       deliveredDate: (json['Delivered_Date'] ?? '') as String,
       roundValTotal: (json['roundvaltotal'] ?? '') as String,
-      orderStatusType:
-          orderStatusFromValue(json['order_status'] ?? 'Cancelled'),
+      orderStatusType: orderStatusFromValue(json['order_status'] as String),
       isView: false,
     );
   }
@@ -79,7 +78,7 @@ class OrderHistoryModel {
   final String orderStatus;
   final String roundValTotal;
   final PaymentStatusType paymentStatusType;
-  final List<ProductModel> ordersList;
+  List<ProductModel>? ordersList;
   final OrderStatusType orderStatusType;
   final bool isView;
 }

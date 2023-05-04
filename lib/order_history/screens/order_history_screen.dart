@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,9 @@ import 'package:medrpha_customer/enums/order_status_type.dart';
 import 'package:medrpha_customer/enums/payment_status_type.dart';
 import 'package:medrpha_customer/enums/store_state.dart';
 import 'package:medrpha_customer/order_history/models/order_history_model.dart';
+import 'package:medrpha_customer/order_history/repository/order_history_repository.dart';
 import 'package:medrpha_customer/order_history/screens/order_history_details_screen.dart';
+import 'package:medrpha_customer/order_history/screens/search_orders.dart';
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/repository/products_repository.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
@@ -68,7 +72,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
     final loginStore = context.read<LoginStore>();
     final store = context.read<ProductsStore>();
     final profileStore = context.read<ProfileStore>();
-    // final bottomNavigationStore = context.read<BottomNavigationStore>();
+    final bottomNavigationStore = context.read<BottomNavigationStore>();
     final orderHistoryStore = context.read<OrderHistoryStore>();
     return Scaffold(
         backgroundColor: ConstantData.bgColor,
@@ -89,17 +93,30 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                   child: Observer(builder: (context) {
                     return InkWell(
                       onTap: () {
-                        orderHistoryStore.filter = !orderHistoryStore.filter;
-                        if (!orderHistoryStore.filter) {
-                          orderHistoryStore.searchOrders
-                            ..clear()
-                            ..addAll(orderHistoryStore.allOrders);
-                        }
+                        // orderHistoryStore.filter = !orderHistoryStore.filter;
+                        // if (!orderHistoryStore.filter) {
+                        //   orderHistoryStore.searchOrders
+                        //     ..clear()
+                        //     ..addAll(orderHistoryStore.allOrders);
+                        // }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MultiProvider(
+                              providers: [
+                                Provider.value(value: store),
+                                Provider.value(value: loginStore),
+                                Provider.value(value: profileStore),
+                                Provider.value(value: bottomNavigationStore),
+                                Provider.value(value: orderHistoryStore),
+                              ],
+                              child: const SearchOrders(),
+                            ),
+                          ),
+                        );
                       },
                       child: ConstantWidget.getCustomText(
-                        (orderHistoryStore.filter)
-                            ? "Remove Filter"
-                            : "Apply Filter",
+                        'Search Orders',
                         ConstantData.mainTextColor,
                         1,
                         TextAlign.center,
@@ -129,10 +146,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                         );
                       }),
                     ),
-                    Offstage(
-                      offstage: (!orderHistoryStore.filter),
-                      child: searchOrders(),
-                    ),
+                    // Offstage(
+                    //   offstage: (!orderHistoryStore.filter),
+                    //   child: searchOrders(),
+                    // ),
                     Observer(builder: (_) {
                       final adminStatus = loginStore.loginModel.adminStatus;
                       return Expanded(
@@ -161,86 +178,6 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
             );
           },
         ));
-  }
-
-  Widget searchOrders() {
-    final loginStore = context.read<LoginStore>();
-    final store = context.read<ProductsStore>();
-    final profileStore = context.read<ProfileStore>();
-    final bottomNavigationStore = context.read<BottomNavigationStore>();
-    final orderHistoryStore = context.read<OrderHistoryStore>();
-
-    double height = ConstantWidget.getScreenPercentSize(context, 14);
-    double searchHeight = ConstantWidget.getPercentSize(height, 50);
-    double radius = ConstantWidget.getPercentSize(height, 10);
-    double margin = ConstantWidget.getScreenPercentSize(context, 2);
-
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: blockSizeHorizontal(context: context) * 4,
-        vertical: blockSizeVertical(context: context) * 2,
-      ),
-      child: SizedBox(
-        width: double.infinity,
-        height: searchHeight,
-        child: TextFormField(
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]")),
-          ],
-          enabled: true,
-          style: TextStyle(
-            fontFamily: ConstantData.fontFamily,
-            fontWeight: FontWeight.w400,
-          ),
-          onChanged: (value) async {
-            if (value.isNotEmpty) {
-              final list = orderHistoryStore.allOrders
-                  .where((element) => element.orderId.startsWith(value));
-              if (list.isNotEmpty) {
-                orderHistoryStore.searchOrders
-                  ..clear()
-                  ..addAll(list);
-              } else {
-                Fluttertoast.showToast(msg: "Order not found");
-              }
-            }
-          },
-          maxLines: 1,
-          keyboardType: TextInputType.number,
-          textAlignVertical: TextAlignVertical.center,
-          textAlign: TextAlign.left,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.zero,
-            hintText: 'Find Orders',
-            prefixIcon: Icon(
-              Icons.search,
-              color: Colors.grey,
-              size: font25Px(context: context) * 1.2,
-            ),
-            hintStyle: TextStyle(
-              color: Colors.grey,
-              fontFamily: ConstantData.fontFamily,
-              fontWeight: FontWeight.w300,
-              fontSize: font15Px(context: context) * 1.2,
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(radius)),
-              borderSide: BorderSide(color: ConstantData.cellColor, width: 2),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(radius)),
-              borderSide: BorderSide(color: ConstantData.cellColor, width: 2),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(radius)),
-              borderSide: BorderSide(color: ConstantData.cellColor, width: 2),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   Widget listMyOrders(BuildContext context) {
@@ -279,9 +216,9 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                   fontSize: font18Px(context: context),
                 ),
                 tabs: const [
-                  Tab(
-                    text: 'ALL',
-                  ),
+                  // Tab(
+                  //   text: 'ALL',
+                  // ),
                   Tab(
                     text: 'LIVE',
                   ),
@@ -306,24 +243,27 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
             ),
             Expanded(
               child: TabBarView(controller: tabController, children: [
-                Column(
-                  children: [
-                    Expanded(
-                      child: Observer(builder: (_) {
-                        if (store.searchOrders.isEmpty) {
-                          return const SizedBox();
-                        }
-                        return ViewOrdersList(
-                          list: store.searchOrders,
-                          store: store,
-                          productsStore: productStore,
-                          loginStore: loginStore,
-                          profileStore: profileStore,
-                        );
-                      }),
-                    ),
-                  ],
-                ),
+                // Column(
+                //   children: [
+                //     Expanded(
+                //       child: Observer(builder: (context) {
+                //         // if (store.searchOrders.isEmpty) {
+                //         //   return const SizedBox();
+                //         // }
+                //         final list = (store.filter)
+                //             ? store.searchOrders
+                //             : store.allOrders;
+                //         return ViewOrdersList(
+                //           list: list,
+                //           store: store,
+                //           productsStore: productStore,
+                //           loginStore: loginStore,
+                //           profileStore: profileStore,
+                //         );
+                //       }),
+                //     ),
+                //   ],
+                // ),
                 Column(
                   children: [
                     Expanded(
@@ -568,78 +508,6 @@ class OrderTile extends StatefulWidget {
 }
 
 class _OrderTileState extends State<OrderTile> {
-  final razorPay = Razorpay();
-
-  handlePaymentSuccess(PaymentSuccessResponse response) async {
-    // print('-----------Success Payment-------- ${response.orderId}');
-    final store = context.read<ProductsStore>();
-    final orderHistoryStore = context.read<OrderHistoryStore>();
-    // final profileStore = context.read<ProfileStore>();
-    // final loginStore = context.read<LoginStore>();
-    // final bottomNavigationStore = context.read<BottomNavigationStore>();
-    store.checkoutState = StoreState.LOADING;
-    await store.confirmPayment(
-      orderId: widget.model.orderId,
-      context: context,
-      orderHistoryStore: orderHistoryStore,
-    );
-    store.checkoutState = StoreState.SUCCESS;
-  }
-
-  handlePaymentFailure(PaymentFailureResponse response) {
-    // print('-----------Failure Payment-------- ${response.code}');
-    showDialog(
-      context: context,
-      builder: (_) => OrderDialog(
-        func: () {
-          Navigator.pop(context);
-        },
-        image: 'online-payment-error.png',
-        label: 'Cancel',
-        text: 'Oops...Something went wrong',
-      ),
-    );
-  }
-
-  handlePaymentExternalWallet(PaymentSuccessResponse response) {
-    print(
-        '-----------Success Payment External wallet-------- ${response.signature}');
-  }
-
-  void openGateway({
-    required String payment,
-    required ProfileModel profileModel,
-    required int noOfProducts,
-  }) async {
-    final repo = ProductsRepository();
-    final id = await repo.createOrder(
-      payment: payment,
-      noOfProducts: noOfProducts,
-    );
-
-    final phoneNo = await DataBox().readPhoneNo();
-    final email = profileModel.firmInfoModel.email;
-
-    var options = {
-      'key': apiKey,
-      'amount': double.parse(payment) * 100,
-      'name': 'Mederpha',
-      'order_id': id,
-      'description': 'Online Medical Hub',
-      'retry': {'enabled': true, 'max_count': 1},
-      'send_sms_hash': true,
-      'prefill': {
-        'contact': phoneNo,
-        'email': email,
-      },
-      'external': {
-        'wallets': ['paytm']
-      }
-    };
-
-    razorPay.open(options);
-  }
-
   Color boxColor({required OrderStatusType orderStatus}) {
     if (orderStatus == OrderStatusType.CANCELLED) {
       return ConstantData.color1;
@@ -658,6 +526,21 @@ class _OrderTileState extends State<OrderTile> {
     }
   }
 
+  Color orderStatusColor({required OrderStatusType orderStatusType}) {
+    switch (orderStatusType) {
+      case OrderStatusType.CONFIRMED:
+        return Colors.green;
+      case OrderStatusType.DISPATCHED:
+        return Colors.green;
+      case OrderStatusType.DELIVERED:
+        return Colors.green;
+      case OrderStatusType.CANCELLED:
+        return ConstantData.color1;
+      case OrderStatusType.RETURNED:
+        return Colors.orange;
+    }
+  }
+
   String getText({required PaymentStatusType paymentStatus}) {
     switch (paymentStatus) {
       case PaymentStatusType.PAID:
@@ -671,9 +554,9 @@ class _OrderTileState extends State<OrderTile> {
 
   @override
   void initState() {
-    razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
-    razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentFailure);
-    razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, handlePaymentExternalWallet);
+    // razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
+    // razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentFailure);
+    // razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, handlePaymentExternalWallet);
     // _openGateway(model: widget.model, profileModel: widget.profileModel);
     super.initState();
   }
@@ -686,24 +569,29 @@ class _OrderTileState extends State<OrderTile> {
         horizontal: blockSizeVertical(context: context),
       ),
       child: InkWell(
-        onTap: () {
+        onTap: () async {
+          widget.productsStore.checkoutState = StoreState.LOADING;
+          final sessId = await DataBox().readSessId();
+          final ordersResponse =
+              await OrderHistoryRepository().getOrdersResponseModel(
+            sessId: sessId,
+            orderId: widget.model.orderId,
+          );
+          final updatedModel = widget.model
+              .copyWith(ordersList: [...ordersResponse.productList]);
+
+          widget.productsStore.checkoutState = StoreState.SUCCESS;
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => Provider.value(
-                value: widget.store,
-                child: Provider.value(
-                  value: widget.productsStore,
-                  child: Provider.value(
-                    value: widget.loginStore,
-                    child: Provider.value(
-                      value: widget.profileStore,
-                      child: OrderHistoryDetailsScreen(
-                        model: widget.model,
-                      ),
-                    ),
-                  ),
-                ),
+              builder: (_) => MultiProvider(
+                providers: [
+                  Provider.value(value: widget.store),
+                  Provider.value(value: widget.loginStore),
+                  Provider.value(value: widget.productsStore),
+                  Provider.value(value: widget.profileStore),
+                ],
+                child: OrderHistoryDetailsScreen(model: updatedModel),
               ),
             ),
           );
@@ -719,17 +607,15 @@ class _OrderTileState extends State<OrderTile> {
           ),
           child: Row(
             children: [
-              Expanded(
-                child: Icon(
-                  Icons.medication,
-                  color: ConstantData.clrBlack30,
-                  size: ConstantWidget.getWidthPercentSize(context, 20),
-                ),
+              Icon(
+                Icons.medication,
+                color: ConstantData.clrBlack30,
+                size: ConstantWidget.getWidthPercentSize(context, 20),
               ),
               // SizedBox(
               //   width: blockSizeHorizontal(context: context) * 4,
               // ),
-              const Spacer(),
+              // const Spacer(),
               Expanded(
                 flex: 5,
                 child: Column(
@@ -781,113 +667,86 @@ class _OrderTileState extends State<OrderTile> {
                       FontWeight.w600,
                       font15Px(context: context),
                     ),
-                    // SizedBox(height: blockSizeVertical(context: context)),
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //       child: Container(
-                    //         height:
-                    //             blockSizeVertical(context: context) * 2,
-                    //         child: ListView.builder(
-                    //           itemCount: widget.model.ordersList.length,
-                    //           scrollDirection: Axis.horizontal,
-                    //           itemBuilder: (_, index) {
-                    //             return ConstantWidget.getCustomText(
-                    //               widget.model.ordersList[index]
-                    //                       .productName +
-                    //                   ((index !=
-                    //                           widget.model.ordersList
-                    //                                   .length -
-                    //                               1)
-                    //                       ? ', '
-                    //                       : ''),
-                    //               ConstantData.mainTextColor,
-                    //               2,
-                    //               TextAlign.left,
-                    //               FontWeight.w600,
-                    //               font15Px(context: context) * 1.1,
-                    //             );
-                    //           },
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    // SizedBox(
-                    //     height:
-                    //         blockSizeVertical(context: context) * 2.5),
-                    // Row(
-                    //   children: [
-                    //     Icon(
-                    //       Icons.circle,
-                    //       size: blockSizeHorizontal(context: context) * 2,
-                    //       color: boxColor(
-                    //           orderStatus: widget.model.orderStatusType),
-                    //     ),
-                    //     SizedBox(
-                    //       width:
-                    //           blockSizeHorizontal(context: context) * 2,
-                    //     ),
-                    //     ConstantWidget.getCustomText(
-                    //       widget.model.orderStatusType
-                    //           .orderStatusString(),
-                    //       ConstantData.mainTextColor,
-                    //       1,
-                    //       TextAlign.center,
-                    //       FontWeight.w600,
-                    //       font15Px(context: context),
-                    //     ),
-                    //   ],
-                    // )
                   ],
                 ),
               ),
-              // if ((widget.model.paymentStatusType != PaymentStatusType.PAID) &&
-              //     (widget.model.orderStatusType == OrderStatusType.CONFIRMED))
-              Offstage(
-                offstage: (widget.model.paymentStatusType ==
-                        PaymentStatusType.PAID) ||
-                    (widget.model.orderStatusType == OrderStatusType.CANCELLED),
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => ConstantWidget.alertDialog(
-                        context: context,
-                        func: () async {
-                          Navigator.pop(context);
-                          openGateway(
-                            payment: widget.model.orderAmount,
-                            noOfProducts: widget.model.ordersList.length,
-                            profileModel: widget.profileStore.profileModel,
-                          );
-                        },
-                        buttonText: 'Confirm',
-                        title: 'Please confirm to continue payment',
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: blockSizeHorizontal(context: context) * 3,
-                        vertical: blockSizeVertical(context: context)),
-                    decoration: BoxDecoration(
-                      color: ConstantData.primaryColor,
-                      borderRadius: BorderRadius.circular(
-                        font25Px(context: context),
-                      ),
+              const Spacer(),
+              Padding(
+                padding: EdgeInsets.only(
+                  right: blockSizeHorizontal(context: context) * 4,
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(
+                    blockSizeHorizontal(context: context) * 2,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(font12Px(context: context)),
+                    border: Border.all(
+                      color: orderStatusColor(
+                          orderStatusType: widget.model.orderStatusType),
+                      width: 1.2,
                     ),
-                    child: ConstantWidget.getCustomText(
-                      'Pay Now',
-                      ConstantData.bgColor,
-                      1,
-                      TextAlign.center,
-                      FontWeight.w600,
-                      font12Px(context: context) * 1.1,
-                    ),
+                  ),
+                  child: ConstantWidget.getCustomText(
+                    widget.model.orderStatusType.orderStatusString(),
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w600,
+                    font18Px(context: context) * 1.1,
                   ),
                 ),
               ),
+              // Offstage(
+              // offstage: (widget.model.paymentStatusType ==
+              //         PaymentStatusType.PAID) ||
+              //     (widget.model.orderStatusType == OrderStatusType.CANCELLED),
+              //   child: Padding(
+              //     padding: EdgeInsets.only(
+              //       right: blockSizeHorizontal(context: context) * 4,
+              //     ),
+              //     child: InkWell(
+              //       onTap: () {
+              // showDialog(
+              //   context: context,
+              //   builder: (_) => ConstantWidget.alertDialog(
+              //     context: context,
+              //     func: () async {
+              //       Navigator.pop(context);
+              //       openGateway(
+              //         payment: widget.model.orderAmount,
+              //         noOfProducts: widget.model.ordersList.length,
+              //         profileModel: widget.profileStore.profileModel,
+              //       );
+              //     },
+              //     buttonText: 'Confirm',
+              //     title: 'Please confirm to continue payment',
+              //   ),
+              // );
+              //       },
+              //       child: Container(
+              //         padding: EdgeInsets.symmetric(
+              //             horizontal: blockSizeHorizontal(context: context) * 3,
+              //             vertical: blockSizeVertical(context: context)),
+              //         decoration: BoxDecoration(
+              //           color: ConstantData.primaryColor,
+              //           borderRadius: BorderRadius.circular(
+              //             font25Px(context: context),
+              //           ),
+              //         ),
+              //         child: ConstantWidget.getCustomText(
+              //           'Pay Now',
+              //           ConstantData.bgColor,
+              //           1,
+              //           TextAlign.center,
+              //           FontWeight.w600,
+              //           font12Px(context: context) * 1.1,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               // const Spacer(),
               // Column(
               //   children: [
@@ -912,567 +771,567 @@ class _OrderTileState extends State<OrderTile> {
   }
 }
 
-class AllOrdersList extends StatelessWidget {
-  const AllOrdersList({
-    Key? key,
-    required this.list,
-    required this.store,
-    required this.loginStore,
-  }) : super(key: key);
+// class AllOrdersList extends StatelessWidget {
+//   const AllOrdersList({
+//     Key? key,
+//     required this.list,
+//     required this.store,
+//     required this.loginStore,
+//   }) : super(key: key);
 
-  final List<OrderHistoryModel> list;
-  final OrderHistoryStore store;
-  final LoginStore loginStore;
+//   final List<OrderHistoryModel> list;
+//   final OrderHistoryStore store;
+//   final LoginStore loginStore;
 
-  // final _orderStatusValues = [
-  //   'Placed',
-  //   'Confirmed',
-  // ];
+//   // final _orderStatusValues = [
+//   //   'Placed',
+//   //   'Confirmed',
+//   // ];
 
-  @override
-  Widget build(BuildContext context) {
-    double imageSize = safeBlockVertical(context: context) * 6;
-    double margin = safeBlockVertical(context: context) * 2;
-    double leftMargin = safeBlockVertical(context: context) * 3;
-    double radius = ConstantWidget.getPercentSize(imageSize, 30);
-    double padding = ConstantWidget.getPercentSize(imageSize, 10);
-    double dotSize = ConstantWidget.getPercentSize(imageSize, 15);
-    double circleSize = ConstantWidget.getScreenPercentSize(context, 2);
-    return (list.isNotEmpty && loginStore.loginModel.adminStatus)
-        ? Container(
-            margin: EdgeInsets.only(top: leftMargin),
-            child: Observer(builder: (_) {
-              return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: list.length,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      child: Container(
-                        child: Column(
-                          children: [
-                            Container(
-                              margin:
-                                  EdgeInsets.only(left: margin, right: margin),
-                              child: InkWell(
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      height: imageSize,
-                                      width: imageSize,
-                                      margin: EdgeInsets.all(margin),
-                                      padding: EdgeInsets.all(padding),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.rectangle,
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(radius),
-                                        ),
-                                      ),
-                                      child: Image.asset(
-                                        "${ConstantData.assetsPath}med_logo_text.png",
-                                        height: ConstantWidget.getPercentSize(
-                                            imageSize, 50),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                bottom: padding),
-                                            child: ConstantWidget.getCustomText(
-                                              'Order #${list[index].orderId}',
-                                              ConstantData.mainTextColor,
-                                              1,
-                                              TextAlign.start,
-                                              FontWeight.w600,
-                                              font18Px(context: context) * 1.1,
-                                            ),
-                                          ),
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              ConstantWidget.getCustomText(
-                                                list[index]
-                                                    .ordersList
-                                                    .length
-                                                    .toString(),
-                                                ConstantData.textColor,
-                                                1,
-                                                TextAlign.start,
-                                                FontWeight.w400,
-                                                font18Px(context: context),
-                                              ),
-                                              Container(
-                                                height: dotSize,
-                                                width: dotSize,
-                                                margin: EdgeInsets.only(
-                                                    left: margin,
-                                                    right: margin),
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color:
-                                                        ConstantData.textColor),
-                                              ),
-                                              ConstantWidget.getCustomText(
-                                                (list[index].orderStatusType)
-                                                    .orderStatusString(),
-                                                ConstantData.textColor,
-                                                1,
-                                                TextAlign.start,
-                                                FontWeight.w600,
-                                                font18Px(context: context),
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: margin, right: margin),
-                                      child: Icon(
-                                        (list[index].isView)
-                                            ? CupertinoIcons.chevron_up
-                                            : CupertinoIcons.chevron_down,
-                                        color: ConstantData.textColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                onTap: () async {
-                                  // await store.updateTheOrdersState(
-                                  //   model: list[index],
-                                  // );
-                                },
-                              ),
-                            ),
-                            Offstage(
-                              offstage: !list[index].isView,
-                              child: Container(
-                                child: ListView(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  children: [
-                                    DropDownListTile(
-                                      margin: margin,
-                                      leftMargin: leftMargin,
-                                      circleSize: circleSize,
-                                      padding: padding,
-                                      // list: list,
-                                      status: 'Order Placed',
-                                      date: list[index].placedDateTime,
-                                      dotColor: ConstantData.primaryColor,
-                                    ),
-                                    DropDownListTile(
-                                      margin: margin,
-                                      leftMargin: leftMargin,
-                                      circleSize: circleSize,
-                                      padding: padding,
-                                      // list: list,
-                                      status: 'Order Confirmed',
-                                      date: list[index].placedDateTime,
-                                      dotColor: ConstantData.primaryColor,
-                                    ),
-                                    DropDownListTile(
-                                      margin: margin,
-                                      leftMargin: leftMargin,
-                                      circleSize: circleSize,
-                                      padding: padding,
-                                      // list: list,
-                                      status: 'Order Dispatched',
-                                      date: (list[index].orderStatusType !=
-                                              OrderStatusType.DISPATCHED)
-                                          ? 'Not yet dispatched'
-                                          : list[index].dispatchedDate,
-                                      dotColor: (list[index].orderStatusType !=
-                                              OrderStatusType.DISPATCHED)
-                                          ? ConstantData.textColor
-                                          : ConstantData.primaryColor,
-                                    ),
-                                    DropDownListTile(
-                                      margin: margin,
-                                      leftMargin: leftMargin,
-                                      circleSize: circleSize,
-                                      padding: padding,
-                                      // list: list,
-                                      status: 'Order Delivered',
-                                      date: (list[index].orderStatusType !=
-                                              OrderStatusType.DELIVERED)
-                                          ? 'Not yet delivered'
-                                          : list[index].deliveredDate,
-                                      dotColor: (list[index].orderStatusType !=
-                                              OrderStatusType.DELIVERED)
-                                          ? ConstantData.textColor
-                                          : ConstantData.primaryColor,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin:
-                                  EdgeInsets.only(top: margin, bottom: margin),
-                              color: ConstantData.textColor,
-                              height: ConstantWidget.getScreenPercentSize(
-                                  context, 0.08),
-                            )
-                          ],
-                        ),
-                      ),
-                      onTap: () {},
-                    );
-                  });
-            }))
-        : Column(
-            // mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Observer(builder: (_) {
-                  final adminStatus = loginStore.loginModel.adminStatus;
-                  return Offstage(
-                    offstage: adminStatus,
-                    child: ConstantWidget.adminStatusbanner(context),
-                  );
-                }),
-              ),
-              SizedBox(
-                height: ConstantWidget.getScreenPercentSize(context, 17),
-              ),
-              // SizedBox(
-              // height: ConstantWidget.getScreenPercentSize(context, 30),
-              //   width: ConstantWidget.getWidthPercentSize(context, 60),
-              //   child: Image.asset(
-              //     ConstantData.assetsPath + 'thank_you.png',
-              //     fit: BoxFit.cover,
-              //   ),
-              // ),
-              ConstantWidget.errorWidget(
-                context: context,
-                height: 25,
-                width: 20,
-              ),
-            ],
-          );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     double imageSize = safeBlockVertical(context: context) * 6;
+//     double margin = safeBlockVertical(context: context) * 2;
+//     double leftMargin = safeBlockVertical(context: context) * 3;
+//     double radius = ConstantWidget.getPercentSize(imageSize, 30);
+//     double padding = ConstantWidget.getPercentSize(imageSize, 10);
+//     double dotSize = ConstantWidget.getPercentSize(imageSize, 15);
+//     double circleSize = ConstantWidget.getScreenPercentSize(context, 2);
+//     return (list.isNotEmpty && loginStore.loginModel.adminStatus)
+//         ? Container(
+//             margin: EdgeInsets.only(top: leftMargin),
+//             child: Observer(builder: (_) {
+//               return ListView.builder(
+//                   shrinkWrap: true,
+//                   itemCount: list.length,
+//                   physics: const BouncingScrollPhysics(),
+//                   itemBuilder: (context, index) {
+//                     return InkWell(
+//                       child: Container(
+//                         child: Column(
+//                           children: [
+//                             Container(
+//                               margin:
+//                                   EdgeInsets.only(left: margin, right: margin),
+//                               child: InkWell(
+//                                 child: Row(
+//                                   children: [
+//                                     Container(
+//                                       height: imageSize,
+//                                       width: imageSize,
+//                                       margin: EdgeInsets.all(margin),
+//                                       padding: EdgeInsets.all(padding),
+//                                       decoration: BoxDecoration(
+//                                         shape: BoxShape.rectangle,
+//                                         borderRadius: BorderRadius.all(
+//                                           Radius.circular(radius),
+//                                         ),
+//                                       ),
+//                                       child: Image.asset(
+//                                         "${ConstantData.assetsPath}med_logo_text.png",
+//                                         height: ConstantWidget.getPercentSize(
+//                                             imageSize, 50),
+//                                       ),
+//                                     ),
+//                                     Expanded(
+//                                       flex: 1,
+//                                       child: Column(
+//                                         mainAxisAlignment:
+//                                             MainAxisAlignment.start,
+//                                         crossAxisAlignment:
+//                                             CrossAxisAlignment.start,
+//                                         children: [
+//                                           Padding(
+//                                             padding: EdgeInsets.only(
+//                                                 bottom: padding),
+//                                             child: ConstantWidget.getCustomText(
+//                                               'Order #${list[index].orderId}',
+//                                               ConstantData.mainTextColor,
+//                                               1,
+//                                               TextAlign.start,
+//                                               FontWeight.w600,
+//                                               font18Px(context: context) * 1.1,
+//                                             ),
+//                                           ),
+//                                           Row(
+//                                             crossAxisAlignment:
+//                                                 CrossAxisAlignment.center,
+//                                             children: [
+//                                               ConstantWidget.getCustomText(
+//                                                 list[index]
+//                                                     .ordersList
+//                                                     .length
+//                                                     .toString(),
+//                                                 ConstantData.textColor,
+//                                                 1,
+//                                                 TextAlign.start,
+//                                                 FontWeight.w400,
+//                                                 font18Px(context: context),
+//                                               ),
+//                                               Container(
+//                                                 height: dotSize,
+//                                                 width: dotSize,
+//                                                 margin: EdgeInsets.only(
+//                                                     left: margin,
+//                                                     right: margin),
+//                                                 decoration: BoxDecoration(
+//                                                     shape: BoxShape.circle,
+//                                                     color:
+//                                                         ConstantData.textColor),
+//                                               ),
+//                                               ConstantWidget.getCustomText(
+//                                                 (list[index].orderStatusType)
+//                                                     .orderStatusString(),
+//                                                 ConstantData.textColor,
+//                                                 1,
+//                                                 TextAlign.start,
+//                                                 FontWeight.w600,
+//                                                 font18Px(context: context),
+//                                               ),
+//                                             ],
+//                                           )
+//                                         ],
+//                                       ),
+//                                     ),
+//                                     Padding(
+//                                       padding: EdgeInsets.only(
+//                                           left: margin, right: margin),
+//                                       child: Icon(
+//                                         (list[index].isView)
+//                                             ? CupertinoIcons.chevron_up
+//                                             : CupertinoIcons.chevron_down,
+//                                         color: ConstantData.textColor,
+//                                       ),
+//                                     ),
+//                                   ],
+//                                 ),
+//                                 onTap: () async {
+//                                   // await store.updateTheOrdersState(
+//                                   //   model: list[index],
+//                                   // );
+//                                 },
+//                               ),
+//                             ),
+//                             Offstage(
+//                               offstage: !list[index].isView,
+//                               child: Container(
+//                                 child: ListView(
+//                                   shrinkWrap: true,
+//                                   physics: const NeverScrollableScrollPhysics(),
+//                                   children: [
+//                                     DropDownListTile(
+//                                       margin: margin,
+//                                       leftMargin: leftMargin,
+//                                       circleSize: circleSize,
+//                                       padding: padding,
+//                                       // list: list,
+//                                       status: 'Order Placed',
+//                                       date: list[index].placedDateTime,
+//                                       dotColor: ConstantData.primaryColor,
+//                                     ),
+//                                     DropDownListTile(
+//                                       margin: margin,
+//                                       leftMargin: leftMargin,
+//                                       circleSize: circleSize,
+//                                       padding: padding,
+//                                       // list: list,
+//                                       status: 'Order Confirmed',
+//                                       date: list[index].placedDateTime,
+//                                       dotColor: ConstantData.primaryColor,
+//                                     ),
+//                                     DropDownListTile(
+//                                       margin: margin,
+//                                       leftMargin: leftMargin,
+//                                       circleSize: circleSize,
+//                                       padding: padding,
+//                                       // list: list,
+//                                       status: 'Order Dispatched',
+//                                       date: (list[index].orderStatusType !=
+//                                               OrderStatusType.DISPATCHED)
+//                                           ? 'Not yet dispatched'
+//                                           : list[index].dispatchedDate,
+//                                       dotColor: (list[index].orderStatusType !=
+//                                               OrderStatusType.DISPATCHED)
+//                                           ? ConstantData.textColor
+//                                           : ConstantData.primaryColor,
+//                                     ),
+//                                     DropDownListTile(
+//                                       margin: margin,
+//                                       leftMargin: leftMargin,
+//                                       circleSize: circleSize,
+//                                       padding: padding,
+//                                       // list: list,
+//                                       status: 'Order Delivered',
+//                                       date: (list[index].orderStatusType !=
+//                                               OrderStatusType.DELIVERED)
+//                                           ? 'Not yet delivered'
+//                                           : list[index].deliveredDate,
+//                                       dotColor: (list[index].orderStatusType !=
+//                                               OrderStatusType.DELIVERED)
+//                                           ? ConstantData.textColor
+//                                           : ConstantData.primaryColor,
+//                                     ),
+//                                   ],
+//                                 ),
+//                               ),
+//                             ),
+//                             Container(
+//                               margin:
+//                                   EdgeInsets.only(top: margin, bottom: margin),
+//                               color: ConstantData.textColor,
+//                               height: ConstantWidget.getScreenPercentSize(
+//                                   context, 0.08),
+//                             )
+//                           ],
+//                         ),
+//                       ),
+//                       onTap: () {},
+//                     );
+//                   });
+//             }))
+//         : Column(
+//             // mainAxisAlignment: MainAxisAlignment.start,
+//             children: [
+//               Align(
+//                 alignment: Alignment.topCenter,
+//                 child: Observer(builder: (_) {
+//                   final adminStatus = loginStore.loginModel.adminStatus;
+//                   return Offstage(
+//                     offstage: adminStatus,
+//                     child: ConstantWidget.adminStatusbanner(context),
+//                   );
+//                 }),
+//               ),
+//               SizedBox(
+//                 height: ConstantWidget.getScreenPercentSize(context, 17),
+//               ),
+//               // SizedBox(
+//               // height: ConstantWidget.getScreenPercentSize(context, 30),
+//               //   width: ConstantWidget.getWidthPercentSize(context, 60),
+//               //   child: Image.asset(
+//               //     ConstantData.assetsPath + 'thank_you.png',
+//               //     fit: BoxFit.cover,
+//               //   ),
+//               // ),
+//               ConstantWidget.errorWidget(
+//                 context: context,
+//                 height: 25,
+//                 width: 20,
+//               ),
+//             ],
+//           );
+//   }
+// }
 
-class DropDownListTile extends StatelessWidget {
-  const DropDownListTile({
-    Key? key,
-    required this.margin,
-    required this.leftMargin,
-    required this.circleSize,
-    required this.padding,
-    // required this.list,
-    required this.date,
-    required this.status,
-    required this.dotColor,
-  }) : super(key: key);
+// class DropDownListTile extends StatelessWidget {
+//   const DropDownListTile({
+//     Key? key,
+//     required this.margin,
+//     required this.leftMargin,
+//     required this.circleSize,
+//     required this.padding,
+//     // required this.list,
+//     required this.date,
+//     required this.status,
+//     required this.dotColor,
+//   }) : super(key: key);
 
-  final double margin;
-  final double leftMargin;
-  final double circleSize;
-  final double padding;
-  // final List<OrderHistoryModel> list;
-  final String status;
-  final String date;
-  final Color dotColor;
+//   final double margin;
+//   final double leftMargin;
+//   final double circleSize;
+//   final double padding;
+//   // final List<OrderHistoryModel> list;
+//   final String status;
+//   final String date;
+//   final Color dotColor;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: margin, bottom: margin),
-      child: Container(
-        margin: EdgeInsets.only(left: leftMargin, right: leftMargin),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: circleSize,
-              width: circleSize,
-              margin: EdgeInsets.only(
-                right: margin,
-              ),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: dotColor,
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: padding),
-                    child: ConstantWidget.getCustomText(
-                        status,
-                        ConstantData.mainTextColor,
-                        1,
-                        TextAlign.start,
-                        FontWeight.w600,
-                        ConstantWidget.getScreenPercentSize(context, 1.8)),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ConstantWidget.getCustomText(
-                          date,
-                          ConstantData.textColor,
-                          1,
-                          TextAlign.start,
-                          FontWeight.w600,
-                          ConstantWidget.getScreenPercentSize(context, 1.5)),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: EdgeInsets.only(top: margin, bottom: margin),
+//       child: Container(
+//         margin: EdgeInsets.only(left: leftMargin, right: leftMargin),
+//         child: Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Container(
+//               height: circleSize,
+//               width: circleSize,
+//               margin: EdgeInsets.only(
+//                 right: margin,
+//               ),
+//               decoration: BoxDecoration(
+//                 shape: BoxShape.circle,
+//                 color: dotColor,
+//               ),
+//             ),
+//             Expanded(
+//               flex: 1,
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.start,
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Padding(
+//                     padding: EdgeInsets.only(bottom: padding),
+//                     child: ConstantWidget.getCustomText(
+//                         status,
+//                         ConstantData.mainTextColor,
+//                         1,
+//                         TextAlign.start,
+//                         FontWeight.w600,
+//                         ConstantWidget.getScreenPercentSize(context, 1.8)),
+//                   ),
+//                   Row(
+//                     crossAxisAlignment: CrossAxisAlignment.center,
+//                     children: [
+//                       ConstantWidget.getCustomText(
+//                           date,
+//                           ConstantData.textColor,
+//                           1,
+//                           TextAlign.start,
+//                           FontWeight.w600,
+//                           ConstantWidget.getScreenPercentSize(context, 1.5)),
+//                     ],
+//                   )
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
-class OrdersList extends StatelessWidget {
-  const OrdersList({
-    Key? key,
-    required this.list,
-    required this.store,
-    required this.loginStore,
-  }) : super(key: key);
+// class OrdersList extends StatelessWidget {
+//   const OrdersList({
+//     Key? key,
+//     required this.list,
+//     required this.store,
+//     required this.loginStore,
+//   }) : super(key: key);
 
-  final List<OrderHistoryModel> list;
-  final OrderHistoryStore store;
-  final LoginStore loginStore;
-  // final PaymentStatusType? paymentStatusType;
+//   final List<OrderHistoryModel> list;
+//   final OrderHistoryStore store;
+//   final LoginStore loginStore;
+//   // final PaymentStatusType? paymentStatusType;
 
-  @override
-  Widget build(BuildContext context) {
-    return (list.isNotEmpty && loginStore.loginModel.adminStatus)
-        ? SizedBox(
-            height: double.infinity,
-            child: Observer(builder: (_) {
-              // final list = store.dispatchedOrders;
-              return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => OrderHistoryDetailsScreen(
-                              model: list[index],
-                            ),
-                          ),
-                        );
-                      },
-                      child: orderTile(
-                        model: list[index],
-                        context: context,
-                      ),
-                    );
-                  });
-            }),
-          )
-        : Column(
-            // mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Observer(builder: (_) {
-                  final adminStatus = loginStore.loginModel.adminStatus;
-                  return Offstage(
-                    offstage: adminStatus,
-                    child: ConstantWidget.adminStatusbanner(context),
-                  );
-                }),
-              ),
-              SizedBox(
-                height: ConstantWidget.getScreenPercentSize(context, 17),
-              ),
-              ConstantWidget.errorWidget(
-                context: context,
-                height: 25,
-                width: 20,
-              ),
-            ],
-          );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return (list.isNotEmpty && loginStore.loginModel.adminStatus)
+//         ? SizedBox(
+//             height: double.infinity,
+//             child: Observer(builder: (_) {
+//               // final list = store.dispatchedOrders;
+//               return ListView.builder(
+//                   shrinkWrap: true,
+//                   physics: const BouncingScrollPhysics(),
+//                   itemCount: list.length,
+//                   itemBuilder: (context, index) {
+//                     return InkWell(
+//                       onTap: () {
+//                         Navigator.push(
+//                           context,
+//                           MaterialPageRoute(
+//                             builder: (_) => OrderHistoryDetailsScreen(
+//                               model: list[index],
+//                             ),
+//                           ),
+//                         );
+//                       },
+//                       child: orderTile(
+//                         model: list[index],
+//                         context: context,
+//                       ),
+//                     );
+//                   });
+//             }),
+//           )
+//         : Column(
+//             // mainAxisAlignment: MainAxisAlignment.start,
+//             children: [
+//               Align(
+//                 alignment: Alignment.topCenter,
+//                 child: Observer(builder: (_) {
+//                   final adminStatus = loginStore.loginModel.adminStatus;
+//                   return Offstage(
+//                     offstage: adminStatus,
+//                     child: ConstantWidget.adminStatusbanner(context),
+//                   );
+//                 }),
+//               ),
+//               SizedBox(
+//                 height: ConstantWidget.getScreenPercentSize(context, 17),
+//               ),
+//               ConstantWidget.errorWidget(
+//                 context: context,
+//                 height: 25,
+//                 width: 20,
+//               ),
+//             ],
+//           );
+//   }
 
-  Widget orderTile(
-      {required OrderHistoryModel model, required BuildContext context}) {
-    double leftMargin = MediaQuery.of(context).size.width * 0.05;
-    double imageSize = safeBlockVertical(context: context) * 8;
+//   Widget orderTile(
+//       {required OrderHistoryModel model, required BuildContext context}) {
+//     double leftMargin = MediaQuery.of(context).size.width * 0.05;
+//     double imageSize = safeBlockVertical(context: context) * 8;
 
-    double cellHeight = safeBlockVertical(context: context) * 5.5;
-    double radius = safeBlockVertical(context: context) * 2;
-    double subRadius = safeBlockVertical(context: context) * 1.5;
+//     double cellHeight = safeBlockVertical(context: context) * 5.5;
+//     double radius = safeBlockVertical(context: context) * 2;
+//     double subRadius = safeBlockVertical(context: context) * 1.5;
 
-    double margin = safeBlockVertical(context: context) * 2;
-    double padding = safeBlockVertical(context: context) * 1.5;
-    double fontSize = ConstantWidget.getPercentSize(cellHeight, 35);
-    return Container(
-      decoration: BoxDecoration(
-          color: ConstantData.bgColor,
-          borderRadius: BorderRadius.circular(radius),
-          border: Border.all(
-              color: ConstantData.borderColor,
-              width: ConstantWidget.getWidthPercentSize(context, 0.08)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade200,
-            )
-          ]),
-      margin: EdgeInsets.only(left: leftMargin, top: margin, right: leftMargin),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              orderImageWidget(imageSize, radius, padding, model),
-              productListOrderWidget(model, context, padding)
-            ],
-          ),
+//     double margin = safeBlockVertical(context: context) * 2;
+//     double padding = safeBlockVertical(context: context) * 1.5;
+//     double fontSize = ConstantWidget.getPercentSize(cellHeight, 35);
+//     return Container(
+//       decoration: BoxDecoration(
+//           color: ConstantData.bgColor,
+//           borderRadius: BorderRadius.circular(radius),
+//           border: Border.all(
+//               color: ConstantData.borderColor,
+//               width: ConstantWidget.getWidthPercentSize(context, 0.08)),
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.grey.shade200,
+//             )
+//           ]),
+//       margin: EdgeInsets.only(left: leftMargin, top: margin, right: leftMargin),
+//       child: Column(
+//         children: [
+//           Row(
+//             children: [
+//               orderImageWidget(imageSize, radius, padding, model),
+//               productListOrderWidget(model, context, padding)
+//             ],
+//           ),
 
-          Padding(
-            padding: EdgeInsets.only(
-                top: padding, bottom: margin, left: margin, right: margin),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: reorderWidget(
-                      model, cellHeight, margin, subRadius, fontSize),
-                ),
-                const Spacer(),
-                Expanded(
-                  child: viewInvoiceWidget(
-                      cellHeight, margin, subRadius, fontSize),
-                ),
-              ],
-            ),
-          )
+//           Padding(
+//             padding: EdgeInsets.only(
+//                 top: padding, bottom: margin, left: margin, right: margin),
+//             child: Row(
+//               children: [
+//                 Expanded(
+//                   flex: 1,
+//                   child: reorderWidget(
+//                       model, cellHeight, margin, subRadius, fontSize),
+//                 ),
+//                 const Spacer(),
+//                 Expanded(
+//                   child: viewInvoiceWidget(
+//                       cellHeight, margin, subRadius, fontSize),
+//                 ),
+//               ],
+//             ),
+//           )
 
-          //   ],
-          // )
-        ],
-      ),
-    );
-  }
+//           //   ],
+//           // )
+//         ],
+//       ),
+//     );
+//   }
 
-  InkWell viewInvoiceWidget(
-      double cellHeight, double margin, double subRadius, double fontSize) {
-    return InkWell(
-      child: Container(
-        height: cellHeight,
-        margin: EdgeInsets.only(right: margin),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: ConstantData.cellColor,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(subRadius),
-        ),
-        child: Center(
-          child: ConstantWidget.getCustomTextWithoutAlign(
-              'Invoice', ConstantData.mainTextColor, FontWeight.w600, fontSize),
-        ),
-      ),
-      onTap: () async {},
-    );
-  }
+//   InkWell viewInvoiceWidget(
+//       double cellHeight, double margin, double subRadius, double fontSize) {
+//     return InkWell(
+//       child: Container(
+//         height: cellHeight,
+//         margin: EdgeInsets.only(right: margin),
+//         alignment: Alignment.center,
+//         decoration: BoxDecoration(
+//           color: ConstantData.cellColor,
+//           shape: BoxShape.rectangle,
+//           borderRadius: BorderRadius.circular(subRadius),
+//         ),
+//         child: Center(
+//           child: ConstantWidget.getCustomTextWithoutAlign(
+//               'Invoice', ConstantData.mainTextColor, FontWeight.w600, fontSize),
+//         ),
+//       ),
+//       onTap: () async {},
+//     );
+//   }
 
-  Offstage reorderWidget(OrderHistoryModel model, double cellHeight,
-      double margin, double subRadius, double fontSize) {
-    return Offstage(
-      offstage: !(model.orderStatusType == OrderStatusType.DELIVERED),
-      child: InkWell(
-        child: Container(
-          height: cellHeight,
-          margin: EdgeInsets.only(left: margin),
-          decoration: BoxDecoration(
-            color: ConstantData.primaryColor,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(subRadius),
-          ),
-          child: Center(
-            child: ConstantWidget.getCustomTextWithoutAlign(
-              'Re-order',
-              Colors.white,
-              FontWeight.w600,
-              fontSize,
-            ),
-          ),
-        ),
-        onTap: () {},
-      ),
-    );
-  }
+//   Offstage reorderWidget(OrderHistoryModel model, double cellHeight,
+//       double margin, double subRadius, double fontSize) {
+//     return Offstage(
+//       offstage: !(model.orderStatusType == OrderStatusType.DELIVERED),
+//       child: InkWell(
+//         child: Container(
+//           height: cellHeight,
+//           margin: EdgeInsets.only(left: margin),
+//           decoration: BoxDecoration(
+//             color: ConstantData.primaryColor,
+//             shape: BoxShape.rectangle,
+//             borderRadius: BorderRadius.circular(subRadius),
+//           ),
+//           child: Center(
+//             child: ConstantWidget.getCustomTextWithoutAlign(
+//               'Re-order',
+//               Colors.white,
+//               FontWeight.w600,
+//               fontSize,
+//             ),
+//           ),
+//         ),
+//         onTap: () {},
+//       ),
+//     );
+//   }
 
-  Expanded productListOrderWidget(
-      OrderHistoryModel model, BuildContext context, double padding) {
-    return Expanded(
-      flex: 1,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ConstantWidget.getCustomText(
-            "Order: #${model.orderId}",
-            ConstantData.mainTextColor,
-            1,
-            TextAlign.start,
-            FontWeight.w600,
-            font18Px(context: context) * 1.1,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: (padding / 1.8)),
-            child: ConstantWidget.getCustomText(
-              '${model.ordersList.length} items',
-              ConstantData.textColor,
-              1,
-              TextAlign.start,
-              FontWeight.w600,
-              font18Px(context: context),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+//   Expanded productListOrderWidget(
+//       OrderHistoryModel model, BuildContext context, double padding) {
+//     return Expanded(
+//       flex: 1,
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           ConstantWidget.getCustomText(
+//             "Order: #${model.orderId}",
+//             ConstantData.mainTextColor,
+//             1,
+//             TextAlign.start,
+//             FontWeight.w600,
+//             font18Px(context: context) * 1.1,
+//           ),
+//           Padding(
+//             padding: EdgeInsets.only(top: (padding / 1.8)),
+//             child: ConstantWidget.getCustomText(
+//               '${model.ordersList.length} items',
+//               ConstantData.textColor,
+//               1,
+//               TextAlign.start,
+//               FontWeight.w600,
+//               font18Px(context: context),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 
-  Container orderImageWidget(double imageSize, double radius, double padding,
-      OrderHistoryModel model) {
-    return Container(
-      height: imageSize,
-      width: imageSize,
-      margin: EdgeInsets.all(radius),
-      padding: EdgeInsets.all(padding),
-      decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          color: ConstantData.cellColor,
-          borderRadius: BorderRadius.all(
-            Radius.circular(radius),
-          ),
-          image: DecorationImage(
-              image: CachedNetworkImageProvider(
-                  productUrl + model.ordersList[0].productImg),
-              fit: BoxFit.cover)),
-    );
-  }
-}
+//   Container orderImageWidget(double imageSize, double radius, double padding,
+//       OrderHistoryModel model) {
+//     return Container(
+//       height: imageSize,
+//       width: imageSize,
+//       margin: EdgeInsets.all(radius),
+//       padding: EdgeInsets.all(padding),
+//       decoration: BoxDecoration(
+//           shape: BoxShape.rectangle,
+//           color: ConstantData.cellColor,
+//           borderRadius: BorderRadius.all(
+//             Radius.circular(radius),
+//           ),
+//           image: DecorationImage(
+//               image: CachedNetworkImageProvider(
+//                   productUrl + model.ordersList[0].productImg),
+//               fit: BoxFit.cover)),
+//     );
+//   }
+// }
 
 class InvoiceView extends StatelessWidget {
   const InvoiceView({

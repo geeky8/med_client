@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -128,454 +129,592 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
     final productStore = context.read<ProductsStore>();
     final bottomNavigationStore = context.read<BottomNavigationStore>();
     final orderHistoryStore = context.read<OrderHistoryStore>();
-    return Scaffold(
-      backgroundColor: ConstantData.bgColor,
-      appBar: AppBar(
-        leading: Observer(builder: (_) {
-          return IconButton(
-            onPressed: () {
-              if (store.page == 0) {
-                Navigator.pop(context);
-              } else {
-                store.page--;
-              }
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              size: font18Px(context: context),
-              color: ConstantData.mainTextColor,
-            ),
-          );
-        }),
-        centerTitle: true,
+    return WillPopScope(
+      onWillPop: () async {
+        if (widget.beginToFill != null) {
+          showDialog(context: context, builder: (_) => exitDialog(context));
+        } else {
+          Navigator.pop(context);
+        }
+        return false;
+      },
+      child: Scaffold(
         backgroundColor: ConstantData.bgColor,
-        title: ConstantWidget.getCustomText(
-          'Edit Profile',
-          ConstantData.mainTextColor,
-          1,
-          TextAlign.center,
-          FontWeight.w600,
-          font22Px(context: context),
+        appBar: AppBar(
+          leading: Observer(builder: (_) {
+            return IconButton(
+              onPressed: () {
+                if (store.page == 0) {
+                  Navigator.pop(context);
+                } else {
+                  store.page--;
+                }
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                size: font18Px(context: context),
+                color: ConstantData.mainTextColor,
+              ),
+            );
+          }),
+          centerTitle: true,
+          backgroundColor: ConstantData.bgColor,
+          title: ConstantWidget.getCustomText(
+            'Edit Profile',
+            ConstantData.mainTextColor,
+            1,
+            TextAlign.center,
+            FontWeight.w600,
+            font22Px(context: context),
+          ),
         ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: blockSizeHorizontal(context: context) * 4,
-        ),
-        child: SizedBox(
-          height: ConstantWidget.getScreenPercentSize(context, 7),
-          child: Observer(
-            builder: (_) {
-              return Column(
-                children: [
-                  if (store.certificateUploadingState == StoreState.LOADING ||
-                      store.saveState == ButtonState.LOADING)
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: blockSizeVertical(context: context)),
-                      child: LinearProgressIndicator(
-                        color: ConstantData.primaryColor,
+        bottomNavigationBar: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: blockSizeHorizontal(context: context) * 4,
+          ),
+          child: SizedBox(
+            height: ConstantWidget.getScreenPercentSize(context, 7),
+            child: Observer(
+              builder: (_) {
+                return Column(
+                  children: [
+                    if (store.certificateUploadingState == StoreState.LOADING ||
+                        store.saveState == ButtonState.LOADING)
+                      Padding(
+                        padding: EdgeInsets.only(
+                            bottom: blockSizeVertical(context: context)),
+                        child: LinearProgressIndicator(
+                          color: ConstantData.primaryColor,
+                        ),
                       ),
-                    ),
-                  Expanded(
-                    child: Observer(builder: (_) {
-                      return InkWell(
-                        onTap: () {
-                          switch (store.page) {
-                            case 0:
-                              if (contactDetailsGlobalKey.currentState!
-                                  .validate()) {
-                                final model =
-                                    store.profileModel.firmInfoModel.copyWith(
-                                  contactName:
-                                      contactNameController.text.trim(),
-                                  contactNo: contactController.text.trim(),
-                                  altContactNo:
-                                      altContactController.text.trim(),
-                                );
-                                store.profileModel = store.profileModel
-                                    .copyWith(firmInfoModel: model);
+                    Expanded(
+                      child: Observer(builder: (_) {
+                        return InkWell(
+                          onTap: () {
+                            switch (store.page) {
+                              case 0:
+                                if (contactDetailsGlobalKey.currentState!
+                                    .validate()) {
+                                  final model =
+                                      store.profileModel.firmInfoModel.copyWith(
+                                    contactName:
+                                        contactNameController.text.trim(),
+                                    contactNo: contactController.text.trim(),
+                                    altContactNo:
+                                        altContactController.text.trim(),
+                                  );
+                                  store.profileModel = store.profileModel
+                                      .copyWith(firmInfoModel: model);
 
-                                store.page += 1;
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: 'Please review the contact details');
-                              }
-                              break;
-                            case 1:
-                              if (firmInfoGlobalKey.currentState!.validate()) {
-                                final model =
-                                    store.profileModel.firmInfoModel.copyWith(
-                                  firmName: firmtNameController.text.trim(),
-                                  address: addressController.text.trim(),
-                                  email: mailController.text.trim(),
-                                  phone: phoneController.text.trim(),
-                                );
-                                store.profileModel = store.profileModel
-                                    .copyWith(firmInfoModel: model);
+                                  store.page += 1;
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: 'Please review the contact details');
+                                }
+                                break;
+                              case 1:
+                                if (firmInfoGlobalKey.currentState!
+                                    .validate()) {
+                                  final model =
+                                      store.profileModel.firmInfoModel.copyWith(
+                                    firmName: firmtNameController.text.trim(),
+                                    address: addressController.text.trim(),
+                                    email: mailController.text.trim(),
+                                    phone: phoneController.text.trim(),
+                                  );
+                                  store.profileModel = store.profileModel
+                                      .copyWith(firmInfoModel: model);
 
-                                store.page += 1;
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: 'Please review the firm details');
-                              }
-                              break;
-                            case 2:
-                              final countryIndex = store.countryList.indexWhere(
-                                  (element) => element.countryName == country);
-                              final stateIndex = store.stateList.indexWhere(
-                                  (element) => element.stateName == state);
+                                  store.page += 1;
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: 'Please review the firm details');
+                                }
+                                break;
+                              case 2:
+                                final countryIndex = store.countryList
+                                    .indexWhere((element) =>
+                                        element.countryName == country);
+                                final stateIndex = store.stateList.indexWhere(
+                                    (element) => element.stateName == state);
 
-                              final cityIndex = store.cityList.indexWhere(
-                                  (element) => element.cityName == city);
+                                final cityIndex = store.cityList.indexWhere(
+                                    (element) => element.cityName == city);
 
-                              final areaIndex = store.areaList.indexWhere(
-                                  (element) => element.areaName == area);
-                              if (countryIndex != -1 &&
-                                  stateIndex != -1 &&
-                                  cityIndex != -1 &&
-                                  areaIndex != -1) {
-                                final model =
-                                    store.profileModel.firmInfoModel.copyWith(
-                                  country: store
-                                      .countryList[countryIndex].countryId
-                                      .toString(),
-                                  state: store.stateList[stateIndex].stateId
-                                      .toString(),
-                                  city: store.cityList[cityIndex].cityId
-                                      .toString(),
-                                  pin: store.areaList[areaIndex].areaId
-                                      .toString(),
-                                );
-                                store.profileModel = store.profileModel
-                                    .copyWith(firmInfoModel: model);
+                                final areaIndex = store.areaList.indexWhere(
+                                    (element) => element.areaName == area);
+                                if (countryIndex != -1 &&
+                                    stateIndex != -1 &&
+                                    cityIndex != -1 &&
+                                    areaIndex != -1) {
+                                  final model =
+                                      store.profileModel.firmInfoModel.copyWith(
+                                    country: store
+                                        .countryList[countryIndex].countryId
+                                        .toString(),
+                                    state: store.stateList[stateIndex].stateId
+                                        .toString(),
+                                    city: store.cityList[cityIndex].cityId
+                                        .toString(),
+                                    pin: store.areaList[areaIndex].areaId
+                                        .toString(),
+                                  );
+                                  store.profileModel = store.profileModel
+                                      .copyWith(firmInfoModel: model);
 
-                                store.page += 1;
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: 'Please review the location details');
-                              }
-                              break;
+                                  store.page += 1;
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          'Please review the location details');
+                                }
+                                break;
 
-                            case 3:
-                              if (store.profileModel.drugLicenseModel.dlImg1 ==
-                                  "") {
-                                Fluttertoast.showToast(
-                                    msg: 'Upload drug certificate 1');
-                              }
-                              if (store.profileModel.drugLicenseModel.dlImg2 ==
-                                  "") {
-                                Fluttertoast.showToast(
-                                    msg: 'Upload drug certificate 2');
-                              }
-                              if (dlGlobalKey.currentState!.validate() &&
-                                  store.profileModel.drugLicenseModel.dlImg1 !=
-                                      "" &&
-                                  store.profileModel.drugLicenseModel.dlImg2 !=
-                                      "") {
-                                final model = store
-                                    .profileModel.drugLicenseModel
-                                    .copyWith(
-                                  name: drugLicenseName.text.trim(),
-                                  number: drugLiscenseNo.text.trim(),
-                                  validity: drugLicenseValidity.text.trim(),
-                                );
-                                store.profileModel = store.profileModel
-                                    .copyWith(drugLicenseModel: model);
+                              case 3:
+                                if (store
+                                        .profileModel.drugLicenseModel.dlImg1 ==
+                                    "") {
+                                  Fluttertoast.showToast(
+                                      msg: 'Upload drug certificate 1');
+                                }
+                                if (store
+                                        .profileModel.drugLicenseModel.dlImg2 ==
+                                    "") {
+                                  Fluttertoast.showToast(
+                                      msg: 'Upload drug certificate 2');
+                                }
+                                if (dlGlobalKey.currentState!.validate() &&
+                                    store.profileModel.drugLicenseModel
+                                            .dlImg1 !=
+                                        "" &&
+                                    store.profileModel.drugLicenseModel
+                                            .dlImg2 !=
+                                        "") {
+                                  final model = store
+                                      .profileModel.drugLicenseModel
+                                      .copyWith(
+                                    name: drugLicenseName.text.trim(),
+                                    number: drugLiscenseNo.text.trim(),
+                                    validity: drugLicenseValidity.text.trim(),
+                                  );
+                                  store.profileModel = store.profileModel
+                                      .copyWith(drugLicenseModel: model);
 
-                                store.page += 1;
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg:
-                                        'Please review the Drug License details');
-                              }
-                              break;
+                                  store.page += 1;
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          'Please review the Drug License details');
+                                }
+                                break;
 
-                            case 4:
-                              if (gstSelection == 'No') {
-                                gstNoController.clear();
-                                store.page += 1;
-                              } else if (gstSelection == 'Yes' &&
-                                  gstGlobalKey.currentState!.validate()) {
-                                final model =
-                                    store.profileModel.gstModel.copyWith(
-                                  gstNo: gstNoController.text.trim(),
-                                );
-                                store.profileModel = store.profileModel
-                                    .copyWith(gstModel: model);
+                              case 4:
+                                if (gstSelection == 'No') {
+                                  gstNoController.clear();
+                                  store.page += 1;
+                                } else if (gstSelection == 'Yes' &&
+                                    gstGlobalKey.currentState!.validate()) {
+                                  final model =
+                                      store.profileModel.gstModel.copyWith(
+                                    gstNo: gstNoController.text.trim(),
+                                  );
+                                  store.profileModel = store.profileModel
+                                      .copyWith(gstModel: model);
 
-                                store.page += 1;
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: 'Please review the GST details');
-                              }
-                              break;
+                                  store.page += 1;
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: 'Please review the GST details');
+                                }
+                                break;
 
-                            case 5:
-                              if (fssaiSelection == 'No') {
-                                // store.page += 1;
-                                fssaiNoController.clear();
-                                final model = store.profileModel.fssaiModel
-                                    .copyWith(fssaiImg: '');
-                                store.profileModel = store.profileModel
-                                    .copyWith(fssaiModel: model);
-                              } else if (store
-                                      .profileModel.fssaiModel.fssaiImg ==
-                                  '') {
-                                Fluttertoast.showToast(
-                                    msg: 'Upload Fssai Certificate');
-                              } else if (fssaiSelection == 'Yes' &&
-                                  fssaiGlobalKey.currentState!.validate()) {
-                                final model =
-                                    store.profileModel.fssaiModel.copyWith(
-                                  number: fssaiNoController.text.trim(),
-                                );
-                                store.profileModel = store.profileModel
-                                    .copyWith(fssaiModel: model);
+                              case 5:
+                                if (fssaiSelection == 'No') {
+                                  // store.page += 1;
+                                  fssaiNoController.clear();
+                                  final model = store.profileModel.fssaiModel
+                                      .copyWith(fssaiImg: '');
+                                  store.profileModel = store.profileModel
+                                      .copyWith(fssaiModel: model);
+                                } else if (store
+                                        .profileModel.fssaiModel.fssaiImg ==
+                                    '') {
+                                  Fluttertoast.showToast(
+                                      msg: 'Upload Fssai Certificate');
+                                } else if (fssaiSelection == 'Yes' &&
+                                    fssaiGlobalKey.currentState!.validate()) {
+                                  final model =
+                                      store.profileModel.fssaiModel.copyWith(
+                                    number: fssaiNoController.text.trim(),
+                                  );
+                                  store.profileModel = store.profileModel
+                                      .copyWith(fssaiModel: model);
 
-                                // store.page += 1;
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: 'Please review the FSSAI details');
-                              }
-                              showDialog(
-                                context: context,
-                                builder: (_) {
-                                  return CustomAlertDialog(
-                                    header: 'Submit Details',
-                                    description:
-                                        'Clicking on submit you will submit your profile',
-                                    func: () async {
-                                      store.saveState = ButtonState.LOADING;
+                                  // store.page += 1;
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: 'Please review the FSSAI details');
+                                }
+                                showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return CustomAlertDialog(
+                                      header: 'Submit Details',
+                                      description:
+                                          'Clicking on submit you will submit your profile',
+                                      func: () async {
+                                        store.saveState = ButtonState.LOADING;
 
-                                      Navigator.pop(context);
+                                        Navigator.pop(context);
 
-                                      /// Profile uploading
-                                      if (widget.beginToFill != null) {
-                                        await store.updateProfile(
-                                          context: context,
-                                          beginToFill: true,
-                                          loginStore: loginstore,
-                                        );
-                                      } else {
-                                        await store.updateProfile(
-                                          context: context,
-                                          loginStore: loginstore,
-                                        );
-                                      }
-                                      store.saveState = ButtonState.SUCCESS;
+                                        /// Profile uploading
+                                        if (widget.beginToFill != null) {
+                                          await store.updateProfile(
+                                            context: context,
+                                            beginToFill: true,
+                                            loginStore: loginstore,
+                                          );
+                                        } else {
+                                          await store.updateProfile(
+                                            context: context,
+                                            loginStore: loginstore,
+                                          );
+                                        }
+                                        store.saveState = ButtonState.SUCCESS;
 
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => MultiProvider(
-                                            providers: [
-                                              Provider.value(value: store),
-                                              Provider.value(
-                                                  value: orderHistoryStore),
-                                              Provider.value(value: loginstore),
-                                              Provider.value(
-                                                value: bottomNavigationStore
-                                                  ..currentPage = 0,
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => MultiProvider(
+                                              providers: [
+                                                Provider.value(value: store),
+                                                Provider.value(
+                                                    value: orderHistoryStore),
+                                                Provider.value(
+                                                    value: loginstore),
+                                                Provider.value(
+                                                  value: bottomNavigationStore
+                                                    ..currentPage = 0,
+                                                ),
+                                                Provider.value(
+                                                  value: productStore,
+                                                ),
+                                              ],
+                                              child: ProfileSubmission(
+                                                beginToFill: widget.beginToFill,
                                               ),
-                                              Provider.value(
-                                                value: productStore,
-                                              ),
-                                            ],
-                                            child: ProfileSubmission(
-                                              beginToFill: widget.beginToFill,
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    buttonText: 'Submit',
-                                  );
-                                },
-                              );
+                                        );
+                                      },
+                                      buttonText: 'Submit',
+                                    );
+                                  },
+                                );
 
-                              // Navigator.pop(context);
-                              break;
-                          }
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: ConstantData.primaryColor,
-                            borderRadius: BorderRadius.circular(
-                              font18Px(context: context),
+                                // Navigator.pop(context);
+                                break;
+                            }
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: ConstantData.primaryColor,
+                              borderRadius: BorderRadius.circular(
+                                font18Px(context: context),
+                              ),
                             ),
-                          ),
-                          child: Observer(builder: (_) {
-                            if (store.page == 5) {
+                            child: Observer(builder: (_) {
+                              if (store.page == 5) {
+                                return ConstantWidget.getCustomText(
+                                  'Submit',
+                                  ConstantData.bgColor,
+                                  1,
+                                  TextAlign.center,
+                                  FontWeight.w600,
+                                  font22Px(context: context),
+                                );
+                              }
                               return ConstantWidget.getCustomText(
-                                'Submit',
+                                'Next',
                                 ConstantData.bgColor,
                                 1,
                                 TextAlign.center,
                                 FontWeight.w600,
                                 font22Px(context: context),
                               );
-                            }
-                            return ConstantWidget.getCustomText(
-                              'Next',
-                              ConstantData.bgColor,
-                              1,
-                              TextAlign.center,
-                              FontWeight.w600,
-                              font22Px(context: context),
-                            );
-                          }),
-                        ),
-                      );
-                    }),
-                  ),
-                ],
-              );
-            },
+                            }),
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
-      ),
-      body: Container(
-        padding: EdgeInsets.only(
-          top: blockSizeVertical(context: context) * 3,
-          left: blockSizeHorizontal(context: context) * 4,
-          right: blockSizeHorizontal(context: context) * 4,
-        ),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  ConstantWidget.getCustomText(
-                    'Profile Completetion / ',
-                    ConstantData.clrBorder,
-                    1,
-                    TextAlign.left,
-                    FontWeight.w600,
-                    font18Px(context: context) * 1.1,
-                  ),
-                  Observer(builder: (_) {
-                    switch (store.page) {
-                      case 0:
-                        return ConstantWidget.getCustomText(
-                          'Contact Details',
-                          ConstantData.mainTextColor,
-                          1,
-                          TextAlign.left,
-                          FontWeight.w500,
-                          font18Px(context: context) * 1.1,
-                        );
-                      case 1:
-                        return ConstantWidget.getCustomText(
-                          'Firm Details',
-                          ConstantData.mainTextColor,
-                          1,
-                          TextAlign.left,
-                          FontWeight.w500,
-                          font18Px(context: context) * 1.1,
-                        );
-                      case 2:
-                        return ConstantWidget.getCustomText(
-                          'Area Details',
-                          ConstantData.mainTextColor,
-                          1,
-                          TextAlign.left,
-                          FontWeight.w500,
-                          font18Px(context: context) * 1.1,
-                        );
-                      case 3:
-                        return ConstantWidget.getCustomText(
-                          'Drug License Details',
-                          ConstantData.mainTextColor,
-                          1,
-                          TextAlign.left,
-                          FontWeight.w500,
-                          font18Px(context: context) * 1.1,
-                        );
-                      case 4:
-                        return ConstantWidget.getCustomText(
-                          'GST Details',
-                          ConstantData.mainTextColor,
-                          1,
-                          TextAlign.left,
-                          FontWeight.w500,
-                          font18Px(context: context) * 1.1,
-                        );
-                      case 5:
-                        return ConstantWidget.getCustomText(
-                          'FSSAI Details',
-                          ConstantData.mainTextColor,
-                          1,
-                          TextAlign.left,
-                          FontWeight.w500,
-                          font18Px(context: context) * 1.1,
-                        );
-                      default:
-                        return ConstantWidget.getCustomText(
-                          'Contact Details',
-                          ConstantData.mainTextColor,
-                          1,
-                          TextAlign.left,
-                          FontWeight.w500,
-                          font18Px(context: context) * 1.1,
-                        );
-                    }
-                  }),
-                  const Spacer(),
-                  Observer(builder: (_) {
-                    return ConstantWidget.getCustomText(
-                      '${(((store.page) / 5) * 100).toStringAsFixed(2)}%',
-                      ConstantData.primaryColor,
+        body: Container(
+          padding: EdgeInsets.only(
+            top: blockSizeVertical(context: context) * 3,
+            left: blockSizeHorizontal(context: context) * 4,
+            right: blockSizeHorizontal(context: context) * 4,
+          ),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    ConstantWidget.getCustomText(
+                      'Profile Completetion / ',
+                      ConstantData.clrBorder,
                       1,
                       TextAlign.left,
                       FontWeight.w600,
                       font18Px(context: context) * 1.1,
+                    ),
+                    Observer(builder: (_) {
+                      switch (store.page) {
+                        case 0:
+                          return ConstantWidget.getCustomText(
+                            'Contact Details',
+                            ConstantData.mainTextColor,
+                            1,
+                            TextAlign.left,
+                            FontWeight.w500,
+                            font18Px(context: context) * 1.1,
+                          );
+                        case 1:
+                          return ConstantWidget.getCustomText(
+                            'Firm Details',
+                            ConstantData.mainTextColor,
+                            1,
+                            TextAlign.left,
+                            FontWeight.w500,
+                            font18Px(context: context) * 1.1,
+                          );
+                        case 2:
+                          return ConstantWidget.getCustomText(
+                            'Area Details',
+                            ConstantData.mainTextColor,
+                            1,
+                            TextAlign.left,
+                            FontWeight.w500,
+                            font18Px(context: context) * 1.1,
+                          );
+                        case 3:
+                          return ConstantWidget.getCustomText(
+                            'Drug License Details',
+                            ConstantData.mainTextColor,
+                            1,
+                            TextAlign.left,
+                            FontWeight.w500,
+                            font18Px(context: context) * 1.1,
+                          );
+                        case 4:
+                          return ConstantWidget.getCustomText(
+                            'GST Details',
+                            ConstantData.mainTextColor,
+                            1,
+                            TextAlign.left,
+                            FontWeight.w500,
+                            font18Px(context: context) * 1.1,
+                          );
+                        case 5:
+                          return ConstantWidget.getCustomText(
+                            'FSSAI Details',
+                            ConstantData.mainTextColor,
+                            1,
+                            TextAlign.left,
+                            FontWeight.w500,
+                            font18Px(context: context) * 1.1,
+                          );
+                        default:
+                          return ConstantWidget.getCustomText(
+                            'Contact Details',
+                            ConstantData.mainTextColor,
+                            1,
+                            TextAlign.left,
+                            FontWeight.w500,
+                            font18Px(context: context) * 1.1,
+                          );
+                      }
+                    }),
+                    const Spacer(),
+                    Observer(builder: (_) {
+                      return ConstantWidget.getCustomText(
+                        '${(((store.page) / 5) * 100).toStringAsFixed(2)}%',
+                        ConstantData.primaryColor,
+                        1,
+                        TextAlign.left,
+                        FontWeight.w600,
+                        font18Px(context: context) * 1.1,
+                      );
+                    }),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: blockSizeVertical(context: context) * 2.5,
+                  ),
+                  child: Observer(builder: (_) {
+                    return LinearProgressIndicator(
+                      color: ConstantData.primaryColor,
+                      backgroundColor: ConstantData.cellColor,
+                      value: ((store.page) / 5),
+                      minHeight: blockSizeVertical(context: context) / 1.5,
                     );
                   }),
+                ),
+                Observer(builder: (_) {
+                  final page = store.page;
+
+                  switch (page) {
+                    case 0:
+                      return ContactDetailWidget(context);
+                    case 1:
+                      return FirmDetailWidget(context);
+                    case 2:
+                      return AreaDetailWidget(context, store);
+                    case 3:
+                      return DLDetailWidget(context, store);
+                    case 4:
+                      return GSTDetailWidget(context, store);
+                    case 5:
+                      return FSSAIDetailWidget(context, store);
+                    default:
+                      return ContactDetailWidget(context);
+                  }
+                }),
+                // ContactDetailWidget(context),
+                // FirmDetailWidget(context),
+                // AreaDetailWidget(context, store),
+                // DLDetailWidget(context, store),
+                // GSTDetailWidget(context, store),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget exitDialog(BuildContext context) {
+    return Dialog(
+      shape: const RoundedRectangleBorder(),
+      backgroundColor: Colors.transparent,
+      child: Container(
+        height: ConstantWidget.getScreenPercentSize(context, 15),
+        decoration: BoxDecoration(
+          color: ConstantData.bgColor,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: blockSizeHorizontal(context: context) * 3,
+                vertical: blockSizeVertical(context: context) * 2,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ConstantWidget.getCustomText(
+                          'Do you really want to exit the app',
+                          ConstantData.mainTextColor,
+                          1,
+                          TextAlign.center,
+                          FontWeight.w600,
+                          font22Px(context: context),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: blockSizeVertical(context: context) * 2.5,
+            ),
+            const Spacer(),
+            Row(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        // horizontal: blockSizeHorizontal(context: context) * 5,
+                        vertical: blockSizeVertical(context: context) * 2.5,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: ConstantData.viewColor,
+                            width: 3,
+                          ),
+                          right: BorderSide(
+                            color: ConstantData.viewColor,
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                      child: ConstantWidget.getCustomText(
+                        'Cancel',
+                        ConstantData.mainTextColor,
+                        1,
+                        TextAlign.center,
+                        FontWeight.w600,
+                        font15Px(context: context) * 1.2,
+                      ),
+                    ),
+                  ),
                 ),
-                child: Observer(builder: (_) {
-                  return LinearProgressIndicator(
-                    color: ConstantData.primaryColor,
-                    backgroundColor: ConstantData.cellColor,
-                    value: ((store.page) / 5),
-                    minHeight: blockSizeVertical(context: context) / 1.5,
-                  );
-                }),
-              ),
-              Observer(builder: (_) {
-                final page = store.page;
-
-                switch (page) {
-                  case 0:
-                    return ContactDetailWidget(context);
-                  case 1:
-                    return FirmDetailWidget(context);
-                  case 2:
-                    return AreaDetailWidget(context, store);
-                  case 3:
-                    return DLDetailWidget(context, store);
-                  case 4:
-                    return GSTDetailWidget(context, store);
-                  case 5:
-                    return FSSAIDetailWidget(context, store);
-                  default:
-                    return ContactDetailWidget(context);
-                }
-              }),
-              // ContactDetailWidget(context),
-              // FirmDetailWidget(context),
-              // AreaDetailWidget(context, store),
-              // DLDetailWidget(context, store),
-              // GSTDetailWidget(context, store),
-            ],
-          ),
+                // const Spacer(),
+                Expanded(
+                  flex: 4,
+                  child: Observer(
+                    builder: (_) => InkWell(
+                      onTap: () async {
+                        await SystemNavigator.pop();
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          // horizontal: blockSizeHorizontal(context: context) * 2,
+                          vertical: blockSizeVertical(context: context) * 2.5,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(
+                              color: ConstantData.viewColor,
+                              width: 3,
+                            ),
+                            right: BorderSide(
+                              color: ConstantData.viewColor,
+                              width: 3,
+                            ),
+                          ),
+                        ),
+                        child: ConstantWidget.getCustomText(
+                          'Exit',
+                          ConstantData.primaryColor,
+                          1,
+                          TextAlign.center,
+                          FontWeight.w600,
+                          font15Px(context: context) * 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

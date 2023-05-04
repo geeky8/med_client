@@ -34,30 +34,33 @@ class OrderHistoryRepository {
           final model =
               OrderHistoryModel.fromJson(json: i as Map<String, dynamic>);
 
-          final ordersResponse = await getOrdersResponseModel(
-            sessId: sessId,
-            orderId: model.orderId,
-          );
+          // final ordersResponse = await getOrdersResponseModel(
+          //   sessId: sessId,
+          //   orderId: model.orderId,
+          // );
 
           OrderHistoryModel orderModel = model.copyWith(
-            ordersList: ordersResponse.productList,
+            // ordersList: ordersResponse.productList,
+            ordersList: [],
           );
 
-          if (i['order_status'] == 'Placed') {
-            if (model.deliveredDate != '') {
-              orderModel = orderModel.copyWith(
-                  orderStatusType: OrderStatusType.DELIVERED);
-            } else if (model.dispatchedDate != '') {
-              orderModel = orderModel.copyWith(
-                  orderStatusType: OrderStatusType.DISPATCHED);
-            } else {
-              orderModel = orderModel.copyWith(
-                  orderStatusType: OrderStatusType.CONFIRMED);
-            }
-          } else {
-            orderModel =
-                orderModel.copyWith(orderStatusType: OrderStatusType.CANCELLED);
-          }
+          // TODO: Remove this code
+          // if (i['order_status'] == 'Placed') {
+          //   if (model.deliveredDate != '') {
+          //     orderModel = orderModel.copyWith(
+          //         orderStatusType: OrderStatusType.DELIVERED);
+          //   } else if (model.dispatchedDate != '') {
+          //     orderModel = orderModel.copyWith(
+          //         orderStatusType: OrderStatusType.DISPATCHED);
+          //   } else {
+          //     orderModel = orderModel.copyWith(
+          //         orderStatusType: OrderStatusType.CONFIRMED);
+          //   }
+          // } else {
+          //   orderModel =
+          //       orderModel.copyWith(orderStatusType: OrderStatusType.CANCELLED);
+          // }
+
           list.add(orderModel);
         }
       }

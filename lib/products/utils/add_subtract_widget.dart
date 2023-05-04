@@ -298,6 +298,7 @@ class RemoveButton extends StatelessWidget {
     return InkWell(
       onTap: () async {
         // store.removeState = StoreState.LOADING;
+        debugPrint("model cart quantyt add subtarct ${model.cartQuantity}");
         await store.removeFromCart(
           model: model,
           // context: context,

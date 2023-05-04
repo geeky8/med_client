@@ -443,31 +443,38 @@ class ProductsCard extends StatelessWidget {
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                height: ConstantWidget.getScreenPercentSize(context, 15),
+                height: ConstantWidget.getScreenPercentSize(context, 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
+                      flex: 2,
                       child: ProductNameTextWidget(
                         remainHeight: remainHeight,
                         list: list,
                         index: index,
                       ),
                     ),
+                    // const Spacer(),
                     Expanded(
-                      flex: 2,
+                      flex: 3,
                       child: ProductPriceWidget(
                           loginStore: loginStore,
                           list: list,
                           index: index,
                           firstHeight: firstHeight),
                     ),
-                    ProductAddWidget(
-                      loginStore: loginStore,
-                      store: store,
-                      list: list,
-                      index: index,
+                    const Spacer(),
+                    Expanded(
+                      flex: 2,
+                      child: ProductAddWidget(
+                        loginStore: loginStore,
+                        store: store,
+                        list: list,
+                        index: index,
+                      ),
                     ),
+                    // const Spacer(),
                   ],
                 ),
               ),
@@ -702,33 +709,30 @@ class ProductPriceWidget extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.symmetric(
               horizontal: blockSizeHorizontal(context: context)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ConstantWidget.getLineTextView(
-                    'MRP : ₹${list[index].oldMrp}',
-                    Colors.grey,
-                    font12Px(context: context),
-                  ),
-                  SizedBox(
-                    height: ConstantWidget.getPercentSize(firstHeight, 8),
-                  ),
-                  ConstantWidget.getCustomText(
-                    '₹${list[index].newMrp}',
-                    ConstantData.primaryColor,
-                    1,
-                    TextAlign.start,
-                    FontWeight.w600,
-                    font18Px(context: context),
-                  ),
-                ],
+              ConstantWidget.getLineTextView(
+                'MRP : ₹${list[index].oldMrp}',
+                Colors.grey,
+                font12Px(context: context),
+              ),
+              SizedBox(
+                height: ConstantWidget.getPercentSize(firstHeight, 8),
               ),
               ConstantWidget.getCustomText(
-                'Avl Qty : ${(list[index].quantity.length > 4) ? '${list[index].quantity.substring(0, 4)}...' : list[index].quantity}',
+                '₹${list[index].newMrp}',
+                ConstantData.primaryColor,
+                1,
+                TextAlign.start,
+                FontWeight.w600,
+                font18Px(context: context),
+              ),
+              SizedBox(
+                height: ConstantWidget.getPercentSize(firstHeight, 8),
+              ),
+              ConstantWidget.getCustomText(
+                'Avl Qty : ${list[index].quantity}',
                 ConstantData.textColor,
                 2,
                 TextAlign.start,
@@ -739,7 +743,20 @@ class ProductPriceWidget extends StatelessWidget {
           ),
         );
       } else {
-        return const SizedBox();
+        return Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: blockSizeHorizontal(context: context),
+            // vertical: blockSizeVertical(context: context) * 2,
+          ),
+          child: ConstantWidget.getCustomText(
+            'Details will be visible after admin verifies',
+            Colors.black45,
+            2,
+            TextAlign.start,
+            FontWeight.w600,
+            font15Px(context: context) * 1.1,
+          ),
+        );
       }
     });
   }

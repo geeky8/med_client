@@ -81,113 +81,193 @@ class _PhoneVerificationState extends State<PhoneVerification> {
 
     double height = ConstantWidget.getScreenPercentSize(context, 18);
 
-    return Scaffold(
-      backgroundColor: ConstantData.bgColor,
-      bottomNavigationBar: Observer(builder: (_) {
-        final state = store.buttonState;
-        switch (state) {
-          case ButtonState.LOADING:
-            return const LinearProgressIndicator();
-          case ButtonState.SUCCESS:
-            return const SizedBox();
-          case ButtonState.ERROR:
-            return const SizedBox();
-        }
-      }),
-      body: SafeArea(
-        child: Container(
-          padding:
-              EdgeInsets.all(ConstantWidget.getScreenPercentSize(context, 2.5)),
-          child: ListView(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: ConstantWidget.getScreenPercentSize(context, 2),
-              ),
+    return WillPopScope(
+      onWillPop: () async {
+        SystemNavigator.pop();
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: ConstantData.bgColor,
+        bottomNavigationBar: Observer(builder: (_) {
+          final state = store.buttonState;
+          switch (state) {
+            case ButtonState.LOADING:
+              return const LinearProgressIndicator();
+            case ButtonState.SUCCESS:
+              return const SizedBox();
+            case ButtonState.ERROR:
+              return const SizedBox();
+          }
+        }),
+        body: SafeArea(
+          child: Container(
+            padding: EdgeInsets.all(
+                ConstantWidget.getScreenPercentSize(context, 2.5)),
+            child: ListView(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: ConstantWidget.getScreenPercentSize(context, 2),
+                ),
 
-              //---> Logo widget
-              MedLogo(height: height),
-              SizedBox(
-                height: ConstantWidget.getScreenPercentSize(context, 2),
-              ),
-              ConstantWidget.getCustomText(
-                'Enter Code',
-                ConstantData.mainTextColor,
-                1,
-                TextAlign.center,
-                FontWeight.w600,
-                font25Px(context: context),
-              ),
-              SizedBox(
-                height: ConstantWidget.getScreenPercentSize(context, 3),
-              ),
-              ConstantWidget.getCustomText(
-                'We have sent a verification code to the phone',
-                ConstantData.clrBorder,
-                2,
-                TextAlign.center,
-                FontWeight.w600,
-                font18Px(context: context) * 1.12,
-              ),
-              SizedBox(
-                height: blockSizeHorizontal(context: context) * 2,
-              ),
-              ConstantWidget.getCustomText(
-                '+91 ${widget.phone}',
-                ConstantData.mainTextColor,
-                2,
-                TextAlign.center,
-                FontWeight.w600,
-                font22Px(context: context),
-              ),
-              SizedBox(
-                height: ConstantWidget.getScreenPercentSize(context, 5),
-              ),
+                //---> Logo widget
+                MedLogo(height: height),
+                SizedBox(
+                  height: ConstantWidget.getScreenPercentSize(context, 2),
+                ),
+                ConstantWidget.getCustomText(
+                  'Enter Code',
+                  ConstantData.mainTextColor,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font25Px(context: context),
+                ),
+                SizedBox(
+                  height: ConstantWidget.getScreenPercentSize(context, 3),
+                ),
+                ConstantWidget.getCustomText(
+                  'We have sent a verification code to the phone',
+                  ConstantData.clrBorder,
+                  2,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font18Px(context: context) * 1.12,
+                ),
+                SizedBox(
+                  height: blockSizeHorizontal(context: context) * 2,
+                ),
+                ConstantWidget.getCustomText(
+                  '+91 ${widget.phone}',
+                  ConstantData.mainTextColor,
+                  2,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font22Px(context: context),
+                ),
+                SizedBox(
+                  height: ConstantWidget.getScreenPercentSize(context, 5),
+                ),
 
-              //---> Pin input
-              Center(
-                child: PinInput(
-                  pinEditingController: _pinEditingController,
-                  isObscure: false,
-                  pinShape: PinCodeFieldShape.circle,
-                  action: TextInputAction.go,
-                  // enable: _enable,
-                  onSubmit: (value) async {
-                    final i = await store.verifyOTP(
-                      mobile: widget.phone,
-                      otp: value,
-                    );
-                    if (i == 1) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => Provider.value(
-                            value: store,
-                            child: Provider.value(
-                              value: productStore,
+                //---> Pin input
+                Center(
+                  child: PinInput(
+                    pinEditingController: _pinEditingController,
+                    isObscure: false,
+                    pinShape: PinCodeFieldShape.circle,
+                    action: TextInputAction.go,
+                    // enable: _enable,
+                    onSubmit: (value) async {
+                      final i = await store.verifyOTP(
+                        mobile: widget.phone,
+                        otp: value,
+                      );
+                      if (i == 1) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => Provider.value(
+                              value: store,
                               child: Provider.value(
-                                value: profileStore,
+                                value: productStore,
                                 child: Provider.value(
-                                  value: orderHistoryStore,
+                                  value: profileStore,
                                   child: Provider.value(
-                                    value: bottomNavigationStore,
-                                    child: const OTPSuccessFailure(),
+                                    value: orderHistoryStore,
+                                    child: Provider.value(
+                                      value: bottomNavigationStore,
+                                      child: const OTPSuccessFailure(),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CustomAlertDialog(
-                              header: 'Incorrect OTP',
-                              description:
-                                  'It looks like you entered incorrect verification code, please try again',
-                              func: () async {
+                        );
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomAlertDialog(
+                                header: 'Incorrect OTP',
+                                description:
+                                    'It looks like you entered incorrect verification code, please try again',
+                                func: () async {
+                                  await store.getOTP(mobile: widget.phone);
+
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Provider.value(
+                                                value: store,
+                                                child: Provider.value(
+                                                  value: productStore,
+                                                  child: Provider.value(
+                                                    value: profileStore,
+                                                    child: Provider.value(
+                                                      value:
+                                                          bottomNavigationStore,
+                                                      child: Provider.value(
+                                                        value:
+                                                            orderHistoryStore,
+                                                        child:
+                                                            PhoneVerification(
+                                                          phone: widget.phone,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )));
+                                },
+                                buttonText: 'Try Again',
+                              );
+                            });
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: safeBlockVertical(context: context) * 5,
+                ),
+
+                //---> OTP verfiy button
+                Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal: safeBlockVertical(context: context) * 9),
+                  child: Column(
+                    children: [
+                      //---> Resend button
+                      SizedBox(
+                        height: safeBlockVertical(context: context) * 3,
+                      ),
+                      Column(
+                        children: [
+                          if (_start > 0)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ConstantWidget.getCustomText(
+                                  'Resend new code in  ',
+                                  ConstantData.clrBorder,
+                                  1,
+                                  TextAlign.center,
+                                  FontWeight.w600,
+                                  font18Px(context: context) * 1.1,
+                                ),
+                                ConstantWidget.getCustomText(
+                                  '0:${_start}s',
+                                  ConstantData.mainTextColor,
+                                  1,
+                                  TextAlign.center,
+                                  FontWeight.w600,
+                                  font18Px(context: context) * 1.15,
+                                ),
+                              ],
+                            ),
+                          if (_start == 0)
+                            InkWell(
+                              onTap: () async {
                                 await store.getOTP(mobile: widget.phone);
 
                                 Navigator.pushReplacement(
@@ -213,111 +293,41 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                                               ),
                                             )));
                               },
-                              buttonText: 'Try Again',
-                            );
-                          });
-                    }
-                  },
-                ),
-              ),
-              SizedBox(
-                height: safeBlockVertical(context: context) * 5,
-              ),
-
-              //---> OTP verfiy button
-              Container(
-                margin: EdgeInsets.symmetric(
-                    horizontal: safeBlockVertical(context: context) * 9),
-                child: Column(
-                  children: [
-                    //---> Resend button
-                    SizedBox(
-                      height: safeBlockVertical(context: context) * 3,
-                    ),
-                    Column(
-                      children: [
-                        if (_start > 0)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ConstantWidget.getCustomText(
-                                'Resend new code in  ',
-                                ConstantData.clrBorder,
-                                1,
-                                TextAlign.center,
-                                FontWeight.w600,
-                                font18Px(context: context) * 1.1,
-                              ),
-                              ConstantWidget.getCustomText(
-                                '0:${_start}s',
-                                ConstantData.mainTextColor,
-                                1,
-                                TextAlign.center,
-                                FontWeight.w600,
-                                font18Px(context: context) * 1.15,
-                              ),
-                            ],
-                          ),
-                        if (_start == 0)
-                          InkWell(
-                            onTap: () async {
-                              await store.getOTP(mobile: widget.phone);
-
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Provider.value(
-                                            value: store,
-                                            child: Provider.value(
-                                              value: productStore,
-                                              child: Provider.value(
-                                                value: profileStore,
-                                                child: Provider.value(
-                                                  value: bottomNavigationStore,
-                                                  child: Provider.value(
-                                                    value: orderHistoryStore,
-                                                    child: PhoneVerification(
-                                                      phone: widget.phone,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          )));
-                            },
-                            child: Container(
-                              height: ConstantWidget.getScreenPercentSize(
-                                  context, 7.5),
-                              width: ConstantWidget.getWidthPercentSize(
-                                  context, 40),
-                              margin: EdgeInsets.symmetric(
-                                  vertical: ConstantWidget.getScreenPercentSize(
-                                      context, 1.2)),
-                              decoration: BoxDecoration(
-                                color: ConstantData.primaryColor,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(
-                                    ConstantWidget.getPercentSize(height, 20),
+                              child: Container(
+                                height: ConstantWidget.getScreenPercentSize(
+                                    context, 7.5),
+                                width: ConstantWidget.getWidthPercentSize(
+                                    context, 40),
+                                margin: EdgeInsets.symmetric(
+                                    vertical:
+                                        ConstantWidget.getScreenPercentSize(
+                                            context, 1.2)),
+                                decoration: BoxDecoration(
+                                  color: ConstantData.primaryColor,
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(
+                                      ConstantWidget.getPercentSize(height, 20),
+                                    ),
+                                  ),
+                                ),
+                                child: Center(
+                                  child: ConstantWidget.getDefaultTextWidget(
+                                    'Resend',
+                                    TextAlign.center,
+                                    FontWeight.w600,
+                                    font22Px(context: context),
+                                    Colors.white,
                                   ),
                                 ),
                               ),
-                              child: Center(
-                                child: ConstantWidget.getDefaultTextWidget(
-                                  'Resend',
-                                  TextAlign.center,
-                                  FontWeight.w600,
-                                  font22Px(context: context),
-                                  Colors.white,
-                                ),
-                              ),
                             ),
-                          ),
-                      ],
-                    )
-                  ],
-                ),
-              )
-            ],
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

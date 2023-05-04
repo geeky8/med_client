@@ -3,6 +3,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:medrpha_customer/products/repository/products_repository.dart';
+import 'package:medrpha_customer/products/utils/order_dialog.dart';
+import 'package:medrpha_customer/profile/models/profile_model.dart';
 
 import 'package:provider/provider.dart';
 
@@ -20,6 +23,7 @@ import 'package:medrpha_customer/utils/constant_data.dart';
 import 'package:medrpha_customer/utils/constant_widget.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
 import 'package:medrpha_customer/utils/storage.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 import '../../api_service.dart';
@@ -112,6 +116,78 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
     }
   }
 
+  final razorPay = Razorpay();
+
+  handlePaymentSuccess(PaymentSuccessResponse response) async {
+    // print('-----------Success Payment-------- ${response.orderId}');
+    final store = context.read<ProductsStore>();
+    final orderHistoryStore = context.read<OrderHistoryStore>();
+    // final profileStore = context.read<ProfileStore>();
+    // final loginStore = context.read<LoginStore>();
+    // final bottomNavigationStore = context.read<BottomNavigationStore>();
+    store.checkoutState = StoreState.LOADING;
+    await store.confirmPayment(
+      orderId: widget.model.orderId,
+      context: context,
+      orderHistoryStore: orderHistoryStore,
+    );
+    store.checkoutState = StoreState.SUCCESS;
+  }
+
+  handlePaymentFailure(PaymentFailureResponse response) {
+    // print('-----------Failure Payment-------- ${response.code}');
+    showDialog(
+      context: context,
+      builder: (_) => OrderDialog(
+        func: () {
+          Navigator.pop(context);
+        },
+        image: 'online-payment-error.png',
+        label: 'Cancel',
+        text: 'Oops...Something went wrong',
+      ),
+    );
+  }
+
+  handlePaymentExternalWallet(PaymentSuccessResponse response) {
+    print(
+        '-----------Success Payment External wallet-------- ${response.signature}');
+  }
+
+  void openGateway({
+    required String payment,
+    required ProfileModel profileModel,
+    required int noOfProducts,
+  }) async {
+    final repo = ProductsRepository();
+    final id = await repo.createOrder(
+      payment: payment,
+      noOfProducts: noOfProducts,
+    );
+
+    final phoneNo = await DataBox().readPhoneNo();
+    final email = profileModel.firmInfoModel.email;
+
+    var options = {
+      'key': apiKey,
+      'amount': double.parse(payment) * 100,
+      'name': 'Mederpha',
+      'order_id': id,
+      'description': 'Online Medical Hub',
+      'retry': {'enabled': true, 'max_count': 1},
+      'send_sms_hash': true,
+      'prefill': {
+        'contact': phoneNo,
+        'email': email,
+      },
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    razorPay.open(options);
+  }
+
   bool viewInvoice = false;
   bool cancelOrder = false;
   final remarksContoller = TextEditingController();
@@ -124,12 +200,26 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
   }
 
   @override
+  void initState() {
+    razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
+    razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentFailure);
+    razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, handlePaymentExternalWallet);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ConstantWidget.customAppBar(context: context, title: 'ORDER DETAILS'),
         OrderDetailHeader(context),
+        Offstage(
+          offstage:
+              (widget.model.paymentStatusType == PaymentStatusType.PAID) ||
+                  (widget.model.orderStatusType == OrderStatusType.CANCELLED),
+          child: paymentWidget(context),
+        ),
         Padding(
           padding: EdgeInsets.symmetric(
             vertical: blockSizeVertical(context: context),
@@ -648,23 +738,140 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                 SizedBox(
                   height: blockSizeVertical(context: context) * 2,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ConstantWidget.getCustomText(
-                        '${widget.profileStore.profileModel.firmInfoModel.address}\n${widget.profileStore.getState(stateId: int.parse(widget.profileStore.profileModel.firmInfoModel.state))} - ${widget.profileStore.getArea(areaId: int.parse(widget.profileStore.profileModel.firmInfoModel.pin))}',
-                        Colors.black45,
-                        4,
-                        TextAlign.left,
-                        FontWeight.w600,
-                        font15Px(context: context) * 1.1,
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       child: ConstantWidget.getCustomText(
+                //         '${widget.profileStore.profileModel.firmInfoModel.address}\n${widget.profileStore.getState(stateId: int.parse(widget.profileStore.profileModel.firmInfoModel.state))} - ${widget.profileStore.getArea(areaId: int.parse(widget.profileStore.profileModel.firmInfoModel.pin))}',
+                //         Colors.black45,
+                //         4,
+                //         TextAlign.left,
+                //         FontWeight.w600,
+                //         font15Px(context: context) * 1.1,
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                addressBlockWidget(widget.profileStore),
               ],
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Padding paymentWidget(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: blockSizeVertical(context: context),
+      ),
+      child: Container(
+        decoration: BoxDecoration(color: ConstantData.bgColor),
+        padding: EdgeInsets.symmetric(
+          vertical: blockSizeVertical(context: context) * 2,
+          horizontal: blockSizeHorizontal(context: context) * 4,
+        ),
+        child: InkWell(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (_) => ConstantWidget.alertDialog(
+                context: context,
+                func: () async {
+                  Navigator.pop(context);
+                  openGateway(
+                    payment: widget.model.orderAmount,
+                    noOfProducts: widget.model.ordersList!.length,
+                    profileModel: widget.profileStore.profileModel,
+                  );
+                },
+                buttonText: 'Confirm',
+                title: 'Please confirm to continue payment',
+              ),
+            );
+          },
+          child: Row(
+            children: [
+              ConstantWidget.getCustomText(
+                'Pay Now',
+                ConstantData.mainTextColor,
+                1,
+                TextAlign.center,
+                FontWeight.w600,
+                font18Px(context: context),
+              ),
+              const Spacer(),
+              Icon(
+                Icons.keyboard_arrow_right_outlined,
+                size: font25Px(context: context),
+                color: ConstantData.mainTextColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Column addressBlockWidget(ProfileStore profileStore) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ConstantWidget.getCustomText(
+                    profileStore.profileModel.firmInfoModel.contactName,
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w500,
+                    font15Px(context: context) * 1.2,
+                  ),
+                  SizedBox(
+                    height: blockSizeVertical(context: context),
+                  ),
+                  ConstantWidget.getCustomText(
+                    '${profileStore.profileModel.firmInfoModel.address} - ${profileStore.getArea(areaId: int.parse(profileStore.profileModel.firmInfoModel.pin))}',
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w400,
+                    font15Px(context: context) * 1.1,
+                  ),
+                  SizedBox(
+                    height: blockSizeVertical(context: context),
+                  ),
+                  ConstantWidget.getCustomText(
+                    '${profileStore.getCityName(cityId: int.parse(profileStore.profileModel.firmInfoModel.city))} , ${profileStore.getState(stateId: int.parse(profileStore.profileModel.firmInfoModel.state))} , ${profileStore.getCountry(countryId: int.parse(profileStore.profileModel.firmInfoModel.country))}',
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w400,
+                    font15Px(context: context) * 1.1,
+                  ),
+                  SizedBox(
+                    height: blockSizeVertical(context: context),
+                  ),
+                  ConstantWidget.getCustomText(
+                    'Phone : ${profileStore.profileModel.firmInfoModel.phone}',
+                    ConstantData.mainTextColor,
+                    1,
+                    TextAlign.center,
+                    FontWeight.w400,
+                    font15Px(context: context) * 1.1,
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ],
     );
@@ -881,12 +1088,12 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                 thickness: 0.5,
               );
             },
-            itemCount: widget.model.ordersList.length,
+            itemCount: widget.model.ordersList!.length,
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (_, index) {
               return ProductDetailsTile(
-                model: widget.model.ordersList[index],
+                model: widget.model.ordersList![index],
                 productsStore: widget.productsStore,
                 loginStore: widget.loginStore,
               );

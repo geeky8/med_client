@@ -20,12 +20,10 @@ import 'package:provider/provider.dart';
 class SignInPage extends StatelessWidget {
   SignInPage({Key? key}) : super(key: key);
 
-  Future<bool> _requestPop() {
-    Future.delayed(const Duration(milliseconds: 200), () {
-      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-    });
-
-    return Future.value(true);
+  Future<bool> _requestPop() async {
+    SystemNavigator.pop();
+    return false;
+    // return Future.value(true);
   }
 
   final _pinController = TextEditingController();
