@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -249,7 +251,18 @@ class CartScreen extends StatelessWidget {
                                 itemCount: store.cartModel.productList.length,
                                 itemBuilder: (context, index) {
                                   return InkWell(
-                                    onTap: () {
+                                    onTap: () async {
+                                      ProductModel model =
+                                          store.cartModel.productList[index];
+
+                                      if (store.cartModel.productList[index]
+                                              .expiryDate ==
+                                          '') {
+                                        model = await store.getProductDetails(
+                                          model: store
+                                              .cartModel.productList[index],
+                                        );
+                                      }
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -265,8 +278,7 @@ class CartScreen extends StatelessWidget {
                                                   value: bottomNavigationStore),
                                             ],
                                             child: ProductsDetailScreen(
-                                              model: store
-                                                  .cartModel.productList[index],
+                                              model: model,
                                             ),
                                           ),
                                         ),

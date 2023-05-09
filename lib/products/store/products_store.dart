@@ -1154,6 +1154,7 @@ abstract class _ProductsStore with Store {
       Fluttertoast.showToast(msg: 'Item already in cart');
       return model;
     }
+    debugPrint("------ model expiry ------ ${model.expiryDate}");
     findProductInProductList(model: model);
     if (int.parse(model.quantity) >= model.minQty) {
       final updatedModel = model.copyWith(
@@ -1412,38 +1413,36 @@ abstract class _ProductsStore with Store {
           context: context,
           builder: (context) => OrderDialog(
             func: () async {
-              final repo = OrderHistoryRepository();
               checkoutState = StoreState.LOADING;
-              final orderHistoryResponseModel =
-                  await repo.getOrdersResponseModel(orderId: status);
-              final orderHistoryModel = await repo.getListOrdersHistory(
-                orderNo: orderHistoryResponseModel.orderNo,
+              final sessId = await DataBox().readSessId();
+              final ordersResponse =
+                  await OrderHistoryRepository().getOrdersResponseModel(
+                sessId: sessId,
+                orderId: status,
               );
+              final model = await OrderHistoryRepository()
+                  .getListOrdersHistory(orderNo: ordersResponse.orderNo);
+
+              final updatedModel = model.first
+                  .copyWith(ordersList: [...ordersResponse.productList]);
+
               checkoutState = StoreState.SUCCESS;
               Navigator.pop(context);
-
-              // if (fromOrders == null) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => Provider.value(
-                    value: orderHistoryStore,
-                    child: Provider.value(
-                      value: loginStore,
-                      child: Provider.value(
-                        value: productsStore,
-                        child: Provider.value(
-                          value: profileStore,
-                          child: OrderHistoryDetailsScreen(
-                            model: orderHistoryModel.first,
-                          ),
-                        ),
-                      ),
-                    ),
+                  builder: (_) => MultiProvider(
+                    providers: [
+                      Provider.value(value: productsStore),
+                      Provider.value(value: loginStore),
+                      Provider.value(value: productsStore),
+                      Provider.value(value: profileStore),
+                      Provider.value(value: orderHistoryStore),
+                    ],
+                    child: OrderHistoryDetailsScreen(model: updatedModel),
                   ),
                 ),
               );
-              // }
             },
             image: 'order-confirmed.png',
             text: 'Thank you for placing your order',

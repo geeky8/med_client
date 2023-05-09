@@ -9,6 +9,7 @@ import 'package:medrpha_customer/bottom_navigation/store/bottom_navigation_store
 import 'package:medrpha_customer/order_history/stores/order_history_store.dart';
 import 'package:medrpha_customer/products/store/products_store.dart';
 import 'package:medrpha_customer/profile/store/profile_store.dart';
+import 'package:medrpha_customer/profile/widgets/widgets.dart';
 import 'package:medrpha_customer/signup_login/screens/login_screen.dart';
 import 'package:medrpha_customer/signup_login/screens/phone_verification_screen.dart';
 import 'package:medrpha_customer/utils/size_config.dart';
@@ -272,55 +273,85 @@ class PhoneInput extends StatelessWidget {
           //     },
           //   ),
           // ),
+          // Expanded(
+          //   flex: 1,
+          //   child: Container(
+          //     height: subHeight,
+          //     padding: const EdgeInsets.only(left: 7),
+          //     margin: const EdgeInsets.only(left: 7),
+          //     alignment: Alignment.centerLeft,
+          //     decoration: BoxDecoration(
+          //       color: ConstantData.cellColor,
+          //       borderRadius: BorderRadius.all(
+          //         Radius.circular(radius),
+          //       ),
+          //     ),
+          //     child: TextFormField(
+
+          //       controller: controller,
+          //       onChanged: (value) async {
+          //         // print(value.length);
+          //         if (value.length >= 10) {
+          //           FocusManager.instance.primaryFocus?.unfocus();
+          //         }
+          //       },
+          //       decoration: InputDecoration(
+          //         contentPadding: EdgeInsets.only(
+          //             left: ConstantWidget.getWidthPercentSize(context, 2)),
+          //         border: InputBorder.none,
+          //         focusedBorder: InputBorder.none,
+          //         enabledBorder: InputBorder.none,
+          //         errorBorder: InputBorder.none,
+          //         disabledBorder: InputBorder.none,
+          //         hintText: 'Number',
+          //         hintStyle: TextStyle(
+          //           fontFamily: ConstantData.fontFamily,
+          //           color: ConstantData.textColor,
+          //           fontWeight: FontWeight.w600,
+          //           fontSize: hintFontSize,
+          //         ),
+          //         labelText: 'Enter Phone No.',
+          //         // labelStyle: TextStyle(
+          //         //   fontFamily: ConstantData.fontFamily,
+          //         //   color: ConstantData.textColor,
+          //         //   fontWeight: FontWeight.w600,
+          //         //   fontSize: hintFontSize,
+          //         // ),
+          //       ),
+          //       style: TextStyle(
+          //         fontFamily: ConstantData.fontFamily,
+          //         color: ConstantData.textColor,
+          //         fontWeight: FontWeight.w600,
+          //         fontSize: fontSize,
+          //       ),
+          //       keyboardType: TextInputType.number,
+
+          //       inputFormatters: <TextInputFormatter>[
+          //         FilteringTextInputFormatter.digitsOnly
+          //       ], // Only numbers can be entered
+          //     ),
+          //   ),
+          // )
           Expanded(
             flex: 1,
-            child: Container(
-              height: subHeight,
-              padding: const EdgeInsets.only(left: 7),
-              margin: const EdgeInsets.only(left: 7),
-              alignment: Alignment.centerLeft,
-              decoration: BoxDecoration(
-                color: ConstantData.cellColor,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(radius),
-                ),
-              ),
-              child: TextField(
-                controller: controller,
-                onChanged: (value) async {
-                  // print(value.length);
-                  if (value.length >= 10) {
-                    FocusManager.instance.primaryFocus?.unfocus();
+            child: CustomTextField(
+              context: context,
+              hintName: 'Enter Number',
+              labelName: 'Contact Number',
+              textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value != null) {
+                  if (value.isEmpty) {
+                    return "Enter Contact Number";
                   }
-                },
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(
-                      left: ConstantWidget.getWidthPercentSize(context, 2)),
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  hintText: 'Number',
-                  hintStyle: TextStyle(
-                    fontFamily: ConstantData.fontFamily,
-                    color: ConstantData.textColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: hintFontSize,
-                  ),
-                ),
-                style: TextStyle(
-                  fontFamily: ConstantData.fontFamily,
-                  color: ConstantData.textColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: fontSize,
-                ),
-                keyboardType: TextInputType.number,
-
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ], // Only numbers can be entered
-              ),
+                  if (value.isNotEmpty && value.length != 10) {
+                    return 'Invalid Number';
+                  }
+                }
+                return null;
+              },
+              controller: controller,
             ),
           )
         ],

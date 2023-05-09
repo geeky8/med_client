@@ -207,6 +207,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                 context: context,
               );
               productStore.checkoutState = StoreState.SUCCESS;
+              bottomNavigationStore.currentPage = 0;
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -390,10 +391,10 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                                   showDialog(
                                     context: context,
                                     builder: (_) => ConstantWidget.alertDialog(
-                                      context: _,
+                                      context: context,
                                       buttonText: 'Cancel',
                                       title:
-                                          'Sure you want to cancel the order?',
+                                          'Sure you want to cancel the payment?',
                                       func: () async {
                                         Navigator.pop(context);
                                         productStore.checkoutState =
@@ -406,7 +407,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                                         );
                                         productStore.checkoutState =
                                             StoreState.SUCCESS;
-
+                                        bottomNavigationStore.currentPage = 0;
                                         Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
@@ -424,7 +425,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                                                     value:
                                                         bottomNavigationStore),
                                               ],
-                                              child: const ProductHomeScreen(),
+                                              child: const HomeScreen(),
                                             ),
                                           ),
                                         );

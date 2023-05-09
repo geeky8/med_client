@@ -520,7 +520,8 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
         Offstage(
           offstage:
               widget.model.orderStatusType == OrderStatusType.DISPATCHED ||
-                  widget.model.orderStatusType == OrderStatusType.CONFIRMED,
+                  widget.model.orderStatusType == OrderStatusType.CONFIRMED ||
+                  widget.model.orderStatusType == OrderStatusType.CANCELLED,
           child: Padding(
             padding: EdgeInsets.symmetric(
               vertical: blockSizeVertical(context: context),
@@ -1118,13 +1119,25 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ConstantWidget.getCustomText(
-              'Order #${widget.model.orderId}',
-              ConstantData.mainTextColor,
-              1,
-              TextAlign.center,
-              FontWeight.w600,
-              font18Px(context: context),
+            Row(
+              children: [
+                ConstantWidget.getCustomText(
+                  'Order : ',
+                  Colors.black45,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font18Px(context: context) * 1.1,
+                ),
+                ConstantWidget.getCustomText(
+                  '#${widget.model.orderId}',
+                  ConstantData.mainTextColor,
+                  1,
+                  TextAlign.center,
+                  FontWeight.w600,
+                  font18Px(context: context) * 1.1,
+                ),
+              ],
             ),
             SizedBox(
               height: blockSizeVertical(context: context) * 2,
@@ -1133,11 +1146,11 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
               children: [
                 ConstantWidget.getCustomText(
                   'Payment Mode : ',
-                  Colors.black38,
+                  Colors.black45,
                   1,
                   TextAlign.center,
                   FontWeight.w600,
-                  font15Px(context: context),
+                  font15Px(context: context) * 1.1,
                 ),
                 SizedBox(
                   width: blockSizeHorizontal(context: context) * 2,
@@ -1148,7 +1161,7 @@ class _OrderHistoryDetailsWidgetState extends State<OrderHistoryDetailsWidget> {
                   1,
                   TextAlign.center,
                   FontWeight.w600,
-                  font15Px(context: context),
+                  font15Px(context: context) * 1.1,
                 ),
               ],
             )

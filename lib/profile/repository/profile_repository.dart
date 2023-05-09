@@ -44,30 +44,37 @@ class ProfileRepository {
     final countryList = <CountryModel>[];
 
     final resp = await httpClient.post(Uri.parse(countryUrl), body: body);
+    debugPrint("---- get countries --------- ${resp.body}");
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);
       if (respBody['status'] == '1') {
         final list = respBody['data'] as List<dynamic>;
         for (final i in list) {
           final model = CountryModel.fromJson(json: i as Map<String, dynamic>);
-          list.add(model);
+          countryList.add(model);
         }
       }
     }
-    countryList.add(CountryModel(countryName: 'India', countryId: 1));
+    // countryList.add(CountryModel(countryName: 'India', countryId: 1));
     return countryList;
   }
 
-  Future<List<StateModel>> getState() async {
+  Future<List<StateModel>> getState({String? stateId}) async {
     final sessId = await DataBox().readSessId();
+    String url = stateUrlAll;
 
-    final body = {
+    Map<String, dynamic> body = {
       "sessid": sessId,
     };
 
+    if (stateId != null) {
+      url = stateUrl;
+      body = {"sessid": sessId, "countid": stateId};
+    }
+
     final stateList = <StateModel>[];
 
-    final resp = await httpClient.post(Uri.parse(stateUrl), body: body);
+    final resp = await httpClient.post(Uri.parse(url), body: body);
 
     if (resp.statusCode == 200) {
       final respBody = jsonDecode(resp.body);

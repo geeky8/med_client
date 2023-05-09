@@ -131,11 +131,12 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
     final orderHistoryStore = context.read<OrderHistoryStore>();
     return WillPopScope(
       onWillPop: () async {
-        if (widget.beginToFill != null) {
-          showDialog(context: context, builder: (_) => exitDialog(context));
-        } else {
-          Navigator.pop(context);
-        }
+        // if (widget.beginToFill != null) {
+        showDialog(
+            context: context, builder: (_) => exitDialog(context, store));
+        // } else {
+        //   Navigator.pop(context);
+        // }
         return false;
       },
       child: Scaffold(
@@ -143,9 +144,11 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
         appBar: AppBar(
           leading: Observer(builder: (_) {
             return IconButton(
-              onPressed: () {
+              onPressed: () async {
                 if (store.page == 0) {
-                  Navigator.pop(context);
+                  showDialog(
+                      context: context,
+                      builder: (_) => exitDialog(context, store));
                 } else {
                   store.page--;
                 }
@@ -600,7 +603,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
     );
   }
 
-  Widget exitDialog(BuildContext context) {
+  Widget exitDialog(BuildContext context, ProfileStore store) {
     return Dialog(
       shape: const RoundedRectangleBorder(),
       backgroundColor: Colors.transparent,
@@ -625,7 +628,9 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                     children: [
                       Expanded(
                         child: ConstantWidget.getCustomText(
-                          'Do you really want to exit the app',
+                          (widget.beginToFill != null)
+                              ? 'Do you really want to exit the app'
+                              : "Your current progress will be lost",
                           ConstantData.mainTextColor,
                           1,
                           TextAlign.center,
@@ -681,7 +686,13 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                   child: Observer(
                     builder: (_) => InkWell(
                       onTap: () async {
-                        await SystemNavigator.pop();
+                        if (widget.beginToFill != null) {
+                          await SystemNavigator.pop();
+                        } else {
+                          Navigator.pop(context);
+                          store.init();
+                          Navigator.pop(context);
+                        }
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(
@@ -867,80 +878,95 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                 children: [
                   Row(
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                ConstantWidget.getCustomText(
-                                  'Country ',
-                                  ConstantData.mainTextColor,
-                                  1,
-                                  TextAlign.left,
-                                  FontWeight.w500,
-                                  font22Px(context: context),
-                                ),
-                                ConstantWidget.getCustomText(
-                                  '(Required)*',
-                                  ConstantData.color1,
-                                  1,
-                                  TextAlign.left,
-                                  FontWeight.w500,
-                                  font22Px(context: context),
-                                ),
-                              ],
-                            ),
-                            CustomDropDown(
-                              value: country,
-                              hint: 'Select Country',
-                              dropDownValidte: (value) {
-                                if (value == null) return 'Enter Country';
-                              },
-                              itemList: store.countryList
-                                  .map<DropdownMenuItem<String>>((element) {
-                                return DropdownMenuItem<String>(
-                                  value: element.countryName,
-                                  child: ConstantWidget.getCustomText(
-                                    element.countryName,
+                      Observer(builder: (_) {
+                        return Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  ConstantWidget.getCustomText(
+                                    'Country ',
                                     ConstantData.mainTextColor,
                                     1,
-                                    TextAlign.center,
-                                    FontWeight.w600,
-                                    font15Px(context: context),
+                                    TextAlign.left,
+                                    FontWeight.w500,
+                                    font22Px(context: context),
                                   ),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  country = value;
-                                });
-                              },
-                              selectFunc: (BuildContext context) =>
-                                  store.countryList
-                                      .map<Widget>(
-                                        (element) => Center(
-                                          child: ConstantWidget.getCustomText(
-                                            element.countryName,
-                                            ConstantData.mainTextColor,
-                                            1,
-                                            TextAlign.center,
-                                            FontWeight.w500,
-                                            font18Px(context: context),
+                                  ConstantWidget.getCustomText(
+                                    '(Required)*',
+                                    ConstantData.color1,
+                                    1,
+                                    TextAlign.left,
+                                    FontWeight.w500,
+                                    font22Px(context: context),
+                                  ),
+                                ],
+                              ),
+                              CustomDropDown(
+                                value: country,
+                                hint: 'Select Country',
+                                dropDownValidte: (value) {
+                                  if (value == null) return 'Enter Country';
+                                  return null;
+                                },
+                                itemList: store.countryList
+                                    .map<DropdownMenuItem<String>>((element) {
+                                  return DropdownMenuItem<String>(
+                                    value: element.countryName,
+                                    child: ConstantWidget.getCustomText(
+                                      element.countryName,
+                                      ConstantData.mainTextColor,
+                                      1,
+                                      TextAlign.center,
+                                      FontWeight.w600,
+                                      font15Px(context: context),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (value) async {
+                                  setState(() {
+                                    country = value;
+                                  });
+                                  final index = store.countryList.indexWhere(
+                                      (element) =>
+                                          element.countryName == country);
+                                  await store.getStateCountrySpecific(
+                                    id: store.countryList[index].countryId
+                                        .toString(),
+                                  );
+                                },
+                                selectFunc: (BuildContext context) =>
+                                    store.countryList
+                                        .map<Widget>(
+                                          (element) => Center(
+                                            child: ConstantWidget.getCustomText(
+                                              element.countryName,
+                                              ConstantData.mainTextColor,
+                                              1,
+                                              TextAlign.center,
+                                              FontWeight.w500,
+                                              font18Px(context: context),
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                      .toList(),
-                            ),
-                          ],
-                        ),
-                      ),
+                                        )
+                                        .toList(),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                     ],
                   ),
                   Row(
                     children: [
                       Expanded(
                         child: Observer(builder: (_) {
+                          if (store.stateFetching == StoreState.LOADING) {
+                            state = null;
+                            city = null;
+                            area = null;
+                          }
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -1029,7 +1055,9 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                     children: [
                       Expanded(
                         child: Observer(builder: (_) {
-                          if (store.cityFetching == StoreState.LOADING) {
+                          if (store.cityFetching == StoreState.LOADING ||
+                              store.stateFetching == StoreState.LOADING) {
+                            // state = null;
                             city = null;
                           }
                           return Column(
@@ -1120,7 +1148,8 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                       Expanded(
                         child: Observer(builder: (_) {
                           if (store.areaFetching == StoreState.LOADING ||
-                              store.cityFetching == StoreState.LOADING) {
+                              store.cityFetching == StoreState.LOADING ||
+                              store.stateFetching == StoreState.LOADING) {
                             area = null;
                           }
 
@@ -1159,6 +1188,7 @@ class _NewProfileScreenState extends State<NewProfileScreen> {
                                 dropDownValidte: (value) {
                                   if (city == null) return 'Enter City First';
                                   if (value == null) return 'Enter Area';
+                                  if (state == null) return 'Enter State';
                                 },
 
                                 /// if city is not selected user won't be able to select area pincode.

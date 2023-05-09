@@ -184,6 +184,22 @@ mixin _$ProfileStore on _ProfileStore, Store {
     });
   }
 
+  late final _$stateFetchingAtom =
+      Atom(name: '_ProfileStore.stateFetching', context: context);
+
+  @override
+  StoreState get stateFetching {
+    _$stateFetchingAtom.reportRead();
+    return super.stateFetching;
+  }
+
+  @override
+  set stateFetching(StoreState value) {
+    _$stateFetchingAtom.reportWrite(value, super.stateFetching, () {
+      super.stateFetching = value;
+    });
+  }
+
   late final _$certificateUploadingStateAtom =
       Atom(name: '_ProfileStore.certificateUploadingState', context: context);
 
@@ -224,6 +240,15 @@ mixin _$ProfileStore on _ProfileStore, Store {
   Future<void> getAreaCitySpecific({String? id}) {
     return _$getAreaCitySpecificAsyncAction
         .run(() => super.getAreaCitySpecific(id: id));
+  }
+
+  late final _$getStateCountrySpecificAsyncAction =
+      AsyncAction('_ProfileStore.getStateCountrySpecific', context: context);
+
+  @override
+  Future<void> getStateCountrySpecific({String? id}) {
+    return _$getStateCountrySpecificAsyncAction
+        .run(() => super.getStateCountrySpecific(id: id));
   }
 
   late final _$getStateCitySpecificAsyncAction =
@@ -285,6 +310,7 @@ areaList: ${areaList},
 profileModel: ${profileModel},
 areaFetching: ${areaFetching},
 cityFetching: ${cityFetching},
+stateFetching: ${stateFetching},
 certificateUploadingState: ${certificateUploadingState}
     ''';
   }
